@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convocação Brasil 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="img/logo.png">
+</head>
+
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-area">
+                <img src="img/logo.png" class="logo">
+                <h1>CONVOCAÇÃO OFICIAL 2026</h1>
+            </div>
+            <div class="score-panel">
+                <span>MÉDIA DE FORÇA</span>
+                <strong id="media-forca">0.0</strong>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="area-jogo">
+            <div class="campo-wrapper">
+                <div class="campo">
+                    <div class="linha-meio"></div>
+                    <div class="circulo-central"></div>
+
+                    <div class="slot" id="ata-1" data-posicao="Ponta"><b>PE</b></div>
+                    <div class="slot" id="ata-2" data-posicao="Centroavante"><b>CA</b></div>
+                    <div class="slot" id="ata-3" data-posicao="Ponta"><b>PD</b></div>
+
+                    <div class="slot" id="mei-1" data-posicao="Meia"><b>MEI</b></div>
+                    <div class="slot" id="mei-2" data-posicao="Meia"><b>VOL</b></div>
+                    <div class="slot" id="mei-3" data-posicao="Meia"><b>MEI</b></div>
+
+                    <div class="slot" id="lat-1" data-posicao="Lateral Esquerdo"><b>LE</b></div>
+                    <div class="slot" id="zag-1" data-posicao="Zagueiro"><b>ZAG</b></div>
+                    <div class="slot" id="zag-2" data-posicao="Zagueiro"><b>ZAG</b></div>
+                    <div class="slot" id="lat-2" data-posicao="Lateral Direito"><b>LD</b></div>
+
+                    <div class="slot" id="gol-1" data-posicao="Goleiro"><b>GOL</b></div>
+                </div>
+            </div>
+
+            <div class="banco-reservas">
+                <h3>RESERVAS (15)</h3>
+                <div class="banco-grid">
+                    <div class="slot reserva" id="res-1" data-posicao="Goleiro">G1</div>
+                    <div class="slot reserva" id="res-2" data-posicao="Goleiro">G2</div>
+                    <div class="slot reserva" id="res-3" data-posicao="Zagueiro">Z1</div>
+                    <div class="slot reserva" id="res-4" data-posicao="Zagueiro">Z2</div>
+                    <div class="slot reserva" id="res-5" data-posicao="Zagueiro">Z3</div>
+                    <div class="slot reserva" id="res-6" data-posicao="Lateral Direito">LD1</div>
+                    <div class="slot reserva" id="res-7" data-posicao="Lateral Esquerdo">LE1</div>
+                    <div class="slot reserva" id="res-8" data-posicao="Meia">MEI1</div>
+                    <div class="slot reserva" id="res-9" data-posicao="Meia">MEI2</div>
+                    <div class="slot reserva" id="res-10" data-posicao="Meia">MEI3</div>
+                    <div class="slot reserva" id="res-11" data-posicao="Meia">MEI4</div>
+                    <div class="slot reserva" id="res-12" data-posicao="Ponta">ATA1</div>
+                    <div class="slot reserva" id="res-13" data-posicao="Ponta">ATA2</div>
+                    <div class="slot reserva" id="res-14" data-posicao="Centroavante">ATA3</div>
+                    <div class="slot reserva" id="res-15" data-posicao="Centroavante">ATA4</div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="mercado">
+            <button onclick="limparTudo()" class="btn-limpar">LIMPAR CONVOCAÇÃO</button>
+
+            <h2>Disponíveis</h2>
+            <div class="filtros">
+                <button onclick="filtrar('todos')" class="btn-filtro active">TODOS</button>
+                <button onclick="filtrar('Europa')" class="btn-filtro">EUROPA</button>
+                <button onclick="filtrar('Brasileirão')" class="btn-filtro">BRASIL</button>
+                <button onclick="filtrar('Outras')" class="btn-filtro">OUTRAS</button>
+            </div>
+            <div id="lista-jogadores" class="lista-cards"></div>
+        </aside>
+    </main>
+
+    <!-- Modal customizado -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon" id="modal-icon">⚽</div>
+            <h2 id="modal-titulo"></h2>
+            <p id="modal-mensagem"></p>
+            <div class="modal-botoes" id="modal-botoes"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

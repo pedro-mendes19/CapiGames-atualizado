@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LABIRINTO DA CAPIVARA🦫</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/text" href="img/capivaravoando.png">
+    <style>
+        :root {
+            --bg-color: #2b2d42;
+            --wall-color: #2b2d42;
+            --path-color: #edf2f4;
+            --primary: #d90429;
+            --ui-bg: rgba(255, 255, 255, 0.98);
+        }
+
+        * { box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--path-color);
+            font-family: 'Nunito', sans-serif;
+            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        /* HUD */
+        .hud {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 95vmin; max-width: 600px; margin-bottom: 10px;
+            font-family: 'Fredoka One', cursive;
+        }
+        .hud-item {
+            background: rgba(0,0,0,0.3); padding: 8px 12px;
+            border-radius: 15px; border: 2px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem; display: flex; align-items: center; gap: 5px;
+        }
+        #timer { color: #f1c40f; min-width: 50px; justify-content: center; }
+        .timer-low { color: #ef233c !important; animation: pulse 0.5s infinite; }
+        .timer-penalized { color: #e74c3c !important; animation: shake 0.3s; }
+
+        /* JOGO */
+        #game-wrapper {
+            position: relative;
+            width: 95vmin; height: 95vmin;
+            max-width: 600px; max-height: 600px;
+            background: var(--wall-color);
+            padding: 4px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        #game-board {
+            display: grid; width: 100%; height: 100%;
+            border-radius: 8px; overflow: hidden;
+            background: var(--path-color);
+        }
+
+        .cell { position: relative; }
+        .wall { background-color: var(--wall-color); transform: scale(1.05); }
+        
+        /* Items */
+        .item::after {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 0.7em; animation: float 2s ease-in-out infinite;
+        }
+        .key::after { content: '🔑'; filter: drop-shadow(0 0 2px gold); }
+        .bonus { background: rgba(52, 152, 219, 0.3); border-radius: 50%; }
+        .bonus::after { content: '⏳'; }
+        
+        .exit { background-color: #e74c3c; transition: all 0.3s; }
+        .exit::after { content: '🔒'; }
+        .exit.open { background-color: #2ecc71; }
+        .exit.open::after { content: '🏁'; animation: none; }
+
+        /* CAPIVARA */
+        #player {
+            position: absolute; top: 0; left: 0; z-index: 10;
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.1s linear; pointer-events: none;
+        }
+        .player-inner {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: none; border: none; box-shadow: none; 
+        }
+        .player-inner img {
+            width: 110%; height: 110%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+        }
+
+        /* MODAIS */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            z-index: 100; display: none; justify-content: center; align-items: center;
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
+        .modal-box {
+            background: var(--ui-bg); color: #2c3e50; padding: 25px;
+            border-radius: 20px; text-align: center; width: 85%; max-width: 350px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .math-display {
+            background: #ecf0f1; font-size: 2.2rem; padding: 15px;
+            border-radius: 10px; margin: 15px 0; font-weight: bold; color: #2980b9;
+        }
+        input[type="number"] {
+            width: 100%; padding: 12px; font-size: 1.5rem; text-align: center;
+            border: 2px solid #bdc3c7; border-radius: 8px; margin-bottom: 10px; outline: none;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .btn-action {
+            background: #27ae60; color: white; border: none; padding: 12px;
+            font-size: 1.1rem; font-weight: bold; border-radius: 50px; cursor: pointer;
+            width: 100%; margin-top: 10px; box-shadow: 0 4px 0 #219150;
+        }
+        .btn-action:active { transform: translateY(4px); box-shadow: none; }
+        .gold-btn { background: #f39c12; box-shadow: 0 4px 0 #d35400; }
+
+        @keyframes float { 0%,100%{transform:translate(-50%,-50%)} 50%{transform:translate(-50%,-60%)} }
+        @keyframes shake { 0%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} 100%{transform:translateX(0)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        
+        .floating-text {
+            position: absolute; color: #fff; font-weight: bold; font-size: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 20;
+            animation: floatUp 1s forwards; pointer-events: none;
+        }
+        @keyframes floatUp { 0%{opacity:1; transform:translateY(0)} 100%{opacity:0; transform:translateY(-50px)} }
+        
+        .mobile-hint { margin-top: 10px; color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="hud">
+        <div class="hud-item"><span id="level-display">Nível 1</span></div>
+        <div class="hud-item" id="key-hud">🔑 <span id="key-status">Falta</span></div>
+        <div class="hud-item">⏱️ <span id="timer">00</span></div>
+    </div>
+
+    <div id="game-wrapper">
+        <div id="game-board"></div>
+        <div id="player">
+            <div class="player-inner">
+                <img src="img/capivaravoando.png" alt="Capivara">
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-hint">Deslize para mover</div>
+
+    <div id="modal-math" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Risco Total</h2>
+            <p>Acerte: <span style="color:#2ecc71">+15s</span> | Erre: <span style="color:#e74c3c">-15s</span></p>
+            <div class="math-display" id="q-text">2 + 2 = ?</div>
+            <input type="number" id="ans-input" placeholder="?" inputmode="numeric">
+            <button class="btn-action" onclick="Game.checkMath()">Confirmar</button>
+            <p style="font-size:0.8rem; margin-top:10px; color:#7f8c8d">Uma chance apenas.</p>
+        </div>
+    </div>
+
+    <div id="modal-end" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="end-title">FIM</h2>
+            <p id="end-msg">...</p>
+            <div style="font-size:3.5rem; margin:20px 0;" id="end-emoji">☠️</div>
+            <button id="end-btn" class="btn-action" onclick="Game.handleEndButton()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        const AudioSys = {
+            ctx: null,
+            init: function() {
+                window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                if(!this.ctx) this.ctx = new AudioContext();
+            },
+            play: function(type, freq, dur) {
+                if(!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + dur);
+            },
+            move: () => AudioSys.play('triangle', 200, 0.05),
+            coin: () => { AudioSys.play('sine', 600, 0.1); setTimeout(()=>AudioSys.play('sine', 900, 0.2), 50); },
+            err: () => AudioSys.play('sawtooth', 100, 0.4),
+            win: () => [440,554,659].forEach((f,i)=>setTimeout(()=>AudioSys.play('square', f, 0.2), i*100)),
+            clear: () => [523,659,783,1046].forEach((f,i)=>setTimeout(()=>AudioSys.play('square', f, 0.2), i*150))
+        };
+
+        const Game = {
+            levels: [
+                { size: 9,  time: 30,  bonus: 1, name: "1. Quintal" },
+                { size: 11, time: 40,  bonus: 1, name: "2. Cerca" },
+                { size: 13, time: 50,  bonus: 2, name: "3. Parque" },
+                { size: 15, time: 65,  bonus: 2, name: "4. Floresta" },
+                { size: 17, time: 80,  bonus: 3, name: "5. Esgoto" },
+                { size: 19, time: 95,  bonus: 3, name: "6. Cidade" },
+                { size: 21, time: 110, bonus: 3, name: "7. Prédio" },
+                { size: 23, time: 125, bonus: 4, name: "8. Fábrica" },
+                { size: 25, time: 140, bonus: 4, name: "9. Reator" },
+                { size: 27, time: 160, bonus: 5, name: "10. Olimpo" }
+            ],
+            
+            currLvl: 0,
+            gridSize: 15,
+            map: [],
+            player: {x:1, y:1},
+            hasKey: false,
+            timeLeft: 0,
+            timerInt: null,
+            paused: false,
+            cellSize: 0,
+            mathTarget: null, mathSol: 0,
+            isWinState: false, isGameClear: false,
+
+            el: {
+                board: document.getElementById('game-board'),
+                player: document.getElementById('player'),
+                timer: document.getElementById('timer'),
+                keyStatus: document.getElementById('key-status'),
+                modalEnd: document.getElementById('modal-end'),
+                modalMath: document.getElementById('modal-math')
+            },
+
+            start: function(idx) {
+                if(idx < 0) idx = 0;
+                this.currLvl = idx;
+                const cfg = this.levels[idx];
+                this.gridSize = cfg.size;
+                this.timeLeft = cfg.time;
+                this.hasKey = false;
+                this.paused = false;
+                this.isWinState = false;
+
+                document.getElementById('level-display').innerText = cfg.name;
+                this.el.keyStatus.innerText = 'Falta';
+                this.el.keyStatus.style.color = '#bdc3c7';
+                document.querySelector('.exit')?.classList.remove('open');
+                this.el.modalEnd.classList.remove('active');
+
+                this.genMap(cfg.bonus);
+                this.render();
+                this.startTimer();
+                
+                document.body.addEventListener('click', () => AudioSys.init(), {once:true});
+            },
+
+            // Algoritmo de Busca em Largura (BFS) para calcular distância REAL
+            getWalkDistances: function(startX, startY) {
+                let dists = Array(this.gridSize).fill().map(() => Array(this.gridSize).fill(-1));
+                let queue = [{x: startX, y: startY, d: 0}];
+                dists[startY][startX] = 0;
+
+                while(queue.length > 0) {
+                    let cur = queue.shift();
+                    
+                    [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx, dy]) => {
+                        let nx = cur.x + dx;
+                        let ny = cur.y + dy;
+                        // Se dentro do mapa, não é parede e não visitado
+                        if(nx >= 0 && nx < this.gridSize && ny >= 0 && ny < this.gridSize && 
+                           this.map[ny][nx] !== 1 && dists[ny][nx] === -1) {
+                            dists[ny][nx] = cur.d + 1;
+                            queue.push({x: nx, y: ny, d: cur.d + 1});
+                        }
+                    });
+                }
+                return dists;
+            },
+
+            genMap: function(bonusCount) {
+                this.map = Array(this.gridSize).fill().map(()=>Array(this.gridSize).fill(1));
+                let stack = [{x:1, y:1}];
+                this.map[1][1] = 0;
+                
+                // Gerador de Labirinto
+                while(stack.length) {
+                    let cur = stack[stack.length-1];
+                    let n = [];
+                    [[0,-2],[0,2],[-2,0],[2,0]].forEach(([dx,dy])=>{
+                        let nx=cur.x+dx, ny=cur.y+dy;
+                        if(nx>0 && nx<this.gridSize-1 && ny>0 && ny<this.gridSize-1 && this.map[ny][nx]===1)
+                            n.push({x:nx, y:ny, dx, dy});
+                    });
+                    if(n.length) {
+                        let pick = n[Math.floor(Math.random()*n.length)];
+                        this.map[cur.y+pick.dy/2][cur.x+pick.dx/2] = 0;
+                        this.map[pick.y][pick.x] = 0;
+                        stack.push({x:pick.x, y:pick.y});
+                    } else stack.pop();
+                }
+
+                const startX = 1, startY = 1;
+                const exitX = this.gridSize-2, exitY = this.gridSize-2;
+                this.map[exitY][exitX] = 3; 
+
+                // --- NOVA LÓGICA DE DISTÂNCIA REAL (BFS) ---
+                // 1. Calcula a distância real de caminhada saindo do Spawn (1,1)
+                let walkFromStart = this.getWalkDistances(startX, startY);
+                // 2. Calcula a distância real de caminhada saindo da Saída
+                let walkFromExit = this.getWalkDistances(exitX, exitY);
+
+                let free = [];
+                for(let y=1; y<this.gridSize-1; y++) {
+                    for(let x=1; x<this.gridSize-1; x++) {
+                        // Só considera espaços vazios que não são spawn
+                        if(this.map[y][x]===0 && (x!==startX || y!==startY)) {
+                            // Score baseado na distância real de caminhada
+                            // Quanto maior a soma, mais "fundo" no labirinto está o ponto
+                            let ds = walkFromStart[y][x];
+                            let de = walkFromExit[y][x];
+                            
+                            if(ds > -1 && de > -1) {
+                                free.push({x, y, score: ds + de});
+                            }
+                        }
+                    }
+                }
+
+                // Ordena pelo Score (Distância Real) decrescente
+                // O primeiro da lista é o ponto mais longe possível de caminhar
+                free.sort((a, b) => b.score - a.score);
+
+                if(free.length > 0) {
+                    // Pega o Top 1 absoluto para garantir a maior distância
+                    let keyPos = free[0];
+                    this.map[keyPos.y][keyPos.x] = 5;
+                }
+
+                // Bônus aleatórios no resto
+                // Remove o local da chave da lista de livres para não sobrepor
+                free.shift(); 
+                free.sort(()=>Math.random()-0.5); // Embaralha para os bônus
+                
+                for(let i=0; i<bonusCount; i++) {
+                    if(free.length) { let b=free.pop(); this.map[b.y][b.x] = 6; }
+                }
+                this.player = {x:1, y:1};
+            },
+
+            render: function() {
+                this.el.board.innerHTML = '';
+                this.el.board.style.gridTemplateColumns = `repeat(${this.gridSize}, 1fr)`;
+                this.el.board.style.gridTemplateRows = `repeat(${this.gridSize}, 1fr)`;
+                
+                for(let y=0; y<this.gridSize; y++) {
+                    for(let x=0; x<this.gridSize; x++) {
+                        let d = document.createElement('div');
+                        d.className = 'cell';
+                        d.id = `c-${x}-${y}`;
+                        let t = this.map[y][x];
+                        if(t===1) d.classList.add('wall');
+                        else if(t===3) d.classList.add('exit');
+                        else if(t===5) d.classList.add('item','key');
+                        else if(t===6) d.classList.add('item','bonus');
+                        this.el.board.appendChild(d);
+                    }
+                }
+                this.resize();
+            },
+
+            resize: function() {
+                let rect = this.el.board.getBoundingClientRect();
+                this.cellSize = rect.width / this.gridSize;
+                this.el.player.style.width = this.cellSize + 'px';
+                this.el.player.style.height = this.cellSize + 'px';
+                this.updateVis();
+            },
+
+            updateVis: function() {
+                this.el.player.style.transform = `translate(${this.player.x*this.cellSize}px, ${this.player.y*this.cellSize}px)`;
+            },
+
+            move: function(dx, dy) {
+                if(this.paused || this.timeLeft<=0) return;
+                let nx = this.player.x+dx, ny = this.player.y+dy;
+                if(nx<0||ny<0||nx>=this.gridSize||ny>=this.gridSize) return;
+                let t = this.map[ny][nx];
+                
+                if(t===1) return;
+
+                this.player = {x:nx, y:ny};
+                this.updateVis();
+                AudioSys.move();
+
+                if(t===5) { // Key
+                    this.hasKey = true;
+                    this.map[ny][nx] = 0;
+                    document.getElementById(`c-${nx}-${ny}`).className = 'cell';
+                    AudioSys.coin();
+                    this.floatText(nx, ny, "🔑 PEGOU!");
+                    this.el.keyStatus.innerText = "OK!";
+                    this.el.keyStatus.style.color = "#2ecc71";
+                    document.querySelector('.exit').classList.add('open');
+                }
+                else if(t===6) { // Bonus
+                    this.mathTarget = {x:nx, y:ny};
+                    this.openMath();
+                }
+                else if(t===3) { // Exit
+                    if(this.hasKey) this.win();
+                    else {
+                        this.floatText(nx, ny, "Trancado!", "#e74c3c");
+                        AudioSys.err();
+                    }
+                }
+            },
+
+            startTimer: function() {
+                if(this.timerInt) clearInterval(this.timerInt);
+                this.updateTimer();
+                this.timerInt = setInterval(()=>{
+                    if(!this.paused) {
+                        this.timeLeft--;
+                        this.updateTimer();
+                        if(this.timeLeft <= 0) {
+                            if(this.el.modalMath.classList.contains('active')) this.el.modalMath.classList.remove('active');
+                            this.gameOver();
+                        }
+                    }
+                }, 1000);
+            },
+
+            updateTimer: function() {
+                this.el.timer.innerText = this.timeLeft;
+                this.el.timer.className = '';
+                if(this.timeLeft <= 10) this.el.timer.classList.add('timer-low');
+            },
+
+            openMath: function() {
+                this.paused = true;
+                this.el.modalMath.classList.add('active');
+                document.getElementById('ans-input').value = '';
+                
+                let n1 = Math.floor(Math.random()*(10+this.currLvl*2))+3;
+                let n2 = Math.floor(Math.random()*(5+this.currLvl))+2;
+                
+                if(Math.random() > 0.5) {
+                    this.mathSol = n1 + n2;
+                    document.getElementById('q-text').innerText = `${n1} + ${n2} = ?`;
+                } else {
+                    let m1 = Math.floor(Math.random()*9)+2;
+                    this.mathSol = m1 * n2;
+                    document.getElementById('q-text').innerText = `${m1} x ${n2} = ?`;
+                }
+                setTimeout(()=>document.getElementById('ans-input').focus(), 100);
+            },
+
+            checkMath: function() {
+                let inputEl = document.getElementById('ans-input');
+                let val = parseInt(inputEl.value);
+                
+                let t = this.mathTarget;
+                this.map[t.y][t.x] = 0;
+                document.getElementById(`c-${t.x}-${t.y}`).className = 'cell';
+                
+                this.el.modalMath.classList.remove('active');
+                this.paused = false;
+
+                if(val === this.mathSol) {
+                    AudioSys.coin();
+                    this.timeLeft += 15;
+                    this.floatText(this.player.x, this.player.y, "+15s", "#2ecc71");
+                } else {
+                    AudioSys.err();
+                    this.timeLeft -= 15;
+                    this.el.timer.classList.add('timer-penalized');
+                    this.floatText(this.player.x, this.player.y, "-15s (Errou)", "#e74c3c");
+                    if(this.timeLeft <= 0) {
+                        this.timeLeft = 0; this.updateTimer();
+                        setTimeout(() => this.gameOver(), 200);
+                    }
+                }
+            },
+
+            win: function() {
+                this.paused = true;
+                clearInterval(this.timerInt);
+                this.isWinState = true;
+
+                if(this.currLvl >= this.levels.length - 1) {
+                    this.isGameClear = true;
+                    AudioSys.clear();
+                    document.getElementById('end-title').innerText = "ZEROU O JOGO!";
+                    document.getElementById('end-title').style.color = "#f1c40f";
+                    document.getElementById('end-msg').innerText = "Rei das Capivaras!";
+                    document.getElementById('end-emoji').innerText = "👑";
+                    let btn = document.getElementById('end-btn');
+                    btn.innerText = "Reiniciar";
+                    btn.className = "btn-action gold-btn";
+                } else {
+                    AudioSys.win();
+                    document.getElementById('end-title').innerText = "NÍVEL CONCLUÍDO!";
+                    document.getElementById('end-title').style.color = "#2ecc71";
+                    document.getElementById('end-msg').innerText = `Sobra: ${this.timeLeft}s`;
+                    document.getElementById('end-emoji').innerText = "🏆";
+                    let btn = document.getElementById('end-btn');
+                    btn.innerText = "Próximo";
+                    btn.className = "btn-action";
+                }
+                this.el.modalEnd.classList.add('active');
+            },
+
+            gameOver: function() {
+                this.paused = true;
+                clearInterval(this.timerInt);
+                this.isWinState = false;
+                AudioSys.err();
+                
+                document.getElementById('end-title').innerText = "FALHOU";
+                document.getElementById('end-title').style.color = "#e74c3c";
+                document.getElementById('end-msg').innerText = "Tempo Esgotado!";
+                document.getElementById('end-emoji').innerText = "💀";
+                let btn = document.getElementById('end-btn');
+                btn.innerText = "Tentar Novamente";
+                btn.className = "btn-action";
+                this.el.modalEnd.classList.add('active');
+            },
+
+            handleEndButton: function() {
+                if(this.isWinState) {
+                    if(this.isGameClear) this.start(0);
+                    else this.start(this.currLvl + 1);
+                } else {
+                    this.start(this.currLvl);
+                }
+            },
+
+            floatText: function(x, y, txt, color="#fff") {
+                let el = document.createElement('div');
+                el.className = 'floating-text';
+                el.innerText = txt; el.style.color = color;
+                el.style.left = (x * this.cellSize + 10) + 'px';
+                el.style.top = (y * this.cellSize - 10) + 'px';
+                document.getElementById('game-wrapper').appendChild(el);
+                setTimeout(()=>el.remove(), 1000);
+            }
+        };
+
+        window.addEventListener('keydown', e => {
+            if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+            if(e.key==='ArrowUp') Game.move(0,-1);
+            if(e.key==='ArrowDown') Game.move(0,1);
+            if(e.key==='ArrowLeft') Game.move(-1,0);
+            if(e.key==='ArrowRight') Game.move(1,0);
+        });
+        document.getElementById('ans-input').addEventListener('keypress', e=>{ if(e.key==='Enter') Game.checkMath(); });
+        window.addEventListener('resize', ()=>Game.resize());
+
+        let tx=0, ty=0;
+        const zone = document.getElementById('game-wrapper');
+        zone.addEventListener('touchstart', e=>{ tx=e.changedTouches[0].screenX; ty=e.changedTouches[0].screenY; }, {passive:false});
+        zone.addEventListener('touchend', e=>{
+            let dx = e.changedTouches[0].screenX - tx;
+            let dy = e.changedTouches[0].screenY - ty;
+            if(Math.abs(dx)>Math.abs(dy)) { if(Math.abs(dx)>30) Game.move(dx>0?1:-1, 0); }
+            else { if(Math.abs(dy)>30) Game.move(0, dy>0?1:-1); }
+        }, {passive:false});
+
+        Game.start(0);
+    </script>
+</body>
+</html>

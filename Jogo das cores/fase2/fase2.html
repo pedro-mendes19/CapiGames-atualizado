@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 2: Cores Secundárias</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+
+    <header>
+        <img src="rainbow-icon.png" alt="Icone Arco-Iris" onerror="this.style.display='none'"> 
+        <h1>CORES SECUNDÁRIAS</h1>
+    </header>
+
+    <div class="game-container">
+        <div class="instruction">
+            Vamos fazer <span id="target-name" class="target-color-text">LARANJA</span>!
+        </div>
+
+        <div class="mixing-area">
+            <div class="slot" id="slot1"></div>
+            
+            <div class="operator">+</div>
+            
+            <div class="slot" id="slot2"></div>
+            
+            <div class="operator">=</div>
+            
+            <div class="result-slot" id="result-slot">
+                <img src="pote-vazio.png" id="result-img" alt="Resultado">
+            </div>
+        </div>
+    </div>
+
+    <div class="color-options">
+        <img src="pote-vermelho.png" class="pote-opcao" onclick="selectColor('vermelho', 'pote-vermelho.png')" alt="Vermelho">
+        <img src="pote-amarelo.png" class="pote-opcao" onclick="selectColor('amarelo', 'pote-amarelo.png')" alt="Amarelo">
+        <img src="pote-azul.png" class="pote-opcao" onclick="selectColor('azul', 'pote-azul.png')" alt="Azul">
+    </div>
+
+    <div class="footer-buttons">
+        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">⬅ VOLTAR</button>
+        <button class="btn btn-reiniciar" onclick="loadLevel(currentLevelIndex)">🔄 REINICIAR</button>
+    </div>
+
+    <div class="capivara-container">
+        <div id="balao" class="balao-fala">Olá! Vamos misturar cores?</div>
+        <img src="capivara.png" class="mascote-capivara" id="capivara-img" alt="Capivara">
+    </div>
+
+    <script src="script2.js"></script>
+
+</body>
+</html>

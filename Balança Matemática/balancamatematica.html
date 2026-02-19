@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balança Matemática: O Desafio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #3498db;
+            --accent: #e67e22;
+            --bg-color: #f0f8ff;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none; /* Impede selecionar texto */
+        }
+
+        /* --- TELA DE INTRODUÇÃO (NOVO) --- */
+        #intro-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 100; /* Fica na frente de tudo */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s ease-in-out; /* Animação de saída */
+        }
+
+        /* Título Animado */
+        .game-title {
+            font-size: 4rem;
+            color: var(--accent);
+            text-shadow: 2px 2px 0px #d35400;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        .instructions {
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .instructions p { font-size: 1.2rem; color: #555; line-height: 1.6; }
+        .highlight { color: var(--accent); font-weight: bold; font-size: 1.3rem; }
+
+        .btn-start {
+            background-color: var(--primary);
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            padding: 15px 60px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #2980b9;
+            transition: transform 0.1s;
+            animation: pulse 1.5s infinite;
+        }
+
+        .btn-start:active { transform: translateY(8px); box-shadow: none; }
+        .btn-start:hover { background-color: #2980b9; animation: none; }
+
+        /* Animações CSS */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* Classe para esconder a intro */
+        .hidden-up { transform: translateY(-100%); }
+
+
+        /* --- O JOGO (Igual ao anterior, com melhorias visuais) --- */
+        
+        .hud {
+            margin-top: 20px;
+            display: flex;
+            gap: 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            background: white;
+            padding: 10px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .balance-container {
+            position: relative;
+            width: 600px;
+            height: 300px;
+            margin-top: 30px;
+        }
+
+        .stand {
+            position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 20px; height: 150px; background-color: #7f8c8d; border-radius: 10px 10px 0 0;
+        }
+        .base {
+            position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 20px; background-color: var(--text-color); border-radius: 10px;
+        }
+
+        .beam {
+            position: absolute; top: 150px; left: 50px;
+            width: 500px; height: 10px;
+            background-color: var(--accent);
+            border-radius: 5px;
+            transform-origin: center; 
+            transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform: rotate(0deg); 
+        }
+
+        .pan {
+            position: absolute; top: 10px; width: 120px; height: 100px;
+            background-image: linear-gradient(to bottom, #95a5a6 40px, transparent 40px);
+            background-size: 2px 100%; background-repeat: no-repeat;
+            background-position: 10px 0, 110px 0;
+        }
+        .pan-left { left: 0; }
+        .pan-right { right: 0; }
+
+        .plate {
+            position: absolute; bottom: 0; width: 100%; height: 60px;
+            background-color: #bdc3c7; border-bottom: 5px solid #7f8c8d;
+            border-radius: 0 0 20px 20px;
+            display: flex; justify-content: center; align-items: flex-end;
+            flex-wrap: wrap-reverse; padding-bottom: 5px;
+            transition: background 0.3s;
+        }
+        .pan-right .plate { border: 2px dashed #95a5a6; background-color: white; }
+        .plate.drag-over { background-color: #a8e6cf; border-color: #2ecc71; transform: scale(1.05); }
+
+        .weight {
+            width: 40px; height: 40px;
+            background-color: var(--primary); color: white;
+            border-radius: 8px;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; font-size: 1.2rem;
+            cursor: grab;
+            border: 2px solid #2980b9;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.15);
+            margin: 2px;
+        }
+        .weight:active { cursor: grabbing; }
+        .target-weight { background-color: var(--accent); border-color: #d35400; width: 60px; height: 60px; font-size: 1.8rem; }
+
+        .status-msg {
+            margin-top: 10px; font-size: 1.5rem; height: 30px;
+            color: #27ae60; font-weight: bold; text-align: center;
+        }
+
+        .shelf {
+            margin-top: 20px;
+            background-color: #d35400;
+            padding: 15px; width: 80%; border-radius: 10px;
+            display: flex; justify-content: center; gap: 15px;
+            box-shadow: 0 8px 0 #a04000;
+            min-height: 50px;
+        }
+
+        /* Botão de reset pequeno no canto */
+        .btn-reset {
+            margin-top: 20px; padding: 10px 20px;
+            background: #95a5a6; border: none; border-radius: 5px;
+            color: white; font-weight: bold; cursor: pointer;
+        }
+        .btn-reset:hover { background: #7f8c8d; }
+
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <div class="game-title">Desafio da Balança ⚖️</div>
+        
+        <div class="instructions">
+            <p>Olá, matemático! 👋</p>
+            <p>A balança está torta porque o lado esquerdo está pesado.</p>
+            <p>Sua missão é <span class="highlight">arrastar os pesos azuis</span> para o prato da direita até que os dois lados fiquem iguais.</p>
+            <p><i>Dica: A soma dos pesos deve ser exata!</i></p>
+        </div>
+
+        <button class="btn-start" onclick="iniciarJogo()">JOGAR AGORA</button>
+    </div>
+
+    <div class="hud">
+        <div>Meta: <span id="targetDisplay">0</span></div>
+        <div style="border-left: 2px solid #ddd; margin: 0 10px;"></div>
+        <div>Soma Atual: <span id="currentDisplay">0</span></div>
+    </div>
+
+    <div class="balance-container">
+        <div class="stand"></div>
+        <div class="base"></div>
+        <div class="beam" id="beam">
+            <div class="pan pan-left">
+                <div class="plate" id="leftPlate"></div>
+            </div>
+            <div class="pan pan-right">
+                <div class="plate" id="dropZone"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-msg" id="msg"></div>
+
+    <div class="shelf" id="shelf"></div>
+
+    <button class="btn-reset" onclick="resetGame()">Nova Conta</button>
+
+    <script>
+        // Elementos
+        const introScreen = document.getElementById('intro-screen');
+        const beam = document.getElementById('beam');
+        const leftPlate = document.getElementById('leftPlate');
+        const dropZone = document.getElementById('dropZone');
+        const shelf = document.getElementById('shelf');
+        const targetDisplay = document.getElementById('targetDisplay');
+        const currentDisplay = document.getElementById('currentDisplay');
+        const msg = document.getElementById('msg');
+
+        let targetValue = 0;
+        let currentValue = 0;
+        let draggedWeightValue = 0;
+        let draggedElement = null;
+
+        // --- FUNÇÃO PARA COMEÇAR (Botão da Intro) ---
+        function iniciarJogo() {
+            introScreen.classList.add('hidden-up'); // Animação de subir
+            setTimeout(() => {
+                resetGame(); // Cria a primeira conta
+            }, 300);
+        }
+
+        // --- LÓGICA DE ARRASTAR ---
+        function addDragEvents(element) {
+            element.addEventListener('dragstart', (e) => {
+                draggedWeightValue = parseInt(e.target.dataset.value);
+                draggedElement = e.target;
+                setTimeout(() => e.target.style.opacity = '0.5', 0);
+            });
+
+            element.addEventListener('dragend', (e) => {
+                e.target.style.opacity = '1';
+                draggedElement = null;
+            });
+        }
+
+        // Drop Zone (Prato)
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+
+            if (draggedElement && draggedElement.parentElement === shelf) {
+                dropZone.appendChild(draggedElement);
+                currentValue += draggedWeightValue;
+                updateBalance();
+            }
+        });
+
+        // Shelf (Devolver peso)
+        shelf.addEventListener('dragover', (e) => e.preventDefault());
+        shelf.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (draggedElement && draggedElement.parentElement === dropZone) {
+                shelf.appendChild(draggedElement);
+                currentValue -= draggedWeightValue;
+                updateBalance();
+            }
+        });
+
+        // --- FÍSICA DA BALANÇA ---
+        function updateBalance() {
+            currentDisplay.innerText = currentValue;
+            let rotation = 0;
+
+            if (currentValue < targetValue) {
+                rotation = -20; 
+                msg.innerText = "Falta peso...";
+                msg.style.color = "#e67e22";
+            } else if (currentValue > targetValue) {
+                rotation = 20;
+                msg.innerText = "Passou! Tire um pouco.";
+                msg.style.color = "#e74c3c";
+            } else {
+                rotation = 0;
+                msg.innerText = "✨ PERFEITO! ✨";
+                msg.style.color = "#2ecc71";
+                // Efeito de sucesso
+                dropZone.style.backgroundColor = "#a8e6cf";
+                setTimeout(() => { dropZone.style.backgroundColor = "white"; }, 500);
+            }
+            beam.style.transform = `rotate(${rotation}deg)`;
+        }
+
+        // --- GERADOR DE FASE ---
+        function resetGame() {
+            leftPlate.innerHTML = '';
+            dropZone.innerHTML = '';
+            shelf.innerHTML = '';
+            currentValue = 0;
+            currentDisplay.innerText = "0";
+            msg.innerText = "";
+            dropZone.style.backgroundColor = "white";
+
+            // Alvo entre 10 e 50
+            targetValue = Math.floor(Math.random() * 40) + 10;
+            targetDisplay.innerText = targetValue;
+
+            // Visual do peso alvo
+            const targetWeight = document.createElement('div');
+            targetWeight.className = 'weight target-weight';
+            targetWeight.innerText = targetValue;
+            leftPlate.appendChild(targetWeight);
+
+            // Algoritmo para garantir que tenha solução
+            let remaining = targetValue;
+            const parts = [];
+            
+            while (remaining > 0) {
+                let part = Math.floor(Math.random() * (remaining - 1)) + 1;
+                if (remaining <= 5 || Math.random() > 0.7) part = remaining;
+                parts.push(part);
+                remaining -= part;
+            }
+
+            // Pesos extras para confundir
+            parts.push(Math.floor(Math.random() * 5) + 1);
+            parts.push(Math.floor(Math.random() * 8) + 1);
+            parts.sort(() => Math.random() - 0.5);
+
+            parts.forEach(val => {
+                const w = document.createElement('div');
+                w.className = 'weight';
+                w.draggable = true;
+                w.innerText = val;
+                w.dataset.value = val;
+                addDragEvents(w);
+                shelf.appendChild(w);
+            });
+
+            updateBalance();
+        }
+    </script>
+</body>
+</html>

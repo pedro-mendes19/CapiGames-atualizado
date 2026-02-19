@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paulistão Hero Kids</title>
+    <link rel="icon" href="img/logo.png">
+    <style>
+        /* --- ESTILO GERAL --- */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505;
+            font-family: 'Arial Black', sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Cores dos Times */
+        body.corinthians { background: radial-gradient(circle, #333, #000); }
+        body.palmeiras { background: radial-gradient(circle, #004d00, #001100); }
+        body.saopaulo { background: radial-gradient(circle, #440000, #000); }
+        body.santos { background: radial-gradient(circle, #fff, #777); } 
+
+        /* --- CAMADA 3D --- */
+        #perspective-container {
+            perspective: 600px;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #game-stage {
+            position: relative;
+            width: 500px;
+            height: 120%;
+            background: linear-gradient(to bottom, #000 0%, #111 100%);
+            border-left: 10px solid #555;
+            border-right: 10px solid #555;
+            transform-origin: 50% 100%;
+            transform: rotateX(60deg); 
+            box-shadow: 0 0 100px rgba(0,0,0,1);
+        }
+
+        .lane-divider {
+            position: absolute;
+            top: 0; bottom: 0; width: 2px;
+            background: rgba(255,255,255,0.2);
+        }
+        .lane-div-1 { left: 25%; }
+        .lane-div-2 { left: 50%; }
+        .lane-div-3 { left: 75%; }
+
+        /* --- NOTAS --- */
+        .note {
+            position: absolute;
+            width: 20%; height: 40px; 
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8), inset 0 0 10px rgba(0,0,0,0.8);
+            z-index: 10;
+            top: -50px;
+        }
+        .note::after {
+            content: ''; position: absolute; top: 25%; left: 25%; width: 50%; height: 50%;
+            background: rgba(255,255,255,0.6); border-radius: 50%;
+        }
+
+        .note[data-lane="0"] { background: #00ff00; border: 3px solid #00aa00; left: 2.5%; }
+        .note[data-lane="1"] { background: #ff0000; border: 3px solid #aa0000; left: 27.5%; }
+        .note[data-lane="2"] { background: #ffff00; border: 3px solid #aaaa00; left: 52.5%; }
+        .note[data-lane="3"] { background: #0088ff; border: 3px solid #0044aa; left: 77.5%; }
+
+        /* --- RECEPTORES --- */
+        #receptors-line {
+            position: absolute; bottom: 30px; left: 0; width: 100%; height: 80px;
+            display: flex;
+        }
+        .receptor {
+            flex: 1; position: relative; margin: 0 5px;
+            border-radius: 15px; border: 4px solid #555;
+            background: rgba(0,0,0,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,1);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 0.1s, background 0.1s;
+        }
+        .rec-arrow { font-size: 30px; line-height: 30px; text-shadow: 0 0 5px #fff; }
+        .rec-key { font-size: 14px; color: #fff; border: 1px solid #fff; padding: 2px 5px; border-radius: 5px; margin-top: 5px; background: #333; }
+
+        .receptor[data-lane="0"] { border-color: #00ff00; color: #00ff00; }
+        .receptor[data-lane="1"] { border-color: #ff0000; color: #ff0000; }
+        .receptor[data-lane="2"] { border-color: #ffff00; color: #ffff00; }
+        .receptor[data-lane="3"] { border-color: #0088ff; color: #0088ff; }
+
+        .receptor.pressed { transform: scale(0.95) translateY(5px); background: #444; box-shadow: 0 0 30px currentColor; }
+        .receptor.pressed .rec-key { background: #fff; color: #000; }
+        
+        .hit-effect { transform: scale(1.5); opacity: 0; background: white !important; transition: all 0.2s ease-out; }
+
+        /* --- UI LAYER --- */
+        #ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        #hud-controls {
+            position: absolute; top: 20px; right: 20px;
+            display: none; gap: 10px;
+            pointer-events: all; z-index: 1001;
+        }
+        .hud-btn {
+            border: 2px solid #fff; border-radius: 10px;
+            padding: 10px 15px; font-size: 14px; font-weight: bold;
+            cursor: pointer; color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+        }
+        .hud-btn:hover { transform: scale(1.05); }
+        #btn-menu { background: #3498db; }
+        #btn-restart { background: #e74c3c; }
+
+        #score-board { margin-top: 20px; text-align: center; text-shadow: 0 3px 0 #000; }
+        #score { font-size: 60px; margin: 0; color: #fff; }
+        #combo { font-size: 30px; color: #f1c40f; opacity: 0; transition: opacity 0.2s; }
+
+        #health-wrapper {
+            position: absolute; right: 50px; bottom: 100px;
+            width: 30px; height: 300px;
+            background: #333; border: 3px solid #fff;
+            border-radius: 15px; overflow: hidden;
+            display: flex; align-items: flex-end;
+        }
+        #health-bar {
+            width: 100%; height: 100%;
+            background: linear-gradient(to top, #00ff00, #adff2f);
+            transition: height 0.2s;
+        }
+
+        /* --- OVERLAY MENU --- */
+        #overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 200; pointer-events: all; text-align: center;
+        }
+        
+        select, button.menu-btn {
+            margin: 10px; padding: 15px 30px; font-size: 20px;
+            border-radius: 50px; border: none; cursor: pointer;
+            font-family: 'Arial Black';
+        }
+        button.menu-btn {
+            background: linear-gradient(45deg, #ff00de, #00ffff);
+            color: #fff; box-shadow: 0 0 20px rgba(255, 0, 222, 0.4);
+            transition: transform 0.2s;
+        }
+        button.menu-btn:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <div id="perspective-container">
+        <div id="game-stage">
+            <div class="lane-divider lane-div-1"></div>
+            <div class="lane-divider lane-div-2"></div>
+            <div class="lane-divider lane-div-3"></div>
+
+            <div id="receptors-line">
+                <div class="receptor" id="rec-0" data-lane="0"><div class="rec-arrow">←</div><div class="rec-key">A / Esq</div></div>
+                <div class="receptor" id="rec-1" data-lane="1"><div class="rec-arrow">↓</div><div class="rec-key">S / Baixo</div></div>
+                <div class="receptor" id="rec-2" data-lane="2"><div class="rec-arrow">↑</div><div class="rec-key">W / Cima</div></div>
+                <div class="receptor" id="rec-3" data-lane="3"><div class="rec-arrow">→</div><div class="rec-key">D / Dir</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ui-layer">
+        <div id="hud-controls">
+            <button id="btn-menu" class="hud-btn" onclick="voltarAoMenu()">☰ MENU</button>
+            <button id="btn-restart" class="hud-btn" onclick="reiniciarPartida()">↻ REINICIAR</button>
+        </div>
+
+        <div id="score-board">
+            <div id="score">0</div>
+            <div id="combo">COMBO x0</div>
+        </div>
+        <div id="health-wrapper"><div id="health-bar"></div></div>
+    </div>
+
+    <audio id="bg-music"></audio>
+    
+    <div id="overlay">
+        <h1 style="font-size: 50px; text-shadow: 0 0 20px #fff;">PAULISTÃO HERO</h1>
+        <h2 style="color: #00ff00;">(MODO KIDS)</h2>
+        
+        <p style="color:#ccc; margin-bottom: 20px;">Use <b>WASD</b> ou as <b>SETINHAS</b></p>
+
+        <div style="display:flex; gap:10px; margin-bottom:30px;">
+            <div style="border:1px solid #0f0; color:#0f0; padding:10px; border-radius:5px;">← Esq</div>
+            <div style="border:1px solid #f00; color:#f00; padding:10px; border-radius:5px;">↓ Baixo</div>
+            <div style="border:1px solid #ff0; color:#ff0; padding:10px; border-radius:5px;">↑ Cima</div>
+            <div style="border:1px solid #00f; color:#08f; padding:10px; border-radius:5px;">→ Dir</div>
+        </div>
+
+        <select id="team-select" onchange="changeTeam()">
+            <option value="padrao">-- Escolha o Time --</option>
+            <option value="corinthians">Corinthians</option>
+            <option value="palmeiras">Palmeiras</option>
+            <option value="saopaulo">São Paulo</option>
+            <option value="santos">Santos</option>
+        </select>
+
+        <button class="menu-btn" onclick="startGame()">TOCAR MÚSICA!</button>
+        <p id="status-msg" style="color: #888; font-size: 14px; margin-top: 20px;"></p>
+    </div>
+
+    <script>
+        /* --- AJUSTE DE VELOCIDADE AQUI --- */
+        const START_SPEED = 3; // VELOCIDADE BAIXA PARA CRIANÇAS
+        
+        const KEYS = {
+            'a': 0, 's': 1, 'w': 2, 'd': 3,
+            'arrowleft': 0, 'arrowdown': 1, 'arrowup': 2, 'arrowright': 3
+        };
+
+        let gameRunning = false;
+        let score = 0;
+        let combo = 0;
+        let health = 100;
+        let speed = START_SPEED;
+        let notes = [];
+        let spawnCounter = 0;
+        let currentTeam = 'padrao';
+
+        const els = {
+            score: document.getElementById('score'),
+            combo: document.getElementById('combo'),
+            overlay: document.getElementById('overlay'),
+            healthBar: document.getElementById('health-bar'),
+            stage: document.getElementById('game-stage'),
+            music: document.getElementById('bg-music'),
+            hudControls: document.getElementById('hud-controls'),
+            receptors: [
+                document.getElementById('rec-0'), document.getElementById('rec-1'),
+                document.getElementById('rec-2'), document.getElementById('rec-3')
+            ],
+            teamSelect: document.getElementById('team-select'),
+            body: document.body,
+            status: document.getElementById('status-msg')
+        };
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function changeTeam() {
+            currentTeam = els.teamSelect.value;
+            els.body.className = ''; 
+            if(currentTeam !== 'padrao') {
+                els.body.classList.add(currentTeam);
+                els.music.src = "audio/" + currentTeam + ".mp3";
+                els.status.innerText = "Música do " + currentTeam + " selecionada!";
+            }
+        }
+
+        function playFeedback(type) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const t = audioCtx.currentTime;
+
+            if (type === 'hit') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440 + (combo * 20), t);
+                gain.gain.setValueAtTime(0.1, t); 
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+            } else {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(100, t);
+                gain.gain.setValueAtTime(0.1, t);
+                gain.gain.linearRampToValueAtTime(0.01, t + 0.1);
+            }
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.15);
+        }
+
+        function updateHealth(amount) {
+            health += amount;
+            if (health > 100) health = 100;
+            if (health < 0) health = 0; 
+            els.healthBar.style.height = health + '%';
+            
+            if (health > 50) els.healthBar.style.background = 'linear-gradient(to top, #00ff00, #adff2f)';
+            else if (health > 20) els.healthBar.style.background = 'linear-gradient(to top, #f1c40f, #f39c12)';
+            else els.healthBar.style.background = 'linear-gradient(to top, #c0392b, #e74c3c)';
+
+            if (health <= 0) gameOver();
+        }
+
+        function startGame() {
+            if (currentTeam === 'padrao') {
+                alert("⚠️ Selecione um time primeiro!");
+                return;
+            }
+            
+            els.music.volume = 0.5;
+            els.music.play().then(() => {
+                iniciarJogoReal();
+            }).catch(e => {
+                console.error(e);
+                alert("Erro ao tocar! Verifique arquivo: audio/" + currentTeam + ".mp3");
+            });
+        }
+
+        function voltarAoMenu() {
+            gameRunning = false;
+            els.music.pause();
+            els.music.currentTime = 0;
+            notes.forEach(n => n.el.remove());
+            notes = [];
+            els.hudControls.style.display = 'none';
+            els.overlay.style.display = 'flex';
+        }
+
+        function reiniciarPartida() {
+            if(!gameRunning && health <= 0) {
+                startGame();
+            } else {
+                gameRunning = false;
+                els.music.pause();
+                els.music.currentTime = 0;
+                setTimeout(() => {
+                    els.music.play();
+                    iniciarJogoReal();
+                }, 100);
+            }
+        }
+
+        function iniciarJogoReal() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            gameRunning = true;
+            score = 0;
+            combo = 0;
+            health = 100;
+            speed = START_SPEED;
+            notes.forEach(n => n.el.remove());
+            notes = [];
+            
+            updateUI();
+            updateHealth(0);
+            els.overlay.style.display = 'none';
+            els.hudControls.style.display = 'flex';
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            els.music.pause();
+            els.music.currentTime = 0;
+            els.hudControls.style.display = 'none';
+            els.overlay.innerHTML = `
+                <h1 style="color:#e74c3c">FIM DE JOGO</h1>
+                <h2>Pontos: ${score}</h2>
+                <button class="menu-btn" onclick="location.reload()">VOLTAR</button>
+                <button class="menu-btn" onclick="startGame()">TENTAR DE NOVO</button>
+            `;
+            els.overlay.style.display = 'flex';
+        }
+
+        function spawnNote() {
+            const lane = Math.floor(Math.random() * 4);
+            const el = document.createElement('div');
+            el.classList.add('note');
+            el.dataset.lane = lane;
+            els.stage.appendChild(el);
+            notes.push({ el: el, y: -50, lane: lane, hit: false });
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            // Spawn mais lento para acompanhar a velocidade baixa
+            spawnCounter += speed * 0.2; 
+            if (spawnCounter > 25) { 
+                spawnNote();
+                spawnCounter = 0;
+            }
+
+            const stageHeight = els.stage.offsetHeight; 
+            
+            for (let i = 0; i < notes.length; i++) {
+                let n = notes[i];
+                if (n.hit) continue;
+
+                n.y += speed;
+                n.el.style.top = n.y + 'px';
+
+                if (n.y > stageHeight) {
+                    n.hit = true;
+                    updateHealth(-10);
+                    playFeedback('miss');
+                    combo = 0;
+                    updateUI();
+                    
+                    n.el.style.background = '#555';
+                    setTimeout(() => { if(n.el.parentNode) n.el.remove(); }, 100);
+                    notes.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (!gameRunning) return;
+            const key = e.key.toLowerCase();
+            
+            if (KEYS.hasOwnProperty(key)) {
+                const lane = KEYS[key];
+                const receptor = els.receptors[lane];
+                receptor.classList.add('pressed');
+                checkHit(lane);
+            }
+        });
+
+        document.addEventListener('keyup', e => {
+            const key = e.key.toLowerCase();
+            if (KEYS.hasOwnProperty(key)) {
+                els.receptors[KEYS[key]].classList.remove('pressed');
+            }
+        });
+
+        function checkHit(lane) {
+            const stageHeight = els.stage.offsetHeight;
+            const perfectY = stageHeight - 80;
+            const tolerance = 70; // Margem de erro boa para crianças
+
+            const noteIndex = notes.findIndex(n => 
+                n.lane === lane && !n.hit && 
+                n.y > (perfectY - tolerance) && n.y < (perfectY + tolerance)
+            );
+
+            if (noteIndex !== -1) {
+                const note = notes[noteIndex];
+                note.hit = true;
+                note.el.classList.add('hit-effect');
+                setTimeout(() => note.el.remove(), 200);
+                notes.splice(noteIndex, 1);
+
+                score += 10 + combo;
+                combo++;
+                updateHealth(4);
+                playFeedback('hit');
+                
+                // DIFICULDADE: Aumenta a velocidade bem devagar
+                if (score % 500 === 0) speed += 0.2;
+            } else {
+                if(combo > 0) combo = 0;
+                updateHealth(-2);
+                playFeedback('miss');
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            els.score.innerText = score;
+            if(combo > 1) {
+                els.combo.innerText = `COMBO x${combo}`;
+                els.combo.style.opacity = 1;
+            } else {
+                els.combo.style.opacity = 0;
+            }
+        }
+    </script>
+</body>
+</html>

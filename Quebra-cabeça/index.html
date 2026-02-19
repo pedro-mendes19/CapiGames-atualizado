@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👦 JOGO DA ANATOMIA</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    </style>
+</head>
+<body>
+
+    <h1>JOGO DA ANATOMIA</h1>
+
+    <div id="menu-screen">
+        <h2>Quem vamos montar hoje?</h2>
+        
+        <div class="gender-buttons">
+    <div class="btn-gender" onclick="window.location.href='./iniciomenina.html'">
+        <img src="images/girl.png" alt="Menina" class="menu-img">
+        <span>Menina</span>
+    </div>
+
+    <div class="btn-gender" onclick="window.location.href='./iniciomenino.html'">
+        <img src="images/boy.png" alt="Menino" class="menu-img">
+        <span>Menino</span>
+    </div>
+</div>
+
+    <div id="game-screen">
+        <h2 id="loading-text">Carregando o corpo...</h2>
+        <button class="back-btn" onclick="voltarMenu()">Voltar</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

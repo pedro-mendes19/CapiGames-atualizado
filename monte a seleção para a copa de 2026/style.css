@@ -1,0 +1,513 @@
+:root {
+    --azul-cbf: #002776;
+    --amarelo-cbf: #f7d116;
+    --verde-campo: #1b4d24;
+    --branco: #ffffff;
+    --vermelho-erro: #cc0000;
+    --bg-dark: #0d1117;
+}
+
+body {
+    background: var(--bg-dark);
+    margin: 0;
+    color: var(--branco);
+    font-family: 'Roboto', sans-serif;
+}
+
+/* --- HEADER --- */
+header {
+    background-color: var(--azul-cbf);
+    padding: 0 30px;
+    border-bottom: 4px solid var(--amarelo-cbf);
+    display: flex;
+    align-items: center;
+    height: 80px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    height: 55px;
+}
+
+header h1 {
+    font-family: 'Oswald';
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.score-panel {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 20px;
+    border-radius: 8px;
+    border: 2px solid var(--amarelo-cbf);
+    text-align: center;
+}
+
+.score-panel span {
+    color: var(--amarelo-cbf);
+    font-family: 'Oswald';
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+#media-forca {
+    font-size: 2rem;
+    font-family: 'Oswald';
+    display: block;
+    line-height: 1;
+}
+
+/* --- LAYOUT PRINCIPAL (SEM SCROLL INTERNO) --- */
+.container {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    padding: 30px;
+    gap: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* --- ÁREA DO CAMPO E BANCO --- */
+.area-jogo {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.campo-wrapper {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.campo {
+    width: 100%;
+    max-width: 500px;
+    height: 650px;
+    background: var(--verde-campo);
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    position: relative;
+}
+
+/* POSICIONAMENTO CORRIGIDO (PARA NÃO SOBREPOR) */
+.slot {
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px dashed var(--branco);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.slot img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--amarelo-cbf);
+}
+
+.nome-player-campo {
+    position: absolute;
+    bottom: -22px;
+    background: var(--amarelo-cbf);
+    color: var(--azul-cbf);
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+/* Coordenadas ajustadas para evitar colisões */
+#ata-1 {
+    top: 12%;
+    left: 15%;
+}
+
+#ata-2 {
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#ata-3 {
+    top: 12%;
+    right: 15%;
+}
+
+#mei-1 {
+    top: 38%;
+    left: 20%;
+}
+
+#mei-2 {
+    top: 48%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#mei-3 {
+    top: 38%;
+    right: 20%;
+}
+
+#lat-1 {
+    bottom: 28%;
+    left: 8%;
+}
+
+#zag-1 {
+    bottom: 22%;
+    left: 30%;
+}
+
+#zag-2 {
+    bottom: 22%;
+    right: 30%;
+}
+
+#lat-2 {
+    bottom: 28%;
+    right: 8%;
+}
+
+#gol-1 {
+    bottom: 4%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* --- BANCO DE RESERVAS --- */
+.banco-reservas {
+    background: #161b22;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.banco-reservas h3 {
+    color: var(--amarelo-cbf);
+    font-family: 'Oswald';
+    text-align: center;
+    margin-top: 0;
+}
+
+.banco-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    justify-items: center;
+}
+
+.slot.reserva {
+    position: relative;
+    width: 65px;
+    height: 65px;
+}
+
+/* --- MERCADO (SIDEBAR STICKY) --- */
+.mercado {
+    position: sticky;
+    top: 110px;
+    /* Gruda logo abaixo do header */
+    height: fit-content;
+    background: #161b22;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.btn-limpar {
+    width: 100%;
+    background: var(--vermelho-erro);
+    color: white;
+    border: none;
+    padding: 12px;
+    font-family: 'Oswald';
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.lista-cards {
+    max-height: 60vh;
+    /* Limita apenas a lista se ela for muito longa */
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Customização da barra de rolagem da lista (mais fina) */
+.lista-cards::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lista-cards::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 10px;
+}
+
+.card-jogador-lista {
+    background: white;
+    color: #333;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.card-jogador-lista:hover {
+    transform: translateX(-5px);
+    background: #f0f0f0;
+}
+
+.foto-lista {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.info-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.txt-nome {
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--azul-cbf);
+}
+
+.txt-clube {
+    font-size: 0.8rem;
+    color: #666;
+    display: block;
+}
+
+.badge-forca {
+    background: var(--azul-cbf);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: 'Oswald';
+}
+
+.filtros {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-filtro {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-filtro.active {
+    background: var(--amarelo-cbf);
+    color: var(--azul-cbf);
+    border-color: var(--amarelo-cbf);
+    font-weight: bold;
+}
+
+/* --- SLOT SELECIONADO --- */
+.slot-selecionado {
+    border: 3px solid var(--amarelo-cbf) !important;
+    box-shadow: 0 0 15px var(--amarelo-cbf), 0 0 30px rgba(247, 209, 22, 0.3);
+    animation: pulsar-slot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulsar-slot {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px var(--amarelo-cbf), 0 0 20px rgba(247, 209, 22, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--amarelo-cbf), 0 0 40px rgba(247, 209, 22, 0.5);
+    }
+}
+
+/* --- FILTER INDICATOR --- */
+#filtro-posicao-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--amarelo-cbf);
+    color: var(--azul-cbf);
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.95rem;
+}
+
+.btn-limpar-filtro {
+    background: rgba(0, 39, 118, 0.2);
+    color: var(--azul-cbf);
+    border: 1px solid var(--azul-cbf);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-limpar-filtro:hover {
+    background: rgba(0, 39, 118, 0.4);
+}
+
+/* --- MODAL CUSTOMIZADO --- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.ativo {
+    display: flex;
+    animation: fadeIn 0.25s ease;
+}
+
+.modal-box {
+    background: linear-gradient(145deg, #1a2233, #0d1117);
+    border: 2px solid var(--amarelo-cbf);
+    border-radius: 20px;
+    padding: 35px 40px;
+    text-align: center;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(247, 209, 22, 0.15);
+    animation: modalEntra 0.3s ease;
+}
+
+.modal-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.modal-box h2 {
+    font-family: 'Oswald', sans-serif;
+    color: var(--amarelo-cbf);
+    font-size: 1.5rem;
+    margin: 0 0 10px;
+}
+
+.modal-box p {
+    color: #c9d1d9;
+    font-size: 1rem;
+    margin: 0 0 25px;
+    line-height: 1.5;
+}
+
+.modal-botoes {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.modal-btn {
+    padding: 10px 28px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-btn:active {
+    transform: translateY(0);
+}
+
+.modal-btn-confirmar {
+    background: var(--amarelo-cbf);
+    color: var(--azul-cbf);
+    font-weight: bold;
+}
+
+.modal-btn-cancelar {
+    background: #30363d;
+    color: #c9d1d9;
+    border: 1px solid #484f58;
+}
+
+.modal-btn-cancelar:hover {
+    background: #484f58;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalEntra {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

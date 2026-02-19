@@ -1,0 +1,332 @@
+:root {
+    --bg-color: #D9BBA0;
+    --primary-color: #E74C3C; 
+    --text-color: #5D4037;
+}
+
+body {
+    font-family: 'Fredoka One', cursive, sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--text-color);
+}
+
+h1 {
+    background-color: #C0392B;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    margin-top: 0;
+}
+
+/* --- Estilos do Menu --- */
+#menu-screen {
+    display: flex; /* Começa visível */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in;
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.gender-buttons {
+    display: flex;
+    gap: 30px;
+}
+
+.btn-gender {
+    background-color: white;
+    border: 4px solid var(--primary-color);
+    border-radius: 20px;
+    padding: 15px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 150px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.btn-gender:hover {
+    transform: scale(1.05);
+    background-color: #FFF0F0;
+}
+
+.btn-gender:active {
+    transform: scale(0.95);
+}
+
+/* Estilo da imagem DENTRO do botão */
+.menu-img {
+    width: 100%;
+    height: 150px; /* Altura fixa para ficarem iguais */
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+span {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+/* --- Estilos da Tela do Jogo (Inicialmente Oculta) --- */
+#game-screen {
+    display: none; /* ESCONDIDO */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+}
+
+.back-btn {
+    padding: 10px 20px;
+    background-color: var(--text-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Estilos Gerais --- */
+.game-body {
+    overflow: hidden; /* Evita barras de rolagem no jogo */
+}
+
+.game-header {
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.back-btn {
+    padding: 10px 20px;
+    background-color: #5D4037;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+/* --- Layout de 3 Colunas --- */
+.game-layout {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; -> Mantém tudo no meio da tela */
+    justify-content: center; 
+    align-items: center;
+    width: 100%;
+    /* Adicionamos um limite máximo para não espalhar demais em monitores grandes */
+    max-width: 1100px; 
+    height: 85vh;
+    gap: 20px; 
+    padding: 0 10px; 
+    box-sizing: border-box;
+    /* Garante que o container em si fique no meio da página */
+    margin: 0 auto; 
+}
+
+/* Colunas Laterais (Onde ficam os órgãos) */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    
+    /* Largura fixa e travada */
+    width: 140px; 
+    flex-shrink: 0; /* Não deixa encolher */
+    flex-grow: 0;   /* Não deixa crescer */
+    
+    padding: 20px;
+    background-color: rgba(255,255,255,0.4);
+    border-radius: 20px;
+    min-height: 400px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Área Central (O Corpo) */
+.center-area {
+    position: relative;
+    height: 90%;
+    
+    /* --- A MUDANÇA PRINCIPAL ESTÁ AQUI --- */
+    /* Em vez de 'auto', damos uma largura fixa para a "caixa" onde o corpo fica.
+       Isso cria um espaço estável entre as barras laterais. */
+    width: 400px; 
+    
+    /* Garante que essa área não mude de tamanho */
+    flex-shrink: 0; 
+    flex-grow: 0;
+    
+    display: flex;
+    justify-content: center; /* A imagem do corpo fica centralizada DENTRO dessa caixa de 400px */
+    align-items: center;
+}
+
+.body-img {
+    /* A imagem tenta ocupar o máximo possível DENTRO da caixa de 400px sem distorcer */
+    width: 100%;
+    height: 100%; 
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.1));
+}
+
+/* Zonas de Encaixe (Marcadores vermelhos para teste) */
+.drop-zone {
+    position: absolute;
+    /* O tamanho agora será definido pela largura da imagem, mas limitamos para não explodir */
+    width: 90px;  /* Largura base igual à dos órgãos na paleta */
+    height: auto; /* Altura automática para manter a proporção */
+    transform: translate(-50%, -50%); /* Centraliza a imagem no ponto top/left */
+    z-index: 5; /* Fica acima do corpo, mas abaixo do órgão colorido */
+    filter: grayscale(100%) brightness(0%);
+    opacity: 0.2;
+    pointer-events: none; /* Impede que a silhueta seja arrastada por engano */
+}
+
+/* Os Órgãos */
+.organ {
+    width: 90px;
+    cursor: grab;
+    transition: transform 0.2s;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+    z-index: 10;
+}
+
+.organ:hover {
+    transform: scale(1.1);
+}
+
+.organ:active {
+    cursor: grabbing;
+}
+
+/* Classe adicionada quando o órgão é encaixado */
+.organ.placed {
+    position: absolute !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+    pointer-events: none; /* Trava o órgão */
+    z-index: 6; /* Fica acima do corpo */
+}
+
+/* Mensagem de Vitória */
+#win-message {
+    display: none;
+    position: fixed;
+    top: auto; 
+    bottom: 20px; /* Fica a 20px do rodapé da tela */
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza apenas na horizontal */
+    
+    background-color: rgba(255, 255, 255, 0.95); /* Fundo branco levemente transparente */
+    border: 4px solid var(--primary-color); /* Borda colorida */
+    padding: 20px 40px;
+    border-radius: 25px; /* Cantos bem arredondados */
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Sombra forte para destacar */
+    z-index: 100;
+    width: 80%; /* Ocupa boa parte da largura */
+    max-width: 500px; /* Mas não deixa ficar gigante no PC */
+    animation: slideUp 0.5s ease-out;
+/* Animação para a mensagem subir suavemente */
+@keyframes slideUp {
+    from { transform: translate(-50%, 100%); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+#win-message h2 {
+    color: var(--success-color, #2ECC71); /* Usa verde ou define um */
+    margin: 0 0 10px 0;
+    font-size: 2em;
+}
+
+#win-message p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    color: #5D4037;
+}
+
+/* --- Novos Botões Bonitos --- */
+.win-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Espaço entre os botões */
+}
+
+.action-btn {
+    border: none;
+    padding: 12px 25px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    border-radius: 50px; /* Formato de pílula */
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2); /* Sombra "dura" embaixo para dar efeito 3D */
+}
+
+/* Efeito ao passar o mouse */
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+}
+
+/* Efeito ao clicar */
+.action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+
+/* Cores Específicas */
+.btn-restart {
+    background-color: #2ECC71; /* Verde Vibrante */
+}
+
+.btn-exit {
+    background-color: #E74C3C; /* Vermelho */
+}
+}
+
+/* --- ORDEM DE CAMADAS (QUEM FICA NA FRENTE) --- */
+
+/* Camada 1: Ficam atrás (Estômago e Pulmões) */
+.organ.placed#stomach,
+.organ.placed#lungs {
+    z-index: 10 !important;
+}
+
+/* Camada 2: Ficam no meio (Fígado cobre estômago, Coração cobre pulmão) */
+.organ.placed#liver,
+.organ.placed#heart {
+    z-index: 20 !important;
+}
+
+/* Camada 3: Ficam na frente de tudo (Rins) */
+.organ.placed#kidneys,
+.organ.placed#brain {
+    z-index: 30 !important;
+}

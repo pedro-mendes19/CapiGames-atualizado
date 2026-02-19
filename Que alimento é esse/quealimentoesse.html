@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Que Alimento é Esse?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      text-transform: uppercase;
+    }
+
+    #intro-screen {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background: #cfeec0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .capa-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 1920px;
+      overflow: hidden;
+    }
+
+    .img-capa-fundo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .conteudo-central {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .img-capa-frente {
+      width: auto;
+      height: auto;
+      max-width: 90%;
+      max-height: 67vh;
+      object-fit: contain;
+      margin-bottom: 20px;
+      animation: flutuarImagem 3s infinite ease-in-out;
+    }
+    
+    @keyframes flutuarImagem {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulsarBotao {
+      0% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+      50% { transform: scale(1.1); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); }
+      100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+    }
+
+    .btn-jogar-capa {
+      background: linear-gradient(to bottom, #76bd4e, #518639);
+      color: white;
+      font-size: clamp(20px, 6vw, 30px);
+      font-weight: 960;
+      padding: 22px 80px;       
+      border: 4px solid #fff;
+      border-radius: 50px;
+      cursor: pointer;
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: auto;
+      animation: pulsarBotao 1.2s infinite ease-in-out;
+      transition: background 0.3s;
+    }
+
+    .btn-jogar-capa:hover {
+      background: linear-gradient(to bottom, #7baf51, #5d853d);
+    }
+
+    #game-screen {
+      display: none; 
+      flex-direction: column; 
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(180deg, #e0f7fa 0%, #a5d6a7 100%);
+      overflow-y: auto;
+      padding-top: 10px;
+    }
+
+    .logo-game {
+      display: block;
+      margin: 0 auto 20px auto;
+      margin-top: 15px;
+      max-width: 90%;
+      height: auto;
+      max-height: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.2));
+      flex-shrink: 0; 
+    }
+
+    .cartao-jogo {
+      background-color: #ffffffb0;
+      border-radius: 30px;
+      padding: 30px 20px; 
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
+      border: 3px dashed #6398B6; 
+      position: relative;
+      margin-bottom: 50px;
+    }
+
+    #painel-quiz {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    #painel-final {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px; 
+        margin-top: 30px;
+    }
+
+    .dica-container {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      background: #f5fbff;
+      border: 3px solid #6398B6; 
+      border-radius: 30px;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+    }
+
+    .controles-som {
+      display: flex;
+      justify-content: center;
+      gap: 15px; 
+      margin-bottom: 10px;
+    }
+
+    .btn-som {
+      background: #ffe0b2;
+      border: none;
+      border-radius: 50px;
+      padding: 8px 25px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #e65100;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #ffb74d;
+      transition: all 0.1s;
+    }
+    
+    .btn-som:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #ffb74d;
+    }
+
+    .btn-mudo {
+      background: #ffcdd2; 
+      border: none;
+      border-radius: 50px;
+      padding: 8px 25px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #c62828;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #ef9a9a;
+      transition: all 0.1s;
+    }
+
+    .btn-mudo:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #ef9a9a;
+    }
+
+    #dica {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #5d4037;
+      margin-top: 18px;
+      line-height: 1.3;
+    }
+
+    .opcoes {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+      padding: 0 10px;
+    }
+
+    .opcao {
+      background: #f5fff6;
+      border: 3px solid #2e7d32;
+      border-radius: 25px;
+      box-shadow: 0 5px 0 #2e7d32; 
+      padding: 15px 10px;
+      width: 150px;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 900;
+      color: #2e7d32;
+      transition: all 0.1s;
+      margin-bottom: 10px;
+    }
+    
+    .opcao:hover { 
+      background-color: #e8f5e9; 
+      transform: translateY(-2px);
+    }
+    
+    .opcao:active { 
+      transform: translateY(6px);
+      box-shadow: 0 0 0 #2e7d32; 
+    }
+
+    #area-resultado {
+      margin-top: 20px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #img-resposta {
+      display: none;
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      border-radius: 20px;
+      border: 5px solid #fff;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      margin-bottom: 15px;
+      background-color: white;
+      transform: scale(1); 
+    }
+    
+    @keyframes pop { 
+        0% { transform: scale(0); opacity: 0; } 
+        80% { transform: scale(1.1); opacity: 1; } 
+        100% { transform: scale(1); } 
+    }
+    
+    .animar-pop { animation: pop 0.4s ease-out; }
+    
+    #texto-resultado { 
+        font-size: 26px; 
+        font-weight: 900; 
+        text-shadow: 2px 2px 0 #fff;
+        padding: 0 20px;
+    }
+
+    .btn-proxima {
+      margin: 20px auto;
+      display: inline-block;
+      padding: 15px 60px;
+      font-size: 24px;
+      border: none;
+      border-radius: 60px;
+      background: linear-gradient(to bottom, #ff9c08, #ff860c);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #e65100, 0 15px 20px rgba(0,0,0,0.2);
+      transition: all 0.1s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-proxima:hover { 
+        background: linear-gradient(to bottom, #ec9513, #f57c00); 
+        transform: translateY(-2px);
+    }
+    
+    .btn-proxima:active {
+        transform: translateY(8px);
+        box-shadow: 0 0 0 #e65100;
+    }
+
+    .btn-proxima:disabled {
+        background: #cccccc;
+        color: #777777;
+        box-shadow: none;
+        cursor: not-allowed;
+        transform: none;
+        pointer-events: none;
+    }
+
+    #mensagem-final {
+      font-size: 30px;
+      color: #2e7d32;
+      font-weight: 900;
+      margin-bottom: 30px;
+      padding: 0 10px;
+    }
+
+    .resumo-placar {
+      font-size: 24px;
+      color: #555;
+      margin-bottom: 40px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .resumo-item {
+      display: inline-block;
+      padding: 15px 30px;
+      border-radius: 20px;
+      color: white;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    }
+    
+    .bg-verde { background: #66bb6a; border: 2px solid #2e7d32; }
+    .bg-vermelho { background: #ef5350; border: 2px solid #c62828; }
+
+    .btn-reiniciar {
+      padding: 20px 50px;
+      font-size: 22px;
+      border: none;
+      border-radius: 60px;
+      background: linear-gradient(to bottom, #42a5f5, #1e88e5);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #1565c0, 0 15px 20px rgba(0,0,0,0.2);
+      transition: all 0.1s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-reiniciar:hover {
+      background: linear-gradient(to bottom, #64b5f6, #2196f3);
+      transform: translateY(-2px);
+    }
+
+    .btn-reiniciar:active {
+      transform: translateY(8px);
+      box-shadow: 0 0 0 #1565c0;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="intro-screen">
+    <div class="capa-container">
+      <img src="capafundo.png" alt="Fundo" class="img-capa-fundo">
+      <div class="conteudo-central">
+        <img src="capafrente.png" alt="Capa" class="img-capa-frente">
+        <button class="btn-jogar-capa" onclick="iniciarJogo()">▶ JOGAR</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="game-screen">
+    <img src="titulojogo.png" alt="Que Alimento é Esse?" class="logo-game">
+
+    <div id="painel-quiz" class="cartao-jogo">
+        <div class="dica-container">
+          <div class="controles-som">
+            <button class="btn-som" onclick="ativarSomManual()" title="Ouvir Dica">🔊</button>
+            <button class="btn-mudo" onclick="pararSom()" title="Silenciar">🔇</button>
+          </div>
+          <div id="dica">...</div>
+        </div>
+
+        <div class="opcoes" id="opcoes"></div>
+
+        <div id="area-resultado">
+          <img id="img-resposta" src="" alt="Imagem Resposta">
+          <div id="texto-resultado"></div>
+        </div>
+
+        <button id="btn-proxima" class="btn-proxima" onclick="proxima()">PRÓXIMA ➜</button>
+    </div>
+
+    <div id="painel-final" class="cartao-jogo">
+        <div id="mensagem-final">PARABÉNS!</div>
+        
+        <div class="resumo-placar">
+            <div class="resumo-item bg-verde">
+                ACERTOS: <span id="final-acertos">0</span>
+            </div>
+            <div class="resumo-item bg-vermelho">
+                ERROS: <span id="final-erros">0</span>
+            </div>
+        </div>
+        
+        <button class="btn-reiniciar" onclick="reiniciarJogo()">🔄 JOGAR NOVAMENTE</button>
+    </div>
+
+  </div>
+
+  <script>
+    const bancoImagens = {
+      "Maçã": "maca.png", "Uva": "uva.png", "Pera": "pera.png", "Limão": "limao.png",
+      "Banana": "banana.png", "Abacaxi": "abacaxi.png", "Ameixa": "ameixa.png",
+      "Jabuticaba": "jabuticaba.png", "Melancia": "melancia.png", "Mamão": "mamao.png",
+      "Manga": "manga.png", "Melão": "melao.png", "Laranja": "laranja.png",
+      "Tangerina": "tangerina.png", "Alface": "alface.png", "Couve": "couve.png",
+      "Brócolis": "brocolis.png", "Batata": "batata.png", "Mandioca": "mandioca.png",
+      "Cenoura": "cenoura.png"
+    };
+
+    const perguntas = [
+      { dica: "Uma fruta redonda, vermelha ou verde e muito usada em sucos.", correta: "Maçã", opcoes: ["Maçã", "Uva", "Pera"] },
+      { dica: "Uma fruta verde por fora e azeda por dentro. Faz um suco refrescante.", correta: "Limão", opcoes: ["Banana", "Limão", "Abacaxi"] },
+      { dica: "É pequena, roxa ou verde e cresce em cachos.", correta: "Uva", opcoes: ["Uva", "Ameixa", "Jabuticaba"] },
+      { dica: "Uma fruta doce, com casca fina e polpa macia.", correta: "Pera", opcoes: ["Maçã", "Pera", "Melancia"] },
+      { dica: "Tem casca verde e por dentro é vermelha e cheia de sementes.", correta: "Melancia", opcoes: ["Mamão", "Melancia", "Abacaxi"] },
+      { dica: "Tem uma coroa, mas não é rei. Tem espinhos e é amarelo por dentro.", correta: "Abacaxi", opcoes: ["Manga", "Abacaxi", "Banana"] },
+      { dica: "É doce, macia e muito usada no café da manhã.", correta: "Mamão", opcoes: ["Mamão", "Melão", "Pera"] },
+      { dica: "É pequena, redonda e nasce em árvores.", correta: "Laranja", opcoes: ["Laranja", "Limão", "Tangerina"] },
+      { dica: "Tem casca colorida, polpa amarela bem doce e tem um caroço no meio.", correta: "Manga", opcoes: ["Jabuticaba", "Abacaxi", "Manga"] },
+      { dica: "Tem casca amarela e dura, é doce, refrescante e as sementes ficam todas juntas no centro.", correta: "Melão", opcoes: ["Melão", "Mamão", "Abacaxi"] },
+      { dica: "Tem folhas verdes e leves. É muito usada em sanduíches e saladas cruas.", correta: "Alface", opcoes: ["Alface", "Couve", "Brócolis"] },
+      { dica: "Nasce debaixo da terra e todo mundo adora quando viro purê ou fritas!", correta: "Batata", opcoes: ["Batata", "Mandioca", "Cenoura"] }
+    ];
+
+    let atual = 0;
+    let respondeu = false;
+    let acertos = 0;
+    let erros = 0;
+    let somLigado = true;
+
+    function iniciarJogo() {
+      document.getElementById('intro-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display = 'flex'; 
+      document.getElementById("painel-quiz").style.display = "flex";
+      document.getElementById("painel-final").style.display = "none";
+      
+      atual = 0;
+      acertos = 0;
+      erros = 0;
+      somLigado = true;
+      
+      mostrar();
+    }
+
+    function falarTexto(texto, forcar = false) {
+      if (!somLigado && !forcar) return;
+
+      window.speechSynthesis.cancel();
+      const voz = new SpeechSynthesisUtterance();
+      voz.text = texto;
+      voz.lang = "pt-BR";
+      voz.rate = 1.1;
+      window.speechSynthesis.speak(voz);
+    }
+
+    function pararSom() {
+        window.speechSynthesis.cancel();
+        somLigado = false; 
+    }
+
+    function ativarSomManual() {
+        somLigado = true;
+        if (atual < perguntas.length) {
+            falarTexto(perguntas[atual].dica, true);
+        }
+    }
+
+    function mostrar() {
+      respondeu = false;
+      const btnProxima = document.getElementById("btn-proxima");
+      btnProxima.disabled = true;
+
+      const p = perguntas[atual];
+      document.getElementById("dica").innerText = p.dica;
+      
+      falarTexto(p.dica);
+
+      const area = document.getElementById("opcoes");
+      area.innerHTML = "";
+      p.opcoes.forEach(opcao => {
+        const div = document.createElement("div");
+        div.className = "opcao";
+        div.innerText = opcao;
+        div.onclick = () => responder(opcao);
+        area.appendChild(div);
+      });
+
+      document.getElementById("texto-resultado").innerText = "";
+      document.getElementById("img-resposta").style.display = "none";
+      document.getElementById("area-resultado").classList.remove("animar-pop");
+    }
+
+    function responder(escolha) {
+      if (respondeu) return;
+      
+      const correta = perguntas[atual].correta;
+      let mensagemVoz = "";
+      const divResultado = document.getElementById("texto-resultado");
+      const imgResultado = document.getElementById("img-resposta");
+      const areaResultado = document.getElementById("area-resultado");
+      const btnProxima = document.getElementById("btn-proxima");
+
+      if (escolha === correta) {
+        divResultado.innerText = "✅ Muito bem! A resposta é " + correta;
+        divResultado.style.color = "#2e7d32";
+        mensagemVoz = "Muito bem! A resposta é " + correta;
+        acertos++; 
+      } else {
+        divResultado.innerText = "❌ Ops! A resposta correta é " + correta;
+        divResultado.style.color = "#c62828";
+        mensagemVoz = "Ops! A resposta correta é " + correta;
+        erros++; 
+      }
+
+      const urlImagem = bancoImagens[correta] || "";
+      if (urlImagem) {
+        imgResultado.src = urlImagem;
+        imgResultado.style.display = "block";
+      }
+
+      areaResultado.classList.remove("animar-pop");
+      void areaResultado.offsetWidth;
+      areaResultado.classList.add("animar-pop");
+      
+      respondeu = true;
+      btnProxima.disabled = false;
+      
+      falarTexto(mensagemVoz);
+    }
+
+    function proxima() {
+      if (!respondeu) return;
+
+      atual++;
+      if (atual < perguntas.length) {
+        mostrar();
+      } else {
+        document.getElementById("painel-quiz").style.display = "none"; 
+        document.getElementById("painel-final").style.display = "flex"; 
+        
+        document.getElementById("final-acertos").innerText = acertos;
+        document.getElementById("final-erros").innerText = erros;
+
+        let msgVisual = ""; 
+        let msgFalada = ""; 
+        
+        const total = acertos + erros;
+
+        if (acertos === total) {
+            msgVisual = "🏆 UAU! VOCÊ ACERTOU TUDO! PARABÉNS!";
+            msgFalada = "Uau! Você acertou tudo! Parabéns!";
+        } else if (acertos > erros) {
+            msgVisual = "🎉 MUITO BEM! VOCÊ FOI INCRÍVEL!";
+            msgFalada = "Muito bem! Você foi incrível!";
+        } else {
+            msgVisual = "💪 BOM JOGO! VAMOS TENTAR DE NOVO?";
+            msgFalada = "Bom jogo! Vamos tentar de novo?";
+        }
+
+        document.getElementById("mensagem-final").innerText = msgVisual;
+        falarTexto(msgFalada + " Você acertou " + acertos + " e errou " + erros);
+      }
+    }
+
+    function reiniciarJogo() {
+        atual = 0;
+        acertos = 0;
+        erros = 0;
+
+        document.getElementById("painel-quiz").style.display = "none";
+        document.getElementById("painel-final").style.display = "none";
+        document.getElementById("game-screen").style.display = "none";
+        
+        document.getElementById("intro-screen").style.display = "flex";
+    }
+  </script>
+</body>
+</html>

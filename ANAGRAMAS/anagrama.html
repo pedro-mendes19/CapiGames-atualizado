@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANAGRAMA MASTER 🚀</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@600;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="img/logo.png">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --primary: #38bdf8;
+            --accent: #fbbf24;
+            --success: #4ade80;
+            --error: #ff6b6b;
+            --text: #f8fafc;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            font-family: 'Open Sans', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Container da Esquerda (Logo + Instruções) */
+        .sidebar-left {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 200px;
+            z-index: 10;
+        }
+
+        .game-logo {
+            width: 140px;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));
+            transition: transform 0.3s ease;
+            margin: 0 auto;
+        }
+
+        /* Card de Instruções */
+        .instruction-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            font-size: 0.85rem;
+            color: #bae6fd;
+        }
+
+        .instruction-card h3 {
+            font-family: 'Fredoka One', cursive;
+            margin-top: 0;
+            color: var(--accent);
+            font-size: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .instruction-card ul {
+            padding-left: 20px;
+            margin: 10px 0 0 0;
+            list-style-type: none;
+        }
+
+        .instruction-card li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .instruction-card li::before {
+            content: "🚀";
+            position: absolute;
+            left: -25px;
+            font-size: 0.8rem;
+        }
+
+        /* Estrutura do Jogo */
+        .game-wrapper {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 95%;
+            max-width: 550px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: 'Fredoka One', cursive;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hint-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid var(--primary);
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+            color: #bae6fd;
+        }
+
+        .letter-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .letter-tile {
+            background: linear-gradient(145deg, #334155, #1e293b);
+            color: var(--accent);
+            padding: 10px 15px;
+            min-width: 40px;
+            font-size: 1.6rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 0 #000;
+            font-family: 'Fredoka One', cursive;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            background: #0f172a;
+            border: 3px solid #334155;
+            border-radius: 20px;
+            color: white;
+            font-size: 1.5rem;
+            text-align: center;
+            font-family: 'Fredoka One', cursive;
+            margin-bottom: 20px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            font-family: 'Fredoka One', cursive;
+            padding: 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-check {
+            background: var(--success);
+            color: #064e3b;
+            box-shadow: 0 6px 0 #15803d;
+            grid-column: span 2;
+        }
+
+        .btn-skip {
+            background: var(--error);
+            color: white;
+            box-shadow: 0 6px 0 #b91c1c;
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: #0c4a6e;
+            box-shadow: 0 6px 0 #0369a1;
+            grid-column: span 2;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Ajuste para telas pequenas */
+        @media (max-width: 850px) {
+            .sidebar-left {
+                position: static;
+                width: 100%;
+                margin-bottom: 20px;
+                align-items: center;
+            }
+
+            .instruction-card {
+                max-width: 300px;
+            }
+
+            body {
+                flex-direction: column;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar-left">
+        <img src="img/logo.png" alt="Logo" class="game-logo">
+
+        <div class="instruction-card">
+            <h3>COMO JOGAR 🎮</h3>
+            <ul>
+                <li>Veja as <b>letras embaralhadas</b> no meio da tela.</li>
+                <li>Leia a <b>Dica Azul</b> para saber qual é a palavra.</li>
+                <li>Digite a resposta e clique em <b>CONFERIR</b>.</li>
+                <li>Se estiver difícil, você pode <b>TROCAR</b> a palavra!</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="game-wrapper">
+        <div class="stats-bar">
+            <span>NÍVEL: <span id="lvl">1</span></span>
+            <span>⭐ <span id="score">0</span></span>
+            <span>RESTAM: <span id="rem">0</span></span>
+        </div>
+
+        <h1>ANAGRAMA MASTER 🚀</h1>
+        <div id="hint-box" class="hint-box">Dica...</div>
+        <div class="letter-container" id="letter-display"></div>
+        <input type="text" id="user-input" placeholder="DIGITE AQUI..." autocomplete="off">
+
+        <div class="button-grid">
+            <button id="check-btn" class="btn btn-check" onclick="checkAnswer()">CONFERIR!</button>
+            <button id="skip-btn" class="btn btn-skip" onclick="skipWord()">TROCAR (3/3)</button>
+            <button id="next-btn" class="btn btn-next hidden" onclick="nextQuestion()">PRÓXIMA ➡️</button>
+        </div>
+
+        <div id="message" style="margin-top: 15px; font-weight: 800;"></div>
+    </div>
+
+    <script>
+        // O Banco de dados e a lógica permanecem os mesmos para garantir o funcionamento
+        const wordDB = [
+            { w: "BOLA", h: "Usada no futebol.", l: 1 }, { w: "CASA", h: "Onde moramos.", l: 1 }, { w: "GATO", h: "Faz miau.", l: 1 }, { w: "DADO", h: "Cubo com números.", l: 1 }, { w: "SAPO", h: "Anfíbio que pula.", l: 1 }, { w: "BOLO", h: "Tem velas no topo.", l: 1 }, { w: "PEIXE", h: "Nada no mar.", l: 1 }, { w: "RATO", h: "Gosta de queijo.", l: 1 }, { w: "MESA", h: "Onde pomos o prato.", l: 1 }, { w: "FOCA", h: "Equilibra bola no nariz.", l: 1 }, { w: "COLA", h: "Gruda papel.", l: 1 }, { w: "BOCA", h: "Usamos para falar.", l: 1 }, { w: "MALA", h: "Levamos na viagem.", l: 1 }, { w: "LEÃO", h: "O rei da selva.", l: 1 }, { w: "RODA", h: "O carro tem quatro.", l: 1 },
+            { w: "PIPOCA", h: "Milho que pula.", l: 2 }, { w: "BANANA", h: "Fruta do macaco.", l: 2 }, { w: "ESCOLA", h: "Onde estudamos.", l: 2 }, { w: "CAVALO", h: "Animal que relincha.", l: 2 }, { w: "JANELA", h: "Vidro na parede.", l: 2 }, { w: "PANELA", h: "Cozinha a sopa.", l: 2 }, { w: "COELHO", h: "Pula e tem orelhas grandes.", l: 2 }, { w: "SAPATO", h: "Protege os pés.", l: 2 }, { w: "GIRAFA", h: "Pescoço bem longo.", l: 2 }, { w: "AMIGOS", h: "Gostamos de brincar.", l: 2 }, { w: "CANETA", h: "Para escrever.", l: 2 }, { w: "XÍCARA", h: "Para tomar café.", l: 2 }, { w: "CABELO", h: "Fica na cabeça.", l: 2 }, { w: "PETECA", h: "Brinquedo com penas.", l: 2 }, { w: "MACACA", h: "Fêmea do macaco.", l: 2 },
+            { w: "MOCHILA", h: "Leva material escolar.", l: 3 }, { w: "ESTRELA", h: "Ponto de luz no céu.", l: 3 }, { w: "SORVETE", h: "Doce gelado.", l: 3 }, { w: "PISCINA", h: "Nadamos nela.", l: 3 }, { w: "MARTELO", h: "Bate no prego.", l: 3 }, { w: "CADERNO", h: "Onde escrevemos.", l: 3 }, { w: "FORMIGA", h: "Inseto pequeno.", l: 3 }, { w: "ESCORREGADOR", h: "Brinquedo de deslizar.", l: 3 }, { w: "GALINHA", h: "Bota ovos.", l: 3 }, { w: "CADEIRA", h: "Para sentar.", l: 3 }, { w: "ESQUILO", h: "Gosta de nozes.", l: 3 }, { w: "ESPELHO", h: "Mostra seu reflexo.", l: 3 }, { w: "ESTOJO", h: "Guarda lápis.", l: 3 }, { w: "FOGUETE", h: "Vai para a lua.", l: 3 }, { w: "PULSEIRA", h: "Enfeite do braço.", l: 3 },
+            { w: "BICICLETA", h: "Tem duas rodas e pedais.", l: 4 }, { w: "TUBARÃO", h: "Peixe grande perigoso.", l: 4 }, { w: "PRESENTE", h: "Ganhamos em festas.", l: 4 }, { w: "BORBOLETA", h: "Tem asas coloridas.", l: 4 }, { w: "GELADEIRA", h: "Guarda o leite gelado.", l: 4 }, { w: "TELEFONE", h: "Para ligações.", l: 4 }, { w: "MELANCIA", h: "Fruta grande e pesada.", l: 4 }, { w: "CAMISETA", h: "Vestimos no corpo.", l: 4 }, { w: "DINOSSAURO", h: "Gigante extinto.", l: 4 }, { w: "CHUTEIRA", h: "Tênis de jogar bola.", l: 4 }, { w: "GOLFINHO", h: "Animal marinho inteligente.", l: 4 }, { w: "ELEFANTE", h: "Orelhas enormes.", l: 4 }, { w: "DINHEIRO", h: "Para comprar coisas.", l: 4 }, { w: "CADARÇO", h: "Amarrar o tênis.", l: 4 }, { w: "CHUVEIRO", h: "Onde tomamos banho.", l: 4 },
+            { w: "ASTRONAUTA", h: "Viajante das galáxias.", l: 5 }, { w: "BIBLIOTECA", h: "Lugar de muitos livros.", l: 5 }, { w: "HELICÓPTERO", h: "Voa e tem hélices.", l: 5 }, { w: "ANIVERSÁRIO", h: "Festa de nova idade.", l: 5 }, { w: "CHOCOLATE", h: "Feito de cacau.", l: 5 }, { w: "COMPUTADOR", h: "Máquina de internet.", l: 5 }, { w: "TRAVESSEIRO", h: "Usamos para dormir.", l: 5 }, { w: "TELEVISÃO", h: "Passa desenhos.", l: 5 }, { w: "ZOOLÓGICO", h: "Casa dos animais.", l: 5 }, { w: "ALFABETO", h: "O ABC completo.", l: 5 }, { w: "HIPOPÓTAMO", h: "Animal grande do rio.", l: 5 }, { w: "BRINQUEDO", h: "Objeto de diversão.", l: 5 }, { w: "DROMEDÁRIO", h: "Com uma corcunda.", l: 5 }, { w: "ESPETÁCULO", h: "Um show incrível.", l: 5 }, { w: "GIRASSOL", h: "Flor que segue o sol.", l: 5 }
+        ];
+
+        let currentLevel = 1;
+        let score = 0;
+        let currentWordObj = null;
+        let wordsForLevel = [];
+        let skipsLeft = 3;
+
+        function shuffle(str) {
+            let a = str.split(""), n = a.length;
+            for (let i = n - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            let res = a.join("");
+            return res === str ? shuffle(str) : res;
+        }
+
+        function initLevel() {
+            let pool = wordDB.filter(w => w.l === currentLevel);
+            wordsForLevel = pool.sort(() => Math.random() - 0.5).slice(0, 6);
+            nextQuestion();
+        }
+
+        function skipWord() {
+            if (skipsLeft > 0) {
+                skipsLeft--;
+                document.getElementById("skip-btn").innerText = `TROCAR (${skipsLeft}/3)`;
+                if (skipsLeft === 0) document.getElementById("skip-btn").disabled = true;
+                nextQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (wordsForLevel.length === 0) {
+                if (currentLevel < 5) { currentLevel++; initLevel(); }
+                else { alert("🏆 VOCÊ VENCEU O JOGO!"); location.reload(); }
+                return;
+            }
+            currentWordObj = wordsForLevel.pop();
+            document.getElementById("lvl").innerText = currentLevel;
+            document.getElementById("rem").innerText = wordsForLevel.length + 1;
+            document.getElementById("hint-box").innerText = "Dica: " + currentWordObj.h;
+            document.getElementById("message").innerText = "";
+            document.getElementById("user-input").value = "";
+            document.getElementById("next-btn").classList.add("hidden");
+            document.getElementById("check-btn").classList.remove("hidden");
+            document.getElementById("skip-btn").classList.remove("hidden");
+
+            const container = document.getElementById("letter-display");
+            container.innerHTML = "";
+            shuffle(currentWordObj.w).split("").forEach(l => {
+                const div = document.createElement("div");
+                div.className = "letter-tile";
+                div.innerText = l;
+                container.appendChild(div);
+            });
+        }
+
+        function checkAnswer() {
+            const val = document.getElementById("user-input").value.toUpperCase().trim();
+            const msg = document.getElementById("message");
+            if (val === currentWordObj.w) {
+                score += (currentLevel * 10);
+                document.getElementById("score").innerText = score;
+                msg.innerHTML = "🌟 EXCELENTE!";
+                msg.style.color = "var(--success)";
+                document.getElementById("check-btn").classList.add("hidden");
+                document.getElementById("skip-btn").classList.add("hidden");
+                document.getElementById("next-btn").classList.remove("hidden");
+            } else {
+                msg.innerText = "❌ Tente novamente!";
+                msg.style.color = "var(--error)";
+            }
+        }
+
+        window.onload = initLevel;
+    </script>
+</body>
+
+</html>

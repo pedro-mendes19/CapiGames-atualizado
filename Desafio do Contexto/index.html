@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESAFIO DO CONTEXTO</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&family=Nunito:wght@400;700;900&display=swap');
+
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #00cec9;
+            --accent: #fdcb6e;
+            --success: #00b894;
+            --error: #ff7675;
+            --bg-gradient: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            --card-bg: #ffffff;
+            --text-dark: #2d3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        #game-container {
+            background: var(--card-bg);
+            max-width: 900px;
+            width: 100%;
+            padding: 50px;
+            border-radius: 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Fredoka', cursive;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 3.2rem;
+            margin: 0 0 10px 0;
+        }
+
+        .instructions {
+            background: #f1f2f6;
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-weight: 800;
+            color: #636e72;
+            margin-bottom: 35px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #story-box {
+            font-size: 1.65rem;
+            line-height: 2.4;
+            color: var(--text-dark);
+            background: #fdfdfd;
+            padding: 45px;
+            border-radius: 30px;
+            box-shadow: inset 0 2px 15px rgba(0,0,0,0.03);
+            margin-bottom: 35px;
+            text-align: left;
+            border: 2px solid #f1f2f6;
+        }
+
+        .drop-zone {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 160px;
+            height: 55px;
+            background: #f7f1ff;
+            border-radius: 15px;
+            border: 3px dashed #d1d8e0;
+            margin: 0 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            vertical-align: middle;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .drop-zone.waiting-click {
+            border-color: var(--primary);
+            background: #efebff;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.2);
+        }
+
+        .drop-zone.correct {
+            border: 3px solid var(--success);
+            background: #e9fdf7;
+            color: var(--success);
+            border-style: solid;
+        }
+
+        .drop-zone.wrong {
+            border: 3px solid var(--error);
+            background: #fff0f0;
+            color: var(--error);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        #options-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 30px;
+            border: 2px solid #eee;
+        }
+
+        .word-card {
+            background: white;
+            color: var(--text-dark);
+            padding: 15px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 1.2rem;
+            border: 2px solid #eee;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .word-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .word-card.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        #message-box {
+            margin: 25px 0;
+            font-weight: 900;
+            font-size: 1.4rem;
+            min-height: 1.5em;
+        }
+
+        button#next-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 20px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+            display: none;
+        }
+
+        button#next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.4);
+        }
+
+        .score-board {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .stat-badge {
+            background: #f1f2f6;
+            padding: 12px 25px;
+            border-radius: 15px;
+            color: var(--text-dark);
+            font-weight: 800;
+        }
+
+        .stat-badge span { color: var(--primary); }
+
+        @media (max-width: 600px) {
+            #game-container { padding: 25px; }
+            h1 { font-size: 2.2rem; }
+            #story-box { font-size: 1.3rem; padding: 25px; }
+            .drop-zone { min-width: 120px; height: 45px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>Desafio do Contexto</h1>
+    <span class="instructions">Complete as histórias com lógica e atenção!</span>
+
+    <div id="story-box"></div>
+    <div id="options-container"></div>
+    <div id="message-box"></div>
+    <button id="next-btn" onclick="nextStory()">Próximo Nível ➔</button>
+
+    <div class="score-board">
+        <div class="stat-badge">⭐ Pontos: <span id="score">0</span></div>
+        <div class="stat-badge">📖 Desafio: <span id="current-task">1</span>/<span id="total-stories">15</span></div>
+    </div>
+</div>
+
+<script>
+    const stories = [
+        {
+            text: "O explorador entrou na [blank1] escura e ligou sua [blank2]. No chão, ele encontrou marcas de um [blank3] antigo que levavam ao tesouro.",
+            answers: { blank1: "caverna", blank2: "lanterna", blank3: "mapa" },
+            options: ["caverna", "lanterna", "mapa", "cozinha", "vela", "sapato", "baú", "carro"]
+        },
+        {
+            text: "Para fazer um bolo delicioso, primeiro quebre os [blank1] e misture com a [blank2]. Depois de assar, coloque a cobertura enquanto ainda estiver [blank3].",
+            answers: { blank1: "ovos", blank2: "farinha", blank3: "quente" },
+            options: ["ovos", "farinha", "quente", "vidros", "areia", "gelado", "açúcar", "pedras"]
+        },
+        {
+            text: "O detetive olhou pela [blank1] e percebeu que o ladrão havia deixado uma [blank2] na lama. Ele pegou sua lupa para analisar cada [blank3] da cena.",
+            answers: { blank1: "janela", blank2: "pegada", blank3: "detalhe" },
+            options: ["janela", "pegada", "detalhe", "porta", "bolsa", "livro", "pista", "cor"]
+        },
+        {
+            text: "Durante a tempestade, o [blank1] cortou o céu e o barulho do [blank2] assustou o cachorro. Logo depois, o jardim ficou coberto de [blank3].",
+            answers: { blank1: "raio", blank2: "trovão", blank3: "lama" },
+            options: ["raio", "trovão", "lama", "sol", "vento", "flores", "neve", "folhas"]
+        },
+        {
+            text: "O time de futebol entrou em [blank1] focado na vitória. O atacante chutou a bola com força e marcou um [blank2] incrível no último [blank3].",
+            answers: { blank1: "campo", blank2: "gol", blank3: "minuto" },
+            options: ["campo", "gol", "minuto", "quadra", "ponto", "segundo", "treino", "grito"]
+        },
+        {
+            text: "O cientista ajustou o seu [blank1] para observar as células de perto. Ele ficou surpreso ao descobrir que a [blank2] estava cheia de pequenos [blank3] vivos.",
+            answers: { blank1: "microscópio", blank2: "amostra", blank3: "organismos" },
+            options: ["microscópio", "amostra", "organismos", "telescópio", "comida", "vidros", "insetos", "livros"]
+        },
+        {
+            text: "Na aula de [blank1], aprendemos a misturar as cores primárias. O professor explicou que, ao juntar azul e amarelo, obtemos a cor [blank2] para pintar a [blank3].",
+            answers: { blank1: "artes", blank2: "verde", blank3: "natureza" },
+            options: ["artes", "verde", "natureza", "história", "roxo", "cidade", "papel", "cinza"]
+        },
+        {
+            text: "O pequeno barco navegava pelo [blank1] calmo durante o pôr do sol. De repente, um enorme [blank2] saltou da água e molhou todo o [blank3].",
+            answers: { blank1: "mar", blank2: "golfinho", blank3: "convés" },
+            options: ["mar", "golfinho", "convés", "rio", "tubarão", "chão", "areia", "avião"]
+        },
+        {
+            text: "O mecânico usou uma [blank1] para apertar o parafuso do motor. Ele explicou que o [blank2] precisava de óleo novo para funcionar sem fazer muito [blank3].",
+            answers: { blank1: "chave", blank2: "carro", blank3: "ruído" },
+            options: ["chave", "carro", "ruído", "martelo", "pneu", "fumaça", "calor", "brilho"]
+        },
+        {
+            text: "No alto da [blank1], o alpinista sentiu o ar ficar mais frio. Ele tirou uma [blank2] da mochila para registrar a vista incrível das [blank3] abaixo.",
+            answers: { blank1: "montanha", blank2: "câmera", blank3: "nuvens" },
+            options: ["montanha", "câmera", "nuvens", "árvore", "foto", "pedras", "neve", "casas"]
+        },
+        {
+            text: "O jardineiro plantou uma [blank1] no centro do vaso de cerâmica. Todos os dias, ele colocava um pouco de [blank2] para que a planta pudesse [blank3].",
+            answers: { blank1: "semente", blank2: "água", blank3: "crescer" },
+            options: ["semente", "água", "crescer", "flor", "terra", "correr", "morrer", "suco"]
+        },
+        {
+            text: "Para viajar para outro [blank1], precisamos levar o nosso passaporte. No aeroporto, o [blank2] decolou pontualmente e cruzou o [blank3] azul.",
+            answers: { blank1: "país", blank2: "avião", blank3: "oceano" },
+            options: ["país", "avião", "oceano", "bairro", "carro", "céu", "estádio", "deserto"]
+        },
+        {
+            text: "O padeiro acordou cedo para fazer a [blank1]. O calor do [blank2] deixou a cozinha com um aroma maravilhoso de [blank3] assado.",
+            answers: { blank1: "massa", blank2: "forno", blank3: "pão" },
+            options: ["massa", "forno", "pão", "farinha", "fogo", "queijo", "bolo", "açúcar"]
+        },
+        {
+            text: "Na biblioteca, o silêncio era interrompido apenas pelo virar das [blank1]. O estudante escolheu um [blank2] sobre dinossauros para fazer a sua [blank3].",
+            answers: { blank1: "páginas", blank2: "livro", blank3: "pesquisa" },
+            options: ["páginas", "livro", "pesquisa", "portas", "caderno", "leitura", "tarefa", "cadeiras"]
+        },
+        {
+            text: "O músico subiu ao [blank1] e afinou as cordas do seu violão. Quando começou a tocar a primeira [blank2], a plateia inteira entrou em [blank3].",
+            answers: { blank1: "palco", blank2: "melodia", blank3: "êxtase" },
+            options: ["palco", "melodia", "êxtase", "chão", "letra", "choque", "silêncio", "festa"]
+        }
+    ];
+
+    let currentStoryIndex = 0;
+    let score = 0;
+    let selectedWordData = null;
+    let completedBlanks = 0;
+
+    const storyBox = document.getElementById('story-box');
+    const optionsContainer = document.getElementById('options-container');
+    const messageBox = document.getElementById('message-box');
+    const nextBtn = document.getElementById('next-btn');
+    const scoreEl = document.getElementById('score');
+    const currentTaskEl = document.getElementById('current-task');
+    document.getElementById('total-stories').textContent = stories.length;
+
+    function initGame() {
+        const story = stories[currentStoryIndex];
+        selectedWordData = null;
+        completedBlanks = 0;
+        currentTaskEl.textContent = currentStoryIndex + 1;
+        
+        let htmlText = story.text;
+        Object.keys(story.answers).forEach(key => {
+            htmlText = htmlText.replace(`[${key}]`, 
+                `<span class="drop-zone" id="${key}" onclick="handleZoneClick(event)">...</span>`);
+        });
+        
+        storyBox.innerHTML = htmlText;
+        optionsContainer.innerHTML = '';
+        messageBox.textContent = '';
+        nextBtn.style.display = 'none';
+
+        const shuffledOptions = [...story.options].sort(() => Math.random() - 0.5);
+        shuffledOptions.forEach(word => {
+            const card = document.createElement('div');
+            card.className = 'word-card';
+            card.textContent = word;
+            card.id = "word-" + Math.random().toString(36).substr(2, 9);
+            card.onclick = () => selectWord(word, card);
+            optionsContainer.appendChild(card);
+        });
+    }
+
+    function selectWord(word, element) {
+        document.querySelectorAll('.word-card').forEach(c => c.classList.remove('selected'));
+        if (selectedWordData && selectedWordData.id === element.id) {
+            selectedWordData = null;
+            updateZonesVisuals();
+            return;
+        }
+        selectedWordData = { word: word, id: element.id };
+        element.classList.add('selected');
+        updateZonesVisuals();
+    }
+
+    function updateZonesVisuals() {
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            if (!zone.classList.contains('correct')) {
+                if (selectedWordData) zone.classList.add('waiting-click');
+                else zone.classList.remove('waiting-click');
+            }
+        });
+    }
+
+    function handleZoneClick(ev) {
+        if (selectedWordData && !ev.target.classList.contains('correct')) {
+            checkAnswer(selectedWordData.word, ev.target, selectedWordData.id);
+        }
+    }
+
+    function checkAnswer(selectedWord, target, elementId) {
+        const story = stories[currentStoryIndex];
+        const zoneId = target.id;
+        const correctAnswer = story.answers[zoneId];
+
+        if (selectedWord === correctAnswer) {
+            target.textContent = selectedWord;
+            target.classList.remove('waiting-click', 'wrong');
+            target.classList.add('correct');
+            document.getElementById(elementId).style.display = 'none';
+            
+            messageBox.textContent = "Excelente escolha! ✨";
+            messageBox.style.color = "var(--success)";
+            
+            completedBlanks++;
+            selectedWordData = null;
+            document.querySelectorAll('.word-card').forEach(c => c.classList.remove('selected'));
+            updateZonesVisuals();
+
+            if (completedBlanks === Object.keys(story.answers).length) {
+                messageBox.textContent = "História concluída com sucesso! 🏆";
+                nextBtn.style.display = 'inline-block';
+                score += 10;
+                scoreEl.textContent = score;
+            }
+        } else {
+            target.classList.add('wrong');
+            messageBox.textContent = "Essa palavra não faz sentido no contexto. Tente novamente! 🧐";
+            messageBox.style.color = "var(--error)";
+            setTimeout(() => {
+                target.classList.remove('wrong');
+                if (selectedWordData) target.classList.add('waiting-click');
+            }, 800);
+        }
+    }
+
+    function nextStory() {
+        currentStoryIndex++;
+        if (currentStoryIndex >= stories.length) {
+            storyBox.innerHTML = `
+                <div style="text-align:center;">
+                    <h2 style="font-size: 2.5rem; color: var(--primary);">Parabéns, Mestre!</h2>
+                    <p style="font-size: 1.4rem;">Você completou todos os 15 desafios com perfeição!</p>
+                </div>`;
+            optionsContainer.style.display = 'none';
+            messageBox.style.display = 'none';
+            nextBtn.textContent = "Recomeçar Desafio 🔄";
+            nextBtn.style.display = "inline-block";
+            nextBtn.onclick = () => location.reload();
+        } else {
+            initGame();
+        }
+    }
+
+    window.onload = initGame;
+</script>
+
+</body>
+</html>

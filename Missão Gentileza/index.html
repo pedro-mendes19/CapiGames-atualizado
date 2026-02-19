@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Missão Gentileza</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-accent: #ffd27a;
+    --good: #2ec4b6;
+    --bad: #ff8a8a;
+    --neutral: #ffde9c;
+    --card: #f0fdfa;
+    --text-dark: #14323a;
+    --blue-accent: #4a90e2;
+    --purple-soft: #e9d8fd;
+    --primary: #2ec4b6;
+    --primary-dark: #1fa79a;
+    --title: #2ec4b6;
+    --text: #374151;
+    --accent-soft: #e9d8fd;
+    --accent-warm: #ffe29a;
+  }
+
+  *{
+    box-sizing:border-box;
+  }
+
+  html, body{
+    height:100%;
+    margin:0;
+    font-family:'Nunito', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    color:var(--text-dark);
+  }
+
+  body{
+    background: linear-gradient(180deg, #eaf6f5 0%, #eaf3ff 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:100vh;
+    padding:30px;
+  }
+
+  #introScreen {
+    position: fixed;
+    inset: 0;
+    background-image: url('img/fundo01.png'); 
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+  }
+
+  #introScreen > div{
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(6px);
+    padding: 70px 50px;
+    border-radius:24px;
+    max-width:800px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 15px 35px rgba(0,0,0,0.15);
+    animation:fadeUp .8s ease;
+  }
+
+  #introScreen h1{
+    font-size:40px;
+    margin-bottom:20px;
+    font-weight:900;
+    letter-spacing:1.2px;
+    text-align:center;
+    color:var(--title);
+
+    text-shadow:
+      -2px -2px 0 #ffffff,
+      2px -2px 0 #ffffff,
+      -2px  2px 0 #ffffff,
+      2px  2px 0 #ffffff,
+      0  4px 10px rgba(0,0,0,0.15);
+  }
+
+  #introScreen p{
+    font-size:20px;
+    color:var(--text);
+    margin-bottom:35px;
+    line-height:1.5;
+  }
+
+  #startGameBtn{
+    background:linear-gradient(180deg, var(--primary), var(--primary-dark));
+    color:#fff;
+    font-size:22px;
+    padding:18px 50px;
+    border:none;
+    border-radius:40px;
+    cursor:pointer;
+    font-weight:900;
+    box-shadow:0 14px 34px rgba(46,196,182,0.45);
+    animation:pulsePlay 1.6s infinite;
+  }
+
+  .game-wrap{
+    width:100%;
+    max-width:920px;
+    border-radius:18px;
+    box-shadow:0 18px 50px rgba(10,20,30,0.12);
+    overflow:hidden;
+    display:grid;
+    grid-template-rows:auto auto;
+    gap:18px;
+    background: linear-gradient(180deg, #ffffff, #fbfbff);
+  }
+
+  @media (max-width:980px){
+    .game-wrap{
+      grid-template-columns:1fr;
+    }
+  }
+
+  .scene{
+    padding:20px;
+    background-size:cover;
+    background-position:center;
+    position:relative;
+  }
+
+  .scene::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
+    pointer-events:none;
+  }
+
+  .sceneInner{
+    position:relative;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  #game-title{
+    font-family:'Nunito', system-ui, -apple-system, "Segoe UI", Roboto, Arial;    font-size:40px;
+    font-size: 35px;
+    font-weight:900;
+    text-align:center;
+    width:100%;
+    color:#17afa3;
+     text-shadow:
+      -2px -2px 0 #ffffff,
+      2px -2px 0 #ffffff,
+      -2px  2px 0 #ffffff,
+      2px  2px 0 #ffffff,
+      0  4px 10px rgba(0,0,0,0.15);
+  }
+
+  .brand{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:12px;
+    padding:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.06);
+    border: 2px solid #2ec4b6; 
+  }
+
+  .situationHead{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+
+  .situationTitle{
+    font-weight:800;
+    font-size:18px;
+    color:#0b3a36;
+  }
+
+  .situIndex{
+    font-weight:800;
+    font-size:14px;
+    color:#0b3a36;
+  }
+
+  .situationText{
+    margin-top:10px;
+    font-size:16px;
+    line-height:1.4;
+    color:#19383b;
+    min-height:64px;
+  }
+
+  .choices{
+    margin-top:12px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .choiceBtn{
+    display:flex;
+    align-items:center;
+    padding:12px 14px;
+    border-radius:12px;
+    border:2px solid #60a5fa;
+    background:#ffffff;
+    font-weight:800;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(0,0,0,0.06);
+    transition:transform .12s ease, background-color .12s ease, opacity .12s ease;
+  }
+
+  .choiceBtn:hover{
+    background:#dbeafe;
+    transform:scale(1.03);
+  }
+
+  .choiceBtn:disabled{
+    opacity:0.6;
+    cursor:default;
+    transform:none;
+  }
+
+  .hint-row{
+    position: relative;
+    margin-top: 12px;
+    min-height: 32px;
+  }
+
+  .feedback{
+    text-align: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: #174;
+  }
+
+  .points{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 800;
+    font-size: 17px;
+  }
+
+  .actions-top{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:12px;
+  }
+
+ .btnPrimary{
+    background: var(--good);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-size: 18px;
+    font-weight: 900;
+    border-radius: 999px;
+    cursor: pointer;
+
+    box-shadow: 
+      0 6px 0 rgba(0,0,0,0.15),
+      0 14px 30px rgba(46,196,182,0.35);
+
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .btnPrimary:hover{
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 0 rgba(0,0,0,0.15),
+      0 18px 36px rgba(46,196,182,0.45);
+  }
+
+  .btnPrimary:active{
+    transform: translateY(2px);
+    box-shadow:
+      0 3px 0 rgba(0,0,0,0.15),
+      0 8px 16px rgba(46,196,182,0.3);
+  }
+
+  .btnAlt{
+    background: #ffffff;
+    color: #374151;
+    border: 2px solid #ddd;
+    padding: 14px 32px;
+    font-size: 17px;
+    font-weight: 800;
+    border-radius: 999px;
+    cursor: pointer;
+
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.08),
+      0 10px 24px rgba(0,0,0,0.08);
+
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .btnAlt:hover{
+    transform: translateY(-2px);
+    box-shadow:
+      0 6px 0 rgba(0,0,0,0.08),
+      0 14px 30px rgba(0,0,0,0.12);
+  }
+
+  .btnAlt:active{
+    transform: translateY(2px);
+    box-shadow:
+      0 2px 0 rgba(0,0,0,0.08),
+      0 6px 14px rgba(0,0,0,0.1);
+  }
+
+  .meta{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .meta-center{
+    justify-content: center;
+  }
+
+  .meta > div{
+    text-align: center;
+  }
+
+  .meta .big{
+    font-size: 18px;
+    font-weight: 900;
+    color: #0b3a36;
+  }
+
+  .panel{
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: linear-gradient(180deg,#ffffff,#fbfbff);
+  }
+
+ .statCard {
+    background: #ffffff; 
+    padding: 12.5px;
+    border-radius: 16px;
+    margin-top: -10px;
+    
+    border: 2px solid #f1f5f9; 
+    
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    margin-bottom: 8px;
+    transition: transform 0.2s ease;
+  }
+
+  .statCard:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+
+  .statLabel{
+    font-weight:800;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color:#123;
+  }
+
+  .barWrap{
+    background:#f0f0f0;
+    height:10px;
+    border-radius:999px;
+    overflow:hidden;
+  }
+
+  .bar{
+    height:100%;
+    width:0%;
+    transition:width .5s cubic-bezier(.2,.9,.3,1);
+  }
+
+  .bar.hum{ background:linear-gradient(90deg,#ffd27a,#ffb86b); }
+  .bar.ene{ background:linear-gradient(90deg,#a0e7ff,#7ed4ff); }
+  .bar.emp{ background:linear-gradient(90deg,#9bf6ff,#6ed1d5); }
+
+  .footer-note{
+    margin-top:auto;
+    font-size:12px;
+    color:#6b6b6b;
+    text-align:center;
+  }
+
+  .scoreList{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:14px;
+    margin: 0 auto;
+    max-width: 520px;
+  }
+
+  .scoreItem{
+    border:2px solid #e5e7eb;
+    border-radius:14px;
+    padding:14px 10px;
+    font-weight:800;
+    font-size:16px;
+    background:#f9fafb;
+  }
+
+  .modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.38);
+    z-index:9999;
+    padding:18px;
+  }
+
+  .modalCard{
+    background:white;
+    border-radius:20px;
+    padding:28px;
+    max-width:680px;
+    width:100%;
+    min-height:420px;
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,0.3);
+  }
+  
+  #confirmModal .modalCard{
+    max-width: 420px;
+    min-height: auto;
+    padding: 22px 26px;
+    border-radius: 18px;
+  }
+
+  #finalText{
+    margin-top: 16px;
+    margin-bottom: 26px;
+    font-weight:800;
+    color:#174;
+  }
+
+  .finalActions{
+    margin-top: 36px;
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+  }
+
+  .finalBtn{
+    min-width:220px;
+    font-size:16px;
+    padding:14px 26px;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(30px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+
+  @keyframes pulsePlay {
+    0% { transform: scale(1); box-shadow: 0 14px 34px rgba(46,196,182,0.45); }
+    50% { transform: scale(1.08); box-shadow: 0 18px 40px rgba(46,196,182,0.65); }
+    100% { transform: scale(1); box-shadow: 0 14px 34px rgba(46,196,182,0.45); }
+  }
+
+  @media (max-width:520px){
+    .choiceBtn{ font-size:15px; padding:10px; }
+    .scene{ padding:16px; }
+    .panel{ padding: 16px; }
+  }
+</style>
+</head>
+<body>
+  <div class="modal" id="confirmModal">
+    <div class="modalCard">
+      <h2 style="margin-bottom:10px; color: #0c524c">Reiniciar jogo?</h2>
+      <p style="font-weight:700;">
+        Você tem certeza que deseja recomeçar?<br>
+        Seu progresso será perdido.
+      </p>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;">
+        <button id="confirmYes" class="btnPrimary">Sim</button>
+        <button id="confirmNo" class="btnAlt">Não</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="introScreen">
+    <div>
+      <h1>MISSÃO GENTILEZA</h1>
+      <p>
+        <strong>Bem-vindo(a) ao jogo Missão Gentileza!</strong><br>
+        Aqui você vai ver situações que acontecem na escola.<br>
+        Em cada uma, escolha o comportamento que você acha mais ideal.
+        <br><br>
+        Este jogo é para <strong>aprender</strong>, <strong>pensar</strong> e
+        <strong>cuidar das pessoas</strong> 💛
+      </p>
+      <button id="startGameBtn">Jogar</button>
+    </div>
+  </div>
+
+  <div class="game-wrap" role="application" aria-label="Jogo emocional para criança">
+    <section class="scene" aria-labelledby="game-title">
+      <div class="sceneInner">
+        <div class="brand">
+          <div class="title" id="game-title">MISSÃO GENTILEZA</div>
+        </div>
+        <div class="card" aria-live="polite">
+          <div class="situationHead">
+            <div><div class="situationTitle">O que você faria?</div></div>
+            <div class="situIndex" id="situ-number">1 / 10</div>
+          </div>
+          <div id="situation" class="situationText">Carregando...</div>
+          <div id="choices" class="choices" aria-live="polite"></div>
+          <div class="hint-row">
+            <div id="center-feedback" class="feedback" aria-live="polite"></div>
+            <div class="points">Pontos: <span id="score">0</span></div>
+          </div>
+          <div class="actions actions-top">
+            <button id="btnNext" class="btnPrimary" aria-label="Próxima pergunta">Próxima</button>
+            <button id="btnRestart" class="btnAlt" aria-label="Reiniciar jogo">Reiniciar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel" aria-hidden="false">
+      <div class="statCard">
+        <div class="statLabel">Humor 😊 <span style="float:right;font-weight:800" id="humVal">50%</span></div>
+        <div class="barWrap"><div id="humBar" class="bar hum" style="width:50%"></div></div>
+      </div>
+      <div class="statCard">
+        <div class="statLabel">Energia ⚡ <span style="float:right;font-weight:800" id="eneVal">50%</span></div>
+        <div class="barWrap"><div id="eneBar" class="bar ene" style="width:50%"></div></div>
+      </div>
+      <div class="statCard">
+        <div class="statLabel">Empatia ❤️ <span style="float:right;font-weight:800" id="empVal">50%</span></div>
+        <div class="barWrap"><div id="empBar" class="bar emp" style="width:50%"></div></div>
+      </div>
+      <div class="meta meta-center">
+        <div>
+          <div style="font-size:13px;color:#556">Respondidas</div>
+          <div class="big" id="answered">0</div>
+        </div>
+      </div>
+      <div class="footer-note">Feito para crianças 6–10 anos • Aprenda a ajudar e pensar nas outras pessoas</div>
+    </aside>
+  </div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="finalTitle">
+    <div class="modalCard">
+      <h2 id="finalTitle" style="margin:0 0 8px;color: #0f766e;font-weight: 900;letter-spacing: 0.5px;">Placar Final</h2>
+      <div id="finalText"></div>
+      <div class="scoreList">
+        <div class="scoreItem">🎯 Pontos: <span id="finalScore">0</span></div>
+        <div class="scoreItem">😊 Humor: <span id="finalHum">0</span>%</div>
+        <div class="scoreItem">⚡ Energia: <span id="finalEne">0</span>%</div>
+        <div class="scoreItem">❤️ Empatia: <span id="finalEmp">0</span>%</div>
+      </div>
+      <div class="finalActions">
+        <button id="playAgain" class="btnPrimary finalBtn">
+          Jogar novamente
+        </button>
+
+        <button id="closeModal" class="btnAlt finalBtn">
+          Fechar placar
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const SITUATIONS = [
+  {
+    text: "Você vê um colega sendo deixado de fora da brincadeira. O que você faz?",
+    choices: [
+      { txt: "Chamo ele para brincar com a gente", effect:{ hum:+4, ene:-1, emp:+6 }, score:10 },
+      { txt: "Continuo brincando sem chamar", effect:{ hum:+1, ene:0, emp:-3 }, score:3 },
+      { txt: "Fico olhando, mas não faço nada", effect:{ hum:0, ene:0, emp:-2 }, score:4 }
+    ]
+  },
+  {
+    text: "A professora faz uma pergunta e você não sabe a resposta. O que você faz?",
+    choices: [
+      { txt:"Digo que não sei e tento aprender", effect:{ hum:+2, ene:0, emp:+1 }, score:9 },
+      { txt:"Fico em silêncio e abaixo a cabeça", effect:{ hum:-1, ene:+1, emp:0 }, score:3 },
+      { txt:"Peço ajuda depois da aula", effect:{ hum:+1, ene:0, emp:+2 }, score:7 }
+    ]
+  },
+  {
+    text: "Um amigo quer brincar com algo que é seu. O que você faz?",
+    choices: [
+      { txt:"Combinamos de dividir por um tempo", effect:{ hum:+4, ene:0, emp:+4 }, score:10 },
+      { txt:"Digo não e guardo o brinquedo", effect:{ hum:-2, ene:0, emp:-2 }, score:2 },
+      { txt:"Empresto e fico por perto", effect:{ hum:+2, ene:0, emp:+2 }, score:8 }
+    ]
+  },
+  {
+    text: "Você esqueceu de fazer a atividade de casa. O que você faz?",
+    choices: [
+      { txt:"Conto a verdade para o professor", effect:{ hum:+2, ene:-1, emp:+2 }, score:9 },
+      { txt:"Digo que fiz, mas esqueci em casa", effect:{ hum:-3, ene:0, emp:-2 }, score:1 },
+      { txt:"Peço ajuda para fazer depois", effect:{ hum:+1, ene:-1, emp:+3 }, score:8 }
+    ]
+  },
+  {
+    text: "Um colega novo chega na turma e parece tímido. O que você faz?",
+    choices: [
+      { txt:"Dou boas-vindas e convido para sentar perto", effect:{ hum:+4, ene:-1, emp:+5 }, score:10 },
+      { txt:"Fico só com meus amigos", effect:{ hum:+1, ene:0, emp:-3 }, score:3 },
+      { txt:"Peço para um amigo chamar ele também", effect:{ hum:+2, ene:0, emp:+3 }, score:8 }
+    ]
+  },
+  {
+    text: "Durante a atividade, você percebe que um colega errou e ficou chateado. O que você faz?",
+    choices: [
+      { txt: "Digo que tudo bem errar e tento ajudar", effect:{ hum:+3, ene:-1, emp:+4 }, score:9 },
+      { txt: "Não falo nada e continuo a minha atividade", effect:{ hum:-1, ene:0, emp:0 }, score:3 },
+      { txt: "Sorrio e digo que ele pode tentar de novo", effect:{ hum:+2, ene:0, emp:+2 }, score:7 }
+    ]
+  },
+  {
+    text: "Dois colegas começam a discutir perto de você. O que você faz?",
+    choices: [
+      { txt:"Peço para conversarem com calma", effect:{ hum:+2, ene:-1, emp:+4 }, score:10 },
+      { txt:"Dou risada da situação", effect:{ hum:0, ene:0, emp:-3 }, score:1 },
+      { txt:"Chamo um adulto para ajudar", effect:{ hum:+1, ene:0, emp:+3 }, score:8 }
+    ]
+  },
+  {
+    text: "Durante a aula, um colega começa a falar alto e atrapalhar todo mundo. O que você faz?",
+    choices: [
+      { txt: "Peço com calma para ele falar mais baixo", effect:{ hum:+3, ene:0, emp:+3 }, score:9 },
+      { txt: "Começo a conversar também", effect:{ hum:-1, ene:+1, emp:-2 }, score:2 },
+      { txt: "Levanto a mão e aviso a professora", effect:{ hum:+1, ene:0, emp:+2 }, score:7 }
+    ]
+  },
+  {
+    text: "Um amigo está triste porque perdeu um jogo. O que você faz?",
+    choices: [
+      { txt: "Converso e digo que faz parte perder", effect:{ hum:+4, ene:0, emp:+5 }, score:10 },
+      { txt: "Digo que ele perdeu porque jogou mal", effect:{ hum:-3, ene:0, emp:-4 }, score:0 },
+      { txt: "Fico perto, mas não digo nada", effect:{ hum:+1, ene:0, emp:+1 }, score:7 }
+    ]
+  },
+  {
+    text: "Você termina a atividade antes dos outros colegas. O que você faz?",
+    choices: [
+      { txt: "Espero em silêncio ou ajudo quem pedir", effect:{ hum:+3, ene:0, emp:+4 }, score:9 },
+      { txt: "Começo a fazer bagunça", effect:{ hum:-2, ene:+1, emp:-3 }, score:1 },
+      { txt: "Fico sentada enquanto espero", effect:{ hum:+2, ene:0, emp:+2 }, score:8 }
+    ]
+  }
+];
+
+let state = { index: 0, score: 0, answered: 0, hum: 50, ene: 50, emp: 50, locked: false };
+
+const situationEl = document.getElementById('situation');
+const choicesEl = document.getElementById('choices');
+const situNumberEl = document.getElementById('situ-number');
+const feedbackEl = document.getElementById('center-feedback');
+const btnNext = document.getElementById('btnNext');
+const btnRestart = document.getElementById('btnRestart');
+const answeredEl = document.getElementById('answered');
+const scoreEl = document.getElementById('score');
+const humBar = document.getElementById('humBar');
+const eneBar = document.getElementById('eneBar');
+const empBar = document.getElementById('empBar');
+const humVal = document.getElementById('humVal');
+const eneVal = document.getElementById('eneVal');
+const empVal = document.getElementById('empVal');
+const modal = document.getElementById('modal');
+const finalText = document.getElementById('finalText');
+const finalScore = document.getElementById('finalScore');
+const finalHum = document.getElementById('finalHum');
+const finalEne = document.getElementById('finalEne');
+const finalEmp = document.getElementById('finalEmp');
+const confirmModal = document.getElementById('confirmModal');
+const confirmYes = document.getElementById('confirmYes');
+const confirmNo = document.getElementById('confirmNo');
+const playAgain = document.getElementById('playAgain');
+const closeModal = document.getElementById('closeModal');
+
+function clamp(v){ return Math.max(0, Math.min(100, Math.round(v))); }
+
+function updateBars(){
+  humBar.style.width = state.hum + '%';
+  eneBar.style.width = state.ene + '%';
+  empBar.style.width = state.emp + '%';
+  humVal.textContent = state.hum + '%';
+  eneVal.textContent = state.ene + '%';
+  empVal.textContent = state.emp + '%';
+}
+
+function renderSituation(){
+  const s = SITUATIONS[state.index];
+  situNumberEl.textContent = `${state.index + 1} / ${SITUATIONS.length}`;
+  situationEl.textContent = s.text;
+  choicesEl.innerHTML = '';
+  feedbackEl.textContent = '';
+
+  s.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choiceBtn';
+    btn.innerHTML = `<span style="flex:1">${c.txt}</span>`;
+    btn.disabled = false;
+    btn.addEventListener('click', () => onChoose(i, btn));
+    choicesEl.appendChild(btn);
+  });
+
+  state.locked = false;
+  btnNext.disabled = true;
+}
+
+function onChoose(i, btnEl){
+  const situ = SITUATIONS[state.index];
+  const choice = situ.choices[i];
+  state.locked = true;
+
+  state.hum = clamp(state.hum + choice.effect.hum);
+  state.ene = clamp(state.ene + choice.effect.ene);
+  state.emp = clamp(state.emp + choice.effect.emp);
+  updateBars();
+
+  state.score += choice.score;
+  scoreEl.textContent = state.score;
+  state.answered += 1;
+  answeredEl.textContent = state.answered;
+
+  document.querySelectorAll(".choiceBtn").forEach(b=>{
+    b.disabled = true;
+    b.style.opacity = "0.6";
+  });
+
+  let highlightColor = "";
+  let labelText = "";
+
+  if (state.index === 0) {
+    // REGRA ESPECIAL SÓ PARA A PRIMEIRA PERGUNTA
+    if (choice.score >= 9) {
+      highlightColor = "#4CAF50"; // verde
+      labelText = "Excelente! Você fez uma escolha gentil 🌟";
+    } else if (choice.score >= 4) {
+      highlightColor = "#FFEB3B"; // amarelo suave
+      labelText = "Boa tentativa! Dá para pensar em algo ainda melhor 🙂";
+    } else {
+      highlightColor = "#F44336"; // vermelho
+      labelText = "Essa escolha não ajudou muito. Vamos tentar melhor na próxima 💛";
+    }
+  } else {
+    // REGRA NORMAL (todas as outras perguntas)
+    if (choice.score >= 9) {
+      highlightColor = "#4CAF50"; 
+      labelText = "Excelente! Você fez uma escolha gentil 🌟";
+    } else if (choice.score >= 7) {
+      highlightColor = "#FFEB3B"; 
+      labelText = "Boa tentativa! Dá para pensar em algo ainda melhor 🙂";
+    } else {
+      highlightColor = "#F44336"; 
+      labelText = "Essa escolha não ajudou muito. Vamos tentar melhor na próxima 💛";
+    }
+  }
+
+  btnEl.style.opacity = "1";
+  btnEl.style.backgroundColor = highlightColor;
+  btnEl.style.color = "#000";
+  feedbackEl.textContent = labelText;
+  btnNext.disabled = false;
+}
+
+function next(){
+  state.index += 1;
+  if (state.index >= SITUATIONS.length){
+    showResults();
+    return;
+  }
+  renderSituation();
+}
+
+function restart(){
+  state = { index:0, score:0, answered:0, hum:50, ene:50, emp:50, locked:false };
+  updateBars();
+  scoreEl.textContent = 0;
+  answeredEl.textContent = 0;
+  renderSituation();
+  modal.style.display = 'none';
+}
+
+function showResults(){
+  const avg = (state.hum + state.ene + state.emp) / 3;
+  let msg = "";
+  if (avg >= 65) {
+    msg = "🌟 Uau! Você foi um verdadeiro amigo gentil! Suas escolhas ajudaram muita gente! Continue espalhando gentileza!";
+  } else if (avg >= 45) {
+    msg = "😊 Muito bem! Você está aprendendo a fazer boas escolhas. Continue praticando, você está no caminho certo!";
+  } else {
+    msg = "💛 Tudo bem! Errar faz parte do aprendizado. Vamos tentar de novo e pensar em ajudar mais as pessoas!";
+  }
+  finalText.textContent = msg;
+  finalScore.textContent = state.score;
+  finalHum.textContent = state.hum;
+  finalEne.textContent = state.ene;
+  finalEmp.textContent = state.emp;
+  modal.style.display = 'flex';
+}
+
+btnNext.addEventListener('click', next);
+btnRestart.addEventListener('click', () => { confirmModal.style.display = 'flex'; });
+confirmYes.addEventListener('click', () => { restart(); confirmModal.style.display = 'none'; });
+confirmNo.addEventListener('click', () => { confirmModal.style.display = 'none'; });
+playAgain.addEventListener('click', () => { restart(); modal.style.display = 'none'; });
+closeModal.addEventListener('click', () => { modal.style.display = 'none'; });
+
+updateBars();
+renderSituation();
+
+const introScreen = document.getElementById("introScreen");
+const startGameBtn = document.getElementById("startGameBtn");
+const gameWrap = document.querySelector(".game-wrap");
+
+if (introScreen && startGameBtn && gameWrap) {
+  gameWrap.style.display = "none";
+  startGameBtn.addEventListener("click", () => {
+    introScreen.style.display = "none";
+    gameWrap.style.display = "grid";
+  });
+}
+</script>
+</body>
+</html>

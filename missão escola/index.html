@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missões Educativas</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <style>
+        /* --- ESTILOS GERAIS --- */
+        :root {
+            --primary: #4a90e2;
+            --secondary: #2c3e50;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #333;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 1s ease;
+            padding: 20px;
+        }
+
+        .game-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 750px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 4px solid rgba(255,255,255,0.7);
+            transition: all 0.5s ease;
+        }
+
+        /* --- CABEÇALHO --- */
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 20px;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .mission-badge {
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            opacity: 0.9;
+        }
+
+        /* --- NOVO H1 SOLICITADO --- */
+        h1#mission-title {
+            font-size: 2.8em;
+            margin: 10px 0;
+            color: var(--secondary);
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 0px rgba(255,255,255,1);
+            line-height: 1.1;
+        }
+
+        h2#question-counter {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 5px 0 0 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- PERGUNTA E OPÇÕES --- */
+        .question-area {
+            font-size: 1.5em;
+            color: var(--text-color);
+            margin: 30px 0 40px 0;
+            font-weight: 600;
+            line-height: 1.4;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .option-btn {
+            background-color: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 18px;
+            padding: 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            color: #555;
+            font-weight: bold;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 0 #dcdcdc;
+            position: relative;
+            top: 0;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 9px 0 rgba(0,0,0,0.1);
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #dcdcdc;
+            top: 4px;
+        }
+
+        /* Feedback Visual */
+        .option-btn.correct {
+            background-color: #2ecc71;
+            border-color: #27ae60;
+            color: white;
+            box-shadow: 0 5px 0 #219150;
+        }
+
+        .option-btn.wrong {
+            background-color: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+            box-shadow: 0 5px 0 #962c22;
+        }
+
+        /* Botão Próximo */
+        #next-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 40px;
+            display: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: bounceIn 0.6s;
+            transition: transform 0.2s;
+        }
+
+        #next-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- MODAL DE TRANSIÇÃO --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.98);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 30px;
+            z-index: 10;
+            animation: fadeIn 0.4s;
+        }
+
+        .modal-content h1 {
+            color: var(--primary);
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .modal-content p {
+            font-size: 1.4em;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .continue-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.4em;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .continue-btn:hover { transform: scale(1.1); }
+
+        /* --- TELA FINAL --- */
+        .end-screen { display: none; }
+        .big-score { font-size: 5em; color: var(--primary); font-weight: 900; display: block; margin: 30px 0; text-shadow: 2px 2px 0 #eee; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- TEMAS DAS MATÉRIAS --- */
+        
+        /* 1. Ciências: Verde */
+        body.theme-ciencias {
+            --primary: #4caf50;
+            --secondary: #2e7d32;
+            --bg-gradient: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+        }
+
+        /* 2. Matemática: Azul Técnico */
+        body.theme-matematica {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --bg-gradient: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+        }
+        body.theme-matematica .game-container { background-image: radial-gradient(#3498db 1px, transparent 1px); background-size: 20px 20px; }
+
+        /* 3. Geografia: Ciano/Mundo */
+        body.theme-geografia {
+            --primary: #00cec9;
+            --secondary: #2d3436;
+            --bg-gradient: linear-gradient(to right, #89f7fe 0%, #66a6ff 100%);
+        }
+
+        /* 4. História: Dourado/Sépia */
+        body.theme-historia {
+            --primary: #d35400;
+            --secondary: #8e44ad;
+            --bg-gradient: linear-gradient(to right, #fce38a 0%, #f38181 100%);
+        }
+        
+        /* 5. Português: Rosa/Vermelho */
+        body.theme-portugues {
+            --primary: #e84393;
+            --secondary: #2d3436;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Mantendo neutro para destacar o rosa */
+        }
+
+        /* 6. Ed. Física: Laranja Energético */
+        body.theme-edfisica {
+            --primary: #ff7675;
+            --secondary: #d63031;
+            --bg-gradient: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            h1#mission-title { font-size: 2em; }
+            .game-container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div id="transition-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div style="font-size: 5em; margin-bottom: 20px;">🎉</div>
+                <h1 id="modal-title">Fase Concluída!</h1>
+                <p id="modal-desc">Você mandou bem demais.</p>
+                <button class="continue-btn" onclick="startNextMission()">Ir para <span id="next-mission-name">...</span> ➜</button>
+            </div>
+        </div>
+
+        <div id="game-screen">
+            <div class="header">
+                <div class="badge-container">
+                    <span id="phase-badge" class="mission-badge">Fase 1</span>
+                </div>
+                <h1 id="mission-title">MATÉRIA AQUI</h1>
+                
+                <h2 id="question-counter">Questão 1/5</h2>
+            </div>
+
+            <div class="question-area">
+                <p id="question-text">Carregando pergunta...</p>
+            </div>
+
+            <div class="options-grid" id="options-container">
+                </div>
+
+            <div id="feedback-msg" style="height: 25px; margin-top: 15px; font-weight: bold; font-size: 1.2em;"></div>
+            <button id="next-btn" onclick="nextQuestion()">PRÓXIMA ➜</button>
+        </div>
+
+        <div id="end-screen" class="end-screen">
+            <h1>🏆 Fim da Jornada!</h1>
+            <p style="font-size: 1.5em;">Você completou todas as missões.</p>
+            <span class="big-score"><span id="final-score">0</span>/30</span>
+            <p id="final-message">...</p>
+            <button class="continue-btn" onclick="initGame()">Jogar Novamente ↺</button>
+        </div>
+    </div>
+
+    <script>
+        // --- BANCO DE DADOS ---
+        const missions = [
+            {
+                subject: "Ciências 🧬",
+                themeClass: "theme-ciencias",
+                questions: [
+                    { q: "O que as plantas precisam para fazer fotossíntese?", opts: ["Apenas Água", "Luz Solar e Água", "Suco de Laranja", "Escuridão"], a: 1 },
+                    { q: "Qual é o maior órgão do corpo humano?", opts: ["Coração", "Cérebro", "Pele", "Pulmão"], a: 2 },
+                    { q: "A água ferve a qual temperatura (nível do mar)?", opts: ["50°C", "90°C", "100°C", "200°C"], a: 2 },
+                    { q: "Qual animal é um mamífero voador?", opts: ["Águia", "Morcego", "Pinguim", "Mosca"], a: 1 },
+                    { q: "O que recobre o corpo dos peixes?", opts: ["Pelos", "Penas", "Escamas", "Lã"], a: 2 }
+                ]
+            },
+            {
+                subject: "Matemática 🔢",
+                themeClass: "theme-matematica",
+                questions: [
+                    { q: "Quanto é uma dúzia?", opts: ["6", "10", "12", "24"], a: 2 },
+                    { q: "Qual o dobro de 55?", opts: ["100", "101", "110", "155"], a: 2 },
+                    { q: "Tenho 10 maçãs e 4 amigos, eu dou para cada amigo 2 maçãs, quantas maçãs sobram?", opts: ["4", "5", "8", "2"], a: 3 },
+                    { q: "Qual forma parece uma bola?", opts: ["Quadrado", "Cubo", "Esfera", "Pirâmide"], a: 2 },
+                    { q: "10 dividido por 2 é igual a?", opts: ["2", "5", "10", "20"], a: 1 }
+                ]
+            },
+            {
+                subject: "Geografia 🌎",
+                themeClass: "theme-geografia",
+                questions: [
+                    { q: "O Brasil fica em qual hemisfério (maior parte)?", opts: ["Norte", "Sul", "Leste", "Nenhum"], a: 1 },
+                    { q: "Qual oceano banha o Brasil?", opts: ["Pacífico", "Atlântico", "Índico", "Ártico"], a: 1 },
+                    { q: "Qual é o estado famoso pelo Pão de Açúcar?", opts: ["Bahia", "São Paulo", "Rio de Janeiro", "Amazonas"], a: 2 },
+                    { q: "A bússola aponta sempre para o...", opts: ["Norte", "Sul", "Leste", "Oeste"], a: 0 },
+                    { q: "O que é um arquipélago?", opts: ["Uma montanha", "Um conjunto de ilhas", "Um rio grande", "Um vulcão"], a: 1 }
+                ]
+            },
+            {
+                subject: "História 📜",
+                themeClass: "theme-historia",
+                questions: [
+                    { q: "Qual transporte os portugueses usaram em 1500?", opts: ["Avião", "Caravela", "Trem", "Submarino"], a: 1 },
+                    { q: "Quem assinou a Lei Áurea?", opts: ["Princesa Isabel", "Dom Pedro I", "Rainha Elizabeth", "Tiradentes"], a: 0 },
+                    { q: "Qual país descobriu a América?", opts: ["Portugal", "Espanha", "Inglaterra", "França"], a: 1 },
+                    { q: "Zumbi dos Palmares lutava contra o quê?", opts: ["A chuva", "A escravidão", "Os índios", "O rei"], a: 1 },
+                    { q: "O que comemoramos em 7 de setembro?", opts: ["Natal", "Carnaval", "Independência", "Páscoa"], a: 2 }
+                ]
+            },
+            {
+                subject: "Português 🔤",
+                themeClass: "theme-portugues",
+                questions: [
+                    { q: "Quantas sílabas tem a palavra 'BANANA'?", opts: ["2", "3", "4", "1"], a: 1 },
+                    { q: "Qual é o feminino de 'Cavalo'?", opts: ["Cavala", "Égua", "Mula", "Cabra"], a: 1 },
+                    { q: "A palavra 'Feliz' é um...", opts: ["Verbo", "Adjetivo", "Substantivo", "Pronome"], a: 1 },
+                    { q: "Qual sinal usamos para fazer uma pergunta?", opts: ["!", ".", "?", ","], a: 2 },
+                    { q: "O que rima com 'Japão'?", opts: ["Mesa", "Pão", "Carro", "Céu"], a: 1 }
+                ]
+            },
+            {
+                subject: "Educação Física ⚽",
+                themeClass: "theme-edfisica",
+                questions: [
+                    { q: "No vôlei, quantos toques o time pode dar na bola?", opts: ["1", "2", "3", "Infinitos"], a: 2 },
+                    { q: "Qual esporte usa raquete?", opts: ["Futebol", "Basquete", "Tênis", "Natação"], a: 2 },
+                    { q: "Onde o nadador compete?", opts: ["No campo", "Na quadra", "Na piscina", "Na pista"], a: 2 },
+                    { q: "Chutar a bola no gol é o objetivo de qual jogo?", opts: ["Basquete", "Vôlei", "Handebol", "Futebol"], a: 3 },
+                    { q: "O que significa 'sedentarismo'?", opts: ["Comer muito", "Fazer muito exercício", "Não fazer exercício", "Beber água"], a: 2 }
+                ]
+            }
+        ];
+
+        // Variáveis
+        let currentMissionIndex = 0;
+        let currentQuestionIndex = 0;
+        let totalScore = 0;
+        let answered = false;
+        let totalQuestions = 0;
+        missions.forEach(m => totalQuestions += m.questions.length);
+
+        // Elementos UI
+        const ui = {
+            gameScreen: document.getElementById('game-screen'),
+            endScreen: document.getElementById('end-screen'),
+            modal: document.getElementById('transition-modal'),
+            modalTitle: document.getElementById('modal-title'),
+            modalDesc: document.getElementById('modal-desc'),
+            nextMissionName: document.getElementById('next-mission-name'),
+            
+            phaseBadge: document.getElementById('phase-badge'), // Badge agora é Fase
+            missionTitle: document.getElementById('mission-title'), // Novo H1
+            questionCounter: document.getElementById('question-counter'),
+            
+            questionText: document.getElementById('question-text'),
+            optionsContainer: document.getElementById('options-container'),
+            nextBtn: document.getElementById('next-btn'),
+            feedbackMsg: document.getElementById('feedback-msg'),
+            finalScore: document.getElementById('final-score'),
+            finalMessage: document.getElementById('final-message')
+        };
+
+        function initGame() {
+            currentMissionIndex = 0;
+            currentQuestionIndex = 0;
+            totalScore = 0;
+            ui.endScreen.style.display = 'none';
+            ui.gameScreen.style.display = 'block';
+            
+            applyTheme();
+            loadQuestion();
+        }
+
+        function applyTheme() {
+            const theme = missions[currentMissionIndex].themeClass;
+            document.body.className = theme; 
+        }
+
+        function loadQuestion() {
+            answered = false;
+            ui.modal.style.display = 'none';
+            ui.gameScreen.style.display = 'block';
+            ui.nextBtn.style.display = 'none';
+            ui.feedbackMsg.textContent = '';
+
+            const mission = missions[currentMissionIndex];
+            const qData = mission.questions[currentQuestionIndex];
+
+            // --- ATUALIZAÇÃO DO CABEÇALHO ---
+            ui.phaseBadge.textContent = `Fase ${currentMissionIndex + 1}`;
+            ui.missionTitle.textContent = mission.subject; // Aqui vai o texto do H1
+            ui.missionTitle.style.color = "var(--secondary)"; // Garante contraste
+            ui.questionCounter.textContent = `Questão ${currentQuestionIndex + 1}/${mission.questions.length}`;
+            
+            // Pergunta
+            ui.questionText.textContent = qData.q;
+
+            // Botões
+            ui.optionsContainer.innerHTML = '';
+            qData.opts.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(index, btn, qData.a);
+                ui.optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btn, correctIndex) {
+            if (answered) return;
+            answered = true;
+
+            const allBtns = ui.optionsContainer.getElementsByClassName('option-btn');
+
+            if (selectedIndex === correctIndex) {
+                btn.classList.add('correct');
+                ui.feedbackMsg.textContent = "✨ ISSO AÍ! MANDOU BEM!";
+                ui.feedbackMsg.style.color = "var(--secondary)"; 
+                totalScore++;
+            } else {
+                btn.classList.add('wrong');
+                allBtns[correctIndex].classList.add('correct');
+                ui.feedbackMsg.textContent = "❌ NÃO FOI DESSA VEZ...";
+                ui.feedbackMsg.style.color = "#e74c3c";
+            }
+            ui.nextBtn.style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const mission = missions[currentMissionIndex];
+
+            if (currentQuestionIndex < mission.questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                if (currentMissionIndex < missions.length - 1) {
+                    showTransitionModal();
+                } else {
+                    endGame();
+                }
+            }
+        }
+
+        function showTransitionModal() {
+            const nextMission = missions[currentMissionIndex + 1];
+            ui.gameScreen.style.display = 'none';
+            ui.modal.style.display = 'flex';
+            
+            ui.modalTitle.textContent = `${missions[currentMissionIndex].subject} COMPLETE!`;
+            ui.modalDesc.textContent = "Prepare-se para o próximo desafio.";
+            ui.nextMissionName.textContent = nextMission.subject;
+        }
+
+        function startNextMission() {
+            currentMissionIndex++;
+            currentQuestionIndex = 0;
+            applyTheme();
+            loadQuestion();
+        }
+
+        function endGame() {
+            ui.gameScreen.style.display = 'none';
+            ui.modal.style.display = 'none';
+            ui.endScreen.style.display = 'block';
+            document.body.className = ''; 
+            
+            ui.finalScore.textContent = totalScore;
+
+            if (totalScore === totalQuestions) {
+                ui.finalMessage.textContent = "🥇 LENDÁRIO! VOCÊ ACERTOU TUDO!";
+            } else if (totalScore > 20) {
+                ui.finalMessage.textContent = "🥈 EXCELENTE TRABALHO!";
+            } else {
+                ui.finalMessage.textContent = "📚 BOM TREINO! CONTINUE ESTUDANDO.";
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+</html>

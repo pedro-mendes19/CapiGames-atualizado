@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Culinária Regional</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(180deg, #E8F5E9, #C8E6C9);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            text-transform: uppercase;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .game-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px 10px;
+        }
+
+        h1 {
+            display: none;
+            margin: 1vh auto 1vh auto;
+            padding: 1vh 4vw;
+            font-size: 35px;
+            width: fit-content;
+            max-width: 90%;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-align: center;
+            color: #3fa846;
+            -webkit-text-stroke: 2px #1B5E20;
+            background: rgba(255, 255, 255, 0.90);
+            border: 0.5vh solid #FFD700;
+            border-radius: 50px;
+            flex-shrink: 0;
+            box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+        }
+
+        #intro {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.623), rgba(255, 255, 255, 0.623)), url('img/fundointro.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .intro-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            padding: 5vh 5vw;
+            border-radius: 35px;
+            max-width: 1088px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+            animation: fadeUp .8s ease;
+            border: 4px solid #FFD700;
+            box-shadow:
+                0 0 0 5px #ffffff,
+                0 0 0 9px #3fa846,
+                0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .intro-card h2 {
+            font-size: clamp(28px, 5vh, 48px);
+            margin-bottom: 2vh;
+            font-weight: 900;
+            color: #3fa846;
+            -webkit-text-stroke: 2px #1B5E20;
+        }
+
+        .intro-card p {
+            font-size: clamp(16px, 2.5vh, 24px);
+            line-height: 1.5;
+            color: #101f0d;
+            font-weight: 700;
+        }
+
+        .btn-jogar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 4vh auto 0 auto;
+            background: linear-gradient(180deg, #FFEB3B, #FBC02D);
+            color: #1B5E20;
+            font-size: clamp(20px, 3vh, 28px);
+            padding: 2vh 6vw;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 900;
+            box-shadow: 0 0.8vh 0 #f57f17ce;
+            animation: pulse 1.5s infinite;
+            text-transform: uppercase;
+            transition: transform 0.1s;
+            border: 2px solid #FFF;
+        }
+
+        .btn-jogar:hover {
+            transform: scale(1.05);
+            background: linear-gradient(180deg, #FFF176, #FDD835);
+        }
+
+        .btn-jogar:active {
+            transform: translateY(4px);
+            box-shadow: 0 0.4vh 0 #F57F17;
+        }
+
+        #container {
+            width: 100%;
+            max-width: 1050px;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1vh;
+            margin-bottom: 0;
+            gap: 1vh;
+            padding-bottom: 10px;
+        }
+
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 3vh;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 900;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            cursor: pointer;
+            background: #DCEDC8;
+            color: #33691E;
+            box-shadow: 0 0.5vh 0 #8BC34A;
+            font-size: clamp(12px, 2.5vw, 16px);
+            flex-grow: 1;
+            max-width: 45%;
+            transition: transform 0.1s;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .tab-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 0.2vh 0 #8BC34A;
+        }
+
+        .tab-btn.active {
+            background: #4CAF50;
+            color: white;
+            box-shadow: 0 0.5vh 0 #1B5E20;
+        }
+
+        .countries-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 0;
+            padding-top: 30px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 50px;
+        }
+
+        .country-card {
+            background: white;
+            border-radius: 20px;
+            margin: 0;
+            width: 155px;
+            padding: 15px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            border: 3px solid #AED581;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 200px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .country-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(51, 105, 30, 0.2);
+            border-color: #3fa846;
+            background: #F1F8E9;
+        }
+
+        .clothing-preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .clothing-preview img {
+            width: auto;
+            max-width: 100px;
+            max-height: 90px;
+            filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s;
+        }
+        
+        .country-card:hover .clothing-preview img {
+            transform: scale(1.15);
+        }
+
+        .country-description {
+            font-size: 12px;
+            color: #33691E;
+            margin-top: auto;
+            width: 100%;
+        }
+
+        .ver-ingredientes {
+            background: #FFD700;
+            color: #1B5E20;
+            border-radius: 50px;
+            padding: 5px 10px;
+            font-size: 11px;
+            margin-top: 5px;
+            font-weight: 900;
+            border: none;
+            display: inline-block;
+        }
+
+        .bloco-imagem {
+            background: white;
+            padding: 1.5vh;
+            border-radius: 35px;
+            box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 95%;
+            max-width: 450px;
+            border: 5px solid #A5D6A7;
+            margin-bottom: 3vh;
+        }
+
+        .label-progresso {
+            margin-bottom: 1vh;
+            background: #E8F5E9;
+            padding: 0.5vh 1.5vw;
+            border-radius: 15px;
+            font-size: clamp(14px, 2vh, 16px);
+            font-weight: 700;
+            color: #2E7D32;
+        }
+
+        #imagemPergunta {
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            max-height: 20vh;
+            display: block;
+            border-radius: 20px;
+            object-fit: contain;
+            border: 2px solid #E8F5E9;
+        }
+
+        #nomeAlimento {
+            margin-top: 1.5vh;
+            font-size: clamp(22px, 3vh, 32px);
+            color: #E65100;
+            font-weight: 900;
+            text-align: center;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        #pergunta {
+            width: 95%;
+            max-width: 600px;
+            font-size: clamp(15px, 2.2vh, 20px);
+            font-weight: 800;
+            text-align: center;
+            color: #101f0d;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.952);
+            padding: 1vh 2vw;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .opcoes {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            flex-wrap: wrap;
+            margin-top: 1vh;
+        }
+
+        .opcao {
+            background: linear-gradient(180deg, #ffffff, #f6faf2);
+            border: 3px solid #FFEB3B;
+            border-radius: 25px;
+            padding: 1vh 1vw;
+            cursor: pointer;
+            min-width: 100px;
+            width: 30%;
+            max-width: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0.7vh 0 #FBC02D;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .opcao:hover {
+            transform: translateY(-2px);
+        }
+
+        .opcao:active {
+            transform: translateY(0.4vh);
+            box-shadow: 0 0.2vh 0 #FBC02D;
+        }
+
+        .opcao img {
+            width: 35px;
+            height: auto;
+            margin-bottom: 0.5vh;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+        }
+
+        .opcao p {
+            font-size: clamp(11px, 1.8vh, 16px);
+            font-weight: 800;
+            margin: 0;
+            color: #33691E;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        #resultado {
+            margin: 1vh auto;
+            width: 95%;
+            max-width: 600px;
+            min-height: 50px;
+            height: auto;
+            padding: 5px 20px;
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: clamp(14px, 2.2vh, 20px);
+            font-weight: 800;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        #score {
+            font-size: clamp(14px, 2vh, 18px);
+            font-weight: 700;
+            color: #101f0d;
+            background: rgba(255, 255, 255, 0.952);
+            padding: 0.8vh 2.5vw;
+            border-radius: 50px;
+            margin-top: 1vh;
+        }
+
+        #painelFinal {
+            display: none;
+            max-width: 90%;
+            width: 600px;
+            padding: 5vh 4vw;
+            background-color: #ffffff;
+            border-radius: 40px;
+            text-align: center;
+            animation: fadeUp .6s ease;
+            border: 4px solid #FFD700;
+            box-shadow:
+                0 0 0 5px #ffffff,
+                0 0 0 9px #3fa846,
+                0 15px 35px rgba(0, 0, 0, 0.2);
+            margin: auto;
+        }
+
+        #painelFinal h2 {
+            font-size: clamp(32px, 5vh, 48px);
+            margin-bottom: 1vh;
+            color: #E65100;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        #resumoFinal {
+            font-size: clamp(18px, 2.5vh, 22px);
+            color: #3E2723;
+            margin-bottom: 3vh;
+        }
+
+        .totais {
+            display: flex;
+            justify-content: center;
+            gap: 5vw;
+            margin: 3vh 0 4vh 0;
+            background: rgb(245, 245, 242);
+            padding: 2vh;
+            border-radius: 25px;
+        }
+
+        .acertos,
+        .erros {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: clamp(16px, 2.2vh, 20px);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .acertos {
+            color: #2E7D32;
+        }
+
+        .erros {
+            color: #C62828;
+        }
+
+        .totais b {
+            font-size: clamp(40px, 6vh, 52px);
+            line-height: 1.1;
+            margin-top: 0.5vh;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        #mensagemFinal {
+            font-size: clamp(18px, 2.5vh, 24px);
+            font-weight: bold;
+            color: #BF360C;
+            margin-bottom: 4vh;
+        }
+
+        .botoes-finais {
+            display: flex;
+            justify-content: center;
+            gap: 2vw;
+            flex-wrap: wrap;
+        }
+
+        .btn-reiniciar,
+        .btn-sair {
+            padding: 1.5vh 3vw;
+            font-size: clamp(16px, 2.2vh, 20px);
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: 800;
+            color: white;
+            text-transform: uppercase;
+            transition: all 0.1s ease;
+            min-width: 150px;
+        }
+
+        .btn-reiniciar {
+            background: linear-gradient(180deg, #42A5F5, #1976D2);
+            box-shadow: 0 0.6vh 0 #0D47A1;
+        }
+
+        .btn-reiniciar:active {
+            transform: translateY(0.4vh);
+            box-shadow: 0 0.2vh 0 #0D47A1;
+        }
+
+        .btn-sair {
+            background: linear-gradient(180deg, #FFA726, #F57C00);
+            box-shadow: 0 0.6vh 0 #E65100;
+        }
+
+        .btn-sair:active {
+            transform: translateY(0.4vh);
+            box-shadow: 0 0.2vh 0 #E65100;
+        }
+
+        #modalOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: #F1F8E9;
+            border: 5px solid #FFD700;
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .modal-box img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.2));
+        }
+
+        .modal-box h2 {
+            color: #2E7D32;
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        .modal-box h3 {
+            color: #5D4037;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .modal-box p {
+            color: #3E2723;
+            font-size: 18px;
+            line-height: 1.4;
+            font-weight: bold;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .btn-fechar-modal {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #b71c1c;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        .btn-fechar-modal:hover {
+            background: #ef5350;
+        }
+
+        .btn-fechar-modal:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #b71c1c;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1) }
+            50% { transform: scale(1.05) }
+            100% { transform: scale(1) }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(3vh) }
+            to { opacity: 1; transform: translateY(0) }
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.5) }
+            to { opacity: 1; transform: scale(1) }
+        }
+
+        @media (max-width: 600px) {
+            .opcao { width: 45%; }
+            .botoes-finais { flex-direction: column; align-items: center; gap: 1.5vh; }
+            .btn-reiniciar, .btn-sair { width: 80%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <h1>CULINÁRIA BRASILEIRA</h1>
+
+        <div id="intro">
+            <div class="intro-card">
+                <h2>CULINÁRIA BRASILEIRA</h2>
+                <p>
+                    Você conhece a culinária dos estados?<br>
+                    Veja o prato típico e clique na bandeira do estado correto.<br><br>
+                    São 10 pratos para testar seu conhecimento.
+                </p>
+                <button class="btn-jogar" onclick="iniciarJogo()">▶ Jogar</button>
+            </div>
+        </div>
+
+        <div id="container" style="display:none;">
+
+            <div class="tab-navigation">
+                <button id="btnQuiz" class="tab-btn active" onclick="mostrarAba('quiz')">
+                    QUIZ
+                </button>
+                <button id="btnExplorar" class="tab-btn" onclick="mostrarAba('explorar')">
+                    CURIOSIDADES
+                </button>
+            </div>
+
+            <div id="explorarCulinaria" style="display:none;">
+                <div style="text-align: center; color: #2E7D32; font-weight: bold; margin-bottom: 15px; margin-top: 30px;">
+                  🔎 Clique nos cards para ver os ingredientes! 🔍
+                </div>
+                <div class="countries-grid" id="gridCuriosidades">
+                    </div>
+            </div>
+
+            <div id="quizCulinaria" style="display:none; flex-direction: column; align-items: center; gap: 2vh; width: 100%;">
+                <div class="bloco-imagem">
+                    <div id="progresso" class="label-progresso">Pergunta 1 de 10</div>
+                    <img id="imagemPergunta" src="" alt="Imagem da comida">
+                    <div id="nomeAlimento">NOME DO PRATO</div>
+                </div>
+
+                <div id="pergunta">DE QUAL ESTADO É ESTE PRATO?</div>
+
+                <div class="opcoes" id="opcoes">
+                </div>
+
+                <div id="resultado"></div>
+                <div id="score">Pontuação: 0</div>
+            </div>
+        </div>
+
+        <div id="painelFinal">
+            <h2>Fim de jogo!</h2>
+            <p id="resumoFinal"></p>
+
+            <div class="totais">
+                <span class="acertos">✔ Acertos: <b id="totalAcertos"></b></span>
+                <span class="erros">✘ Erros: <b id="totalErros"></b></span>
+            </div>
+
+            <p id="mensagemFinal"></p>
+
+            <div class="botoes-finais">
+                <button class="btn-reiniciar" onclick="voltarIntroducao()">🔁 Jogar Novamente</button>
+                <button class="btn-sair" onclick="fecharJogo()">🚪 Sair do Jogo</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="modalOverlay">
+        <div class="modal-box">
+            <img id="modalImg" src="" alt="Comida">
+            <h2 id="modalTitulo">Titulo</h2>
+            <h3>🍽️ Ingredientes Principais:</h3>
+            <p id="modalIngredientes">Lista de ingredientes aqui.</p>
+            <button class="btn-fechar-modal" onclick="fecharModal()">FECHAR</button>
+        </div>
+    </div>
+
+    <script>
+        const perguntas = [
+            {
+                img: "img/feijaotropeiro.png", nome: "FEIJÃO TROPEIRO", correta: "MINAS GERAIS",
+                ingredientes: "Feijão misturado com farinha de mandioca, torresmo, linguiça, ovos, alho, cebola e temperos.",
+                opcoes: [
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" },
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
+                    { nome: "GOIÁS", img: "img/bandeirago.png" }]
+            },
+
+            {
+                img: "img/acaraje.png", nome: "ACARAJÉ", correta: "BAHIA",
+                ingredientes: "Bolinho feito de feijão-fradinho, cebola e sal, frito em azeite de dendê. Recheado com vatapá e camarão.",
+                opcoes: [
+                    { nome: "BAHIA", img: "img/bandeiraba.png" },
+                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
+                    { nome: "CEARÁ", img: "img/bandeirace.png" }]
+            },
+
+            {
+                img: "img/arrozcarreteiro.png", nome: "ARROZ CARRETEIRO", correta: "RIO GRANDE DO SUL",
+                ingredientes: "Arroz cozido com charque (carne seca) picada, refogada em gordura com alho, cebola e cheiro-verde.",
+                opcoes: [
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" },
+                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" },
+                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" }]
+            },
+
+            {
+                img: "img/tacaca.png", nome: "TACACÁ", correta: "PARÁ",
+                ingredientes: "Caldo amarelado (tucupi), goma de tapioca, camarão seco e folhas de jambu (que causam dormência).",
+                opcoes: [
+                    { nome: "AMAZONAS", img: "img/bandeiraam.png" },
+                    { nome: "PARÁ", img: "img/bandeirapa.png" },
+                    { nome: "ACRE", img: "img/bandeiraac.png" }]
+            },
+
+            {
+                img: "img/moquecacapixaba.png", nome: "MOQUECA CAPIXABA", correta: "ESPÍRITO SANTO",
+                ingredientes: "Peixe cozido em panela de barro com tomate, coentro, cebola e urucum. Não leva azeite de dendê nem leite de coco.",
+                opcoes: [
+                    { nome: "RIO DE JANEIRO", img: "img/bandeirarj.png" },
+                    { nome: "BAHIA", img: "img/bandeiraba.png" },
+                    { nome: "ESPÍRITO SANTO", img: "img/bandeiraes.png" }]
+            },
+
+            {
+                img: "img/boloderolo.png", nome: "BOLO DE ROLO", correta: "PERNAMBUCO",
+                ingredientes: "Massa finíssima de pão de ló enrolada com muitas camadas de goiabada derretida. Patrimônio cultural.",
+                opcoes: [
+                    { nome: "ALAGOAS", img: "img/bandeiraal.png" },
+                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
+                    { nome: "PARAÍBA", img: "img/bandeirapb.png" }]
+            },
+
+            {
+                img: "img/bauru.png", nome: "BAURU", correta: "SÃO PAULO",
+                ingredientes: "Pão francês, rosbife, tomate, pepino em conserva e mistura de queijos derretidos.",
+                opcoes: [
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" }]
+            },
+
+            {
+                img: "img/pequi.png", nome: "ARROZ COM PEQUI", correta: "GOIÁS",
+                ingredientes: "Arroz cozido com pequi (fruto do cerrado de sabor marcante e cor amarela), alho e temperos.",
+                opcoes: [
+                    { nome: "TOCANTINS", img: "img/bandeirato.png" },
+                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" },
+                    { nome: "GOIÁS", img: "img/bandeirago.png" }]
+            },
+
+            {
+                img: "img/barreado.png", nome: "BARREADO", correta: "PARANÁ",
+                ingredientes: "Carne bovina cozida por muitas horas em panela de barro vedada (barreada) com farinha de mandioca.",
+                opcoes: [
+                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" }]
+            },
+
+            {
+                img: "img/baiaodedois.png", nome: "BAIÃO DE DOIS", correta: "CEARÁ",
+                ingredientes: "Feijão de corda (ou verde) cozido junto com o arroz, queijo coalho, carne seca e manteiga de garrafa.",
+                opcoes: [
+                    { nome: "CEARÁ", img: "img/bandeirace.png" },
+                    { nome: "MARANHÃO", img: "img/bandeirama.png" },
+                    { nome: "PIAUÍ", img: "img/bandeirapi.png" }]
+            }
+        ];
+
+        let atual = 0;
+        let score = 0;
+        let respondido = false;
+
+        // --- FUNÇÕES DE EXPLORAÇÃO E MODAL ---
+        function gerarCardsCuriosidades() {
+            const grid = document.getElementById('gridCuriosidades');
+            grid.innerHTML = '';
+
+            perguntas.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'country-card';
+                card.onclick = () => abrirModal(index);
+                card.innerHTML = `
+                    <div class="clothing-preview">
+                        <img src="${item.img}" alt="${item.nome}">
+                    </div>
+                    <div class="country-description">
+                        <b style="font-size: 13px; color: #1B5E20;">${item.nome}</b><br>
+                        <div class="ver-ingredientes">VEJA</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function abrirModal(index) {
+            const item = perguntas[index];
+            document.getElementById('modalImg').src = item.img;
+            document.getElementById('modalTitulo').innerText = item.nome;
+            document.getElementById('modalIngredientes').innerText = item.ingredientes;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        function mostrarAba(aba) {
+            document.getElementById('explorarCulinaria').style.display =
+                aba === 'explorar' ? 'block' : 'none';
+
+            document.getElementById('quizCulinaria').style.display =
+                aba === 'quiz' ? 'flex' : 'none';
+
+            document.querySelectorAll('.tab-btn')
+                .forEach(btn => btn.classList.remove('active'));
+
+            if (aba === 'quiz') {
+                document.getElementById('btnQuiz').classList.add('active');
+            } else {
+                document.getElementById('btnExplorar').classList.add('active');
+            }
+        }
+
+        function iniciarJogo() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('painelFinal').style.display = 'none';
+
+            const container = document.getElementById('container');
+            container.style.display = 'flex';
+
+            document.querySelector('h1').style.display = 'block';
+
+            // Por padrão, inicia no Quiz
+            mostrarAba('quiz');
+
+            atual = 0;
+            score = 0;
+            respondido = false;
+
+            document.getElementById('score').innerText = 'Pontuação: 0';
+            mostrar();
+        }
+
+        function mostrar() {
+            const p = perguntas[atual];
+
+            document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${perguntas.length}`;
+            document.getElementById('imagemPergunta').src = p.img;
+            document.getElementById('nomeAlimento').innerText = p.nome;
+
+            const r = document.getElementById('resultado');
+            r.innerHTML = '';
+            r.style.opacity = '0';
+
+            const divOpcoes = document.getElementById('opcoes');
+            divOpcoes.innerHTML = '';
+
+            p.opcoes.forEach(opcao => {
+                const btn = document.createElement('div');
+                btn.className = 'opcao';
+                btn.innerHTML = `<img src="${opcao.img}"><p>${opcao.nome}</p>`;
+
+                btn.onclick = () => verificar(opcao.nome, btn);
+
+                divOpcoes.appendChild(btn);
+            });
+
+            respondido = false;
+        }
+
+        function verificar(resposta, elementoClicado) {
+            if (respondido) return;
+            respondido = true;
+
+            const p = perguntas[atual];
+            const r = document.getElementById('resultado');
+            r.style.opacity = '1';
+
+            if (resposta === p.correta) {
+                r.innerText = "✔ CORRETO! O ESTADO É " + p.correta + "!";
+
+                r.style.color = "#1B5E20";
+                r.style.background = "#b6dfa1";
+                r.style.border = "3px solid #2d7d21";
+
+                elementoClicado.style.background = "#b6dfa1";
+                elementoClicado.style.borderColor = "#2d7d21";
+                score++;
+            } else {
+                r.innerText = "✘ INCORRETO! O ESTADO É " + p.correta + "!";
+
+                r.style.color = "#B71C1C";
+                r.style.background = "#FFCDD2";
+                r.style.border = "3px solid #E53935";
+
+                elementoClicado.style.background = "#FFCDD2";
+                elementoClicado.style.borderColor = "#E53935";
+            }
+
+            document.getElementById('score').innerText = 'Pontuação: ' + score;
+
+            setTimeout(() => {
+                atual++;
+                if (atual < perguntas.length) {
+                    mostrar();
+                } else {
+                    fim();
+                }
+            }, 2500);
+        }
+
+        function fim() {
+            document.getElementById('container').style.display = 'none';
+            document.querySelector('h1').style.display = 'none';
+
+            const painel = document.getElementById('painelFinal');
+            painel.style.display = 'block';
+
+            const erros = perguntas.length - score;
+            document.getElementById('totalAcertos').innerText = score;
+            document.getElementById('totalErros').innerText = erros;
+            document.getElementById('resumoFinal').innerText = `Você completou todas as ${perguntas.length} perguntas!`;
+
+            let msg = '';
+            if (score === perguntas.length) msg = "🏆 INCRÍVEL! Você é um expert em comida brasileira!";
+            else if (score > perguntas.length * 0.7) msg = "👏 Mandou bem! Conhece muito do nosso Brasil.";
+            else msg = "🍽 Que tal viajar mais pelos sabores do Brasil?";
+
+            document.getElementById('mensagemFinal').innerText = msg;
+        }
+
+        function voltarIntroducao() {
+            document.getElementById('painelFinal').style.display = 'none';
+            document.getElementById('intro').style.display = 'flex';
+            document.querySelector('h1').style.display = 'none';
+        }
+
+        function fecharJogo() {
+            window.close();
+            document.body.innerHTML = `
+    <div style="
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center; 
+        height: 100vh; 
+        background: linear-gradient(135deg, #E8F5E9, #C8E6C9); 
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        text-align: center;
+    ">
+        <h1 style="color: #E65100; font-size: 40px; margin-bottom: 20px;">Jogo Encerrado!</h1>
+        <p style="color: #5D4037; font-size: 24px;">Até a próxima refeição!</p>
+    </div>
+  `;
+        }
+        
+        // Gera os cards ao carregar a página para estarem prontos quando clicar na aba
+        gerarCardsCuriosidades();
+    </script>
+</body>
+</html>

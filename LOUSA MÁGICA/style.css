@@ -1,0 +1,123 @@
+/* Reset básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', 'Arial', sans-serif;
+    user-select: none;
+}
+
+body {
+    background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    width: 95%;
+    max-width: 900px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: 8px solid #FFD700;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+}
+
+/* Barra de Ferramentas */
+.toolbar {
+    background-color: #fff9c4;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    border-bottom: 4px solid #F0F0F0;
+}
+
+.group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+label { font-weight: bold; color: #555; }
+
+/* Bolinhas de Cores */
+.colors { display: flex; gap: 8px; }
+
+.color {
+    width: 30px; height: 30px;
+    border-radius: 50%; cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+.color:hover { transform: scale(1.2); }
+.color.active { border: 3px solid #333; transform: scale(1.2); }
+
+/* Botões */
+.btn {
+    border: none; padding: 10px 15px;
+    border-radius: 12px; font-size: 0.9rem;
+    cursor: pointer; font-weight: bold;
+    color: white; transition: 0.2s;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+
+/* Cores específicas dos botões */
+#btnBrush { background-color: #FF9800; }
+#btnBucket { background-color: #2196F3; }
+.btn.eraser { background-color: #9c27b0; }
+.btn.clear { background-color: #ff4757; }
+.btn.confirm { background-color: #4CAF50; }
+.btn.cancel { background-color: #ff9800; }
+
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); box-shadow: none; }
+
+/* Estilo para ferramenta ativa */
+.btn.tool.active, .btn.eraser.active {
+    box-shadow: inset 0 0 0 3px #333; /* Borda interna escura */
+    transform: scale(0.95);
+}
+
+/* Canvas */
+canvas {
+    width: 100%; height: 100%;
+    cursor: crosshair;
+    touch-action: none; /* Impede scroll no celular */
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
+}
+
+.hidden { display: none; }
+
+.modal-content {
+    background: white; padding: 30px;
+    border-radius: 20px; text-align: center;
+    border: 5px solid #ff4757;
+    animation: popIn 0.3s;
+}
+
+.modal-buttons {
+    display: flex; justify-content: center; gap: 15px; margin-top: 20px;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

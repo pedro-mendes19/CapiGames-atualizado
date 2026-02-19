@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoExpert: Missão Medalha</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <style>
+        :root {
+            --primary: #58cc02;
+            --primary-dark: #46a302;
+            --blue: #1cb0f6;
+            --blue-dark: #1899d6;
+            --orange: #ff9600;
+            --danger: #ff4b4b;
+            --white: #ffffff;
+            --text: #3c3c3c;
+            --bronze: #cd7f32;
+            --prata: #95a5a6;
+            --ouro: #f1c40f;
+            --diamante: #3498db;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #0a192f;
+            background-image: radial-gradient(at 0% 100%, #1a365d 0px, transparent 50%), radial-gradient(at 100% 0%, #2d3748 0px, transparent 50%);
+            margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        /* Logo Clicável */
+        .header-logo {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+        .header-logo:hover { transform: scale(1.08); }
+        .header-logo img {
+            width: 140px;
+            height: auto;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4));
+        }
+
+        .app-container {
+            background: var(--white); width: 95%; max-width: 500px; min-height: 600px;
+            border-radius: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 30px; display: flex; flex-direction: column; position: relative;
+        }
+
+        .screen { display: none; animation: fadeIn 0.4s; }
+        .active { display: flex; flex-direction: column; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Barra de Progresso */
+        .progress-container { width: 100%; height: 14px; background: #eee; border-radius: 20px; margin-bottom: 25px; }
+        #progress-fill {
+            width: 0%; height: 100%; background: linear-gradient(90deg, #58cc02, #b6ff00);
+            border-radius: 20px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        h1 { font-family: 'Fredoka', cursive; color: var(--blue); text-align: center; font-size: 2.2rem; margin: 0 0 15px 0; }
+        p { text-align: center; color: #666; line-height: 1.5; margin-bottom: 20px; }
+
+        .hint-box {
+            background: #f8fbff; border: 2px solid #e2efff; border-radius: 24px;
+            padding: 20px; font-size: 1.2rem; font-weight: 600; text-align: center;
+            margin-bottom: 25px; min-height: 120px; display: flex; align-items: center; justify-content: center;
+        }
+
+        .options-grid { display: grid; gap: 12px; }
+
+        .btn-option {
+            background: var(--white); border: 2px solid #e5e5e5; border-bottom: 5px solid #e5e5e5;
+            padding: 16px; border-radius: 18px; font-size: 1.05rem; font-weight: 700;
+            cursor: pointer; transition: all 0.1s; font-family: 'Outfit', sans-serif;
+        }
+        .btn-option:hover { background-color: #f7faff; border-color: var(--blue); }
+        .btn-option:active { transform: translateY(3px); border-bottom-width: 2px; }
+
+        .btn-main {
+            background: var(--primary); color: white; border: none; border-bottom: 6px solid var(--primary-dark);
+            padding: 18px; border-radius: 20px; font-size: 1.3rem; font-weight: 700; width: 100%;
+            cursor: pointer; font-family: 'Fredoka', cursive; margin-top: 10px;
+        }
+        .btn-main:active { transform: translateY(4px); border-bottom-width: 2px; }
+        .btn-secondary { background: var(--blue); border-bottom-color: var(--blue-dark); margin-top: 15px; }
+
+        /* MODAL CENTRALIZADO */
+        #modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75); display: none; justify-content: center; align-items: center; z-index: 9999;
+        }
+        .modal-content {
+            background: white; width: 85%; max-width: 400px; padding: 35px;
+            border-radius: 32px; text-align: center; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        @keyframes popIn { 
+            from { transform: scale(0.5); opacity: 0; } 
+            to { transform: scale(1); opacity: 1; } 
+        }
+
+        .medal-icon { font-size: 90px; margin: 15px 0; display: inline-block; animation: bounce 1s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+    <div class="header-logo" onclick="location.reload()">
+        <img src="img/logo.png" alt="GeoExpert Logo">
+    </div>
+
+    <div class="app-container">
+        <div id="home-screen" class="screen active">
+            <h1>GeoExpert</h1>
+            <p>Seja bem-vindo, explorador!<br>Conquiste a medalha de Diamante!</p>
+            <button class="btn-main" onclick="initGame()">COMEÇAR MISSÃO</button>
+            <button class="btn-main btn-secondary" onclick="showScreen('info-screen')">INSTRUÇÕES</button>
+        </div>
+
+        <div id="info-screen" class="screen">
+            <h1>Regras 🎒</h1>
+            <div style="text-align: left; background: #f9f9f9; padding: 20px; border-radius: 20px;">
+                <p>📍 O quiz tem 10 perguntas aleatórias.</p>
+                <p>📍 Clique na logo para reiniciar o jogo.</p>
+                <p>📍 Acerte tudo para ganhar o Diamante!</p>
+            </div>
+            <button class="btn-main" onclick="showScreen('home-screen')">VOLTAR</button>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="progress-container"><div id="progress-fill"></div></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:800; color:#999;">
+                <span>PERGUNTA <span id="q-count">1</span>/10</span>
+                <span style="color: var(--orange);">⭐ <span id="score-val">0</span></span>
+            </div>
+            <div class="hint-box" id="hint-text"></div>
+            <div class="options-grid" id="options-container"></div>
+        </div>
+
+        <div id="final-screen" class="screen">
+            <div id="medal-display" class="medal-icon"></div>
+            <h2 id="rank-text" style="font-family:'Fredoka'; font-size:2.2rem; margin:0;"></h2>
+            <p id="final-score-text" style="font-size:1.2rem; margin: 20px 0;"></p>
+            <button class="btn-main" onclick="location.reload()">JOGAR NOVAMENTE</button>
+        </div>
+    </div>
+
+    <div id="modal-overlay">
+        <div class="modal-content">
+            <div id="modal-icon" style="font-size: 60px; margin-bottom: 10px;"></div>
+            <h2 id="modal-title" style="font-family:'Fredoka'; font-size: 2.2rem; margin: 0;"></h2>
+            <p id="modal-msg" style="font-size: 1.2rem; color: #666; margin: 15px 0 25px 0;"></p>
+            <button class="btn-main" id="modal-btn" onclick="nextStep()">CONTINUAR</button>
+        </div>
+    </div>
+
+<script>
+    const allQuestions = [
+        { h: "País onde o futebol moderno foi criado e as regras escritas.", a: "Inglaterra" },
+        { h: "Maior país da América do Sul e o único que fala português.", a: "Brasil" },
+        { h: "Conhecido como a 'Terra do Sol Nascente' e berço dos samurais.", a: "Japão" },
+        { h: "País europeu famoso por sua bota e pelas pizzas de Nápoles.", a: "Itália" },
+        { h: "Lugar onde ficam as Grandes Pirâmides e o Rio Nilo.", a: "Egito" },
+        { h: "O maior país do mundo em território, cruzando dois continentes.", a: "Rússia" },
+        { h: "País da Oceania famoso pelos cangurus e o deserto Outback.", a: "Austrália" },
+        { h: "Famoso pela Torre Eiffel, perfumes e pães croissants.", a: "França" },
+        { h: "País vizinho do Brasil, famoso pelo Tango e carne de churrasco.", a: "Argentina" },
+        { h: "País da América do Norte com a folha de bordo na bandeira.", a: "Canadá" },
+        { h: "Berço das Olimpíadas, da filosofia e de belas ilhas brancas.", a: "Grécia" },
+        { h: "País dos relógios, queijos, chocolates e dos Alpes gelados.", a: "Suíça" },
+        { h: "País asiático que construiu uma muralha gigante.", a: "China" },
+        { h: "País da América do Norte famoso pelos Astecas e tacos.", a: "México" },
+        { h: "País africano onde viveu Nelson Mandela.", a: "África do Sul" },
+        { h: "Conhecido pelos moinhos de vento, tulipas e bicicletas.", a: "Holanda" },
+        { h: "País sul-americano que abriga Machu Picchu.", a: "Peru" },
+        { h: "País europeu famoso pelo Flamenco e pelas touradas.", a: "Espanha" },
+        { h: "Localizado no norte da Europa, famoso pelos Vikings.", a: "Noruega" },
+        { h: "País asiático famoso pelo Taj Mahal.", a: "Índia" },
+        { h: "País europeu famoso pela cerveja e salsichas.", a: "Alemanha" },
+        { h: "País famoso pela Estátua da Liberdade e Hollywood.", a: "EUA" },
+        { h: "País africano famoso pelo Safari e o Kilimanjaro.", a: "Tanzânia" },
+        { h: "País europeu famoso pelos Pastéis de Belém.", a: "Portugal" },
+        { h: "País asiático famoso pelo K-Pop e tecnologia.", a: "Coreia do Sul" },
+        { h: "País sul-americano famoso pelo canal que liga dois oceanos.", a: "Panamá" },
+        { h: "País europeu que tem o famoso relógio Big Ben.", a: "Reino Unido" },
+        { h: "País africano com grande parte do deserto do Saara.", a: "Argélia" },
+        { h: "País sul-americano famoso pela Ilha de Páscoa.", a: "Chile" },
+        { h: "País europeu famoso pelo chocolate e sede da UE.", a: "Bélgica" },
+        { h: "País asiático onde fica o Monte Everest.", a: "Nepal" },
+        { h: "País do Oriente Médio famoso por Dubai.", a: "Emirados Árabes" },
+        { h: "País europeu famoso por Mozart e música clássica.", a: "Áustria" },
+        { h: "País do Sudeste Asiático famoso por suas praias.", a: "Tailândia" },
+        { h: "País sul-americano chamado de 'Coração da América'.", a: "Paraguai" },
+        { h: "País europeu famoso pelo castelo do Drácula.", a: "Romênia" },
+        { h: "País africano famoso pelo cacau.", a: "Costa do Marfim" },
+        { h: "País que possui o maior número de ilhas no mundo.", a: "Suécia" },
+        { h: "Famoso pelos cassinos de Monte Carlo e luxo.", a: "Mônaco" },
+        { h: "O menor país do mundo, localizado dentro de Roma.", a: "Vaticano" }
+    ];
+
+    let gameList = [];
+    let currentIdx = 0;
+    let score = 0;
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+
+    function initGame() {
+        gameList = shuffle([...allQuestions]).slice(0, 10);
+        currentIdx = 0; score = 0;
+        document.getElementById('score-val').innerText = "0";
+        showScreen('game-screen');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = gameList[currentIdx];
+        document.getElementById('hint-text').innerText = q.h;
+        document.getElementById('q-count').innerText = currentIdx + 1;
+        const options = generateOptions(q.a);
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-option';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(opt);
+            container.appendChild(btn);
+        });
+        document.getElementById('progress-fill').style.width = (currentIdx / 10 * 100) + "%";
+    }
+
+    function generateOptions(correct) {
+        let others = shuffle([...new Set(allQuestions.map(i => i.a))].filter(a => a !== correct)).slice(0, 3);
+        return shuffle([correct, ...others]);
+    }
+
+    function checkAnswer(choice) {
+        const correct = gameList[currentIdx].a;
+        const modal = document.getElementById('modal-overlay');
+        modal.style.display = 'flex';
+        if(choice === correct) {
+            score += 10;
+            document.getElementById('score-val').innerText = score;
+            setModal("⭐", "Incrível!", "Você acertou!", "var(--primary)");
+        } else {
+            setModal("❌", "Quase lá!", `O país correto era <b>${correct}</b>.`, "var(--danger)");
+        }
+    }
+
+    function setModal(icon, title, msg, color) {
+        document.getElementById('modal-icon').innerText = icon;
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-title').style.color = color;
+        document.getElementById('modal-msg').innerHTML = msg;
+        document.getElementById('modal-btn').style.background = color;
+    }
+
+    function nextStep() {
+        document.getElementById('modal-overlay').style.display = 'none';
+        currentIdx++;
+        if(currentIdx < 10) renderQuestion();
+        else finishGame();
+    }
+
+    function finishGame() {
+        showScreen('final-screen');
+        let medal, rank, color;
+        if(score >= 100) { medal = "💎"; rank = "DIAMANTE"; color = "var(--diamante)"; }
+        else if(score >= 80) { medal = "🥇"; rank = "OURO"; color = "var(--ouro)"; }
+        else if(score >= 50) { medal = "🥈"; rank = "PRATA"; color = "var(--prata)"; }
+        else { medal = "🥉"; rank = "BRONZE"; color = "var(--bronze)"; }
+
+        document.getElementById('medal-display').innerText = medal;
+        document.getElementById('rank-text').innerText = "EXPLORADOR " + rank;
+        document.getElementById('rank-text').style.color = color;
+        document.getElementById('final-score-text').innerHTML = `Missão concluída com <b>${score} pontos</b>!`;
+        document.getElementById('progress-fill').style.width = "100%";
+    }
+</script>
+</body>
+</html>

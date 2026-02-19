@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESCUBRA A PALAVRA</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* --- CSS (ESTILO) --- */
+        body {
+            background-color: #262b3c;
+            color: white;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh; 
+            margin: 0;
+            overflow-y: auto; 
+            padding-bottom: 50px;
+        }
+
+        h1 {
+            margin: 20px 0 10px 0;
+            font-weight: 800;
+            font-size: 32px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- TABULEIRO --- */
+        .board-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            margin: 10px 0;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 5px;
+            width: 330px;
+            height: 400px;
+            max-width: 90vw;
+            max-height: 55vh;
+        }
+
+        .tile {
+            border: 2px solid #4c4347;
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(1.5rem, 4vw, 2rem); 
+            font-weight: 800;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            border-radius: 4px;
+            user-select: none;
+            line-height: 1; 
+            transition: border-color 0.1s;
+        }
+
+        /* Estados e Animações */
+        .filled { border-color: #818384; }
+        
+        /* NOVO: Classe para o cursor selecionado */
+        .selected {
+            border-bottom: 4px solid #3aa394; /* Sublinhado verde */
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .pop { animation: pop 0.1s ease-in-out; }
+        .flip { animation: flip 0.5s ease-in; }
+
+        @keyframes pop { 50% { transform: scale(1.1); } }
+        @keyframes flip { 0% { transform: rotateX(0); } 50% { transform: rotateX(90deg); } 100% { transform: rotateX(0); } }
+
+        /* Cores */
+        .correct { background-color: #3aa394 !important; border-color: #3aa394 !important; }
+        .present { background-color: #d3ad69 !important; border-color: #d3ad69 !important; }
+        .absent { background-color: #312a2c !important; border-color: #312a2c !important; }
+
+        /* --- TECLADO --- */
+        .keyboard-container {
+            margin-bottom: 20px;
+            width: 96%;
+            max-width: 500px;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 6px;
+            touch-action: manipulation;
+        }
+
+        .key {
+            background-color: #4c4347;
+            color: white;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            height: 52px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 3px;
+            flex: 1;
+            text-transform: uppercase;
+            font-size: 14px;
+            user-select: none;
+            transition: background-color 0.2s, transform 0.1s;
+            touch-action: manipulation;
+        }
+
+        .key:active { 
+            background-color: #717374; 
+            transform: scale(0.95);
+        }
+
+        .key-wide { flex: 1.5; font-size: 12px; }
+
+        /* --- CONTROLES (DICA E RESTART) --- */
+        .controls-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .restart-btn {
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            touch-action: manipulation;
+        }
+
+        .hint-btn {
+            background-color: #f1c40f; 
+            color: #2c3e50;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .hint-btn:disabled {
+            background-color: #575757;
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .restart-btn:hover { background-color: #d35400; }
+        .hint-btn:hover:not(:disabled) { background-color: #f39c12; }
+
+        /* --- MENSAGENS --- */
+        .message-container {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            color: black;
+            padding: 15px 25px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 16px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>DESCUBRA A PALAVRA</h1>
+    
+    <div class="message-container" id="message-container"></div>
+    
+    <div class="board-container">
+        <div class="board" id="board"></div>
+    </div>
+
+    <div class="keyboard-container" id="keyboard"></div>
+
+    <div class="controls-container">
+        <button class="hint-btn" id="hint-btn">💡 Dica</button>
+        <button class="restart-btn" id="restart-btn">Nova Palavra</button>
+    </div>
+
+    <script>
+        const rawWords = [
+            "AMIGO", "ANEXO", "ANDAR", "AONDE", "AREIA", "ASSIM", "AVIAO", "BAIXO", "BANCO", "BARCO", 
+            "BATOM", "BEBER", "BEIJO", "BICHO", "BLOCO", "BOTAO", "BRACO", "BREVE", "BRISA", "BURRO", 
+            "CAIXA", "CALOR", "CAMPO", "CANTO", "CARRO", "CARTA", "CASAL", "CERTO", "CHAVE", "CHEFE", 
+            "CHUVA", "CINCO", "CLARO", "CLUBE", "COISA", "COMER", "CORPO", "CRAVO", "CRIAR", "CURTO", 
+            "DANCA", "DENTE", "DESDE", "DIZER", "DOBRO", "DOIDO", "DUZIA", "EMAIL", "ENVIO", "ESTAR", 
+            "EXAME", "EXTRA", "FACIL", "FAZER", "FEBRE", "FELIZ", "FERRO", "FESTA", "FIBRA", "FILME", 
+            "FINAL", "FOLHA", "FONTE", "FORMA", "FORTE", "FRACO", "FRUTA", "FUGIR", "FUNDO", "GARRA", 
+            "GENTE", "GESTO", "GRATO", "GRITO", "GRUPO", "HAVER", "HOMEM", "HOTEL", "IDEIA", "IDOSO", 
+            "IGUAL", "JOGAR", "JOVEM", "JUIZO", "JUSTO", "LABIO", "LAPIS", "LEITE", "LENTO", "LEAO", 
+            "LETRA", "LIMPO", "LINHA", "LIVRO", "LOUCO", "LUGAR", "MACA", "MAGRO", "MAIOR", "MELAO", 
+            "MENOS", "METAL", "MEDIR", "METER", "MILHO", "MINHA", "MOEDA", "MONTE", "MORAL", "MORTE", 
+            "MUDAR", "MUITO", "MUNDO", "NACAO", "NADAR", "NARIZ", "NATAL", "NAVIO", "NIVEL", "NOBRE", 
+            "NOITE", "NORTE", "NUVEM", "OLHAR", "ONTEM", "OUTRO", "OUVIR", "PADRE", "PAGAR", "PAPEL", 
+            "PARTE", "PASSO", "PEDRA", "PEIXE", "PEITO", "PERTO", "PLUMA", "PODER", "POETA", "PONTO", 
+            "PORTA", "PORTO", "POUCO", "PRAIA", "PRATO", "PRECO", "PRETO", "PRIMO", "PROVA", "QUASE", 
+            "RAIVA", "RAZAO", "RADIO", "REGRA", "RITMO", "SABER", "SABIO", "SAIDA", "SALTO", "SAUDE", 
+            "SENHA", "SERIO", "SINAL", "SITIO", "SONHO", "SORTE", "SUAVE", "SUBIR", "SUMIR", "SUPER", 
+            "SURDO", "TARDE", "TEMPO", "TENIS", "TERRA", "TIGRE", "TINTA", "TOCAR", "TOMAR", "TORRE", 
+            "TOSSE", "TOTAL", "TRACO", "TRENO", "TRIGO", "TROCA", "TRONO", "VALOR", "VAPOR", "VAZIO", 
+            "VELHO", "VENTO", "VERAO", "VERDE", "VIDRO", "VIES", "VIGOR", "VINHO", "VISAO", "VISTO", 
+            "VIVER", "VOLTA", "ZEBRA"
+        ];
+
+        const words = rawWords.filter(word => word.length === 5);
+
+        // --- VARIÁVEIS DE ESTADO ---
+        let secretWord = "";
+        let currentRow = 0;
+        let currentTile = 0; // Agora atua como índice do cursor (0-4)
+        let isGameOver = false;
+        let isAnimating = false;
+        let hasUsedHint = false;
+        let guesses = [];
+        const rows = 6;
+        const cols = 5;
+
+        // Elementos do DOM
+        const board = document.getElementById('board');
+        const keyboard = document.getElementById('keyboard');
+        const messageDisplay = document.getElementById('message-container');
+        const restartBtn = document.getElementById('restart-btn');
+        const hintBtn = document.getElementById('hint-btn');
+
+        // --- INICIALIZAÇÃO ---
+        function initGame() {
+            if (isAnimating) return;
+
+            secretWord = words[Math.floor(Math.random() * words.length)];
+            console.log("Palavra Secreta:", secretWord); 
+
+            currentRow = 0;
+            currentTile = 0;
+            isGameOver = false;
+            hasUsedHint = false;
+            
+            guesses = [
+                ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""],
+                ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""]
+            ];
+
+            board.innerHTML = ''; 
+            keyboard.innerHTML = '';
+
+            createBoard();
+            createKeyboard();
+            updateCursor(); // Inicializa o cursor visual
+            
+            messageDisplay.style.display = 'none';
+            hintBtn.disabled = false;
+            restartBtn.blur(); 
+        }
+
+        function createBoard() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    tile.setAttribute('id', `tile-${r}-${c}`);
+                    
+                    // Permite clicar na caixa para selecionar (extra)
+                    tile.addEventListener('click', () => {
+                        if (r === currentRow && !isGameOver && !isAnimating) {
+                            currentTile = c;
+                            updateCursor();
+                        }
+                    });
+
+                    board.appendChild(tile);
+                }
+            }
+        }
+
+        function createKeyboard() {
+            const keys = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+            
+            keys.forEach((rowString, index) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.classList.add('keyboard-row');
+                
+                if (index === 2) addKey(rowDiv, 'ENTER', true);
+                
+                rowString.split('').forEach(char => addKey(rowDiv, char, false));
+                
+                if (index === 2) addKey(rowDiv, '⌫', true, 'BACKSPACE');
+                
+                keyboard.appendChild(rowDiv);
+            });
+            
+            // Adiciona linha extra para setas no mobile (opcional, mas bom pra UX)
+            const arrowRow = document.createElement('div');
+            arrowRow.classList.add('keyboard-row');
+            arrowRow.style.marginTop = "5px";
+            
+            addKey(arrowRow, '←', true, 'ARROWLEFT');
+            addKey(arrowRow, '→', true, 'ARROWRIGHT');
+            
+            keyboard.appendChild(arrowRow);
+        }
+
+        function addKey(parent, text, isWide, action = null) {
+            const button = document.createElement('div');
+            button.textContent = text;
+            button.classList.add('key');
+            if (isWide) button.classList.add('key-wide');
+            button.setAttribute('id', `key-${action || text}`);
+            
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const keyVal = action || text;
+                handleInput(keyVal);
+            });
+            
+            parent.appendChild(button);
+        }
+
+        // --- FUNÇÃO PARA ATUALIZAR O CURSOR VISUAL ---
+        function updateCursor() {
+            // Remove seleção de todos na linha atual
+            for (let c = 0; c < cols; c++) {
+                const tile = document.getElementById(`tile-${currentRow}-${c}`);
+                if (tile) tile.classList.remove('selected');
+            }
+
+            if (isGameOver || isAnimating) return;
+
+            // Adiciona seleção na tile atual
+            const currentTileEl = document.getElementById(`tile-${currentRow}-${currentTile}`);
+            if (currentTileEl) {
+                currentTileEl.classList.add('selected');
+            }
+        }
+
+        // --- LÓGICA DE JOGO ---
+        function handleInput(key) {
+            if (isGameOver || isAnimating) return;
+
+            // --- NAVEGAÇÃO COM SETAS ---
+            if (key === 'ARROWLEFT') {
+                if (currentTile > 0) {
+                    currentTile--;
+                    updateCursor();
+                }
+                return;
+            }
+
+            if (key === 'ARROWRIGHT') {
+                if (currentTile < 4) {
+                    currentTile++;
+                    updateCursor();
+                }
+                return;
+            }
+
+            // --- BACKSPACE ---
+            if (key === 'BACKSPACE') {
+                const currentVal = guesses[currentRow][currentTile];
+                
+                // Se a casa atual tem letra, apaga ela e FICA nela
+                if (currentVal !== "") {
+                    guesses[currentRow][currentTile] = "";
+                    updateTileVisual(currentRow, currentTile, "");
+                } 
+                // Se a casa atual está vazia e não estamos no começo, volta um e apaga
+                else if (currentTile > 0) {
+                    currentTile--;
+                    guesses[currentRow][currentTile] = "";
+                    updateTileVisual(currentRow, currentTile, "");
+                    updateCursor();
+                }
+                return;
+            }
+
+            // --- ENTER ---
+            if (key === 'ENTER') {
+                // Verifica se há espaços vazios na linha
+                if (!guesses[currentRow].includes("")) {
+                    checkGuess();
+                } else {
+                    showMessage("Palavra incompleta");
+                    shakeRow(); // Efeito visual de erro
+                }
+                return;
+            }
+
+            // --- LETRAS ---
+            if (/^[A-Z]$/.test(key)) {
+                // Preenche a posição atual
+                guesses[currentRow][currentTile] = key;
+                updateTileVisual(currentRow, currentTile, key);
+
+                // Animação de pop
+                const tile = document.getElementById(`tile-${currentRow}-${currentTile}`);
+                tile.classList.add('pop');
+                setTimeout(() => tile.classList.remove('pop'), 100);
+
+                // Avança para a próxima se não for a última
+                if (currentTile < 4) {
+                    currentTile++;
+                    updateCursor();
+                }
+            }
+        }
+
+        function updateTileVisual(r, c, val) {
+            const tile = document.getElementById(`tile-${r}-${c}`);
+            if (tile) {
+                tile.textContent = val;
+                if (val !== "") {
+                    tile.classList.add('filled');
+                    tile.style.borderColor = "#818384";
+                } else {
+                    tile.classList.remove('filled');
+                    tile.style.borderColor = "#4c4347"; // volta cor padrão
+                    // Se for o selecionado, o CSS .selected sobrescreve a borda
+                }
+            }
+        }
+        
+        function shakeRow() {
+            const rowStart = currentRow * 5; 
+            // Implementação simples de shake seria adicionar classe na board ou nos tiles
+            // Deixando simplificado aqui apenas com mensagem
+        }
+
+        function checkGuess() {
+            const guess = guesses[currentRow].join("");
+            const rowToCheck = currentRow;
+            
+            // Remove cursor visual durante animação
+            const currentTileEl = document.getElementById(`tile-${currentRow}-${currentTile}`);
+            if(currentTileEl) currentTileEl.classList.remove('selected');
+
+            isAnimating = true;
+
+            let wordCheck = secretWord.split('');
+            const guessCheck = guess.split('');
+            const resultColors = new Array(5).fill('absent');
+
+            // 1. Verdes
+            guessCheck.forEach((char, i) => {
+                if (char === secretWord[i]) {
+                    resultColors[i] = 'correct';
+                    wordCheck[i] = null;
+                }
+            });
+
+            // 2. Amarelos
+            guessCheck.forEach((char, i) => {
+                if (resultColors[i] !== 'correct' && wordCheck.includes(char)) {
+                    resultColors[i] = 'present';
+                    wordCheck[wordCheck.indexOf(char)] = null;
+                }
+            });
+
+            // 3. Animação
+            resultColors.forEach((color, i) => {
+                setTimeout(() => {
+                    const tile = document.getElementById(`tile-${rowToCheck}-${i}`);
+                    if (tile) {
+                        tile.classList.add('flip', color);
+                        tile.style.borderColor = "transparent";
+                    }
+
+                    const keyChar = guesses[rowToCheck][i];
+                    const keyDiv = document.getElementById(`key-${keyChar}`);
+                    if (keyDiv) {
+                        const oldClass = keyDiv.className;
+                        if (!oldClass.includes('correct')) {
+                            if (color === 'correct') {
+                                keyDiv.className = 'key correct';
+                            } else if (color === 'present' && !oldClass.includes('present')) {
+                                keyDiv.classList.add('present');
+                            } else if (color === 'absent') {
+                                keyDiv.classList.add('absent');
+                            }
+                        }
+                    }
+                }, 300 * i);
+            });
+
+            // 4. Fim de processamento
+            setTimeout(() => {
+                isAnimating = false;
+
+                if (guess === secretWord) {
+                    showMessage("VOCÊ ACERTOU!");
+                    isGameOver = true;
+                    triggerConfetti();
+                } else if (currentRow === rows - 1) {
+                    showMessage("A palavra era: " + secretWord);
+                    isGameOver = true;
+                } else {
+                    currentRow++;
+                    currentTile = 0; // Reseta para primeira coluna da nova linha
+                    updateCursor();
+                }
+            }, 300 * 5 + 100);
+        }
+
+        // --- DINÂMICA: DICA ---
+        function useHint() {
+            if (isGameOver || hasUsedHint || isAnimating) return;
+
+            // Procura slots vazios ou errados na linha atual para preencher
+            const indicesDisponiveis = [];
+            for (let i = 0; i < 5; i++) {
+                // Só dá dica se o espaço estiver vazio ou letra errada
+                if (guesses[currentRow][i] !== secretWord[i]) {
+                    indicesDisponiveis.push(i);
+                }
+            }
+
+            if (indicesDisponiveis.length === 0) {
+                showMessage("Você já tem as letras certas!");
+                return;
+            }
+
+            const randomIndex = indicesDisponiveis[Math.floor(Math.random() * indicesDisponiveis.length)];
+            const correctChar = secretWord[randomIndex];
+
+            guesses[currentRow][randomIndex] = correctChar;
+            updateTileVisual(currentRow, randomIndex, correctChar);
+            
+            const tile = document.getElementById(`tile-${currentRow}-${randomIndex}`);
+            tile.classList.add('pop');
+
+            hasUsedHint = true;
+            hintBtn.disabled = true;
+            
+            // Re-foca o cursor onde estava ou move se necessário
+            updateCursor();
+        }
+
+        // --- DINÂMICA: CONFETES ---
+        function triggerConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+              var timeLeft = animationEnd - Date.now();
+              if (timeLeft <= 0) return clearInterval(interval);
+              var particleCount = 50 * (timeLeft / duration);
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        function showMessage(msg) {
+            messageDisplay.textContent = msg;
+            messageDisplay.style.display = 'block';
+            setTimeout(() => {
+                messageDisplay.style.display = 'none';
+            }, 2500);
+        }
+
+        // --- EVENTOS ---
+        restartBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            initGame();
+        });
+
+        hintBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            useHint();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toUpperCase();
+            
+            if (key === 'ARROWLEFT' || key === 'ARROWRIGHT') {
+                handleInput(key);
+                return;
+            }
+            if (key === 'ENTER' || key === 'BACKSPACE' || /^[A-Z]$/.test(key)) {
+                handleInput(key);
+            }
+        });
+
+        initGame();
+    </script>
+</body>
+</html>

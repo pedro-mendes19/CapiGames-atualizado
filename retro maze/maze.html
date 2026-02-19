@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Maze - 5 Níveis</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="img/escape.png">
+</head>
+<body>
+
+    <h1>Retro Escape</h1>
+    <h2 id="levelIndicator">NÍVEL 1 / 5</h2>
+
+    <div class="console-container">
+        <div class="screen-border">
+            <canvas id="gameCanvas" width="500" height="500"></canvas>
+        </div>
+    </div>
+
+    <div class="controls-hint">
+        USE AS SETAS OU W-A-S-D PARA MOVER
+    </div>
+
+    <div id="winModal">
+        <h2 id="modalTitle">NÍVEL COMPLETADO!</h2>
+        <p id="modalMessage">Prepare-se para o próximo desafio.</p>
+        
+        <button id="btnNext" onclick="nextLevel()">PRÓXIMO NÍVEL</button>
+        <button id="btnRestart" onclick="restartGame()" style="display: none;">JOGAR TUDO DE NOVO</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

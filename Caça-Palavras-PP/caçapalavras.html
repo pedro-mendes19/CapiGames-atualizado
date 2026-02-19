@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAÇA-PALAVRAS DIVERTIDO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="img/logo.png">
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <h1> Caça-Palavras </h1>
+            <p class="instruction">Encontre as palavras ! Clique na <b>primeira</b> e na <b>última</b> letra.</p>
+            
+            <div class="game-area">
+                <div id="grid" class="grid"></div>
+                
+                <div class="word-list">
+                    <h3>Procure por:</h3>
+                    <ul id="words-to-find">
+                        </ul>
+                </div>
+            </div>
+
+            <button id="restartBtn">Novo Jogo</button>
+            <div id="message" class="hidden">Parabéns! Você achou tudo! 🎉</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEAD SOCCER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto+Mono:wght@500&display=swap');
+
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2c3e50;
+            font-family: 'Roboto Mono', monospace;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* --- HUD --- */
+        #hud {
+            position: absolute;
+            top: 20px;
+            width: 850px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .placar-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            padding: 10px 20px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .placar-numero {
+            font-family: 'Fredoka One', cursive;
+            font-size: 45px;
+            line-height: 45px;
+        }
+
+        #p1Card {
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        #p2Card {
+            color: #4ecdc4;
+            border-color: #4ecdc4;
+        }
+
+        canvas {
+            border: 8px solid #ecf0f1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background-color: #87CEEB;
+            border-radius: 10px;
+            cursor: crosshair;
+        }
+
+        /* --- MODAL MATEMÁTICO --- */
+        #modal-matematica {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2c3e50;
+            border: 6px solid #f1c40f;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            z-index: 500;
+            box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0.8);
+            width: 450px;
+        }
+
+        #modal-titulo {
+            color: #f1c40f;
+            font-family: 'Fredoka One', cursive;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        #conta-texto {
+            color: white;
+            font-size: 50px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .btn-opcao {
+            background: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 24px;
+            font-family: 'Fredoka One', cursive;
+            margin: 0 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            min-width: 80px;
+        }
+
+        .btn-opcao:hover {
+            transform: scale(1.1);
+            background: #ecf0f1;
+        }
+
+        /* CONTROLES */
+        #painel-professor {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: sans-serif;
+            width: 200px;
+            z-index: 300;
+        }
+
+        .controle-item {
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .controle-item input {
+            margin-right: 10px;
+        }
+
+        #btnReiniciar {
+            display: none;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 40px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 30px;
+            color: #fff;
+            background-color: #f39c12;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 200;
+            box-shadow: 0 8px 0 #d35400;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="modal-matematica">
+        <div id="modal-titulo">TÍTULO DINÂMICO</div>
+        <div id="conta-texto">10 + 5 = ?</div>
+        <div id="opcoes-container"></div>
+    </div>
+
+    <div id="painel-professor">
+        <strong>Opções Pedagógicas</strong>
+        <div class="controle-item"><input type="checkbox" id="checkGrid" checked> Grid Cartesiano</div>
+        <div class="controle-item"><input type="checkbox" id="checkCoords"> Coordenadas</div>
+        <div class="controle-item"><input type="checkbox" id="checkSlowMo" onchange="toggleSlowMo()"> Câmera Lenta</div>
+        <div class="controle-item"><input type="checkbox" id="checkRastro" checked> Rastro da Bola</div>
+    </div>
+
+    <div id="hud">
+        <div id="p1Card" class="placar-card">
+            <div style="font-size: 12px;">JOGADOR 1</div>
+            <div id="p1Score" class="placar-numero">0</div>
+        </div>
+        <div class="placar-card" style="background: #fff; color: #333; border:none;">
+            <div style="font-size: 10px;">TEMPO</div>
+            <div id="timer" style="font-size: 30px; font-weight: bold;">03:00</div>
+        </div>
+        <div id="p2Card" class="placar-card">
+            <div style="font-size: 12px;">COMPUTADOR</div>
+            <div id="p2Score" class="placar-numero">0</div>
+        </div>
+    </div>
+
+    <button id="btnReiniciar" onclick="reiniciarJogo()">JOGAR NOVAMENTE</button>
+    <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+    <div
+        style="margin-top:10px; color:#fff; background:rgba(0,0,0,0.5); padding:5px 15px; border-radius:20px; font-size:13px;">
+        🎮 <strong>P1:</strong> [W] Pular | [A][D] Mover | [ESPAÇO] Chutar
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // CONFIG
+        const GRAVIDADE = 0.7; const CHAO_Y = 460; const LARGURA_GOL = 90; const ALTURA_TRAVE = 290; const TEMPO_JOGO = 180;
+
+        let scoreP1 = 0; let scoreP2 = 0; let tempo = TEMPO_JOGO; let jogoRodando = true;
+        let pausadoPorDesafio = false; let mensagemTela = ""; let ultimoTempo = Date.now();
+        let confetes = []; let fatorTempo = 1.0; let golPendente = null;
+
+        // DOM
+        const modalMath = document.getElementById('modal-matematica');
+        const modalTitulo = document.getElementById('modal-titulo');
+        const textoConta = document.getElementById('conta-texto');
+        const containerOpcoes = document.getElementById('opcoes-container');
+        const checkGrid = document.getElementById('checkGrid');
+        const checkCoords = document.getElementById('checkCoords');
+        const checkSlowMo = document.getElementById('checkSlowMo');
+        const checkRastro = document.getElementById('checkRastro');
+
+        function toggleSlowMo() { fatorTempo = checkSlowMo.checked ? 0.3 : 1.0; }
+
+        // --- NOVA LÓGICA DE ATAQUE E DEFESA ---
+        function gerarDesafio(quemFezGol) {
+            pausadoPorDesafio = true;
+            golPendente = quemFezGol;
+
+            // Define o título baseado em quem chutou
+            if (quemFezGol === 'P1') {
+                modalTitulo.innerText = "ACERTE PARA MARCAR O GOL!";
+                modalTitulo.style.color = "#2ecc71"; // Verde Ataque
+            } else {
+                modalTitulo.innerText = "RESOLVA PARA DEFENDER!";
+                modalTitulo.style.color = "#e74c3c"; // Vermelho Alerta
+            }
+
+            // Gera conta (1 a 10)
+            let n1 = Math.floor(Math.random() * 10) + 1;
+            let n2 = Math.floor(Math.random() * 10) + 1;
+            let operacoes = ['+', '-', '*'];
+            let op = operacoes[Math.floor(Math.random() * operacoes.length)];
+            if (op === '-' && n1 < n2) { let t = n1; n1 = n2; n2 = t; }
+
+            let resultado = (op === '+') ? n1 + n2 : (op === '-') ? n1 - n2 : n1 * n2;
+
+            textoConta.innerText = `${n1} ${op} ${n2} = ?`;
+
+            // Opções
+            let opcoes = new Set([resultado]);
+            while (opcoes.size < 3) {
+                let erro = resultado + (Math.floor(Math.random() * 10) - 5);
+                if (erro >= 0 && erro !== resultado) opcoes.add(erro);
+            }
+
+            containerOpcoes.innerHTML = '';
+            Array.from(opcoes).sort(() => Math.random() - 0.5).forEach(num => {
+                let btn = document.createElement('button');
+                btn.className = 'btn-opcao';
+                btn.innerText = num;
+                btn.onclick = () => verificarResposta(num, resultado);
+                containerOpcoes.appendChild(btn);
+            });
+
+            modalMath.style.display = 'block';
+        }
+
+        function verificarResposta(escolha, correta) {
+            modalMath.style.display = 'none';
+            pausadoPorDesafio = false;
+            ultimoTempo = Date.now();
+
+            if (escolha === correta) {
+                // ACERTOU A CONTA
+                if (golPendente === 'P1') {
+                    confirmarGol('P1'); // Validou seu gol
+                } else {
+                    realizarDefesa(); // Defendeu o chute da CPU
+                }
+            } else {
+                // ERROU A CONTA
+                if (golPendente === 'P1') {
+                    anularGol(); // Errou o próprio gol
+                } else {
+                    confirmarGol('CPU'); // Falhou na defesa, gol da CPU
+                }
+            }
+        }
+
+        function realizarDefesa() {
+            mensagemTela = "DEFESAÇA!";
+            jogoRodando = false;
+            // Efeito visual de defesa (bola saindo)
+            bola.vx = 15; bola.vy = -15;
+
+            setTimeout(() => {
+                if (tempo > 0) { resetarPosicoes(); mensagemTela = ""; jogoRodando = true; }
+            }, 2000);
+        }
+
+        function confirmarGol(autor) {
+            if (autor === 'P1') { scoreP1++; mensagemTela = "GOL DO P1!"; }
+            else { scoreP2++; mensagemTela = "GOL DA CPU!"; }
+
+            document.getElementById('p1Score').innerText = scoreP1;
+            document.getElementById('p2Score').innerText = scoreP2;
+            criarConfetes(canvas.width / 2, 200, 50);
+
+            jogoRodando = false;
+            setTimeout(() => {
+                if (tempo > 0) { resetarPosicoes(); mensagemTela = ""; jogoRodando = true; }
+            }, 2000);
+        }
+
+        function anularGol() {
+            mensagemTela = "CHUTE PRA FORA!";
+            jogoRodando = false;
+            setTimeout(() => {
+                if (tempo > 0) { resetarPosicoes(); mensagemTela = ""; jogoRodando = true; }
+            }, 1500);
+        }
+
+        function resetarPosicoes() {
+            bola.reset(); p1.reset(); cpu.reset(); confetes = [];
+        }
+
+        // --- GAME ENGINE ---
+        const bola = {
+            x: canvas.width / 2, y: 200, vx: 0, vy: 0, raio: 18, anguloRotacao: 0, rastro: [],
+            reset: function () { this.x = canvas.width / 2; this.y = 200; this.vx = 0; this.vy = 0; this.rastro = []; },
+            atualizar: function () {
+                if ((!jogoRodando && mensagemTela.indexOf("GOL") === -1) || pausadoPorDesafio) return;
+
+                let passos = checkSlowMo.checked ? 3 : 1;
+                for (let i = 0; i < passos; i++) {
+                    let spd = fatorTempo / passos;
+                    this.vy += GRAVIDADE * spd; this.x += this.vx * spd; this.y += this.vy * spd;
+                    this.vx *= 0.99; this.anguloRotacao += (this.vx * spd) / 10;
+                    if (this.y + this.raio > CHAO_Y) { this.y = CHAO_Y - this.raio; this.vy *= -0.75; }
+                    if (this.x > canvas.width) { this.x = canvas.width; this.vx *= -0.8; }
+                    if (this.x < 0) { this.x = 0; this.vx *= -0.8; }
+                    if (this.y < 0) { this.y = 0; this.vy *= -0.5; }
+                    this.colisaoTraves();
+                    if (passos === 1) break;
+                }
+                if (jogoRodando && (Math.abs(this.vx) > 0.5 || Math.abs(this.vy) > 0.5)) {
+                    this.rastro.push({ x: this.x, y: this.y });
+                    if (this.rastro.length > 20) this.rastro.shift();
+                }
+            },
+            colisaoTraves: function () {
+                if (this.x < LARGURA_GOL + this.raio && this.y < ALTURA_TRAVE + this.raio) {
+                    if (this.y > ALTURA_TRAVE) { this.x = LARGURA_GOL + this.raio; this.vx *= -0.8; }
+                    else if (this.vy > 0) { this.y = ALTURA_TRAVE - this.raio; this.vy *= -0.6; }
+                }
+                let limD = canvas.width - LARGURA_GOL;
+                if (this.x > limD - this.raio && this.y < ALTURA_TRAVE + this.raio) {
+                    if (this.y > ALTURA_TRAVE) { this.x = limD - this.raio; this.vx *= -0.8; }
+                    else if (this.vy > 0) { this.y = ALTURA_TRAVE - this.raio; this.vy *= -0.6; }
+                }
+            },
+            desenhar: function () {
+                if (checkRastro.checked && this.rastro.length > 1) {
+                    ctx.beginPath(); ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 4; ctx.setLineDash([5, 10]);
+                    ctx.moveTo(this.rastro[0].x, this.rastro[0].y);
+                    for (let p of this.rastro) ctx.lineTo(p.x, p.y);
+                    ctx.stroke(); ctx.setLineDash([]);
+                }
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.anguloRotacao);
+                ctx.beginPath(); ctx.arc(0, 0, this.raio, 0, Math.PI * 2); ctx.fillStyle = "white"; ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "#222"; ctx.beginPath(); for (let i = 0; i < 5; i++) { ctx.moveTo(0, 0); ctx.arc(0, 0, this.raio, (i * 72) * Math.PI / 180, (i * 72) * Math.PI / 180 + 0.5); } ctx.fill(); ctx.restore();
+                if (checkCoords.checked) {
+                    let cX = Math.round(this.x); let cY = Math.round(CHAO_Y - this.y);
+                    ctx.fillStyle = "rgba(0,0,0,0.7)"; ctx.fillRect(this.x - 40, this.y - 45, 80, 20);
+                    ctx.fillStyle = "#fff"; ctx.font = "bold 14px monospace"; ctx.textAlign = "center"; ctx.fillText(`(${cX}, ${cY})`, this.x, this.y - 30);
+                }
+            }
+        };
+
+        class Jogador {
+            constructor(x, cor, dir) { this.iniX = x; this.x = x; this.y = CHAO_Y; this.vx = 0; this.vy = 0; this.cor = cor; this.dir = dir; this.raio = 35; this.chute = false; this.angPe = 0; this.naTrave = false; }
+            reset() { this.x = this.iniX; this.y = CHAO_Y; this.vx = 0; this.vy = 0; this.chute = false; this.naTrave = false; }
+            atualizar() {
+                if (!jogoRodando || pausadoPorDesafio) return;
+                let spd = fatorTempo;
+                this.vy += GRAVIDADE * spd; this.x += this.vx * spd; this.y += this.vy * spd;
+                this.naTrave = false;
+
+                // Colisão com o chão
+                if (this.y > CHAO_Y) { this.y = CHAO_Y; this.vy = 0; this.vx *= 0.93; }
+                else this.vx *= 0.95;
+
+                // --- INTERAÇÃO COM AS TRAVES ---
+                let noPostEsq = (this.x >= -5 && this.x <= LARGURA_GOL + 15);
+                let noPostDir = (this.x >= canvas.width - LARGURA_GOL - 15 && this.x <= canvas.width + 5);
+
+                // Pousar EM CIMA da trave (travessão horizontal)
+                if (this.vy >= 0 && this.y >= ALTURA_TRAVE - 5 && this.y <= ALTURA_TRAVE + 15) {
+                    if (noPostEsq || noPostDir) {
+                        this.y = ALTURA_TRAVE;
+                        this.vy = 0;
+                        this.vx *= 0.85;
+                        this.naTrave = true;
+                    }
+                }
+
+                // Escalar/agarrar no poste vertical (wall cling)
+                let noPosteVertEsq = (Math.abs(this.x - LARGURA_GOL) < 18 && this.y < ALTURA_TRAVE && this.y > 100);
+                let noPosteVertDir = (Math.abs(this.x - (canvas.width - LARGURA_GOL)) < 18 && this.y < ALTURA_TRAVE && this.y > 100);
+
+                if ((noPosteVertEsq || noPosteVertDir) && this.vy > 0) {
+                    // Escorrega devagar no poste (wall slide)
+                    this.vy = Math.min(this.vy, 2.5);
+                    this.naTrave = true;
+                }
+
+                if (this.x < 10) this.x = 10; if (this.x > canvas.width - 10) this.x = canvas.width - 10;
+                if (this.chute) { this.angPe = -1.5 * this.dir; setTimeout(() => this.chute = false, 200 / fatorTempo); } else this.angPe *= 0.8;
+            }
+            mover(d) { this.vx += d * 4.0; if (this.vx > 11) this.vx = 11; if (this.vx < -11) this.vx = -11; }
+            pular() {
+                // Pula do chão
+                if (this.y >= CHAO_Y - 5) { this.vy = -16; }
+                // Pula da trave (travessão ou poste)
+                else if (this.naTrave) {
+                    this.vy = -14;
+                    // Wall-jump: impulso lateral ao pular do poste vertical
+                    let noPosteEsq = (Math.abs(this.x - LARGURA_GOL) < 18 && this.y < ALTURA_TRAVE);
+                    let noPosteDir = (Math.abs(this.x - (canvas.width - LARGURA_GOL)) < 18 && this.y < ALTURA_TRAVE);
+                    if (noPosteEsq) this.vx = 6;  // Impulso pra direita
+                    if (noPosteDir) this.vx = -6; // Impulso pra esquerda
+                    this.naTrave = false;
+                }
+            }
+            chutar() { if (!this.chute) this.chute = true; }
+            colisaoBola() {
+                let dx = bola.x - this.x, dy = bola.y - (this.y - 40), dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < this.raio + bola.raio) {
+                    let ang = Math.atan2(dy, dx), f = 10;
+                    bola.vx = Math.cos(ang) * f; bola.vy = Math.sin(ang) * f;
+                    bola.x += Math.cos(ang) * 5; bola.y += Math.sin(ang) * 5;
+                }
+                if (this.chute) {
+                    let peX = this.x + (40 * this.dir), peY = this.y - 10, dPe = Math.sqrt((bola.x - peX) ** 2 + (bola.y - peY) ** 2);
+                    if (dPe < 75) { bola.vx = 28 * this.dir; bola.vy = -18; criarConfetes(bola.x, bola.y, 5); }
+                }
+            }
+            desenhar() {
+                ctx.save(); ctx.translate(this.x, this.y);
+                let eX = 15 * this.dir, eY = -55, dx = bola.x - (this.x + eX), dy = bola.y - (this.y + eY), ang = Math.atan2(dy, dx);
+                ctx.save(); ctx.translate(5 * this.dir, -10); ctx.rotate(this.angPe);
+                ctx.fillStyle = "#333"; ctx.fillRect(this.dir === 1 ? -10 : -25, -5, 35, 12); ctx.restore();
+                ctx.fillStyle = this.cor; ctx.beginPath(); ctx.arc(0, -55, this.raio, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(eX, eY, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(eX + Math.cos(ang) * 5, eY + Math.sin(ang) * 5, 5, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const p1 = new Jogador(200, "#ff6b6b", 1);
+        const cpu = new Jogador(760, "#4ecdc4", -1);
+        const teclas = {};
+        window.addEventListener('keydown', e => { if (e.code === 'Space') e.preventDefault(); teclas[e.code] = true; });
+        window.addEventListener('keyup', e => { teclas[e.code] = false; if (e.code === 'KeyS' || e.code === 'Space') p1.chute = false; });
+
+        function reiniciarJogo() {
+            scoreP1 = 0; scoreP2 = 0; tempo = TEMPO_JOGO; jogoRodando = true; mensagemTela = ""; pausadoPorDesafio = false;
+            resetarPosicoes();
+            document.getElementById('p1Score').innerText = "0"; document.getElementById('p2Score').innerText = "0";
+            document.getElementById('timer').innerText = "03:00"; document.getElementById('btnReiniciar').style.display = "none";
+            modalMath.style.display = 'none'; ultimoTempo = Date.now();
+        }
+
+        // --- INTELIGÊNCIA ARTIFICIAL AVANÇADA (CPU) 4.0 ---
+
+        // Prediz onde a bola vai cair usando simulação física real
+        function preverTrajetoriaBola(frames) {
+            let simX = bola.x, simY = bola.y, simVx = bola.vx, simVy = bola.vy;
+            for (let i = 0; i < frames; i++) {
+                simVy += GRAVIDADE;
+                simX += simVx;
+                simY += simVy;
+                simVx *= 0.99;
+                if (simY > CHAO_Y - bola.raio) {
+                    simY = CHAO_Y - bola.raio;
+                    simVy *= -0.75;
+                    if (Math.abs(simVy) < 2) simVy = 0;
+                }
+                if (simX > canvas.width) { simX = canvas.width; simVx *= -0.8; }
+                if (simX < 0) { simX = 0; simVx *= -0.8; }
+            }
+            return { x: simX, y: simY, vx: simVx, vy: simVy };
+        }
+
+        function controlarJogadores() {
+            // CONTROLES P1
+            if (teclas['KeyD']) p1.mover(1); if (teclas['KeyA']) p1.mover(-1);
+            if (teclas['KeyW']) p1.pular(); if (teclas['KeyS'] || teclas['Space']) p1.chutar();
+
+            // === CPU 4.0 — IA REWRITTEN ===
+
+            // Future predictions
+            let pred10 = preverTrajetoriaBola(10);
+            let pred20 = preverTrajetoriaBola(20);
+            let pred40 = preverTrajetoriaBola(40);
+
+            // Positions and distances
+            let golCpuX = canvas.width - LARGURA_GOL; // x=870 (right side)
+            let golP1X = LARGURA_GOL;                  // x=90 (left side)
+            let meioCampo = canvas.width / 2;           // x=480
+            let distX = bola.x - cpu.x;                 // negative = ball to the left of CPU
+            let distBolaAbs = Math.abs(distX);
+            let distY = bola.y - (cpu.y - 40);          // relative to CPU's head
+            let distTotal = Math.sqrt(distX * distX + distY * distY);
+
+            // Is the ball threatening the CPU's goal?
+            let bolaPerigosa = (bola.x > golCpuX - 200 && bola.vx >= 0) ||
+                (bola.vx > 8 && bola.x > meioCampo) ||
+                (pred20.x > golCpuX - 80);
+
+            // Is the ball in the CPU's half? (right half)
+            let bolaNoCampoCpu = bola.x > meioCampo;
+
+            // Is the CPU to the RIGHT of the ball? (correct position to push it LEFT towards P1's goal)
+            let cpuAtrasParaChutar = cpu.x > bola.x;
+
+            // ===========================================
+            // TARGET POSITIONING
+            // ===========================================
+            let alvoX;
+
+            if (bolaPerigosa) {
+                // ---- GOALKEEPER MODE ----
+                // Positions itself BETWEEN the ball and the goal, slightly in front
+                let predAlvo = (bola.vx > 12) ? pred10 : pred20;
+
+                // Stays between the predicted ball position and the goal
+                alvoX = predAlvo.x + 30;
+                // Does not go past the goal, does not go too far
+                alvoX = Math.max(alvoX, golCpuX - 150);
+                alvoX = Math.min(alvoX, golCpuX + 20);
+
+                // If the ball is VERY close to the goal, stick to the goal
+                if (bola.x > golCpuX - 60) {
+                    alvoX = bola.x + 15;
+                }
+
+                // KICK to clear — maximum priority
+                if (distTotal < 110) {
+                    cpu.chutar();
+                }
+
+                // JUMP to defend high shots
+                if (distBolaAbs < 130 && bola.y < cpu.y - 20 && bola.y > 50) {
+                    cpu.pular();
+                }
+
+            } else if (bolaNoCampoCpu) {
+                // ---- DEFENSE/PRESSURE MODE ----
+                // Goes to the ball and KICKS it away
+
+                // Positions to the RIGHT of the ball so that the kick (dir=-1) sends it to the left
+                if (bola.x < golCpuX - 80) {
+                    // Ball far from goal: can advance and attack
+                    alvoX = bola.x + 45;
+                } else {
+                    // Ball near goal: positions between ball and goal
+                    alvoX = bola.x + 25;
+                    alvoX = Math.min(alvoX, golCpuX);
+                }
+
+                // If the ball is slow/stopped, go for it aggressively
+                if (Math.abs(bola.vx) < 3 && Math.abs(bola.vy) < 4) {
+                    alvoX = bola.x + 35;
+                }
+
+                // KICK when in position (ball to the left of CPU)
+                if (distTotal < 100 && bola.x < cpu.x + 10) {
+                    cpu.chutar();
+                }
+
+                // JUMP to head the ball
+                if (distBolaAbs < 100 && bola.y < cpu.y - 50 && bola.y > cpu.y - 200) {
+                    cpu.pular();
+                }
+
+            } else {
+                // ---- ATTACK MODE ----
+                // Ball in P1's half: CPU advances aggressively
+
+                // Goes to the ball, positions to the RIGHT to kick left (towards P1's goal)
+                alvoX = bola.x + 45;
+
+                // If close, positions with precision
+                if (distBolaAbs < 150) {
+                    alvoX = bola.x + 30;
+                }
+
+                // If the ball is almost stopped, go straight
+                if (Math.abs(bola.vx) < 2 && Math.abs(bola.vy) < 3) {
+                    alvoX = bola.x + 35;
+                }
+
+                // Offensive KICK — very aggressive
+                if (distTotal < 100 && bola.x < cpu.x + 15) {
+                    cpu.chutar();
+                }
+
+                // Aerial header
+                if (distBolaAbs < 90 && bola.y < cpu.y - 40 && bola.y > cpu.y - 180) {
+                    cpu.pular();
+                }
+            }
+
+            // ===========================================
+            // MOVEMENT — moves towards the target
+            // ===========================================
+            let erro = alvoX - cpu.x;
+            let dir = 0;
+
+            if (Math.abs(erro) > 5) {
+                dir = erro > 0 ? 1 : -1;
+
+                // Runs faster when far or in emergency
+                let mult = 1.0;
+                if (Math.abs(erro) > 200) mult = 2.5;
+                else if (Math.abs(erro) > 100) mult = 2.0;
+                else if (Math.abs(erro) > 50) mult = 1.5;
+
+                if (bolaPerigosa) mult *= 1.5; // Extra urgency at the goal
+
+                dir *= mult;
+                if (dir > 3.5) dir = 3.5;
+                if (dir < -3.5) dir = -3.5;
+            }
+            cpu.mover(dir);
+
+            // ===========================================
+            // EXTRA BEHAVIORS
+            // ===========================================
+
+            // Quick counter-attack: ball going towards P1's goal and CPU has space
+            if (bola.vx < -8 && cpu.x > bola.x + 50 && bola.x < meioCampo) {
+                cpu.mover(-3); // Run after it!
+            }
+
+            // If the ball rebounded and is moving slowly in the middle, CPU attacks
+            if (bola.x > 200 && bola.x < 700 && Math.abs(bola.vx) < 4 && distBolaAbs > 50) {
+                let rush = bola.x + 40 - cpu.x;
+                if (Math.abs(rush) > 20) cpu.mover(rush > 0 ? -1.5 : 1.5);
+            }
+
+            // Anti-Stuck: don't get stuck in P1's goal
+            if (cpu.x < 100 && bola.x > 250) {
+                cpu.mover(3);
+            }
+            // Anti-Stuck: don't get stuck on the wall of its own goal
+            if (cpu.x > canvas.width - 25) {
+                cpu.mover(-2);
+            }
+
+            // Default position when the ball is very far and moving away
+            if (distBolaAbs > 450 && bola.vx < -2) {
+                let posPadrao = canvas.width * 0.65;
+                let erroPadrao = posPadrao - cpu.x;
+                if (Math.abs(erroPadrao) > 30) {
+                    cpu.mover(erroPadrao > 0 ? 1.5 : -1.5);
+                }
+            }
+
+            // Proactive jump to intercept balls that will pass overhead
+            if (pred10.y < cpu.y - 100 && distBolaAbs < 80 && bola.vy < -4) {
+                cpu.pular();
+            }
+
+            // Extra kick: if very close to the ball in any situation, kick
+            if (distTotal < 70) {
+                cpu.chutar();
+            }
+        }
+
+        function checarGol() {
+            if (!jogoRodando || pausadoPorDesafio) return;
+
+            // P1 FEZ GOL -> Validar
+            if (bola.x > canvas.width - LARGURA_GOL + 10 && bola.y > ALTURA_TRAVE + 10) {
+                gerarDesafio('P1');
+            }
+            // CPU FEZ GOL -> Defender
+            if (bola.x < LARGURA_GOL - 10 && bola.y > ALTURA_TRAVE + 10) {
+                gerarDesafio('CPU');
+            }
+        }
+
+        function checarColisaoEntreJogadores() {
+            let dx = p1.x - cpu.x, dy = (p1.y - 40) - (cpu.y - 40), dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 70) {
+                let emp = (70 - dist) / 2;
+                if (p1.x < cpu.x) { p1.x -= emp; cpu.x += emp; } else { p1.x += emp; cpu.x -= emp; }
+                p1.vx = 0; cpu.vx = 0;
+            }
+        }
+
+        function timerJogo() {
+            if (!jogoRodando || pausadoPorDesafio) { ultimoTempo = Date.now(); return; }
+            let agora = Date.now();
+            if (agora - ultimoTempo >= 1000) {
+                tempo--; ultimoTempo = agora;
+                let m = Math.floor(tempo / 60), s = tempo % 60;
+                document.getElementById('timer').innerText = `0${m}:${s < 10 ? '0' + s : s}`;
+                if (tempo <= 0) {
+                    jogoRodando = false;
+                    mensagemTela = scoreP1 > scoreP2 ? "VITÓRIA P1!" : (scoreP2 > scoreP1 ? "VITÓRIA CPU!" : "EMPATE!");
+                    document.getElementById('btnReiniciar').style.display = "block";
+                    criarConfetes(canvas.width / 2, canvas.height / 2, 100);
+                }
+            }
+        }
+
+        function desenharCenario() {
+            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height); grad.addColorStop(0, "#3498db"); grad.addColorStop(1, "#87CEEB");
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (checkGrid.checked) {
+                ctx.lineWidth = 1; ctx.font = "10px Arial"; ctx.fillStyle = "rgba(255,255,255,0.7)";
+                for (let x = 0; x <= canvas.width; x += 100) {
+                    ctx.strokeStyle = (x === 0 || x === canvas.width) ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.2)";
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); ctx.fillText(x, x + 5, CHAO_Y + 15);
+                }
+                for (let y = CHAO_Y; y >= 0; y -= 100) {
+                    ctx.strokeStyle = (y === CHAO_Y) ? "white" : "rgba(255,255,255,0.2)"; ctx.lineWidth = (y === CHAO_Y) ? 3 : 1;
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                    if (CHAO_Y - y > 0) ctx.fillText(CHAO_Y - y, 5, y - 5);
+                }
+            }
+            ctx.fillStyle = "#27ae60"; ctx.fillRect(0, CHAO_Y, canvas.width, canvas.height - CHAO_Y);
+            ctx.fillStyle = "#fff"; ctx.fillRect(0, CHAO_Y, canvas.width, 4);
+        }
+        function desenharGol(x, esp) {
+            ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 2; let sx = esp ? x - LARGURA_GOL : x; ctx.beginPath();
+            for (let i = 0; i <= LARGURA_GOL; i += 15) { ctx.moveTo(sx + i, ALTURA_TRAVE); ctx.lineTo(sx + i + (esp ? -5 : 5), CHAO_Y); }
+            for (let i = ALTURA_TRAVE; i < CHAO_Y; i += 20) { ctx.moveTo(sx, i); ctx.lineTo(sx + LARGURA_GOL, i); } ctx.stroke();
+            ctx.fillStyle = "#ecf0f1"; ctx.fillRect(esp ? x - LARGURA_GOL : x, ALTURA_TRAVE, LARGURA_GOL, 8);
+            ctx.fillStyle = "#bdc3c7"; ctx.fillRect(esp ? x - LARGURA_GOL : x + LARGURA_GOL - 10, ALTURA_TRAVE, 10, CHAO_Y - ALTURA_TRAVE);
+        }
+        function criarConfetes(x, y, q) {
+            for (let i = 0; i < q; i++) confetes.push({ x: x, y: y, vx: (Math.random() - 0.5) * 15, vy: (Math.random() - 1) * 15, cor: `hsl(${Math.random() * 360},100%,50%)`, vida: 100 });
+        }
+        function desenharConfetes() {
+            for (let i = confetes.length - 1; i >= 0; i--) {
+                let p = confetes[i]; p.x += p.vx * fatorTempo; p.y += p.vy * fatorTempo; p.vy += 0.5 * fatorTempo; p.vida -= 2 * fatorTempo;
+                ctx.fillStyle = p.cor; ctx.fillRect(p.x, p.y, 8, 8); if (p.vida <= 0) confetes.splice(i, 1);
+            }
+        }
+
+        function loop() {
+            requestAnimationFrame(loop);
+            if (jogoRodando && !pausadoPorDesafio && mensagemTela.indexOf("GOL") === -1 && mensagemTela !== "DEFESAÇA!") {
+                controlarJogadores(); p1.atualizar(); cpu.atualizar(); bola.atualizar();
+                p1.colisaoBola(); cpu.colisaoBola(); checarColisaoEntreJogadores(); checarGol();
+            } else if (mensagemTela !== "" || !jogoRodando) bola.atualizar();
+
+            timerJogo(); desenharCenario(); desenharGol(0, false); desenharGol(canvas.width, true);
+            p1.desenhar(); cpu.desenhar(); bola.desenhar(); desenharConfetes();
+
+            if (mensagemTela) {
+                ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.save(); ctx.shadowBlur = 10; ctx.shadowColor = "black";
+                // COR DA MENSAGEM: Verde se defendeu ou fez gol, Vermelho se errou ou tomou gol
+                if (mensagemTela === "DEFESAÇA!" || mensagemTela === "GOL DO P1!") ctx.fillStyle = "#2ecc71";
+                else ctx.fillStyle = "#e74c3c";
+
+                ctx.font = "bold 80px 'Fredoka One'"; ctx.textAlign = "center";
+                ctx.fillText(mensagemTela, canvas.width / 2, canvas.height / 2);
+                ctx.strokeText(mensagemTela, canvas.width / 2, canvas.height / 2);
+                ctx.restore();
+            }
+        }
+        loop();
+    </script>
+</body>
+
+</html>

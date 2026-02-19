@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOUSA MÁGICA INFANTIL</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="img/logo.png">
+</head>
+<body>
+
+    <div class="container">
+        <div class="toolbar">
+            
+            <div class="group">
+                <label>Cor:</label>
+               <div class="colors">
+    <div class="color white-swatch" style="background: #FFFFFF;" onclick="setColor('#FFFFFF', this)"></div>
+
+    <div class="color active" style="background: #000000;" onclick="setColor('#000000', this)"></div>
+    <div class="color" style="background: #FF0000;" onclick="setColor('#FF0000', this)"></div>
+    <div class="color" style="background: #0000FF;" onclick="setColor('#0000FF', this)"></div>
+    <div class="color" style="background: #008000;" onclick="setColor('#008000', this)"></div>
+    <div class="color" style="background: #E91E63;" onclick="setColor('#E91E63', this)"></div>
+    <div class="color" style="background: #FFA500;" onclick="setColor('#FFA500', this)"></div>
+</div>
+            </div>
+
+            <div class="group">
+                <label>Tamanho:</label>
+                <input type="range" id="brushSize" min="5" max="50" value="10" onchange="setSize(this.value)">
+            </div>
+
+            <div class="group actions">
+                <button class="btn tool active" id="btnBrush" onclick="setTool('brush')">🖌️ Pincel</button>
+                <button class="btn tool" id="btnBucket" onclick="setTool('bucket')">🪣 Baldinho</button>
+                <button class="btn eraser" id="btnEraser" onclick="setEraser()">🧽 Borracha</button>
+                <button class="btn clear" onclick="openModal()">🗑️ Limpar</button>
+            </div>
+        </div>
+
+        <canvas id="drawingBoard"></canvas>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Quer apagar o desenho? 😮</h2>
+            <div class="modal-buttons">
+                <button class="btn confirm" onclick="confirmClear()">Sim, apagar!</button>
+                <button class="btn cancel" onclick="closeModal()">Não, voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

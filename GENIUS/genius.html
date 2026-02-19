@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENIUS🔴🟢🔵🟡</title>
+    <link rel="icon" type="image/text" href="assets/favicon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        #level-title {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+            min-height: 30px;
+            text-align: center;
+        }
+
+        .container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background-color: #34495e;
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        }
+
+        .btn {
+            border-radius: 20px;
+            cursor: pointer;
+            border: 8px solid rgba(0,0,0,0.2);
+            opacity: 0.8;
+            transition: all 0.1s;
+        }
+
+        #green { background-color: #00ea90; border-top-left-radius: 100%; }
+        #red { background-color: #ff4b4b; border-top-right-radius: 100%; }
+        #yellow { background-color: #ffea20; border-bottom-left-radius: 100%; }
+        #blue { background-color: #20aaff; border-bottom-right-radius: 100%; }
+
+        .pressed {
+            opacity: 1;
+            transform: scale(0.95);
+            box-shadow: 0 0 15px white inset;
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .game-over-bg { background-color: #581313; }
+
+        #start-btn {
+            margin-top: 40px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #bdc3c7;
+            transition: all 0.1s;
+        }
+
+        #start-btn:active { transform: translateY(5px); box-shadow: none; }
+        
+        /* Bloqueia cliques enquanto o computador joga */
+        .unclickable { pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <h1>Genius</h1>
+    <h2 id="level-title">Pressione Iniciar</h2>
+
+    <div class="container" id="game-board">
+        <div type="button" id="green" class="btn"></div>
+        <div type="button" id="red" class="btn"></div>
+        <div type="button" id="yellow" class="btn"></div>
+        <div type="button" id="blue" class="btn"></div>
+    </div>
+
+    <button id="start-btn">Iniciar Jogo</button>
+
+    <script>
+        const buttonColours = ["green", "red", "yellow", "blue"];
+        
+        // gamePattern: Guarda a sequência oficial do jogo (Ex: Verde, Vermelho, Verde...)
+        let gamePattern = []; 
+        
+        // userClickedPattern: Guarda o que o jogador clicou na rodada atual
+        let userClickedPattern = [];
+        
+        let started = false;
+        let level = 0;
+
+        // --- Áudio (Web Audio API) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        const frequencies = {
+            "green": 261.63, "red": 329.63, "yellow": 392.00, "blue": 523.25, "wrong": 100.00
+        };
+
+        function playTone(color) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = color === "wrong" ? "sawtooth" : "sine";
+            oscillator.frequency.value = frequencies[color] || 440;
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        }
+
+        // --- Lógica Principal ---
+
+        document.getElementById("start-btn").addEventListener("click", function() {
+            if (!started) {
+                // Ao iniciar, garantimos que tudo está zerado
+                startOver(); 
+                started = true;
+                this.style.display = "none";
+                nextSequence();
+            }
+        });
+
+        const buttons = document.querySelectorAll(".btn");
+        buttons.forEach(btn => {
+            btn.addEventListener("click", function() {
+                if(!started) return;
+
+                const userChosenColour = this.id;
+                userClickedPattern.push(userChosenColour);
+
+                playTone(userChosenColour);
+                animatePress(userChosenColour);
+
+                // Verifica a resposta IMEDIATAMENTE após o clique
+                checkAnswer(userClickedPattern.length - 1);
+            });
+        });
+
+        function checkAnswer(currentLevel) {
+            // Verifica se a cor clicada é a correta
+            if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+                
+                // Se acertou a cor, verifica se terminou a sequência
+                if (userClickedPattern.length === gamePattern.length) {
+                    setTimeout(function () {
+                        nextSequence();
+                    }, 1000);
+                }
+            } else {
+                // Se errou
+                playTone("wrong");
+                document.body.classList.add("game-over-bg");
+                document.getElementById("level-title").innerText = "Errou! Reiniciando...";
+                
+                setTimeout(function () {
+                    document.body.classList.remove("game-over-bg");
+                    // Prepara o botão para reiniciar
+                    started = false; 
+                    document.getElementById("level-title").innerText = "Tente novamente";
+                    const startBtn = document.getElementById("start-btn");
+                    startBtn.style.display = "block";
+                    startBtn.innerText = "Reiniciar";
+                }, 1500);
+            }
+        }
+
+        function nextSequence() {
+            userClickedPattern = [];
+            level++;
+            document.getElementById("level-title").innerText = "Nível " + level;
+
+            // LÓGICA ACUMULATIVA: Adiciona APENAS UMA nova cor aleatória à lista existente
+            const randomNumber = Math.floor(Math.random() * 4);
+            const randomChosenColour = buttonColours[randomNumber];
+            gamePattern.push(randomChosenColour);
+
+            // Toca a sequência completa (desde o início até a nova cor)
+            playFullSequence();
+        }
+
+        function playFullSequence() {
+            let i = 0;
+            const board = document.getElementById("game-board");
+            board.classList.add("unclickable"); // Bloqueia cliques
+
+            const intervalId = setInterval(() => {
+                const color = gamePattern[i];
+                playTone(color);
+                animatePress(color);
+                i++;
+                
+                if (i >= gamePattern.length) {
+                    clearInterval(intervalId);
+                    setTimeout(() => {
+                        board.classList.remove("unclickable"); // Libera cliques
+                    }, 500);
+                }
+            }, 600); // Velocidade da sequência
+        }
+
+        function animatePress(currentColor) {
+            const activeBtn = document.getElementById(currentColor);
+            activeBtn.classList.add("pressed");
+            setTimeout(function() {
+                activeBtn.classList.remove("pressed");
+            }, 300);
+        }
+
+        function startOver() {
+            level = 0;
+            gamePattern = []; // IMPORTANTE: Limpa a sequência anterior para começar uma nova do zero
+            started = false;
+        }
+    </script>
+</body>
+</html>

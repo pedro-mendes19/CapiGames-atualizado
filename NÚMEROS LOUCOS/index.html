@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> NÚMEROS LOUCOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS DIVERTIDOS --- */
+        :root {
+            --cor-fundo: #85FFBD;
+            --cor-fundo-gradiente: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
+            --cor-tabuleiro: #FFF;
+            --cor-peca: #FF6B6B;
+            --cor-peca-sombra: #C44D4D;
+            --cor-texto: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Fredoka One', cursive; /* Fonte arredondada */
+            background-image: var(--cor-fundo-gradiente);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Título Colorido */
+        h1 {
+            font-size: 3rem;
+            color: #4A4A4A;
+            text-shadow: 2px 2px 0px #FFF;
+            margin-bottom: 10px;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        /* Placar */
+        .placar {
+            background: #FFFFFF;
+            padding: 10px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
+            font-size: 1.5rem;
+            color: #555;
+            margin-bottom: 20px;
+            border: 3px solid #FFD93D;
+        }
+
+        /* O Tabuleiro (Moldura) */
+        .game-board {
+            background-color: #FFD93D; /* Amarelo vivo */
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 0 #D4B218; /* Sombra dura para efeito 3D */
+            display: inline-block;
+            position: relative;
+        }
+
+        /* A Grade Interna */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+            background-color: #D4B218;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        /* As Peças (Botões) */
+        .tile {
+            width: 100px;
+            height: 100px;
+            background-color: var(--cor-peca);
+            color: var(--cor-texto);
+            font-size: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            cursor: pointer;
+            user-select: none;
+            
+            /* Efeito 3D no botão */
+            box-shadow: 0 8px 0 var(--cor-peca-sombra);
+            transition: transform 0.1s, box-shadow 0.1s;
+            position: relative;
+            top: 0;
+        }
+
+        .tile:hover {
+            filter: brightness(1.1); /* Fica mais brilhante */
+            transform: translateY(-2px);
+        }
+
+        .tile:active {
+            /* Efeito de apertar o botão */
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 var(--cor-peca-sombra);
+        }
+
+        /* A Peça Vazia (Buraco) */
+        .tile.empty {
+            background-color: #2E2E2E; /* Escuro para parecer um buraco */
+            box-shadow: inset 0 0 15px #000; /* Sombra interna */
+            cursor: default;
+            opacity: 0.3;
+        }
+
+        /* Botão de Reiniciar */
+        .btn-restart {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            background-color: #4D96FF;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #285EAB;
+            transition: all 0.1s;
+        }
+
+        .btn-restart:hover {
+            transform: scale(1.05);
+            background-color: #64A5FF;
+        }
+
+        .btn-restart:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #285EAB;
+        }
+
+        /* Tela de Vitória (Overlay) */
+        #win-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            color: white;
+            text-align: center;
+        }
+
+        #win-overlay h2 {
+            font-size: 4rem;
+            color: #FFD93D;
+            text-shadow: 4px 4px 0 #FF6B6B;
+            margin: 0;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        /* Partículas de Confete */
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #f00;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(720deg); }
+        }
+        
+        /* Ajuste para celulares */
+        @media (max-width: 400px) {
+            .grid {
+                grid-template-columns: repeat(3, 80px);
+                grid-template-rows: repeat(3, 80px);
+            }
+            .tile { width: 80px; height: 80px; font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Números<br>Mágicos!</h1>
+    
+    <div class="placar">
+        Movimentos: <span id="moves" style="color:#FF6B6B">0</span>
+    </div>
+
+    <div class="game-board">
+        <div class="grid" id="board">
+            </div>
+    </div>
+
+    <button class="btn-restart" onclick="startGame()">Misturar Tudo! 🔄</button>
+
+    <div id="win-overlay" onclick="closeWin()">
+        <h2>PARABÉNS! <br> VOCÊ VENCEU! 🎉</h2>
+        <p>Toque na tela para jogar de novo</p>
+    </div>
+
+    <script>
+        const boardElement = document.getElementById('board');
+        const movesElement = document.getElementById('moves');
+        const winOverlay = document.getElementById('win-overlay');
+        
+        let tiles = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+        let moveCount = 0;
+        let isGameActive = true;
+
+        // Sons simulados (opcionais, navegadores as vezes bloqueiam)
+        // Vamos focar no visual que é garantido
+
+        function renderBoard() {
+            boardElement.innerHTML = '';
+            
+            tiles.forEach((tile, index) => {
+                const div = document.createElement('div');
+                div.classList.add('tile');
+                
+                if (tile === 0) {
+                    div.classList.add('empty');
+                } else {
+                    div.innerText = tile;
+                    div.onclick = () => moveTile(index);
+                    
+                    // Cores variadas para ficar divertido
+                    const colors = ['#FF6B6B', '#4D96FF', '#6BCB77', '#FFD93D'];
+                    // Uma lógica simples para distribuir cores baseada no número
+                    div.style.backgroundColor = colors[(tile - 1) % colors.length];
+                    div.style.boxShadow = `0 8px 0 ${darkenColor(colors[(tile - 1) % colors.length])}`;
+                }
+                
+                boardElement.appendChild(div);
+            });
+        }
+
+        // Função auxiliar para escurecer a cor da sombra
+        function darkenColor(color) {
+            const map = {
+                '#FF6B6B': '#C44D4D', // Vermelho -> Escuro
+                '#4D96FF': '#285EAB', // Azul -> Escuro
+                '#6BCB77': '#3E8E46', // Verde -> Escuro
+                '#FFD93D': '#D4B218'  // Amarelo -> Escuro
+            };
+            return map[color] || '#333';
+        }
+
+        function moveTile(index) {
+            if (!isGameActive) return;
+
+            const emptyIndex = tiles.indexOf(0);
+            
+            if (isAdjacent(index, emptyIndex)) {
+                // Troca
+                [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+                moveCount++;
+                movesElement.innerText = moveCount;
+                renderBoard();
+                checkWin();
+            } else {
+                // Feedback visual de "erro" (balançar)
+                const tileElement = boardElement.children[index];
+                tileElement.style.transform = 'translateX(5px)';
+                setTimeout(() => tileElement.style.transform = 'translateX(0)', 100);
+            }
+        }
+
+        function isAdjacent(index1, index2) {
+            const r1 = Math.floor(index1 / 3), c1 = index1 % 3;
+            const r2 = Math.floor(index2 / 3), c2 = index2 % 3;
+            return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
+        }
+
+        function checkWin() {
+            const winState = JSON.stringify([1, 2, 3, 4, 5, 6, 7, 8, 0]);
+            if (JSON.stringify(tiles) === winState && moveCount > 0) {
+                isGameActive = false;
+                showConfetti();
+                winOverlay.style.display = 'flex';
+            }
+        }
+
+        function startGame() {
+            // Reinicia
+            tiles = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+            moveCount = 0;
+            movesElement.innerText = '0';
+            isGameActive = true;
+            winOverlay.style.display = 'none';
+
+            // Embaralha (100 movimentos aleatórios válidos)
+            for (let i = 0; i < 150; i++) {
+                const emptyIndex = tiles.indexOf(0);
+                const possibleMoves = [];
+                const offsets = [-1, 1, -3, 3]; // Esq, Dir, Cima, Baixo
+                
+                offsets.forEach(offset => {
+                    const neighbor = emptyIndex + offset;
+                    if (neighbor >= 0 && neighbor < 9 && isAdjacent(emptyIndex, neighbor)) {
+                        possibleMoves.push(neighbor);
+                    }
+                });
+                
+                const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                [tiles[emptyIndex], tiles[randomMove]] = [tiles[randomMove], tiles[emptyIndex]];
+            }
+            renderBoard();
+        }
+
+        function closeWin() {
+            winOverlay.style.display = 'none';
+            startGame();
+        }
+
+        // --- EFEITO DE CONFETE ---
+        function showConfetti() {
+            const colors = ['#FF6B6B', '#4D96FF', '#6BCB77', '#FFD93D', '#FFF'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                // Limpa confetes depois de 5s
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        // Inicia o jogo ao carregar
+        startGame();
+
+    </script>
+</body>
+</html>

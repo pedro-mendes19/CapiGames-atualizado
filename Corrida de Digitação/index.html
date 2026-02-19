@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corrida de Digitação - Nível Médio</title>
+    <link rel="icon" type="image/jpg" href="img/logo.png">
+    <style>
+        :root {
+            --asphalt: #2d3436;
+            --grass: #27ae60;
+            --lane-marker: #ecf0f1;
+            --ui-bg: #dfe6e9;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #74b9ff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Permite crescer se precisar */
+            padding: 20px 0;   /* Espaço para não colar nas bordas */
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: white;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            font-style: italic;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* --- NOVAS INSTRUÇÕES NO CANTO ESQUERDO --- */
+        .hud-instructions {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            max-width: 200px;
+            backdrop-filter: blur(5px);
+            border-left: 4px solid #f1c40f;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .hud-instructions h3 {
+            margin: 0 0 10px 0;
+            font-size: 1rem;
+            color: #ffeaa7;
+            text-transform: uppercase;
+        }
+
+        .hud-instructions ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* --- UI DO JOGO --- */
+        .game-container {
+            width: 90%;
+            max-width: 800px;
+            background-color: var(--ui-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative; /* Para manter contexto */
+        }
+
+        .display-text {
+            font-size: 1.5rem; /* Levemente menor para caber melhor */
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #b2bec3;
+            min-height: 40px;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 1px;
+            user-select: none;
+            line-height: 1.4;
+            word-wrap: break-word; /* Evita quebra de layout com palavras longas */
+        }
+
+        .correct-char { color: #27ae60; font-weight: bold; background-color: #eafaf1; }
+        .wrong-char { color: #d63031; text-decoration: line-through; background-color: #fadbd8; }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            font-size: 1.2rem;
+            border: 3px solid #b2bec3;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: center;
+        }
+
+        input[type="text"]:focus { border-color: #0984e3; }
+        input.error { border-color: #d63031; background-color: #ff7675; color: white; }
+        input.error::placeholder { color: white; opacity: 0.7; }
+
+        /* --- A PISTA DE CORRIDA --- */
+        .race-track {
+            margin-top: 30px;
+            background-color: var(--asphalt);
+            border-top: 10px solid var(--grass);
+            border-bottom: 10px solid var(--grass);
+            padding: 10px 0;
+            position: relative;
+            height: 160px; /* Reduzi um pouco a altura para telas menores */
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .lane-divider {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, var(--lane-marker) 0, var(--lane-marker) 30px, transparent 30px, transparent 60px);
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+
+        .finish-line {
+            position: absolute;
+            right: 30px; top: 0; bottom: 0;
+            width: 20px;
+            background: repeating-linear-gradient(45deg, #fff 0, #fff 10px, #000 10px, #000 20px);
+            z-index: 1;
+        }
+
+        .car-container {
+            position: absolute;
+            left: 10px;
+            width: 80px; /* Carros levemente menores para responsividade */
+            height: 50px;
+            transition: left 0.3s linear;
+            z-index: 10;
+        }
+
+        #player-car { top: 20px; }
+        #ai-car { bottom: 20px; }
+
+        .label {
+            position: absolute; left: -60px; top: 15px;
+            color: white; font-weight: bold; font-size: 0.7rem;
+            background: rgba(0,0,0,0.5); padding: 2px 4px; border-radius: 4px;
+        }
+
+        button {
+            background-color: #0984e3;
+            color: white; border: none; padding: 12px 30px;
+            font-size: 1.2rem; border-radius: 8px; cursor: pointer;
+            margin-top: 15px; box-shadow: 0 4px 0 #0056b3;
+            transition: transform 0.1s;
+        }
+        button:active { transform: translateY(4px); box-shadow: none; }
+        button:disabled { background-color: #b2bec3; box-shadow: none; cursor: not-allowed; }
+
+        /* MODAL */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 100;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 15px;
+            text-align: center; border: 4px solid white; width: 90%; max-width: 400px;
+        }
+
+        /* --- RESPONSIVIDADE (MEDIA QUERIES) --- */
+        /* Quando a tela for menor que 900px (Tablets e Celulares) */
+        @media (max-width: 900px) {
+            .hud-instructions {
+                position: relative; /* Deixa de ser absoluto */
+                top: auto; left: auto;
+                width: 90%;
+                max-width: 800px;
+                margin-bottom: 20px;
+                border-left: none;
+                border-top: 4px solid #f1c40f;
+                display: flex;
+                flex-direction: row; /* Coloca titulo e itens lado a lado */
+                justify-content: space-between;
+                align-items: center;
+            }
+            .hud-instructions ul { padding-left: 0; display: flex; gap: 15px; list-style: none; }
+            .hud-instructions h3 { margin: 0; margin-right: 15px; }
+            
+            h1 { font-size: 1.5rem; margin-top: 10px; }
+            .display-text { font-size: 1.1rem; }
+            .race-track { height: 140px; }
+        }
+
+        /* Para telas muito pequenas (Celulares em pé) */
+        @media (max-width: 600px) {
+            .hud-instructions {
+                flex-direction: column; /* Empilha de novo */
+                text-align: center;
+            }
+            .hud-instructions ul { flex-direction: column; gap: 5px; }
+            .hud-instructions h3 { margin-bottom: 5px; margin-right: 0; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hud-instructions">
+        <h3>⚠️ Atenção</h3>
+        <ul>
+            <li>Escreva a frase ao lado.</li>
+            <li>Respeite acentos (´ ^ ~)</li>
+            <li>Use letras Maiúsculas</li>
+            <li>Pontuação conta!</li>
+        </ul>
+    </div>
+
+    <h1>🏎️ Corrida de Digitação</h1>
+
+    <div class="game-container">
+        ```
+           
+    <div class="game-container">
+        <div id="text-display" class="display-text">Clique no botão para começar a correr!</div>
+        
+        <input type="text" id="input-field" placeholder="Prepare os dedos..." disabled autocomplete="off">
+        <button id="start-btn" onclick="startGame()">🚦 Ligar Motor</button>
+
+        <div class="race-track">
+            <div class="lane-divider"></div>
+            <div class="finish-line"></div>
+
+            <div id="player-car" class="car-container">
+                <span class="label" style="top: 20px; left: -50px;">VOCÊ</span>
+                <svg viewBox="0 0 200 80" width="100%" height="100%">
+                    <path fill="#e74c3c" d="M10,50 L30,50 L40,30 L120,30 L140,50 L190,50 C195,50 200,55 200,60 L200,70 L0,70 L0,60 C0,55 5,50 10,50 Z"/>
+                    <circle cx="40" cy="70" r="15" fill="#333" stroke="#fff" stroke-width="2"/>
+                    <circle cx="160" cy="70" r="15" fill="#333" stroke="#fff" stroke-width="2"/>
+                    <path fill="#c0392b" d="M120,30 L140,50 L40,50 L40,30 Z" opacity="0.3"/>
+                    <path fill="#f1c40f" d="M190,55 L200,65 L190,65 Z"/> </svg>
+            </div>
+
+            <div id="ai-car" class="car-container">
+                <span class="label" style="top: 20px; left: -40px;">CPU</span>
+                <svg viewBox="0 0 200 80" width="100%" height="100%">
+                    <path fill="#0984e3" d="M10,50 L20,50 L50,25 L130,25 L160,50 L190,50 C195,50 200,55 200,60 L200,70 L0,70 L0,60 C0,55 5,50 10,50 Z"/>
+                    <circle cx="45" cy="70" r="15" fill="#333" stroke="#fff" stroke-width="2"/>
+                    <circle cx="155" cy="70" r="15" fill="#333" stroke="#fff" stroke-width="2"/>
+                    <rect x="90" y="15" width="20" height="10" fill="#ff7675"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal">
+        <div class="modal-content" id="modal-box">
+            <h2 id="modal-title">Resultado</h2>
+            <p id="modal-msg">...</p>
+            <button onclick="closeModal()">Jogar Outra Vez</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAÇÃO DE DIFICULDADE ---
+        
+        // AJUSTADO PARA 1.0 CONFORME PEDIDO
+        const CPU_SPEED_INCREMENT = 1.2; 
+        
+        // Quanto maior, mais demora para o computador "pensar" entre movimentos
+        const CPU_TICK_RATE = 250; 
+
+        // Lista Expandida de Frases (30 frases)
+        const phrases = [
+            "O sol brilha forte no céu azul.",
+            "A girafa come folhas no alto da árvore.",
+            "Eu gosto de brincar no parque com amigos.",
+            "A tartaruga anda devagar mas chega lá.",
+            "Minha cor favorita é o amarelo do sol.",
+            "O gato bebe leite no pratinho.",
+            "O cachorro late quando vê o carteiro.",
+            "Comer frutas faz bem para a saúde.",
+            "A lua ilumina a noite escura.",
+            "Dois mais dois é igual a quatro.",
+            "O passarinho voa livre pelo ar.",
+            "Eu escovo os dentes antes de dormir.",
+            "A escola é um lugar de aprender coisas novas.",
+            "O elefante tem uma tromba muito grande.",
+            "O peixinho nada feliz no aquário.",
+            "Gosto de ler histórias de aventura.",
+            "O Brasil é um país muito bonito.",
+            "A chuva molha as plantas do jardim.",
+            "O arco-íris tem sete cores lindas.",
+            "Respeitar os mais velhos é educação.",
+            "O trem corre rápido pelos trilhos.",
+            "A abelha faz mel na colmeia.",
+            "Eu amo minha família e meus amigos.",
+            "A bola de futebol é branca e preta.",
+            "O macaco adora comer bananas maduras.",
+            "A baleia é o maior animal do mar.",
+            "Ler livros ajuda a escrever melhor.",
+            "O avião voa acima das nuvens brancas.",
+            "Sorrir deixa o dia mais feliz.",
+            "Fazer a lição de casa é importante."
+        ];
+
+        let currentPhrase = "";
+        let timer = null;
+        let gameRunning = false;
+        let aiProgress = 0;
+        
+        const displayDiv = document.getElementById('text-display');
+        const inputField = document.getElementById('input-field');
+        const playerCar = document.getElementById('player-car');
+        const aiCar = document.getElementById('ai-car');
+        const startBtn = document.getElementById('start-btn');
+        const modal = document.getElementById('result-modal');
+        const modalBox = document.getElementById('modal-box');
+
+        function startGame() {
+            // Resetar variáveis
+            aiProgress = 0;
+            updateCarPosition(playerCar, 0);
+            updateCarPosition(aiCar, 0);
+            inputField.value = "";
+            inputField.classList.remove('error');
+            
+            // Escolher frase aleatória
+            const randomIndex = Math.floor(Math.random() * phrases.length);
+            currentPhrase = phrases[randomIndex];
+            
+            // Renderizar frase
+            renderPhrase(currentPhrase);
+
+            // Ativar jogo
+            gameRunning = true;
+            inputField.disabled = false;
+            inputField.focus();
+            startBtn.disabled = true;
+            startBtn.innerText = "🏎️ Correndo...";
+
+            // Iniciar a IA com velocidade reduzida
+            // Adiciona uma leve variação para não ser robótico demais
+            const adjustedSpeed = CPU_TICK_RATE + Math.random() * 100;
+            timer = setInterval(moveAI, adjustedSpeed);
+        }
+
+        function renderPhrase(text) {
+            displayDiv.innerHTML = "";
+            text.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.innerText = char;
+                displayDiv.appendChild(span);
+            });
+        }
+
+        inputField.addEventListener('input', () => {
+            if (!gameRunning) return;
+
+            const typed = inputField.value;
+            const originalArray = currentPhrase.split('');
+            const spans = displayDiv.querySelectorAll('span');
+
+            // Validação visual letra por letra
+            spans.forEach((span, index) => {
+                const char = typed[index];
+                if (char == null) {
+                    span.classList.remove('correct-char', 'wrong-char');
+                } else if (char === originalArray[index]) {
+                    span.classList.add('correct-char');
+                    span.classList.remove('wrong-char');
+                } else {
+                    span.classList.add('wrong-char');
+                    span.classList.remove('correct-char');
+                }
+            });
+
+            // Lógica do Carro e Erros
+            if (currentPhrase.startsWith(typed)) {
+                inputField.classList.remove('error');
+                
+                const percentage = (typed.length / currentPhrase.length) * 100;
+                updateCarPosition(playerCar, percentage);
+
+                if (typed === currentPhrase) {
+                    endGame(true);
+                }
+
+            } else {
+                inputField.classList.add('error');
+            }
+        });
+
+        function moveAI() {
+            if (!gameRunning) return;
+            
+            // Incremento ajustado
+            aiProgress += CPU_SPEED_INCREMENT; 
+            updateCarPosition(aiCar, aiProgress);
+
+            if (aiProgress >= 100) {
+                endGame(false);
+            }
+        }
+
+        function updateCarPosition(carElement, percentage) {
+            if (percentage > 100) percentage = 100;
+            // Limite visual (80% da tela para não sair da pista na direita)
+            const visualLimit = 80; 
+            const visualPos = (percentage / 100) * visualLimit;
+            carElement.style.left = `calc(10px + ${visualPos}%)`;
+        }
+
+        function endGame(playerWon) {
+            gameRunning = false;
+            clearInterval(timer);
+            inputField.disabled = true;
+
+            const title = document.getElementById('modal-title');
+            const msg = document.getElementById('modal-msg');
+
+            if (playerWon) {
+                modalBox.style.borderColor = "#27ae60";
+                title.innerText = "🏆 CHEGADA!";
+                title.style.color = "#27ae60";
+                msg.innerText = "Incrível! Você venceu a corrida!";
+            } else {
+                modalBox.style.borderColor = "#d63031";
+                title.innerText = "🏳️ FIM DE JOGO";
+                title.style.color = "#d63031";
+                msg.innerText = "A CPU venceu desta vez. Continue praticando!";
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            startBtn.disabled = false;
+            startBtn.innerText = "🚦 Ligar Motor";
+            inputField.value = "";
+            displayDiv.innerText = 'Clique no botão para começar!';
+            updateCarPosition(playerCar, 0);
+            updateCarPosition(aiCar, 0);
+        }
+    </script>
+</body>
+</html>

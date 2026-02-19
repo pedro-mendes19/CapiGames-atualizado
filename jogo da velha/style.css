@@ -1,0 +1,115 @@
+/* Estilos CSS (Aparência Divertida) */
+
+/* 1. Fundo da página vibrante */
+body {
+    /* Fonte mais divertida e arredondada */
+    font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', 'Nunito', sans-serif;
+    /* Degradê colorido tipo arco-íris/doce */
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #a6c1ee 50%, #96e6a1 75%, #f9f871 100%);
+    /* Animação suave do fundo (opcional, mas legal) */
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Animação para o fundo se mover devagar */
+@keyframes gradientBG {
+	0% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+}
+
+/* 2. Onde fica o jogo (a caixinha branca) */
+.container {
+    text-align: center;
+    background: #ffffff;
+    padding: 25px;
+    /* Cantos bem redondos */
+    border-radius: 25px;
+    /* Sombra colorida e borda grossa */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 0 5px #4facfe;
+    border: 5px solid #f9f871;
+}
+
+h1 {
+    color: #ff6b6b; /* Título vermelhinho */
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 0px #f9f871; /* Sombra amarela no texto */
+}
+
+.status {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    color: #4facfe; /* Azul vibrante */
+    font-weight: bold;
+}
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 8px; /* Espaço um pouco maior entre os blocos */
+    margin-bottom: 20px;
+    background-color: #4facfe; /* Fundo azul entre os blocos */
+    padding: 8px;
+    border-radius: 15px;
+}
+
+/* 3. Os quadrados do jogo */
+.cell {
+    background-color: #74b9ff; /* Azul celeste brilhante */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem; /* Letras X e O maiores */
+    cursor: pointer;
+    border-radius: 10px; /* Cantos arredondados nos quadrados */
+    transition: all 0.3s ease;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Quando passa o mouse por cima */
+.cell:hover {
+    background-color: #a29bfe; /* Roxo claro ao passar o mouse */
+    transform: scale(1.05); /* Efeito de "pulo" */
+}
+
+/* Quando alguém ganha - Verde limão vibrante */
+.cell.winner {
+    background-color: #00b894;
+    animation: pulse 1s infinite; /* Faz os blocos vencedores pulsarem */
+}
+
+/* Animação de pulsar para a vitória */
+@keyframes pulse {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.05); }
+	100% { transform: scale(1); }
+}
+
+/* Botão de reiniciar */
+button {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-family: inherit; /* Usa a mesma fonte divertida */
+    background-color: #ff7675; /* Botão vermelho/rosa */
+    color: white;
+    border: none;
+    border-radius: 50px; /* Botão bem redondo */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 5px 0 #d63031; /* Efeito 3D no botão */
+}
+
+button:hover {
+    background-color: #fab1a0;
+    transform: translateY(2px); /* Efeito de apertar o botão */
+    box-shadow: 0 3px 0 #d63031;
+}

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TROCO DOCE </title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <style>
+        :root {
+            --wood: #6d4c41;
+            --wood-light: #8d6e63;
+            --paper: #fff9c4;
+            --candy-pink: #ff80ab;
+            --ui-red: #ff5252;
+            --success: #2ecc71;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fce4ec;
+            overflow: hidden;
+        }
+
+        /* BANNER TOPO */
+        .top-banner {
+            position: absolute; top: 0; width: 100%;
+            background-color: var(--ui-red); color: white;
+            text-align: center; padding: 12px 0;
+            font-family: 'Comic Neue', cursive; font-size: 24px;
+            z-index: 100; border-bottom: 4px solid #d32f2f;
+        }
+
+        .game-world { display: flex; height: 100vh; padding-top: 60px; box-sizing: border-box; }
+
+        /* LADO DA LOJA */
+        .view-shop {
+            width: 45%; background: linear-gradient(to bottom, #f8bbd0 0%, #f48fb1 100%);
+            border-right: 8px solid #4e342e; display: flex;
+            flex-direction: column; align-items: center; justify-content: flex-end;
+            position: relative;
+        }
+
+        /* BALÃO DE FALA */
+        .speech-bubble {
+            background: white; padding: 20px; border-radius: 20px;
+            margin-bottom: 40px; font-weight: bold; width: 70%;
+            position: relative; box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            font-size: 1.1rem; text-align: center;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .speech-bubble::after {
+            content: ''; position: absolute; bottom: -15px; left: 30px;
+            border-left: 15px solid transparent; border-right: 15px solid transparent;
+            border-top: 15px solid white;
+        }
+
+        .customer { font-size: 180px; z-index: 2; margin-bottom: -20px; }
+        .counter-front {
+            width: 100%; height: 120px; background-color: var(--wood);
+            z-index: 3; border-top: 6px solid var(--wood-light);
+        }
+
+        /* LADO DO TRABALHO */
+        .view-workspace {
+            width: 55%; background-color: var(--wood-light);
+            display: flex; flex-direction: column; padding: 30px;
+            position: relative; box-shadow: inset 15px 0 30px rgba(0,0,0,0.2);
+        }
+
+        .order-sheet {
+            background-color: var(--paper); width: 280px; padding: 20px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1); transform: rotate(-1deg);
+            margin-bottom: 20px; border: 1px solid #eee;
+        }
+
+        .work-surface {
+            flex-grow: 1; background: rgba(0,0,0,0.05); border-radius: 15px;
+            border: 4px dashed rgba(255,255,255,0.2); margin-bottom: 20px;
+            display: flex; flex-wrap: wrap; gap: 10px; padding: 20px; align-content: flex-start;
+        }
+
+        /* DINHEIRO */
+        .cash-drawer {
+            background: #3e2723; padding: 15px; border-radius: 12px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+        }
+
+        .money-btn {
+            border: none; border-radius: 4px; padding: 10px 5px; cursor: pointer;
+            font-weight: bold; transition: transform 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+        }
+        .money-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        .b20 { background: #ffcc80; border-left: 10px solid #fb8c00; }
+        .b10 { background: #a5d6a7; border-left: 10px solid #43a047; }
+        .b5 { background: #ef9a9a; border-left: 10px solid #e53935; }
+        .b2 { background: #90caf9; border-left: 10px solid #1e88e5; }
+        .coin { border-radius: 50%; height: 45px; width: 45px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        .m100 { background: #ffd54f; } .m50 { background: #cfd8dc; }
+
+        .actions { display: flex; gap: 15px; margin-top: 15px; }
+        .btn-main { flex: 1; padding: 15px; border: none; border-radius: 10px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 6px 0 rgba(0,0,0,0.2); }
+        .btn-finish { background: var(--success); color: white; }
+        .btn-next { background: #3498db; color: white; display: none; }
+
+        .placed-money {
+            padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;
+            font-size: 14px; font-weight: bold; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            animation: drop In 0.2s ease-out;
+        }
+        @keyframes dropIn { from { transform: scale(1.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-banner" id="main-instruction">Dê o troco correto ao cliente!</div>
+
+    <div class="game-world">
+        <div class="view-shop">
+            <div class="speech-bubble" id="customer-speech">
+                Olá! Pode me dar o meu troco?
+            </div>
+            <div class="customer">👩</div>
+            <div class="counter-front"></div>
+        </div>
+
+        <div class="view-workspace">
+            <div class="order-sheet">
+                <h2 style="font-family: 'Comic Neue'; margin: 0;">RECIBO DOCE</h2>
+                <div style="font-size: 24px; font-weight: bold; margin: 10px 0;" id="val-total">TOTAL: R$ 0,00</div>
+                <div style="color: #1976d2;" id="val-pago">PAGOU COM: R$ 0,00</div>
+                <div style="border-top: 2px dashed #ccc; margin-top: 10px; padding-top: 10px; color: #d32f2f; font-weight: bold;">
+                    TROCO ATUAL: <span id="val-troco">R$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="work-surface" id="tray"></div>
+
+            <div class="cash-drawer">
+                <button class="money-btn b20" onclick="add(2000)">R$ 20</button>
+                <button class="money-btn b10" onclick="add(1000)">R$ 10</button>
+                <button class="money-btn b5" onclick="add(500)">R$ 5</button>
+                <button class="money-btn b2" onclick="add(200)">R$ 2</button>
+                <button class="money-btn m100 coin" onclick="add(100)">1,00</button>
+                <button class="money-btn m50 coin" onclick="add(50)">0,50</button>
+                <button class="money-btn m25 coin" onclick="add(25)">0,25</button>
+                <button class="money-btn m10 coin" onclick="add(10)">0,10</button>
+                <button class="money-btn m05 coin" onclick="add(5)">0,05</button>
+                <button class="money-btn" style="background:#eee" onclick="reset()">LIMPAR</button>
+            </div>
+
+            <div class="actions">
+                <button class="btn-main btn-finish" id="btn-finalizar" onclick="check()">ENTREGAR TROCO</button>
+                <button class="btn-main btn-next" id="btn-proximo" onclick="nextLevel()">PRÓXIMO CLIENTE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let totalCents = 0, paidCents = 0, currentCents = 0;
+
+        function format(c) { return "R$ " + (c/100).toFixed(2).replace('.', ','); }
+
+        function nextLevel() {
+            totalCents = (Math.floor(Math.random() * 300) + 10) * 5; //
+            const bills = [500, 1000, 2000, 5000];
+            paidCents = bills.find(b => b > totalCents);
+            
+            document.getElementById('val-total').innerText = "TOTAL: " + format(totalCents);
+            document.getElementById('val-pago').innerText = "PAGOU COM: " + format(paidCents);
+            document.getElementById('customer-speech').innerText = "Olá! Pode me dar o meu troco?";
+            document.getElementById('customer-speech').style.color = "black";
+            document.getElementById('btn-proximo').style.display = "none";
+            document.getElementById('btn-finalizar').style.display = "block";
+            reset();
+        }
+
+        function add(v) {
+            currentCents += v;
+            document.getElementById('val-troco').innerText = format(currentCents);
+            const item = document.createElement('div');
+            item.className = 'placed-money';
+            item.innerText = v >= 100 ? "R$ "+(v/100) : v+"¢";
+            item.style.transform = `rotate(${Math.random()*20-10}deg)`;
+            document.getElementById('tray').appendChild(item);
+        }
+
+        function reset() {
+            currentCents = 0;
+            document.getElementById('val-troco').innerText = format(0);
+            document.getElementById('tray').innerHTML = '';
+        }
+
+        function check() {
+            const correct = paidCents - totalCents;
+            const speech = document.getElementById('customer-speech');
+            
+            if(currentCents === correct) {
+                speech.innerText = "✨ Perfeito! Muito obrigado, o troco está certinho!";
+                speech.style.color = "var(--success)";
+                document.getElementById('btn-proximo').style.display = "block";
+                document.getElementById('btn-finalizar').style.display = "none";
+            } else {
+                speech.innerText = "🤔 Hum... acho que esse troco não está certo. Pode conferir?";
+                speech.style.color = "var(--ui-red)";
+            }
+        }
+
+        window.onload = nextLevel;
+    </script>
+</body>
+</html>

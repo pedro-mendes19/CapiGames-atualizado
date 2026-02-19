@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESAFIO DAS BANDEIRAS</title>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cor-azul-ceu: #4facfe;
+            --cor-azul-turquesa: #00f2fe;
+            --cor-amarelo: #ffeb3b;
+            --cor-laranja: #ff9800;
+            --cor-vermelho: #ff4757;
+            --cor-verde: #2ed573;
+            --cor-texto: #2f3542;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(#ffffff33 15%, transparent 16%),
+                        linear-gradient(135deg, var(--cor-azul-ceu) 0%, var(--cor-azul-turquesa) 100%);
+            background-size: 30px 30px, 100% 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #game-box {
+            /* MUDANÇA AQUI: Cinza mais escuro e visível (#e0e0e0) */
+            background: #e0e0e0; 
+            padding: 30px;
+            border-radius: 40px;
+            box-shadow: 0 15px 0 rgba(0,0,0,0.15); 
+            width: 90%;
+            max-width: 550px;
+            text-align: center;
+            /* MUDANÇA AQUI: A borda externa continua branca para contraste */
+            border: 8px solid #fff;
+            position: relative;
+            animation: flutuar 3s ease-in-out infinite;
+        }
+
+        @keyframes flutuar {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+            /* MUDANÇA AQUI: Fundo do header mais escuro que o box */
+            background: #ced6e0; 
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        .vidas { letter-spacing: 5px; }
+        .score { color: var(--cor-texto); font-weight: 600; }
+        .score span { color: var(--cor-laranja); font-size: 1.6rem; }
+
+        #level-badge {
+            display: inline-block;
+            background: var(--cor-laranja);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 0 #e65100;
+            text-transform: uppercase;
+        }
+
+        #target-country {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            color: var(--cor-texto);
+            text-shadow: 2px 2px 0px #eee;
+        }
+
+        .grid-bandeiras {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-bandeira {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0;
+            cursor: pointer;
+            transition: transform 0.1s;
+            position: relative;
+            box-shadow: 0 8px 0 #bdc3c7; 
+            /* MUDANÇA AQUI: Borda cinza para separar do fundo */
+            border: 4px solid #ced6e0;
+        }
+
+        .btn-bandeira:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #bdc3c7;
+        }
+
+        .btn-bandeira img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 14px;
+            aspect-ratio: 16/10;
+            display: block;
+        }
+
+        .acertou { 
+            border-color: var(--cor-verde) !important; 
+            box-shadow: 0 8px 0 #218c74 !important;
+            background: var(--cor-verde);
+        }
+        
+        .errou { 
+            border-color: var(--cor-vermelho) !important; 
+            box-shadow: 0 8px 0 #b33939 !important;
+            animation: tremer 0.4s;
+        }
+
+        @keyframes tremer {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px) rotate(-5deg); }
+            75% { transform: translateX(8px) rotate(5deg); }
+        }
+
+        #tela-over {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(47, 53, 66, 0.95);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .btn-restart {
+            margin-top: 30px;
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            font-family: 'Fredoka', sans-serif;
+            background: var(--cor-verde);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #218c74;
+            transition: 0.2s;
+        }
+        
+        .btn-restart:hover { transform: scale(1.05); }
+        .btn-restart:active { transform: translateY(5px); box-shadow: 0 5px 0 #218c74; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div id="tela-over" class="hidden">
+    <h1 style="font-size: 4rem; margin: 0; color: var(--cor-vermelho);">Oooops!</h1>
+    <p style="font-size: 2rem;">Fim de Jogo</p>
+    <div style="font-size: 1.5rem; background: rgba(255,255,255,0.1); padding: 10px 30px; border-radius: 20px;">
+        Pontuação Final: <b id="final-score" style="color: var(--cor-amarelo);">0</b>
+    </div>
+    <button class="btn-restart" onclick="iniciarJogo()">Jogar de Novo! 🚀</button>
+</div>
+
+<div id="game-box">
+    <div id="level-badge">Nível: Fácil</div>
+    
+    <div class="header">
+        <div class="vidas" id="vidas-container">❤️❤️❤️</div>
+        <div class="score">Pts: <span id="score">0</span></div>
+    </div>
+
+    <div id="target-country">Carregando... ⏳</div>
+
+    <div class="grid-bandeiras" id="container-opcoes"></div>
+</div>
+
+<script>
+    let todosPaisesAPI = [];
+    let baralhoFamosos = [];
+    let baralhoDificeis = [];
+    
+    let vidas = 3;
+    let pontos = 0;
+    let paisCorreto;
+    let travado = false;
+
+    const famososcodes = [
+        'BR', 'US', 'FR', 'AR', 'JP', 'PT', 'ES', 'IT', 'CN', 'DE', 
+        'GB', 'MX', 'CA', 'RU', 'EG', 'AU', 'IN', 'KR', 'ZA', 'CL',
+        'UY', 'CO', 'PE', 'GR', 'BE', 'NL', 'CH', 'IL', 'NO', 'TR',
+        'SE', 'DK', 'IE', 'NZ', 'JM', 'MA', 'CU', 'PL', 'CN', 'AT'
+    ];
+
+    async function baixarPaises() {
+        try {
+            const res = await fetch('https://restcountries.com/v3.1/all?fields=name,flags,translations,cca2,subregion');
+            const data = await res.json();
+            
+            todosPaisesAPI = data.map(p => ({
+                nome: p.translations.por.common || p.name.common,
+                bandeira: p.flags.svg,
+                cca2: p.cca2,
+                subregion: p.subregion
+            }));
+            
+            iniciarJogo();
+        } catch (e) {
+            document.getElementById('target-country').innerText = "Sem Internet ☹️";
+        }
+    }
+
+    function embaralhar(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function iniciarJogo() {
+        vidas = 3;
+        pontos = 0;
+        travado = false;
+        
+        baralhoFamosos = embaralhar(todosPaisesAPI.filter(p => famososcodes.includes(p.cca2)));
+        baralhoDificeis = embaralhar(todosPaisesAPI.filter(p => !famososcodes.includes(p.cca2)));
+
+        atualizarInterface();
+        document.getElementById('tela-over').classList.add('hidden');
+        gerarPergunta();
+    }
+
+    function gerarPergunta() {
+        travado = false;
+        const container = document.getElementById('container-opcoes');
+        const badge = document.getElementById('level-badge');
+        container.innerHTML = '';
+
+        if (baralhoFamosos.length > 0) {
+            paisCorreto = baralhoFamosos.shift();
+            badge.innerText = "⭐ Nível: Famosos";
+            badge.style.background = "#ff9800";
+            badge.style.boxShadow = "0 4px 0 #e65100";
+        } else {
+            paisCorreto = baralhoDificeis.shift();
+            badge.innerText = "🚀 Nível: Mestre (Difícil)";
+            badge.style.background = "#8e44ad";
+            badge.style.boxShadow = "0 4px 0 #6c3483";
+        }
+
+        if (!paisCorreto) { 
+            alert("VOCÊ É UM GÊNIO DA GEOGRAFIA! Zerou tudo!");
+            iniciarJogo(); 
+            return;
+        }
+
+        document.getElementById('target-country').innerText = paisCorreto.nome;
+
+        let opcoes = [paisCorreto];
+        let bancoErros = [];
+
+        const vizinhos = todosPaisesAPI.filter(p => 
+            p.subregion === paisCorreto.subregion && 
+            p.nome !== paisCorreto.nome
+        );
+
+        if (vizinhos.length >= 3) {
+             bancoErros = embaralhar([...vizinhos]).slice(0, 3);
+        } else {
+             bancoErros = [...vizinhos];
+             const restoDoMundo = todosPaisesAPI.filter(p => 
+                 p.subregion !== paisCorreto.subregion &&
+                 p.nome !== paisCorreto.nome
+             );
+             const faltam = 3 - bancoErros.length;
+             const aleatorios = embaralhar([...restoDoMundo]).slice(0, faltam);
+             bancoErros = bancoErros.concat(aleatorios);
+        }
+        
+        opcoes = embaralhar(opcoes.concat(bancoErros));
+
+        opcoes.forEach(op => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-bandeira';
+            btn.innerHTML = `<img src="${op.bandeira}">`;
+            btn.onclick = () => verificar(op.nome, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function verificar(nome, el) {
+        if(travado) return;
+        travado = true;
+
+        if(nome === paisCorreto.nome) {
+            el.classList.add('acertou');
+            pontos += 10;
+        } else {
+            el.classList.add('errou');
+            vidas--;
+            destacarCorreta();
+        }
+
+        atualizarInterface();
+
+        if(vidas <= 0) {
+            setTimeout(gameOver, 1000);
+        } else {
+            setTimeout(gerarPergunta, 1000);
+        }
+    }
+
+    function destacarCorreta() {
+        const botoes = document.querySelectorAll('.btn-bandeira');
+        botoes.forEach(b => {
+            if(b.innerHTML.includes(paisCorreto.bandeira)) {
+                b.classList.add('acertou');
+            }
+        });
+    }
+
+    function atualizarInterface() {
+        document.getElementById('score').innerText = pontos;
+        let coracoes = "";
+        for(let i=0; i<3; i++) {
+            coracoes += i < vidas ? "❤️" : "🖤";
+        }
+        document.getElementById('vidas-container').innerText = coracoes;
+    }
+
+    function gameOver() {
+        document.getElementById('final-score').innerText = pontos;
+        document.getElementById('tela-over').classList.remove('hidden');
+    }
+
+    baixarPaises();
+</script>
+
+</body>
+</html>  

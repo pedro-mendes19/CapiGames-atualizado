@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montando o Menino</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    </style>
+</head>
+<body class="game-body">
+
+    <div class="game-header">
+        <button class="back-btn" onclick="window.location.href='index.html'">⬅ Voltar ao Menu</button>
+        <h1>Monte o Menino</h1>
+    </div>
+
+<div class="game-layout">
+
+    <div class="sidebar left-side">
+        <img src="images/brain.png" class="organ" id="brain" alt="Cérebro">
+        <img src="images/pulmao.png" class="organ" id="lungs" alt="Pulmões">
+        <img src="images/heart.png" class="organ" id="heart" alt="Coração">
+    </div>
+
+    <div class="center-area" id="target-body">
+        <img src="images/boy.png" class="body-img" draggable="false">
+
+        <img src="images/brain.png" class="drop-zone" data-organ="brain" style="top: 15%; left: 49%;">
+        <img src="images/pulmao.png" class="drop-zone" data-organ="lungs" style="top: 37%; left: 49%;">
+        <img src="images/heart.png" class="drop-zone" data-organ="heart" style="top: 38%; left: 52%;">
+        <img src="images/figado.png" class="drop-zone" data-organ="liver" style="top: 43%; left: 46%;">
+        <img src="images/estomago.png" class="drop-zone" data-organ="stomach" style="top: 43%; left: 51%;">
+        <img src="images/rins.png" class="drop-zone" data-organ="kidneys" style="top: 44%; left: 48%;">
+    </div>
+
+    <div class="sidebar right-side">
+        <img src="images/figado.png" class="organ" id="liver" alt="Fígado">
+        <img src="images/estomago.png" class="organ" id="stomach" alt="Estômago">
+        <img src="images/rins.png" class="organ" id="kidneys" alt="Rins">
+    </div>
+
+</div>
+
+
+    <div id="win-message">
+        <h2>Parabéns!</h2>
+        <p>Você completou o corpo do menino!</p>
+        
+      <div class="win-buttons">
+        <button class="action-btn btn-restart" onclick="location.reload()">Jogar de Novo</button>
+        <button class="action-btn btn-exit" onclick="window.location.href='index.html'">Sair</button>
+      </div>
+      
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

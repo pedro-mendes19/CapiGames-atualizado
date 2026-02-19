@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAGO DOS VERBOS</title>
+    <link rel="icon" type="image/png" href="img/img/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Paleta de Cores Premium */
+            --bg-dark: #0f172a;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
+            --glass-surface: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1; /* Indigo */
+            --primary-hover: #4f46e5;
+            --accent: #10b981; /* Emerald */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            background-image: var(--bg-gradient);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Ambient Light (Efeito de fundo sutil) */
+        .glow-effect {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Container Principal (Glassmorphism) */
+        .game-container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 550px;
+            background: var(--glass-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        /* Header e Score */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-badge {
+            background: rgba(255,255,255,0.05);
+            padding: 5px 12px;
+            border-radius: 8px;
+            color: var(--text-main);
+        }
+
+        /* Mascote e Título */
+        .brand-area {
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin: 10px 0 0 0;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .mascot-icon {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.3));
+        }
+
+        /* Barra de Progresso Fina */
+        .progress-container {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+        }
+
+        /* Área da Pergunta */
+        .question-card {
+            margin-bottom: 40px;
+        }
+
+        .tags-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-verb { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+        .tag-time { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .sentence {
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .gap {
+            display: inline-block;
+            min-width: 80px;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0 5px;
+            transition: all 0.3s;
+        }
+
+        /* Grid de Opções */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .btn-opt {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 18px;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-opt:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-opt:active {
+            transform: scale(0.98);
+        }
+
+        /* Feedback States */
+        .btn-opt.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-opt.wrong {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--error);
+            color: var(--error);
+            opacity: 0.7;
+        }
+
+        /* Tela Final */
+        #end-screen { display: none; }
+        
+        .score-big {
+            font-size: 5rem;
+            font-weight: 800;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+        }
+
+        .btn-restart {
+            margin-top: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+            transition: transform 0.2s;
+        }
+        
+        .btn-restart:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="glow-effect"></div>
+
+    <div class="game-container">
+        
+        <div id="game-ui">
+            <div class="header-bar">
+                <span>Nível <span id="current-level">1</span>/10</span>
+                <span class="score-badge">PTS: <span id="score">0</span></span>
+            </div>
+
+            <div class="brand-area">
+                <div class="mascot-icon" id="mascot">🧙‍♂️</div>
+                </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div class="question-card">
+                <div class="tags-container">
+                    <span class="tag tag-verb" id="tag-verb">VERBO</span>
+                    <span class="tag tag-time" id="tag-time">TEMPO</span>
+                </div>
+                <div class="sentence" id="sentence-text">
+                    Carregando desafio...
+                </div>
+            </div>
+
+            <div class="options-grid" id="options-area">
+                </div>
+        </div>
+
+        <div id="end-screen">
+            <div style="font-size: 4rem;">✨</div>
+            <h2 style="color:white; margin:10px 0;">Sessão Concluída</h2>
+            <div class="score-big" id="final-score">0</div>
+            <p style="color:var(--text-muted)">Acertos de 10 tentativas</p>
+            <button class="btn-restart" onclick="restartGame()">Jogar Novamente</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- LÓGICA DO JOGO (Mesmo banco de dados, lógica robusta) ---
+        const masterList = [
+            // PRESENTE
+            { v: "Amar", t: "Hoje", s: "Eu ______ muito meus pais.", c: "Amo", o: ["Amei", "Amo", "Amarei"] },
+            { v: "Beber", t: "Agora", s: "Você ______ água?", c: "Bebe", o: ["Bebeu", "Bebe", "Beberá"] },
+            { v: "Abrir", t: "Hoje", s: "Nós ______ a porta.", c: "Abrimos", o: ["Abrimos", "Abriram", "Abriremos"] },
+            { v: "Correr", t: "Agora", s: "O cachorro ______ no quintal.", c: "Corre", o: ["Correu", "Corre", "Correrá"] },
+            { v: "Escrever", t: "Hoje", s: "A professora ______ no quadro.", c: "Escreve", o: ["Escreveu", "Escreve", "Escreverá"] },
+            { v: "Falar", t: "Agora", s: "Eu ______ inglês.", c: "Falo", o: ["Falei", "Falo", "Falarei"] },
+            { v: "Ler", t: "Hoje", s: "Eles ______ gibis.", c: "Leem", o: ["Leram", "Leem", "Lerão"] },
+            { v: "Dormir", t: "Agora", s: "O gato ______ no sofá.", c: "Dorme", o: ["Dormiu", "Dorme", "Dormirá"] },
+            { v: "Ver", t: "Hoje", s: "Nós ______ TV.", c: "Vemos", o: ["Vimos", "Vemos", "Veremos"] },
+            { v: "Ir", t: "Hoje", s: "Eu ______ ao mercado.", c: "Vou", o: ["Fui", "Vou", "Irei"] },
+            { v: "Ter", t: "Hoje", s: "Eles ______ uma casa azul.", c: "Têm", o: ["Têm", "Tem", "Terão"] },
+            { v: "Ser", t: "Hoje", s: "Nós ______ amigos.", c: "Somos", o: ["Fomos", "Somos", "Seremos"] },
+            
+            // PASSADO
+            { v: "Comer", t: "Ontem", s: "Eu ______ bolo de chocolate.", c: "Comi", o: ["Comi", "Como", "Comerei"] },
+            { v: "Cair", t: "Ontem", s: "O menino ______ da bike.", c: "Caiu", o: ["Cai", "Caiu", "Cairá"] },
+            { v: "Estudar", t: "Passado", s: "Elas ______ para a prova.", c: "Estudaram", o: ["Estudam", "Estudarão", "Estudaram"] },
+            { v: "Fazer", t: "Ontem", s: "Nós ______ o dever.", c: "Fizemos", o: ["Fazemos", "Fizemos", "Faremos"] },
+            { v: "Dizer", t: "Passado", s: "Ele ______ a verdade.", c: "Disse", o: ["Diz", "Disse", "Dirá"] },
+            { v: "Chegar", t: "Ontem", s: "Você ______ tarde.", c: "Chegou", o: ["Chega", "Chegou", "Chegará"] },
+            { v: "Brincar", t: "Ontem", s: "Eles ______ na areia.", c: "Brincaram", o: ["Brincam", "Brincarão", "Brincaram"] },
+            { v: "Poder", t: "Ontem", s: "Ela não ______ vir.", c: "Pôde", o: ["Pode", "Pôde", "Poderá"] },
+            { v: "Dar", t: "Ontem", s: "Ele me ______ um presente.", c: "Deu", o: ["Dá", "Deu", "Dará"] },
+            { v: "Ir", t: "Ontem", s: "Nós ______ ao cinema.", c: "Fomos", o: ["Vamos", "Fomos", "Iremos"] },
+            
+            // FUTURO
+            { v: "Viajar", t: "Amanhã", s: "Eles ______ para a praia.", c: "Viajarão", o: ["Viajaram", "Viajam", "Viajarão"] },
+            { v: "Ser", t: "Futuro", s: "Eu ______ astronauta.", c: "Serei", o: ["Sou", "Fui", "Serei"] },
+            { v: "Comprar", t: "Amanhã", s: "Nós ______ o pão.", c: "Compraremos", o: ["Compramos", "Compramos", "Compraremos"] },
+            { v: "Ler", t: "Futuro", s: "Você ______ este livro?", c: "Lerá", o: ["Leu", "Lê", "Lerá"] },
+            { v: "Estar", t: "Amanhã", s: "Eu ______ lá.", c: "Estarei", o: ["Estou", "Estive", "Estarei"] },
+            { v: "Ter", t: "Futuro", s: "Ela ______ sucesso.", c: "Terá", o: ["Tem", "Teve", "Terá"] },
+            { v: "Fazer", t: "Amanhã", s: "Nós ______ uma festa.", c: "Faremos", o: ["Fazemos", "Fizemos", "Faremos"] },
+            { v: "Vir", t: "Futuro", s: "Todos ______ para o jantar.", c: "Virão", o: ["Vêm", "Vieram", "Virão"] },
+            { v: "Dormir", t: "Amanhã", s: "Eu ______ cedo.", c: "Dormirei", o: ["Dormi", "Durmo", "Dormirei"] },
+            { v: "Falar", t: "Futuro", s: "O diretor ______ com você.", c: "Falará", o: ["Falou", "Fala", "Falará"] }
+        ];
+        // (Nota: Lista reduzida no código para brevidade, mas o algoritmo funciona com qualquer tamanho)
+
+        let gameQueue = [];
+        let currentIndex = 0;
+        let score = 0;
+        let isLocked = false;
+
+        const ui = {
+            game: document.getElementById('game-ui'),
+            end: document.getElementById('end-screen'),
+            sentence: document.getElementById('sentence-text'),
+            options: document.getElementById('options-area'),
+            tagVerb: document.getElementById('tag-verb'),
+            tagTime: document.getElementById('tag-time'),
+            score: document.getElementById('score'),
+            level: document.getElementById('current-level'),
+            bar: document.getElementById('progress-bar'),
+            mascot: document.getElementById('mascot'),
+            finalScore: document.getElementById('final-score')
+        };
+
+        function secureShuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function restartGame() {
+            const fullPool = secureShuffle([...masterList]);
+            gameQueue = fullPool.slice(0, 10);
+            
+            currentIndex = 0;
+            score = 0;
+            
+            ui.end.style.display = 'none';
+            ui.game.style.display = 'block';
+            ui.score.innerText = '0';
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIndex >= gameQueue.length) {
+                showEndScreen();
+                return;
+            }
+
+            const q = gameQueue[currentIndex];
+            isLocked = false;
+
+            ui.level.innerText = currentIndex + 1;
+            ui.bar.style.width = ((currentIndex) / gameQueue.length * 100) + '%';
+            ui.mascot.innerText = '🧙‍♂️';
+
+            ui.tagVerb.innerText = q.v;
+            ui.tagTime.innerText = q.t;
+
+            const htmlText = q.s.replace('______', '<span class="gap">_______</span>');
+            ui.sentence.innerHTML = htmlText;
+
+            ui.options.innerHTML = '';
+            const shuffledOpts = secureShuffle([...q.o]);
+
+            shuffledOpts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-opt';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(btn, opt, q.c);
+                ui.options.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(btn, selected, correct) {
+            if (isLocked) return;
+            isLocked = true;
+
+            const gap = document.querySelector('.gap');
+            const allBtns = document.querySelectorAll('.btn-opt');
+
+            if (selected === correct) {
+                score++;
+                ui.score.innerText = score;
+                btn.classList.add('correct');
+                ui.mascot.innerText = '✨';
+                
+                if (gap) {
+                    gap.innerText = correct;
+                    gap.style.borderBottom = 'none';
+                    gap.style.color = 'var(--accent)';
+                    gap.style.fontWeight = 'bold';
+                }
+                setTimeout(() => { currentIndex++; loadQuestion(); }, 1200);
+
+            } else {
+                btn.classList.add('wrong');
+                ui.mascot.innerText = '🔮';
+                
+                allBtns.forEach(b => {
+                    if (b.innerText === correct) b.classList.add('correct');
+                });
+                setTimeout(() => { currentIndex++; loadQuestion(); }, 2000);
+            }
+        }
+
+        function showEndScreen() {
+            ui.game.style.display = 'none';
+            ui.end.style.display = 'block';
+            ui.finalScore.innerText = score;
+        }
+
+        restartGame();
+
+    </script>
+</body>
+</html>

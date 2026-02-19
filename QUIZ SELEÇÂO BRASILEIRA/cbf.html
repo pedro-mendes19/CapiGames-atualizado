@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz da Seleção Brasileira 🇧🇷</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image" href="img/favicon.jpg">
+    
+    <style>
+        :root {
+            --brazil-green: #009c3b;
+            --brazil-yellow: #fdd835;
+            --brazil-blue: #002776;
+            --brazil-red: #d32f2f;
+            --white: #ffffff;
+            --dark-blue-bg: #0a1e3f;
+            --gold: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--dark-blue-bg);
+            overflow-x: hidden;
+        }
+
+        .bg-stadium {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--dark-blue-bg) 0%, var(--dark-blue-bg) 40%, #2e7d32 40%, #388e3c 100%);
+            z-index: -1;
+        }
+
+        /* --- BOTÃO HOME --- */
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--white);
+            border: 3px solid var(--brazil-blue);
+            border-radius: 50%;
+            padding: 5px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .home-btn:hover { transform: scale(1.1) rotate(-5deg); }
+        .home-btn img { width: 100%; height: 100%; object-fit: contain; }
+        .home-btn.hide { display: none; }
+
+        .main-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .flag-decoration {
+            position: absolute;
+            top: -20px;
+            right: -60px;
+            width: 300px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .flag-decoration img {
+            width: 100%; height: auto;
+            filter: drop-shadow(5px 10px 10px rgba(0,0,0,0.4));
+        }
+
+        .shield-container {
+            background-color: var(--brazil-yellow);
+            width: 100%;
+            max-width: 700px; /* Aumentei um pouco para caber os novos cards */
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+            padding: 5px;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));
+            position: relative;
+            z-index: 1;
+        }
+
+        .shield-content {
+            background-color: var(--brazil-yellow);
+            border: 8px solid var(--brazil-blue);
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+            padding: 40px 30px 80px 30px;
+            text-align: center;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 5px rgba(0,0,0,0.3));
+            animation: floatLogo 3s ease-in-out infinite;
+            display: block; 
+        }
+
+        @keyframes floatLogo {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .title-green {
+            color: var(--brazil-green);
+            font-weight: 900;
+            font-size: 2rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 0 var(--white), -1px -1px 0 var(--white), 1px -1px 0 var(--white), -1px 1px 0 var(--white);
+        }
+
+        .description-text {
+            color: var(--brazil-blue);
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        /* --- BOTÕES --- */
+        .btn-green-start {
+            background-color: var(--brazil-green); 
+            color: var(--white);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            top: 0;
+            width: 100%;
+            box-shadow: 0 8px 0 #006925, 0 15px 20px rgba(0,0,0,0.4); 
+        }
+        .btn-green-start:hover { background-color: #00b344; }
+        .btn-green-start:active { top: 8px; box-shadow: 0 0 0 #006925; }
+
+        .btn-blue-3d { 
+            background-color: var(--brazil-blue); 
+            color: var(--white);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            top: 0;
+            width: 100%;
+            box-shadow: 0 8px 0 #001b52, 0 15px 20px rgba(0,0,0,0.4); 
+        }
+        .btn-blue-3d:hover { background-color: #0036a3; }
+        .btn-blue-3d:active { top: 8px; box-shadow: 0 0 0 #001b52; }
+
+        .btn-green-next { 
+            background-color: var(--brazil-green); 
+            color: var(--white);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #007a2e, 0 10px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            position: relative;
+            top: 0;
+            width: auto; 
+            margin-top: auto; 
+        }
+        .btn-green-next:hover { background-color: #00b344; }
+        .btn-green-next:active { top: 6px; box-shadow: 0 0 0 #007a2e; }
+
+        .screen { width: 100%; }
+        .screen.hide { display: none; }
+
+        /* QUIZ */
+        .question-text { color: var(--brazil-blue); font-size: 1.4rem; font-weight: 800; margin-bottom: 20px; }
+        .progress-bar { width: 100%; height: 12px; background-color: rgba(0, 39, 118, 0.2); border-radius: 10px; margin-bottom: 20px; overflow: hidden; border: 2px solid var(--brazil-blue); }
+        .progress-fill { height: 100%; background-color: var(--brazil-green); width: 0%; transition: width 0.3s ease; }
+        .answer-buttons { display: grid; gap: 12px; margin-bottom: 20px; width: 100%; }
+        .answer-btn { background-color: var(--white); border: 3px solid var(--brazil-blue); padding: 12px 15px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: var(--brazil-blue); cursor: pointer; transition: all 0.2s; text-align: left; box-shadow: 0 4px 0 rgba(0, 39, 118, 0.3); }
+        .answer-btn:hover:not(:disabled) { background-color: var(--brazil-blue); color: var(--brazil-yellow); transform: translateY(-2px); }
+        .answer-btn.correct { background-color: var(--brazil-green) !important; border-color: var(--brazil-green) !important; color: white !important; box-shadow: 0 4px 0 #007a2e; }
+        .answer-btn.wrong { background-color: var(--brazil-red) !important; border-color: var(--brazil-red) !important; color: white !important; box-shadow: 0 4px 0 #b71c1c; }
+        .info-box { background-color: rgba(0, 39, 118, 0.1); border-left: 5px solid var(--brazil-blue); padding: 15px; margin-bottom: 20px; text-align: left; border-radius: 5px; font-size: 0.95rem; color: var(--brazil-blue); display: none; }
+        .info-box strong { color: var(--brazil-green); }
+        .result-score { font-size: 3.5rem; font-weight: 900; color: var(--brazil-blue); margin: 20px 0; text-shadow: 2px 2px 0 var(--brazil-yellow); }
+        .result-message { font-size: 1.4rem; color: var(--brazil-blue); font-weight: 700; margin-bottom: 30px; }
+
+        /* --- GALERIA LENDÁRIA (Novo Design) --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            height: 240px; /* Mais alto para caber mais info */
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border: 3px solid var(--brazil-blue); /* Borda padrão */
+        }
+
+        /* Estilo da Frente (Verde e Amarelo com Dourado) */
+        .flip-card-front {
+            background: linear-gradient(135deg, var(--brazil-green) 0%, #007a2e 100%);
+            color: white;
+            border: 4px solid var(--gold); /* Borda Dourada */
+        }
+
+        /* Estilo do Verso (Branco com Detalhes) */
+        .flip-card-back {
+            background-color: var(--white);
+            color: var(--brazil-blue);
+            transform: rotateY(180deg);
+            padding: 10px;
+            border: 4px solid var(--brazil-blue);
+        }
+
+        /* Tipografia dos Cards */
+        .card-year { 
+            font-size: 2.8rem; 
+            font-weight: 900; 
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 5px;
+        }
+        .card-stars { 
+            color: var(--gold); 
+            font-size: 1.4rem; 
+            margin-top: 5px; 
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+        }
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        /* Detalhes do Verso */
+        .card-details h3 { 
+            font-size: 1.1rem; 
+            margin-bottom: 10px; 
+            color: var(--brazil-green);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--brazil-yellow);
+            display: inline-block;
+        }
+        .detail-row {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            font-weight: 700;
+            margin: 3px 0;
+            text-align: left;
+            width: 100%;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 2px;
+        }
+        .detail-label {
+            color: var(--brazil-blue);
+            font-weight: 900;
+        }
+
+        @media (max-width: 768px) {
+            .flag-decoration { width: 150px; right: -20px; top: 0; }
+            .title-green { font-size: 1.5rem; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .flip-card { height: 220px; }
+            .home-btn { width: 50px; height: 50px; top: 10px; left: 10px; }
+            .main-logo { width: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-stadium"></div>
+
+    <div id="home-btn" class="home-btn hide" onclick="goToHome()" title="Voltar ao Início">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/1024px-Flag_of_Brazil.svg.png" alt="Início">
+    </div>
+
+    <div class="main-container">
+        <div class="flag-decoration">
+            <img src="https://i.imgur.com/8Q7x08G.png" alt="Bandeira do Brasil">
+        </div>
+
+        <div class="shield-container">
+            <div class="shield-content">
+                
+                <div id="start-screen" class="screen">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Brazilian_Football_Confederation_logo.svg/240px-Brazilian_Football_Confederation_logo.svg.png" alt="Logo CBF" class="main-logo">
+                    <h1 class="title-green">Quiz & Galeria da Seleção</h1>
+                    <p class="description-text">Mostre que você sabe tudo sobre o Brasil em Copas ou visite nossa galeria de títulos!</p>
+                    
+                    <div class="btn-container">
+                        <button class="btn-green-start" onclick="startGame()">JOGAR AGORA</button>
+                        <button class="btn-blue-3d" onclick="showGallery()">GALERIA DO PENTA</button>
+                    </div>
+                </div>
+
+                <div id="gallery-screen" class="screen hide">
+                    <h2 class="title-green">Galeria Lendária</h2>
+                    <p class="description-text" style="font-size: 1rem; margin-bottom: 20px;">Toque nos cards para ver a história.</p>
+                    
+                    <div class="gallery-grid">
+                        
+                        <div class="flip-card">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <div class="card-year">1958</div>
+                                    <div class="card-stars">★</div>
+                                    <div class="card-title">A ERA PELÉ</div>
+                                </div>
+                                <div class="flip-card-back">
+                                    <div class="card-details">
+                                        <h3>Suécia</h3>
+                                        <div class="detail-row"><span class="detail-label">Final:</span> BRA 5x2 SUE</div>
+                                        <div class="detail-row"><span class="detail-label">Capitão:</span> Bellini</div>
+                                        <div class="detail-row"><span class="detail-label">Técnico:</span> Feola</div>
+                                        <div class="detail-row"><span class="detail-label">Destaque:</span> Pelé (17 anos)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <div class="card-year">1962</div>
+                                    <div class="card-stars">★★</div>
+                                    <div class="card-title">A COPA DO MANÉ</div>
+                                </div>
+                                <div class="flip-card-back">
+                                    <div class="card-details">
+                                        <h3>Chile</h3>
+                                        <div class="detail-row"><span class="detail-label">Final:</span> BRA 3x1 TCH</div>
+                                        <div class="detail-row"><span class="detail-label">Capitão:</span> Mauro</div>
+                                        <div class="detail-row"><span class="detail-label">Técnico:</span> A. Moreira</div>
+                                        <div class="detail-row"><span class="detail-label">Destaque:</span> Garrincha</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <div class="card-year">1970</div>
+                                    <div class="card-stars">★★★</div>
+                                    <div class="card-title">FUTEBOL ARTE</div>
+                                </div>
+                                <div class="flip-card-back">
+                                    <div class="card-details">
+                                        <h3>México</h3>
+                                        <div class="detail-row"><span class="detail-label">Final:</span> BRA 4x1 ITA</div>
+                                        <div class="detail-row"><span class="detail-label">Capitão:</span> Carlos Alberto</div>
+                                        <div class="detail-row"><span class="detail-label">Técnico:</span> Zagallo</div>
+                                        <div class="detail-row"><span class="detail-label">Destaque:</span> O Coletivo</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <div class="card-year">1994</div>
+                                    <div class="card-stars">★★★★</div>
+                                    <div class="card-title">É TETRA!</div>
+                                </div>
+                                <div class="flip-card-back">
+                                    <div class="card-details">
+                                        <h3>EUA</h3>
+                                        <div class="detail-row"><span class="detail-label">Final:</span> 0x0 (3x2 Pen)</div>
+                                        <div class="detail-row"><span class="detail-label">Capitão:</span> Dunga</div>
+                                        <div class="detail-row"><span class="detail-label">Técnico:</span> Parreira</div>
+                                        <div class="detail-row"><span class="detail-label">Destaque:</span> Romário</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <div class="card-year">2002</div>
+                                    <div class="card-stars">★★★★★</div>
+                                    <div class="card-title">FAMÍLIA SCOLARI</div>
+                                </div>
+                                <div class="flip-card-back">
+                                    <div class="card-details">
+                                        <h3>Coreia/Japão</h3>
+                                        <div class="detail-row"><span class="detail-label">Final:</span> BRA 2x0 ALE</div>
+                                        <div class="detail-row"><span class="detail-label">Capitão:</span> Cafu</div>
+                                        <div class="detail-row"><span class="detail-label">Técnico:</span> Felipão</div>
+                                        <div class="detail-row"><span class="detail-label">Destaque:</span> Ronaldo R9</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="quiz-container" class="screen hide">
+                    <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+                    <div id="question-container">
+                        <h2 id="question" class="question-text">Pergunta aqui</h2>
+                        <div id="answer-buttons" class="answer-buttons"></div>
+                        <div id="info-box" class="info-box"></div>
+                    </div>
+                    <button id="next-btn" class="btn-green-next hide" onclick="nextQuestion()">Próxima Pergunta</button>
+                </div>
+
+                <div id="result-screen" class="screen hide">
+                    <h1 class="title-green">Fim de Jogo!</h1>
+                    <div class="result-score">Acertos: <span id="score-text">0</span></div>
+                    <p id="result-message" class="result-message">Mensagem</p>
+                    <button class="btn-green-start" onclick="restartGame()">JOGAR NOVAMENTE</button>
+                    <br><br>
+                    <button class="btn-blue-3d" onclick="showGallery()">VER GALERIA</button>
+                </div>
+
+            </div> 
+        </div> 
+    </div> 
+
+    <script>
+        // BANCO DE 50 PERGUNTAS (MESMO DO ANTERIOR)
+        const allQuestions = [
+            { question: "Quem assumiu como técnico da Seleção no início de 2024 visando a Copa de 2026?", answers: [{text: "Carlo Ancelotti", correct: false}, {text: "Dorival Júnior", correct: true}, {text: "Fernando Diniz", correct: false}, {text: "Abel Ferreira", correct: false}], info: "Dorival assumiu em janeiro de 2024 após a saída de Diniz." },
+            { question: "Qual jovem marcou contra a Inglaterra em Wembley em 2024 aos 17 anos?", answers: [{text: "Vitor Roque", correct: false}, {text: "Endrick", correct: true}, {text: "Rodrygo", correct: false}, {text: "Savinho", correct: false}], info: "Endrick se tornou o 4º mais jovem a marcar pela Seleção." },
+            { question: "Onde será a Copa do Mundo de 2026?", answers: [{text: "Arábia Saudita", correct: false}, {text: "EUA, México e Canadá", correct: true}, {text: "Argentina e Uruguai", correct: false}, {text: "Espanha e Portugal", correct: false}], info: "Será a primeira Copa sediada por três países simultaneamente." },
+            { question: "Quem assumiu a braçadeira de capitão em 2024 na ausência de Neymar?", answers: [{text: "Marquinhos", correct: false}, {text: "Danilo", correct: true}, {text: "Alisson", correct: false}, {text: "Vini Jr", correct: false}], info: "O lateral Danilo foi escolhido por Dorival Júnior como líder em campo." },
+            { question: "Qual jogador do Real Madrid é o principal protagonista da Seleção pós-2022?", answers: [{text: "Rodrygo", correct: false}, {text: "Vini Jr", correct: true}, {text: "Militão", correct: false}, {text: "Paquetá", correct: false}], info: "Vini Jr assumiu o protagonismo global com suas atuações na Champions." },
+            { question: "Qual goleiro do Athletico-PR ganhou chances na Seleção em 2024?", answers: [{text: "Bento", correct: true}, {text: "Perri", correct: false}, {text: "Everson", correct: false}, {text: "Rafael", correct: false}], info: "Bento foi titular nos amistosos contra Inglaterra e Espanha." },
+            { question: "Por que o Brasil parou de usar uniforme branco após 1950?", answers: [{text: "Achavam feio", correct: false}, {text: "Consideraram 'azarado'", correct: true}, {text: "Patrocínio", correct: false}, {text: "Regra da FIFA", correct: false}], info: "Após o Maracanazo, criou-se o concurso que escolheu a camisa canarinho." },
+            { question: "Qual seleção é a única a participar de todas as Copas do Mundo?", answers: [{text: "Alemanha", correct: false}, {text: "Brasil", correct: true}, {text: "Itália", correct: false}, {text: "Argentina", correct: false}], info: "O Brasil é o único país presente em todas as edições desde 1930." },
+            { question: "Quem é o maior artilheiro da história da Seleção (jogos oficiais)?", answers: [{text: "Pelé", correct: false}, {text: "Neymar", correct: true}, {text: "Ronaldo", correct: false}, {text: "Romário", correct: false}], info: "Neymar ultrapassou Pelé em gols oficiais pela FIFA em 2023." },
+            { question: "Qual jogador tem mais jogos (caps) pela Seleção Brasileira?", answers: [{text: "Cafu", correct: true}, {text: "Roberto Carlos", correct: false}, {text: "Dani Alves", correct: false}, {text: "Neymar", correct: false}], info: "Cafu vestiu a amarelinha em 142 partidas oficiais." },
+            { question: "Qual técnico comandou o Brasil em 3 Copas (1970, 1974, 1998)?", answers: [{text: "Telê Santana", correct: false}, {text: "Zagallo", correct: true}, {text: "Parreira", correct: false}, {text: "Felipão", correct: false}], info: "Zagallo esteve em 7 Copas no total, sendo 3 como técnico principal." },
+            { question: "Em que ano o Brasil conquistou sua primeira medalha de Ouro Olímpica?", answers: [{text: "2012", correct: false}, {text: "2008", correct: false}, {text: "2016", correct: true}, {text: "2020", correct: false}], info: "Foi no Rio de Janeiro, vencendo a Alemanha nos pênaltis." },
+            { question: "Qual o apelido da Seleção de 1970?", answers: [{text: "Esquadrão de Ouro", correct: false}, {text: "Canarinho Pistola", correct: false}, {text: "O Time Bonito", correct: false}, {text: "Esquadrão Imortal", correct: true}], info: "Muitos consideram a melhor equipe de futebol de todos os tempos." },
+            { question: "Quem foi o capitão do Tri em 1970?", answers: [{text: "Pelé", correct: false}, {text: "Carlos Alberto Torres", correct: true}, {text: "Gérson", correct: false}, {text: "Rivelino", correct: false}], info: "O 'Capita' marcou um dos gols mais bonitos da história na final." },
+            { question: "Qual jogador perdeu o pênalti decisivo para a Itália em 1994?", answers: [{text: "Baresi", correct: false}, {text: "Maldini", correct: false}, {text: "Roberto Baggio", correct: true}, {text: "Massaro", correct: false}], info: "Baggio chutou por cima, garantindo o Tetra para o Brasil." },
+            { question: "Quem fez os dois gols da final de 2002 contra a Alemanha?", answers: [{text: "Rivaldo", correct: false}, {text: "Ronaldinho", correct: false}, {text: "Ronaldo", correct: true}, {text: "Kleberson", correct: false}], info: "Ronaldo Fenômeno marcou os dois gols do Penta." },
+            { question: "Qual foi o placar da tragédia do Mineirão em 2014?", answers: [{text: "5x0", correct: false}, {text: "7x1", correct: true}, {text: "6x1", correct: false}, {text: "4x0", correct: false}], info: "A Alemanha venceu o Brasil por 7 a 1 na semifinal." },
+            { question: "Quem marcou o gol do Brasil no 7x1?", answers: [{text: "Neymar", correct: false}, {text: "David Luiz", correct: false}, {text: "Oscar", correct: true}, {text: "Fred", correct: false}], info: "Oscar marcou o gol de honra nos minutos finais." },
+            { question: "Qual seleção eliminou o Brasil em 2018?", answers: [{text: "França", correct: false}, {text: "Bélgica", correct: true}, {text: "Croácia", correct: false}, {text: "Alemanha", correct: false}], info: "A Bélgica venceu por 2x1 nas quartas de final." },
+            { question: "Quem perdeu o primeiro pênalti contra a Croácia em 2022?", answers: [{text: "Marquinhos", correct: false}, {text: "Rodrygo", correct: true}, {text: "Casemiro", correct: false}, {text: "Pedro", correct: false}], info: "Rodrygo teve sua cobrança defendida pelo goleiro Livakovic." },
+            { question: "Quem foi o artilheiro da Copa de 1950?", answers: [{text: "Ademir de Menezes", correct: true}, {text: "Zizinho", correct: false}, {text: "Jair", correct: false}, {text: "Ghiggia", correct: false}], info: "Ademir, o 'Queixada', marcou 9 gols naquela edição." },
+            { question: "Qual jogador era conhecido como 'Anjo das Pernas Tortas'?", answers: [{text: "Garrincha", correct: true}, {text: "Pelé", correct: false}, {text: "Didi", correct: false}, {text: "Vavá", correct: false}], info: "Garrincha foi o herói da Copa de 1962." },
+            { question: "Quem é o único jogador a vencer 3 Copas do Mundo?", answers: [{text: "Zagallo", correct: false}, {text: "Pelé", correct: true}, {text: "Ronaldo", correct: false}, {text: "Cafu", correct: false}], info: "Pelé venceu em 1958, 1962 e 1970." },
+            { question: "Romário formou dupla lendária com quem em 1994?", answers: [{text: "Ronaldo", correct: false}, {text: "Bebeto", correct: true}, {text: "Müller", correct: false}, {text: "Careca", correct: false}], info: "A dupla Romário e Bebeto foi decisiva no Tetra." },
+            { question: "Qual goleiro é famoso pelo grito 'Sai que é sua,'?", answers: [{text: "Marcos", correct: false}, {text: "Dida", correct: false}, {text: "Taffarel", correct: true}, {text: "Júlio César", correct: false}], info: "Galvão Bueno eternizou a frase nas defesas de pênalti de Taffarel." },
+            { question: "Quem foi eleito o melhor do mundo pela FIFA em 2007?", answers: [{text: "Ronaldinho", correct: false}, {text: "Kaká", correct: true}, {text: "Ronaldo", correct: false}, {text: "Adriano", correct: false}], info: "Kaká foi o último brasileiro a vencer antes da era Messi-CR7." },
+            { question: "Qual jogador fez o gol do título da Copa América 2004 no último lance?", answers: [{text: "Luis Fabiano", correct: false}, {text: "Adriano Imperador", correct: true}, {text: "Alex", correct: false}, {text: "Juan", correct: false}], info: "Adriano empatou o jogo contra a Argentina aos 48 do 2º tempo." },
+            { question: "Quem foi o técnico do Penta em 2002?", answers: [{text: "Wanderley Luxemburgo", correct: false}, {text: "Felipão", correct: true}, {text: "Parreira", correct: false}, {text: "Emerson Leão", correct: false}], info: "Luiz Felipe Scolari assumiu o time em crise e foi campeão." },
+            { question: "Quem treinava a mítica Seleção de 1982?", answers: [{text: "Telê Santana", correct: true}, {text: "Zagallo", correct: false}, {text: "Parreira", correct: false}, {text: "Minelli", correct: false}], info: "Telê montou o time que 'encantou o mundo' mas perdeu para a Itália." },
+            { question: "Qual técnico comandou o Brasil na Copa de 2010?", answers: [{text: "Mano Menezes", correct: false}, {text: "Dunga", correct: true}, {text: "Tite", correct: false}, {text: "Felipão", correct: false}], info: "Dunga, capitão do Tetra, era o treinador na África do Sul." },
+            { question: "Tite comandou a Seleção em quantas Copas?", answers: [{text: "1", correct: false}, {text: "2", correct: true}, {text: "3", correct: false}, {text: "0", correct: false}], info: "Tite foi o técnico em 2018 (Rússia) e 2022 (Catar)." },
+            { question: "Qual seleção derrotou o Brasil na final de 1998?", answers: [{text: "Alemanha", correct: false}, {text: "Itália", correct: false}, {text: "França", correct: true}, {text: "Argentina", correct: false}], info: "A França de Zidane venceu por 3x0 em Paris." },
+            { question: "Qual jogador italiano marcou 3 gols contra o Brasil em 1982?", answers: [{text: "Rossi", correct: true}, {text: "Baggio", correct: false}, {text: "Schillaci", correct: false}, {text: "Zoff", correct: false}], info: "Paolo Rossi foi o carrasco na 'Tragédia do Sarriá'." },
+            { question: "Qual seleção o Brasil venceu na final da Copa das Confederações 2013?", answers: [{text: "Itália", correct: false}, {text: "Espanha", correct: true}, {text: "Uruguai", correct: false}, {text: "Argentina", correct: false}], info: "O Brasil venceu a campeã mundial Espanha por 3x0 no Maracanã." },
+            { question: "Contra quem foi o jogo do 'Maracanazo'?", answers: [{text: "Argentina", correct: false}, {text: "Alemanha", correct: false}, {text: "Uruguai", correct: true}, {text: "Inglaterra", correct: false}], info: "O Uruguai venceu por 2x1 na final da Copa de 1950." },
+            { question: "Em que ano o Brasil sediou a Copa pela primeira vez?", answers: [{text: "1950", correct: true}, {text: "1962", correct: false}, {text: "2014", correct: false}, {text: "1930", correct: false}], info: "A primeira Copa no Brasil foi em 1950; a segunda em 2014." },
+            { question: "Qual o mascote da Seleção que virou meme em 2018?", answers: [{text: "Fuleco", correct: false}, {text: "Canarinho Pistola", correct: true}, {text: "Zakumi", correct: false}, {text: "Gauchito", correct: false}], info: "A versão 'invocada' do mascote fez sucesso na Rússia." },
+            { question: "Quantas estrelas tem na camisa do Brasil?", answers: [{text: "4", correct: false}, {text: "5", correct: true}, {text: "6", correct: false}, {text: "3", correct: false}], info: "Cada estrela representa um título mundial conquistado." },
+            { question: "Qual jogador é conhecido como 'O Fenômeno'?", answers: [{text: "Ronaldo", correct: true}, {text: "Ronaldinho", correct: false}, {text: "Adriano", correct: false}, {text: "Neymar", correct: false}], info: "Ronaldo Nazário ganhou esse apelido na Itália." },
+            { question: "Qual lateral é o jogador com mais títulos na história do futebol?", answers: [{text: "Marcelo", correct: false}, {text: "Cafu", correct: false}, {text: "Dani Alves", correct: true}, {text: "Roberto Carlos", correct: false}], info: "Dani Alves superou 40 títulos oficiais na carreira." },
+            { question: "Em que time Pelé jogou a maior parte da carreira?", answers: [{text: "Flamengo", correct: false}, {text: "Santos", correct: true}, {text: "Corinthians", correct: false}, {text: "São Paulo", correct: false}], info: "Pelé defendeu o Santos por quase duas décadas." },
+            { question: "Quem marcou o gol do título da Copa América 2019?", answers: [{text: "Everton Cebolinha", correct: false}, {text: "Gabriel Jesus", correct: true}, {text: "Richarlison", correct: false}, {text: "Firmino", correct: false}], info: "Gabriel Jesus foi decisivo na final contra o Peru no Maracanã." },
+            { question: "Qual jogador fez o gol 'impossível' de falta contra a França em 1997?", answers: [{text: "Roberto Carlos", correct: true}, {text: "Ronaldinho", correct: false}, {text: "Juninho", correct: false}, {text: "Branco", correct: false}], info: "A curva da bola desafiou a física no Torneio da França." },
+            { question: "Quem foi o goleiro titular na Copa de 2014?", answers: [{text: "Júlio César", correct: true}, {text: "Jefferson", correct: false}, {text: "Victor", correct: false}, {text: "Alisson", correct: false}], info: "Júlio César era o dono da camisa 1 naquele mundial." },
+            { question: "Qual seleção eliminou o Brasil em 2006?", answers: [{text: "Itália", correct: false}, {text: "Alemanha", correct: false}, {text: "França", correct: true}, {text: "Portugal", correct: false}], info: "O Brasil perdeu por 1x0 com gol de Thierry Henry." },
+            { question: "Quem substituiu Neymar quando ele se lesionou em 2014?", answers: [{text: "Willian", correct: false}, {text: "Bernard", correct: true}, {text: "Lucas Moura", correct: false}, {text: "Fred", correct: false}], info: "Bernard, 'alegria nas pernas', foi o escolhido por Felipão." },
+            { question: "Qual jogador nunca jogou uma Copa do Mundo?", answers: [{text: "Alex (Cabeção)", correct: true}, {text: "Kaká", correct: false}, {text: "Robinho", correct: false}, {text: "Dida", correct: false}], info: "Alex, ídolo de Cruzeiro e Palmeiras, nunca foi convocado para o mundial." },
+            { question: "Qual seleção o Brasil venceu na final da Copa América 2007?", answers: [{text: "Uruguai", correct: false}, {text: "Argentina", correct: true}, {text: "México", correct: false}, {text: "Chile", correct: false}], info: "O Brasil venceu por 3x0 com um time considerado 'reserva'." }
+        ];
+// ... (Mantenha o array allQuestions igual) ...
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let gameQuestions = [];
+        
+        // NOVO: Variável para controlar o "monte" de perguntas disponíveis
+        let availableQuestionsPool = []; 
+
+        // Elementos do DOM (Mantenha igual)
+        const startScreen = document.getElementById('start-screen');
+        const galleryScreen = document.getElementById('gallery-screen');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultScreen = document.getElementById('result-screen');
+        const questionElement = document.getElementById('question');
+        const answerButtonsElement = document.getElementById('answer-buttons');
+        const nextButton = document.getElementById('next-btn');
+        const progressFill = document.getElementById('progress-fill');
+        const scoreText = document.getElementById('score-text');
+        const resultMessage = document.getElementById('result-message');
+        const infoBox = document.getElementById('info-box');
+        const homeBtn = document.getElementById('home-btn');
+
+        // Função de embaralhar (Fisher-Yates) - Mantenha, pois é ótima
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // ... (Funções goToHome e showGallery mantêm iguais) ...
+        function goToHome() {
+             // ... seu código anterior ...
+             quizContainer.classList.add('hide');
+             resultScreen.classList.add('hide');
+             galleryScreen.classList.add('hide');
+             startScreen.classList.remove('hide');
+             homeBtn.classList.add('hide');
+        }
+        
+        function showGallery() {
+             // ... seu código anterior ...
+             startScreen.classList.add('hide');
+             resultScreen.classList.add('hide');
+             galleryScreen.classList.remove('hide');
+             homeBtn.classList.remove('hide');
+        }
+
+        // --- AQUI ESTÁ A MUDANÇA PRINCIPAL ---
+        function startGame() {
+            startScreen.classList.add('hide');
+            resultScreen.classList.add('hide');
+            galleryScreen.classList.add('hide');
+            quizContainer.classList.remove('hide');
+            homeBtn.classList.remove('hide');
+            
+            currentQuestionIndex = 0;
+            score = 0;
+
+            // Lógica do "Baralho Inteligente":
+            // 1. Se o monte estiver vazio ou com menos de 12 perguntas, recarregue tudo.
+            if (availableQuestionsPool.length < 12) {
+                // Cria uma cópia nova de todas as perguntas
+                availableQuestionsPool = [...allQuestions];
+                // Embaralha o monte inteiro
+                shuffleArray(availableQuestionsPool);
+                console.log("Banco de perguntas resetado e reembaralhado!");
+            }
+
+            // 2. Pega as primeiras 12 perguntas do monte
+            // O método .splice() remove os itens do array original, garantindo que não repitam
+            gameQuestions = availableQuestionsPool.splice(0, 12);
+
+            // Opcional: Reembaralhar as 12 escolhidas apenas para garantir ordem aleatória absoluta na rodada
+            shuffleArray(gameQuestions);
+
+            setNextQuestion();
+        }
+        // -------------------------------------
+
+        
+        function setNextQuestion() {
+            resetState();
+            showQuestion(gameQuestions[currentQuestionIndex]);
+            updateProgressBar();
+        }
+        
+        // ... continue com o resto do seu código original (showQuestion, resetState, selectAnswer, etc.)
+
+        function showQuestion(question) {
+            questionElement.innerText = question.question;
+            const shuffledAnswers = shuffleArray([...question.answers]);
+            shuffledAnswers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerText = answer.text;
+                button.classList.add('answer-btn');
+                if (answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener('click', selectAnswer);
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextButton.classList.add('hide');
+            infoBox.style.display = 'none'; 
+            infoBox.innerText = '';
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const correct = selectedButton.dataset.correct === "true";
+            if (correct) {
+                score++;
+                selectedButton.classList.add('correct');
+            } else {
+                selectedButton.classList.add('wrong');
+            }
+            Array.from(answerButtonsElement.children).forEach(button => {
+                if (button.dataset.correct === "true") {
+                    button.classList.add('correct');
+                }
+                button.disabled = true;
+            });
+            const currentQ = gameQuestions[currentQuestionIndex];
+            if (currentQ.info) {
+                infoBox.innerHTML = `<strong>Curiosidade:</strong> ${currentQ.info}`;
+                infoBox.style.display = 'block';
+            }
+            nextButton.classList.remove('hide');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < gameQuestions.length) {
+                setNextQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex) / gameQuestions.length) * 100;
+            progressFill.style.width = `${progress}%`;
+        }
+
+        function showResults() {
+            quizContainer.classList.add('hide');
+            resultScreen.classList.remove('hide');
+            scoreText.innerText = score + "/" + gameQuestions.length;
+            homeBtn.classList.remove('hide');
+            const percentage = (score / gameQuestions.length) * 100;
+            if (percentage === 100) {
+                resultMessage.innerText = "🏆 LENDÁRIO! Você é o próprio Pelé dos Quizzes!";
+            } else if (percentage >= 80) {
+                resultMessage.innerText = "⚽ Craque de bola! Convocação garantida!";
+            } else if (percentage >= 50) {
+                resultMessage.innerText = "😐 Titular, mas precisa treinar mais fundamentos.";
+            } else {
+                resultMessage.innerText = "❌ Deu ruim! Vai ficar no banco de reservas.";
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+    </script>
+</body>
+</html>

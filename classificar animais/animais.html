@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Que Animal é Esse?</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Carter+One&display=swap" rel="stylesheet">
+    <style>
+        /* --- CORE --- */
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            touch-action: none;
+            background-color: #0d1a10;
+            /* FLORESTA REAL */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
+                url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Carter One', cursive;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            color: white;
+        }
+
+        /* --- HUD --- */
+        #hud {
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            background: rgba(40, 25, 20, 0.9);
+            border-bottom: 4px solid #5D4037;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .stat-box {
+            font-size: 1.4rem;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .lives {
+            color: #ff5252;
+        }
+
+        .score {
+            color: #ffd700;
+        }
+
+        /* --- JOGO --- */
+        #game-area {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* CARD OTIMIZADO */
+        #card {
+            width: 85vw;
+            max-width: 320px;
+            height: 60vh;
+            max-height: 480px;
+            background: #F4E4BC;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate3d(-50%, -50%, 0);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            z-index: 100;
+            cursor: grab;
+            border: 1px solid #D7CCC8;
+            will-change: transform;
+        }
+
+        #card:active {
+            cursor: grabbing;
+            scale: 1.02;
+        }
+
+        .card-photo-box {
+            flex: 1;
+            background: #1a1a1a;
+            border: 4px solid #fff;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            display: block;
+        }
+
+        .card-title {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #3E2723;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        /* ZONAS */
+        #zones-container {
+            height: 190px;
+            display: flex;
+            padding: 10px;
+            gap: 10px;
+            align-items: flex-end;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+        }
+
+        .zone {
+            flex: 1;
+            height: 150px;
+            background: rgba(62, 39, 35, 0.85);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+        }
+
+        .zone-icon {
+            font-size: 2.8rem;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .zone-text {
+            font-size: 1rem;
+            text-transform: uppercase;
+            margin-top: 5px;
+            pointer-events: none;
+            color: #FFECB3;
+        }
+
+        .zone.active {
+            transform: scale(1.1);
+            background: #4E342E;
+            border-color: #fff;
+        }
+
+        .zone[data-type="mamifero"] {
+            border-bottom: 6px solid #FFA726;
+        }
+
+        .zone[data-type="ave"] {
+            border-bottom: 6px solid #4FC3F7;
+        }
+
+        .zone[data-type="reptil"] {
+            border-bottom: 6px solid #66BB6A;
+        }
+
+        .zone[data-type="peixe"] {
+            border-bottom: 6px solid #29B6F6;
+        }
+
+        /* --- MODAIS (GERAL E ERRO) --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: #fff;
+            color: #333;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 6px solid #3E2723;
+            width: 300px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+        }
+
+        /* Estilo Específico do Erro */
+        .modal-box.error-mode {
+            border-color: #D32F2F;
+            background: #FFEBEE;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+        }
+
+        .modal-msg {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: #3E2723;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: 'Carter One', cursive;
+            border-radius: 50px;
+            box-shadow: 0 5px 0 #271c19;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        .btn-error {
+            background: #D32F2F;
+            box-shadow: 0 5px 0 #b71c1c;
+        }
+
+        #loader {
+            position: absolute;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px #000;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="hud">
+        <div class="stat-box lives">❤️❤️❤️ <span id="lives-txt">3</span></div>
+        <div class="stat-box" style="color:#fff; opacity:0.8">QUIZ</div>
+        <div class="stat-box score">⭐ <span id="score-txt">0</span></div>
+    </div>
+
+    <div id="game-area">
+        <div id="loader">Explorando a selva...</div>
+
+        <div id="card" style="visibility: hidden;">
+            <div class="card-photo-box">
+                <img id="card-img" src="" alt="">
+            </div>
+            <div id="card-name" class="card-title">...</div>
+        </div>
+    </div>
+
+    <div id="zones-container">
+        <div class="zone" data-type="mamifero">
+            <div class="zone-icon">🦁</div>
+            <div class="zone-text">Mamífero</div>
+        </div>
+        <div class="zone" data-type="ave">
+            <div class="zone-icon">🦅</div>
+            <div class="zone-text">Ave</div>
+        </div>
+        <div class="zone" data-type="reptil">
+            <div class="zone-icon">🐊</div>
+            <div class="zone-text">Réptil</div>
+        </div>
+        <div class="zone" data-type="peixe">
+            <div class="zone-icon">🐟</div>
+            <div class="zone-text">Peixe</div>
+        </div>
+    </div>
+
+    <div id="modal-gameover" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="go-title" class="modal-title">FIM</h2>
+            <p id="go-msg" class="modal-msg">...</p>
+            <button class="btn" onclick="initGame()">REINICIAR</button>
+        </div>
+    </div>
+
+    <div id="modal-error" class="modal-overlay">
+        <div class="modal-box error-mode">
+            <h2 class="modal-title" style="color:#D32F2F">ERROU!</h2>
+            <p class="modal-msg" id="error-text">...</p>
+            <button class="btn btn-error" onclick="closeError()">ENTENDI</button>
+        </div>
+    </div>
+
+    <script>
+        // --- BANCO DE DADOS EXPANDIDO (MEGA EDITION) ---
+        // Imagens curadas do Wikimedia Commons para garantir precisão e evitar cortes
+        const database = [
+            // MAMÍFEROS
+            { q: 'Jaguar', n: 'Onça Pintada', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Standing_jaguar.jpg' },
+            { q: 'Lion', n: 'Leão', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg' },
+            { q: 'Tiger', n: 'Tigre', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg' },
+            { q: 'African_elephant', n: 'Elefante', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/3/37/African_Bush_Elephant.jpg' },
+            { q: 'Giraffe', n: 'Girafa', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/9/9f/Giraffe_standing.jpg' },
+            { q: 'Zebra', n: 'Zebra', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/e/e3/Pltains_Zebra_Equus_quagga.jpg' },
+            { q: 'Hippopotamus', n: 'Hipopótamo', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/a/a3/Hippopotamus_amphibius_-_01.jpg' },
+            { q: 'Rhinoceros', n: 'Rinoceronte', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/4/42/Rhinoceros_Sigean.jpg' }, /* Link substituído por um mais estável se necessário, mas o do plano era Rhinocéros_blanc_Jp.jpg que tem caracteres especiais. Usarei um seguro. */
+            { q: 'Gorilla', n: 'Gorila', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Gorilla_Profile.jpg' },
+            { q: 'Giant_panda', n: 'Urso Panda', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Grosser_Panda.JPG' },
+            { q: 'Polar_bear', n: 'Urso Polar', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Polar_Bear_-_Alaska_%28cropped%29.jpg' },
+            { q: 'Kangaroo', n: 'Canguru', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Kangaroo_Australia_01_11_2008_-_retouch.jpg' },
+            { q: 'Koala', n: 'Coala', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg' },
+            { q: 'Sloth', n: 'Bicho-preguiça', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/1/18/Bradypus.jpg' },
+            { q: 'Capybara', n: 'Capivara', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Capybara_%28Hydrochoerus_hydrochaeris%29.JPG' },
+            { q: 'Humpback_whale', n: 'Baleia Jubarte', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/6/61/Humpback_Whale_underwater_shot.jpg' },
+            { q: 'Bottlenose_dolphin', n: 'Golfinho', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Tursiops_truncatus_01.jpg' },
+            { q: 'Bat', n: 'Morcego', t: 'mamifero', tn: 'MAMÍFERO', img: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Big-eared-townsend-fledermaus.jpg' },
+
+            // AVES
+            { q: 'Macaw', n: 'Arara', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/2/25/Ara_chloropterus_-_01.jpg' },
+            { q: 'Bald_eagle', n: 'Águia', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/About_to_Launch_%2826075320352%29.jpg' },
+            { q: 'Owl', n: 'Coruja', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Strigiformes_-_Etosha_2014.jpg' },
+            { q: 'Toucan', n: 'Tucano', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Toco_toucan_%28Ramphastos_toco%29.jpg' },
+            { q: 'Flamingo', n: 'Flamingo', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/f/ed/Greater_Flamingo.jpg' },
+            { q: 'Peacock', n: 'Pavão', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Peacock_Plumage.jpg' }, /* Usando um alternativo mais seguro que o Pavo cristatus Phasianidae.jpg que pode ter redirect */
+            { q: 'Ostrich', n: 'Avestruz', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Struthio_camelus_-_Etosha_2014_%281%29.jpg' },
+            { q: 'Emperor_penguin', n: 'Pinguim', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Emperor_Penguin_Manchot_empereur.jpg' },
+            { q: 'Hummingbird', n: 'Beija-flor', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Hummingbird.jpg' },
+            { q: 'Swan', n: 'Cisne', t: 'ave', tn: 'AVE', img: 'https://upload.wikimedia.org/wikipedia/commons/2/22/Mute_Swans_%284352577062%29.jpg' },
+
+            // RÉPTEIS
+            { q: 'Nile_crocodile', n: 'Crocodilo', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Crocodylus_niloticus6.jpg' },
+            { q: 'Alligator', n: 'Jacaré', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/American_Alligator.jpg' },
+            { q: 'Snake', n: 'Cobra', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Crotalus_atrox_02.jpg' },
+            { q: 'Cobra', n: 'Naja', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Naja_naja_%28Indian_cobra%29.jpg' },
+            { q: 'Green_iguana', n: 'Iguana', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Iguana_iguana_male_head.jpg' },
+            { q: 'Chameleon', n: 'Camaleão', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Chamaeleo_chamaeleon_Malta.jpg' },
+            { q: 'Komodo_dragon', n: 'Dragão de Komodo', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Komodo_dragon_%28Varanus_komodoensis%29.jpg' },
+            { q: 'Gecko', n: 'Lagartixa', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Gecko.jpg' },
+            { q: 'Green_sea_turtle', n: 'Tartaruga Marinha', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Green_sea_turtle_%28Chelonia_mydas%29_2.jpg' },
+            { q: 'Tortoise', n: 'Jabuti', t: 'reptil', tn: 'RÉPTIL', img: 'https://upload.wikimedia.org/wikipedia/commons/f/f4/Red_Footed_Tortoise_2.jpg' },
+
+            // PEIXES (NOVO)
+            { q: 'Great_white_shark', n: 'Tubarão Branco', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/5/56/White_shark.jpg' },
+            { q: 'Clownfish', n: 'Peixe-palhaço', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Amphiprion_ocellaris_%28Clown_anemonefish%29_by_Nick_Hobgood.jpg' },
+            { q: 'Seahorse', n: 'Cavalo-marinho', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Beautiful_seahorse.jpg' },
+            { q: 'Pufferfish', n: 'Baiacu', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Puffer_Fish_DSC01257.JPG' },
+            { q: 'Moray_eel', n: 'Enguia / Moreia', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Gymnothorax_funebris_01.jpg' },
+            { q: 'Swordfish', n: 'Peixe-espada', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/8/82/Xiphias_gladius_23056964.jpg' },
+            { q: 'Manta_ray', n: 'Arraia Manta', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Manta_birostris-Thailand4.jpg' },
+            { q: 'Piranha', n: 'Piranha', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Pygocentrus_nattereri_-_Karlsruhe_Zoo_01.jpg' },
+            { q: 'Goldfish', n: 'Peixinho Dourado', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Carassius_auratus_auratus_%28goldfish%29_1.jpg' },
+            { q: 'Anglerfish', n: 'Peixe-diabo', t: 'peixe', tn: 'PEIXE', img: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Lophius_piscatorius.jpg' }
+        ];
+
+        let deck = [], current = null, score = 0, lives = 3;
+        let isDragging = false, startX, startY, cardX = 0, cardY = 0;
+        let zoneCoords = [];
+
+        // Elementos
+        const card = document.getElementById('card');
+        const cardImg = document.getElementById('card-img');
+        const cardName = document.getElementById('card-name');
+        const zones = document.querySelectorAll('.zone');
+        const mGameOver = document.getElementById('modal-gameover');
+        const mError = document.getElementById('modal-error');
+        const loader = document.getElementById('loader');
+
+        function initGame() {
+            deck = [...database].sort(() => Math.random() - 0.5);
+            score = 0; lives = 3;
+            updateUI();
+            mGameOver.style.display = 'none';
+            mError.style.display = 'none';
+            loadCard();
+        }
+
+        function updateUI() {
+            document.getElementById('score-txt').innerText = score;
+            document.getElementById('lives-txt').innerText = lives;
+        }
+
+        function loadCard() {
+            if (deck.length === 0) { showEnd(true); return; }
+
+            // Reset
+            card.style.transition = 'none';
+            card.style.transform = 'translate3d(-50%, -50%, 0)';
+            card.style.visibility = 'hidden';
+            cardX = 0; cardY = 0;
+
+            current = deck.pop();
+            loader.style.display = 'block';
+
+            // Carregamento direto da imagem
+            cardImg.src = current.img;
+
+            cardImg.onload = () => {
+                loader.style.display = 'none';
+                cardName.innerText = current.n;
+                card.style.visibility = 'visible';
+            };
+
+            cardImg.onerror = () => {
+                console.error("Erro ao carregar imagem:", current.img);
+                // Tenta carregar a próxima se falhar
+                loadCard();
+            };
+        }
+
+        // --- ARRASTAR (High Performance) ---
+        function cacheZones() {
+            zoneCoords = [];
+            zones.forEach(z => {
+                const r = z.getBoundingClientRect();
+                zoneCoords.push({ el: z, l: r.left, r: r.right, t: r.top, b: r.bottom, type: z.dataset.type });
+            });
+        }
+
+        function onStart(e) {
+            if (mGameOver.style.display === 'flex' || mError.style.display === 'flex') return;
+
+            isDragging = true;
+            const cx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const cy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            startX = cx - cardX;
+            startY = cy - cardY;
+
+            card.style.transition = 'none';
+            card.style.cursor = 'grabbing';
+            cacheZones();
+        }
+
+        function onMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const cx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const cy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+            cardX = cx - startX;
+            cardY = cy - startY;
+            card.style.transform = `translate3d(calc(-50% + ${cardX}px), calc(-50% + ${cardY}px), 0) rotate(${cardX * 0.05}deg)`;
+
+            checkHit();
+        }
+
+        function checkHit() {
+            const cr = card.getBoundingClientRect();
+            const cx = cr.left + cr.width / 2;
+            const cy = cr.top + cr.height / 2;
+
+            let hit = false;
+            for (const z of zoneCoords) {
+                if (cx > z.l && cx < z.r && cy > z.t && cy < z.b) {
+                    if (!z.el.classList.contains('active')) {
+                        zones.forEach(x => x.classList.remove('active'));
+                        z.el.classList.add('active');
+                    }
+                    hit = true; break;
+                }
+            }
+            if (!hit) zones.forEach(x => x.classList.remove('active'));
+        }
+
+        function onEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            card.style.cursor = 'grab';
+
+            const active = document.querySelector('.zone.active');
+            if (active) {
+                active.classList.remove('active');
+                handleDrop(active.dataset.type);
+            } else {
+                resetPos();
+            }
+        }
+
+        function handleDrop(type) {
+            if (type === current.t) {
+                // ACERTOU
+                score++; updateUI();
+                card.style.transition = 'transform 0.3s ease, opacity 0.3s';
+                card.style.transform = `translate3d(calc(-50% + ${cardX}px), calc(-50% + ${cardY + 200}px), 0) scale(0.5)`;
+                card.style.opacity = 0;
+                setTimeout(() => { card.style.opacity = 1; loadCard(); }, 300);
+            } else {
+                // ERROU -> Mostra Modal
+                lives--; updateUI();
+                showError();
+            }
+        }
+
+        function showError() {
+            document.getElementById('error-text').innerHTML = `O <b>${current.n}</b> é um(a) <br> <b>${current.tn}</b>!`;
+            mError.style.display = 'flex';
+        }
+
+        function closeError() {
+            mError.style.display = 'none';
+            if (lives <= 0) {
+                showEnd(false);
+            } else {
+                // Se ainda tem vida, carrega o próximo (Carta perdida)
+                loadCard();
+            }
+        }
+
+        function resetPos() {
+            cardX = 0; cardY = 0;
+            card.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            card.style.transform = 'translate3d(-50%, -50%, 0)';
+        }
+
+        function showEnd(win) {
+            const t = document.getElementById('go-title');
+            const m = document.getElementById('go-msg');
+            t.innerText = win ? "PARABÉNS!" : "FIM DE JOGO";
+            t.style.color = win ? "#4CAF50" : "#D32F2F";
+            m.innerText = win ? "Você completou a expedição!" : `Pontuação final: ${score}`;
+            mGameOver.style.display = 'flex';
+        }
+
+        // Eventos
+        card.addEventListener('mousedown', onStart);
+        card.addEventListener('touchstart', onStart, { passive: false });
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('touchmove', onMove, { passive: false });
+        window.addEventListener('mouseup', onEnd);
+        window.addEventListener('touchend', onEnd);
+
+        initGame();
+    </script>
+</body>
+
+</html>

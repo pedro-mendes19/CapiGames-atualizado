@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> MISSÃO ALGORITMO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <style>
+        :root {
+            --mars-red: #e74c3c;
+            --neon-blue: #00f2ff;
+            --space-black: #0d1117;
+            --panel-bg: #161b22;
+            --grid-border: #30363d;
+        }
+
+        body {
+            font-family: 'Source Code Pro', monospace;
+            background-color: var(--space-black);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin: 10px 0;
+            font-size: 2rem;
+        }
+
+        .game-layout {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* --- TABULEIRO --- */
+        #grid-container {
+            background: var(--panel-bg);
+            padding: 10px;
+            border: 2px solid var(--grid-border);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        #grid {
+            display: grid;
+            /* Grade 10x10 */
+            grid-template-columns: repeat(10, 45px);
+            grid-template-rows: repeat(10, 45px);
+            gap: 2px;
+            background-color: var(--grid-border);
+        }
+
+        .cell {
+            width: 45px;
+            height: 45px;
+            background-color: var(--panel-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            user-select: none;
+        }
+
+        .obstacle { background-color: #21262d; opacity: 0.7; }
+        .obstacle::after { content: '🪨'; font-size: 18px; }
+
+        /* --- PAINEL DE CONTROLE --- */
+        .controls {
+            width: 320px;
+            background: var(--panel-bg);
+            border: 1px solid var(--grid-border);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #terminal {
+            background: #000;
+            height: 120px;
+            padding: 10px;
+            font-size: 12px;
+            color: #00ff00;
+            overflow-y: auto;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        #command-list {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            min-height: 40px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .cmd-tag {
+            background: var(--mars-red);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            background: #30363d;
+            color: white;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: 0.2s;
+        }
+
+        button:hover { background: #484f58; }
+        button:active { transform: translateY(2px); }
+
+        .btn-main { background: var(--neon-blue); color: #000; grid-column: span 3; font-weight: bold; }
+        .btn-main:hover { background: #00c8d4; box-shadow: 0 0 10px var(--neon-blue); }
+        
+        .btn-reset { background: transparent; color: var(--mars-red); border: 1px solid var(--mars-red); grid-column: span 3; }
+
+        .robot { filter: drop-shadow(0 0 5px var(--neon-blue)); }
+        .target { animation: pulse 1s infinite alternate; }
+
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
+    </style>
+</head>
+<body>
+
+    <h1>MARS EXPLORER 10x10</h1>
+    <p>Crie o algoritmo para guiar o robô desviando das rochas.</p>
+
+    <div class="game-layout">
+        <div id="grid-container">
+            <div id="grid"></div>
+        </div>
+
+        <div class="controls">
+            <div id="terminal">> INICIALIZANDO SISTEMA...<br>> AGUARDANDO COMANDOS_</div>
+            
+            <div id="command-list"></div>
+
+            <div class="btn-group">
+                <div></div>
+                <button onclick="pushCommand('UP')">▲</button>
+                <div></div>
+
+                <button onclick="pushCommand('LEFT')">◀</button>
+                <button onclick="pushCommand('DOWN')">▼</button>
+                <button onclick="pushCommand('RIGHT')">▶</button>
+
+                <button class="btn-main" id="execute-btn" onclick="startMission()">EXECUTAR MISSÃO</button>
+                <button class="btn-reset" onclick="initGame()">REINICIAR MAPA</button>
+            </div>
+        </div>
+    </div>
+
+   <script>
+    const GRID_SIZE = 10;
+    let robotPos = { x: 0, y: 0 };
+    let goalPos = { x: 9, y: 9 };
+    let obstacles = [];
+    let commands = [];
+    let isRunning = false;
+
+    function initGame() {
+        commands = [];
+        isRunning = false;
+        robotPos = { x: 0, y: 0 };
+        goalPos = { x: 9, y: 9 };
+        document.getElementById('command-list').innerHTML = '';
+        document.getElementById('execute-btn').disabled = false;
+        updateTerminal("SISTEMA PRONTO. USE AS SETAS PARA MONTAR O ALGORITMO.");
+        
+        generateObstacles();
+        drawGrid();
+    }
+
+    // --- NOVA LÓGICA: TECLADO PARA CRIAR O ALGORITMO ---
+    window.addEventListener('keydown', function(e) {
+        // Se já estiver rodando, não aceita novos comandos
+        if (isRunning) return;
+
+        // Mapeia as teclas para as direções
+        const keyMap = {
+            "ArrowUp": "UP",
+            "ArrowDown": "DOWN",
+            "ArrowLeft": "LEFT",
+            "ArrowRight": "RIGHT"
+        };
+
+        if (keyMap[e.key]) {
+            e.preventDefault(); // Evita o scroll da página
+            pushCommand(keyMap[e.key]); // Adiciona o comando à fila
+        }
+
+        // Atalho: Enter para Iniciar a Missão
+        if (e.key === "Enter") {
+            e.preventDefault();
+            startMission();
+        }
+
+        // Atalho: Backspace para remover o último comando inserido
+        if (e.key === "Backspace") {
+            e.preventDefault();
+            removeLastCommand();
+        }
+    });
+
+    // Função para remover o último item da lista (UX melhorada)
+    function removeLastCommand() {
+        if (commands.length > 0) {
+            commands.pop();
+            const list = document.getElementById('command-list');
+            list.removeChild(list.lastChild);
+            updateTerminal("ÚLTIMO COMANDO REMOVIDO.", "#ffaa00");
+        }
+    }
+    // --------------------------------------------------
+
+    function generateObstacles() {
+        obstacles = [];
+        const obstacleCount = 18;
+        while(obstacles.length < obstacleCount) {
+            let obs = {
+                x: Math.floor(Math.random() * GRID_SIZE),
+                y: Math.floor(Math.random() * GRID_SIZE)
+            };
+            if (!((obs.x === 0 && obs.y === 0) || (obs.x === 9 && obs.y === 9)) && 
+                !obstacles.some(o => o.x === obs.x && o.y === obs.y)) {
+                obstacles.push(obs);
+            }
+        }
+    }
+
+    function drawGrid() {
+        const gridElement = document.getElementById('grid');
+        gridElement.innerHTML = '';
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.id = `cell-${x}-${y}`;
+                if (obstacles.some(o => o.x === x && o.y === y)) cell.classList.add('obstacle');
+                if (x === goalPos.x && y === goalPos.y) cell.innerHTML = '<span class="target">🚩</span>';
+                if (x === robotPos.x && y === robotPos.y) cell.innerHTML = '<span class="robot">🤖</span>';
+                gridElement.appendChild(cell);
+            }
+        }
+    }
+
+    function pushCommand(dir) {
+        if (isRunning) return;
+        commands.push(dir);
+        const list = document.getElementById('command-list');
+        const tag = document.createElement('span');
+        tag.className = 'cmd-tag';
+        // Visual das setas na lista
+        const icons = { UP: '↑', DOWN: '↓', LEFT: '←', RIGHT: '→' };
+        tag.innerText = icons[dir];
+        list.appendChild(tag);
+        
+        // Auto-scroll da lista de comandos para sempre ver o último adicionado
+        const container = document.getElementById('command-list');
+        container.scrollLeft = container.scrollWidth;
+    }
+
+    async function startMission() {
+        if (commands.length === 0 || isRunning) {
+            updateTerminal("ERRO: ADICIONE COMANDOS ANTES DE INICIAR.", "#ff4444");
+            return;
+        }
+        isRunning = true;
+        document.getElementById('execute-btn').disabled = true;
+        updateTerminal("INICIANDO SEQUÊNCIA AUTOMÁTICA...");
+
+        for (let i = 0; i < commands.length; i++) {
+            const move = commands[i];
+            
+            // Destaque visual no comando que está sendo executado
+            const tags = document.getElementsByClassName('cmd-tag');
+            if(tags[i]) tags[i].style.background = "var(--neon-blue)";
+            if(tags[i]) tags[i].style.color = "#000";
+
+            const success = await processStep(move);
+            
+            if (!success) {
+                updateTerminal("FALHA: COLISÃO NO SETOR " + robotPos.x + "," + robotPos.y, "#ff4444");
+                isRunning = false;
+                return;
+            }
+
+            if (robotPos.x === goalPos.x && robotPos.y === goalPos.y) {
+                updateTerminal("MISSÃO CONCLUÍDA!", "#00ff00");
+                isRunning = false;
+                return;
+            }
+            
+            await new Promise(r => setTimeout(r, 400));
+            if(tags[i]) tags[i].style.background = "var(--mars-red)"; // Volta a cor
+            if(tags[i]) tags[i].style.color = "#fff";
+        }
+
+        updateTerminal("ALGORITMO FINALIZADO SEM ATINGIR O ALVO.", "#ffaa00");
+        isRunning = false;
+        document.getElementById('execute-btn').disabled = false;
+    }
+
+    function processStep(dir) {
+        return new Promise((resolve) => {
+            let nextX = robotPos.x;
+            let nextY = robotPos.y;
+            if (dir === 'UP') nextY--;
+            if (dir === 'DOWN') nextY++;
+            if (dir === 'LEFT') nextX--;
+            if (dir === 'RIGHT') nextX++;
+
+            if (nextX < 0 || nextX >= GRID_SIZE || nextY < 0 || nextY >= GRID_SIZE || 
+                obstacles.some(o => o.x === nextX && o.y === nextY)) {
+                resolve(false);
+                return;
+            }
+
+            const currentCell = document.getElementById(`cell-${robotPos.x}-${robotPos.y}`);
+            currentCell.innerHTML = '';
+            
+            robotPos.x = nextX;
+            robotPos.y = nextY;
+            
+            const nextCell = document.getElementById(`cell-${robotPos.x}-${robotPos.y}`);
+            // Garante que se o robô passar pela bandeira, ela continue lá ou o robô fique por cima
+            nextCell.innerHTML = (robotPos.x === goalPos.x && robotPos.y === goalPos.y) ? 
+                                 '<span class="robot">🤖</span>' : '<span class="robot">🤖</span>';
+            resolve(true);
+        });
+    }
+
+    function updateTerminal(text, color = "#00ff00") {
+        const t = document.getElementById('terminal');
+        t.innerHTML += `<br><span style="color:${color}">> ${text}</span>`;
+        t.scrollTop = t.scrollHeight;
+    }
+
+    window.onload = initGame;
+</script>

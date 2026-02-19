@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MISSÃO RECICLAGEM - FINAL</title>
+    <link rel="icon" type="image/text" sizes="16x16" href="img/logo.png">
+    <style>
+        /* --- ESTILOS VISUAIS (CSS) --- */
+        
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+            overflow-x: hidden;
+            touch-action: none;
+        }
+
+        .game-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 20px;
+            border-bottom: 6px solid #cfd8dc; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 800px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { 
+            color: #2e7d32; 
+            margin: 0; 
+            font-size: 2rem; 
+            text-shadow: 2px 2px 0px #a5d6a7;
+        }
+        
+        p.instrucao {
+            color: #546e7a;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        /* Placar e Progresso */
+        .info-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #ffe082;
+            padding: 8px 15px;
+            border-radius: 50px;
+            margin: 5px auto;
+            width: fit-content;
+            border: 3px solid #ffca28;
+        }
+
+        .info-item {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #d84315;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Área do Lixo (Spawner) */
+        .spawner-area {
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 3px dashed #90caf9;
+            background-color: #e3f2fd;
+            border-radius: 20px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .spawner-bg-circle {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background-color: white;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        #item-container {
+            width: 130px;
+            height: 130px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            z-index: 100;
+            touch-action: none;
+            transition: transform 0.1s;
+        }
+
+        .lixo-img {
+            max-width: 100%;
+            max-height: 100%;
+            pointer-events: none;
+            object-fit: contain;
+            filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.2));
+        }
+
+        #mensagem-feedback {
+            font-size: 1.1rem;
+            height: 25px;
+            font-weight: bold;
+            color: #455a64;
+            margin-top: 5px;
+            z-index: 5;
+        }
+
+        /* Área das Lixeiras */
+        .bins-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .bin {
+            width: 100px;
+            padding: 10px 5px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .bin-img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 5px;
+            pointer-events: none;
+        }
+
+        /* Cores */
+        .papel { background: #2196F3; border-bottom: 4px solid #1565C0; }
+        .plastico { background: #F44336; border-bottom: 4px solid #C62828; }
+        .metal { background: #FFC107; border-bottom: 4px solid #FF8F00; color: #4e342e; text-shadow: none; }
+        .vidro { background: #4CAF50; border-bottom: 4px solid #2E7D32; }
+
+        .bin.scale-effect { transform: scale(1.1); }
+
+        .footer-edu {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #fff;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        /* --- TELA DE VITÓRIA / GAME OVER (OVERLAY) --- */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none; /* Começa oculto */
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            flex-direction: column;
+            animation: fadeIn 0.5s;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: 0 0 20px #fff;
+            border: 5px solid #2e7d32;
+        }
+
+        .modal-titulo {
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+        }
+        
+        .modal-texto {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .btn-restart {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #e65100;
+            font-family: inherit;
+        }
+        .btn-restart:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #e65100;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- RESPONSIVIDADE --- */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; }
+            .game-container { width: 95%; padding: 10px; }
+            .bins-container { gap: 8px; }
+            .bin { width: 42%; height: auto; padding: 10px 0; }
+            .bin-img { width: 50px; height: 50px; }
+            .spawner-area { height: 150px; }
+            #item-container { width: 100px; height: 100px; }
+            .spawner-bg-circle { width: 90px; height: 90px; }
+            .info-item { font-size: 1rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <header>
+            <h1>🌍 Missão Reciclagem</h1>
+            <p class="instrucao">Objetivo: Recicle <strong style="color:#d84315">10 itens</strong> para vencer!</p>
+            
+            <div class="info-bar">
+                <div class="info-item">🎯 Meta: <span id="progresso">0/10</span></div>
+                <div class="info-item">⭐ <span id="pontuacao">0</span></div>
+                <div class="info-item">❤️ <span id="vidas-display">❤️❤️❤️</span></div>
+            </div>
+        </header>
+
+        <div class="spawner-area">
+            <div class="spawner-bg-circle"></div>
+            <div id="item-container" draggable="true"></div>
+            <p id="mensagem-feedback">Toque para começar!</p>
+        </div>
+
+        <div class="bins-container">
+            <div class="bin papel" data-tipo="papel">
+                <img src="img/lixeiraazul.png" alt="Papel" class="bin-img">
+                <span>PAPEL</span>
+            </div>
+            <div class="bin plastico" data-tipo="plastico">
+                <img src="img/lixeiravermelha.png" alt="Plástico" class="bin-img">
+                <span>PLÁSTICO</span>
+            </div>
+            <div class="bin metal" data-tipo="metal">
+                <img src="img/amarelo.png" alt="Metal" class="bin-img">
+                <span>METAL</span>
+            </div>
+            <div class="bin vidro" data-tipo="vidro">
+                <img src="img/lixeiraverde.png" alt="Vidro" class="bin-img">
+                <span>VIDRO</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-edu">🌱 Reciclar ajuda a salvar o planeta! 🌱</div>
+
+    <div id="overlay-jogo" class="overlay">
+        <div class="modal-content">
+            <h2 id="modal-titulo" class="modal-titulo">PARABÉNS! 🏆</h2>
+            <p id="modal-msg" class="modal-texto">Você limpou a cidade!</p>
+            <button class="btn-restart" onclick="resetarJogo()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        /* --- LÓGICA DO JOGO --- */
+        
+        // Configurações
+        const META_VITORIA = 10; // Quantidade de acertos para ganhar
+        let itensReciclados = 0;
+        let pontuacao = 0;
+        let vidas = 3;
+        let jogoAtivo = true;
+
+        // Sons (Links online)
+        const somAcerto = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3');
+        const somErro = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3');
+        const somVitoria = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
+        const somGameOver = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3');
+
+        // Itens
+        const todosOsLixos = [
+            { imagem: 'img/jornal.png', tipo: 'papel', nome: 'Jornal' },
+            { imagem: 'img/papelao.png', tipo: 'papel', nome: 'Papelão' },
+            { imagem: 'img/agua.png', tipo: 'plastico', nome: 'Garrafa Água' },
+            { imagem: 'img/copobranco.png', tipo: 'plastico', nome: 'Copo' },
+            { imagem: 'img/latinha.png', tipo: 'metal', nome: 'Latinha' },
+            { imagem: 'img/latadeconserva.png', tipo: 'metal', nome: 'Lata Conserva' },
+            { imagem: 'img/rolinho.png', tipo: 'papel', nome: 'Rolo de Papel' },
+            { imagem: 'img/caderno.png', tipo: 'papel', nome: 'Caderno Velho' },
+            { imagem: 'img/cereal.png', tipo: 'papel', nome: 'Caixa Cereal' },
+            { imagem: 'img/sacola.png', tipo: 'plastico', nome: 'Sacola Plástica' },
+            { imagem: 'img/canudo.png', tipo: 'plastico', nome: 'Canudo' },
+            { imagem: 'img/aluminio.png', tipo: 'metal', nome: 'Papel Alumínio' },
+            { imagem: 'img/chave.png', tipo: 'metal', nome: 'Chave Antiga' },
+            { imagem: 'img/geleia.png', tipo: 'vidro', nome: 'Pote de Geleia' },
+            { imagem: 'img/azeitona.png', tipo: 'vidro', nome: 'Pote de Azeitona' },
+            { imagem: 'img/perfume.png', tipo: 'vidro', nome: 'Frasco Perfume' }
+        ];
+
+        let lixosDisponiveis = [];
+        let itemAtual = null;
+
+        // Elementos DOM
+        const itemContainer = document.getElementById('item-container');
+        const pontuacaoElemento = document.getElementById('pontuacao');
+        const progressoElemento = document.getElementById('progresso');
+        const vidasElemento = document.getElementById('vidas-display');
+        const mensagemElemento = document.getElementById('mensagem-feedback');
+        const lixeiras = document.querySelectorAll('.bin');
+        
+        // Modal Elementos
+        const overlay = document.getElementById('overlay-jogo');
+        const modalTitulo = document.getElementById('modal-titulo');
+        const modalMsg = document.getElementById('modal-msg');
+        const modalContent = document.querySelector('.modal-content');
+
+        function atualizarUI() {
+            pontuacaoElemento.innerText = pontuacao;
+            progressoElemento.innerText = `${itensReciclados}/${META_VITORIA}`;
+            
+            let coracoes = "";
+            for(let i = 0; i < vidas; i++) { coracoes += "❤️"; }
+            if (vidas === 0) coracoes = "💔";
+            vidasElemento.innerText = coracoes;
+        }
+
+        function resetarJogo() {
+            pontuacao = 0;
+            vidas = 3;
+            itensReciclados = 0;
+            jogoAtivo = true;
+            lixosDisponiveis = [...todosOsLixos];
+            
+            overlay.style.display = 'none';
+            mensagemElemento.innerText = "Vamos lá!";
+            mensagemElemento.style.color = "#455a64";
+            
+            atualizarUI();
+            gerarNovoItem();
+        }
+
+        function fimDeJogo(vitoria) {
+            jogoAtivo = false;
+            overlay.style.display = 'flex';
+            
+            if (vitoria) {
+                modalTitulo.innerText = "MISSÃO CUMPRIDA! 🌟";
+                modalTitulo.style.color = "#2e7d32";
+                modalContent.style.borderColor = "#2e7d32";
+                modalMsg.innerText = `Você reciclou ${META_VITORIA} itens e salvou o planeta!\nPontuação Final: ${pontuacao}`;
+                somVitoria.play().catch(()=>{});
+            } else {
+                modalTitulo.innerText = "FIM DE JOGO 😢";
+                modalTitulo.style.color = "#c62828";
+                modalContent.style.borderColor = "#c62828";
+                modalMsg.innerText = "Suas vidas acabaram. Tente novamente!";
+                somGameOver.play().catch(()=>{});
+            }
+        }
+
+        function gerarNovoItem() {
+            if (!jogoAtivo) return;
+
+            // Evita repetir itens se possível
+            if (lixosDisponiveis.length === 0) {
+                lixosDisponiveis = [...todosOsLixos];
+            }
+
+            const index = Math.floor(Math.random() * lixosDisponiveis.length);
+            itemAtual = lixosDisponiveis.splice(index, 1)[0];
+
+            itemContainer.innerHTML = ''; 
+            const img = document.createElement('img');
+            img.src = itemAtual.imagem;
+            img.alt = itemAtual.nome;
+            img.classList.add('lixo-img');
+            
+            img.onerror = function() {
+                this.style.display = 'none';
+                itemContainer.innerText = itemAtual.nome;
+            };
+            
+            itemContainer.appendChild(img);
+            mensagemElemento.innerText = itemAtual.nome;
+            mensagemElemento.style.color = "#455a64";
+            
+            itemContainer.style.transform = 'translate(0, 0)';
+            itemContainer.style.opacity = '0';
+            setTimeout(() => itemContainer.style.opacity = '1', 100);
+        }
+
+        function verificarJogada(tipoItem, tipoLixeira) {
+            if (!jogoAtivo) return;
+
+            if (tipoItem === tipoLixeira) {
+                // Acertou
+                somAcerto.currentTime = 0;
+                somAcerto.play().catch(() => {});
+                
+                pontuacao += 10;
+                itensReciclados++;
+                atualizarUI();
+                
+                mensagemElemento.innerText = "MUITO BEM! 🌟";
+                mensagemElemento.style.color = "#2e7d32";
+
+                // Checa condição de vitória
+                if (itensReciclados >= META_VITORIA) {
+                    itemContainer.style.display = 'none'; // Esconde item
+                    setTimeout(() => fimDeJogo(true), 500);
+                } else {
+                    itemContainer.style.transform = 'translate(0, 0)';
+                    gerarNovoItem();
+                }
+
+            } else {
+                // Errou
+                somErro.currentTime = 0;
+                somErro.play().catch(() => {});
+                
+                vidas--;
+                atualizarUI();
+                
+                itemContainer.style.transform = 'translate(0, 0)';
+
+                if (vidas <= 0) {
+                    setTimeout(() => fimDeJogo(false), 500);
+                } else {
+                    mensagemElemento.innerText = "Ops! Lixeira errada!";
+                    mensagemElemento.style.color = "#c62828";
+                }
+            }
+        }
+
+        /* --- EVENT LISTENERS (INPUT) --- */
+
+        // Mouse (PC)
+        itemContainer.addEventListener('dragstart', (e) => {
+            if(!jogoAtivo) return;
+            e.dataTransfer.setData('text/plain', itemAtual.tipo);
+            setTimeout(() => itemContainer.style.opacity = '0.5', 0);
+        });
+        
+        itemContainer.addEventListener('dragend', () => {
+            itemContainer.style.opacity = '1';
+        });
+
+        lixeiras.forEach(lixeira => {
+            lixeira.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                lixeira.classList.add('scale-effect');
+            });
+            lixeira.addEventListener('dragleave', () => {
+                lixeira.classList.remove('scale-effect');
+            });
+            lixeira.addEventListener('drop', (e) => {
+                e.preventDefault();
+                lixeira.classList.remove('scale-effect');
+                const tipoItem = e.dataTransfer.getData('text/plain');
+                verificarJogada(tipoItem, lixeira.getAttribute('data-tipo'));
+            });
+        });
+
+        // Touch (Celular)
+        let touchStartX = 0, touchStartY = 0;
+
+        itemContainer.addEventListener('touchstart', (e) => {
+            if(!jogoAtivo) return;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            itemContainer.style.transition = 'none';
+            itemContainer.style.opacity = '0.7';
+        }, { passive: false });
+
+        itemContainer.addEventListener('touchmove', (e) => {
+            if(!jogoAtivo) return;
+            e.preventDefault();
+            const deltaX = e.touches[0].clientX - touchStartX;
+            const deltaY = e.touches[0].clientY - touchStartY;
+            itemContainer.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        }, { passive: false });
+
+        itemContainer.addEventListener('touchend', (e) => {
+            if(!jogoAtivo) return;
+            itemContainer.style.opacity = '1';
+            itemContainer.style.transition = 'transform 0.3s ease';
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            itemContainer.style.display = 'none';
+            const elementoEmbaixo = document.elementFromPoint(touchEndX, touchEndY);
+            itemContainer.style.display = 'flex';
+
+            const lixeiraAlvo = elementoEmbaixo ? elementoEmbaixo.closest('.bin') : null;
+
+            if (lixeiraAlvo) {
+                const tipoLixeira = lixeiraAlvo.getAttribute('data-tipo');
+                verificarJogada(itemAtual.tipo, tipoLixeira);
+            } else {
+                itemContainer.style.transform = 'translate(0, 0)';
+            }
+        });
+
+        // Iniciar
+        resetarJogo();
+
+    </script>
+</body>
+</html>

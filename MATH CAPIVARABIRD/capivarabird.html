@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH FLAPPY CAPIVARA - LANDSCAPE</title>
+    <style>
+        body {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Verdana', sans-serif;
+            overflow: hidden;
+        }
+
+        canvas {
+            border: 4px solid #000;
+            display: block;
+            background-color: #70c5ce;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            /* Garante que o canvas não estoure telas menores, mantendo proporção */
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+    <link rel="icon" type="image/text" href="img/capivaravoando.png">
+</head>
+<body>
+
+    <canvas id="canvas" width="800" height="450"></canvas>
+
+    <script>
+        const cvs = document.getElementById("canvas");
+        const ctx = cvs.getContext("2d");
+
+        let frames = 0;
+
+        // IMAGEM DA CAPIVARA
+        const capybaraSprite = new Image();
+        capybaraSprite.src = "img/capivaravoando.png"; 
+
+        // ESTADO DO JOGO
+        const state = {
+            current: 0,
+            getReady: 0,
+            game: 1,
+            over: 2
+        }
+
+        // CONTROLES
+        document.addEventListener("keydown", function(evt) {
+            if(evt.code === "Space") action();
+        });
+        cvs.addEventListener("click", function(evt) {
+            action();
+        });
+
+        function action() {
+            switch(state.current) {
+                case state.getReady:
+                    state.current = state.game;
+                    break;
+                case state.game:
+                    bird.flap();
+                    break;
+                case state.over:
+                    gates.reset();
+                    bird.speedReset();
+                    score.reset();
+                    state.current = state.getReady;
+                    break;
+            }
+        }
+
+        // OBJETOS DO JOGO
+        const bird = {
+            x: 100, // MUDANÇA: Capivara um pouco mais para a direita
+            y: 150, 
+            w: 60, 
+            h: 45, 
+            speed: 0, 
+            gravity: 0.25, 
+            jump: 4.6,
+            draw: function() {
+                if (capybaraSprite.complete && capybaraSprite.naturalHeight !== 0) {
+                    ctx.drawImage(capybaraSprite, this.x, this.y, this.w, this.h);
+                } else {
+                    // Fallback se a imagem não carregar
+                    ctx.fillStyle = "#8B4513";
+                    ctx.fillRect(this.x, this.y, this.w, this.h);
+                }
+            },
+            flap: function() { this.speed = -this.jump; },
+            update: function() {
+                if(state.current !== state.game) return;
+                this.speed += this.gravity;
+                this.y += this.speed;
+                
+                // Colisão com o chão
+                if(this.y + this.h >= cvs.height - fg.h) {
+                    this.y = cvs.height - fg.h - this.h;
+                    state.current = state.over;
+                }
+                
+                // Colisão com o teto (opcional, evita voar pra fora)
+                if(this.y < 0) this.y = 0;
+            },
+            speedReset: function() { this.speed = 0; this.y = 150; }
+        }
+
+        const fg = {
+            h: 50, 
+            draw: function() {
+                ctx.fillStyle = "#ded895";
+                ctx.fillRect(0, cvs.height - this.h, cvs.width, this.h);
+                ctx.fillStyle = "#73bf2e";
+                ctx.fillRect(0, cvs.height - this.h, cvs.width, 15);
+            }
+        }
+
+        // --- SISTEMA DE MATEMÁTICA ---
+        const mathSystem = {
+            currentQuestion: "Prepare-se",
+            
+            generate: function() {
+                const operacao = Math.random() < 0.5 ? '+' : '-';
+                let a = Math.floor(Math.random() * 10);
+                let b = Math.floor(Math.random() * 10);
+                let res = 0;
+
+                if(operacao === '-') {
+                    if(a < b) { let temp = a; a = b; b = temp; }
+                    res = a - b;
+                } else {
+                    res = a + b;
+                }
+
+                let wrong = res + (Math.random() < 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
+                if(wrong < 0) wrong = res + 2; 
+
+                return {
+                    text: `${a} ${operacao} ${b}`,
+                    correct: res,
+                    wrong: wrong
+                };
+            }
+        }
+
+        // PORTÕES DE DECISÃO
+        const gates = {
+            position: [],
+            w: 50,
+            dx: 3, // MUDANÇA: Aumentei um pouco a velocidade horizontal (de 2 para 3)
+            
+            draw: function() {
+                for(let i = 0; i < this.position.length; i++) {
+                    let p = this.position[i];
+                    
+                    // Desenha o obstáculo central
+                    ctx.fillStyle = "green";
+                    ctx.fillRect(p.x, p.centerY - 50, this.w, 100); 
+                    ctx.strokeStyle = "black";
+                    ctx.strokeRect(p.x, p.centerY - 50, this.w, 100);
+
+                    // Configuração do texto das respostas
+                    ctx.fillStyle = "#FFF";
+                    ctx.font = "bold 30px Arial";
+                    ctx.strokeStyle = "black";
+                    ctx.lineWidth = 3;
+                    ctx.textAlign = "left"; // Reseta alinhamento para o desenho normal
+
+                    let topText = p.isTopCorrect ? p.problem.correct : p.problem.wrong;
+                    ctx.strokeText(topText, p.x + 10, p.centerY - 80);
+                    ctx.fillText(topText, p.x + 10, p.centerY - 80);
+
+                    let bottomText = p.isTopCorrect ? p.problem.wrong : p.problem.correct;
+                    ctx.strokeText(bottomText, p.x + 10, p.centerY + 80);
+                    ctx.fillText(bottomText, p.x + 10, p.centerY + 80);
+                }
+            },
+            
+            update: function() {
+                if(state.current !== state.game) return;
+                
+                // MUDANÇA: Intervalo ajustado para 200 frames (tela mais larga)
+                if(frames % 200 === 0) {
+                    const problem = mathSystem.generate();
+                    mathSystem.currentQuestion = problem.text + " = ?";
+                    
+                    this.position.push({
+                        x: cvs.width,
+                        centerY: cvs.height / 2 - 20, 
+                        problem: problem,
+                        isTopCorrect: Math.random() < 0.5, 
+                        passed: false
+                    });
+                }
+                
+                for(let i = 0; i < this.position.length; i++) {
+                    let p = this.position[i];
+                    p.x -= this.dx;
+
+                    let blockTop = p.centerY - 50;
+                    let blockBottom = p.centerY + 50;
+
+                    // Colisão com o bloco do meio
+                    if(bird.x + bird.w > p.x && bird.x < p.x + this.w) {
+                        if(bird.y + bird.h > blockTop && bird.y < blockBottom) {
+                            state.current = state.over;
+                        }
+                    }
+
+                    // Passou pelo bloco (Sistema de Pontuação)
+                    if(p.x + this.w < bird.x && !p.passed) {
+                        p.passed = true;
+                        
+                        let choseTop = bird.y < p.centerY;
+                        
+                        if((choseTop && p.isTopCorrect) || (!choseTop && !p.isTopCorrect)) {
+                            score.value += 1;
+                            score.best = Math.max(score.value, score.best);
+                        } else {
+                            state.current = state.over; 
+                        }
+                    }
+
+                    // Remove canos que saíram da tela
+                    if(p.x + this.w <= 0) {
+                        this.position.shift();
+                        i--;
+                    }
+                }
+            },
+            reset: function() {
+                this.position = [];
+                mathSystem.currentQuestion = "Prepare-se";
+            }
+        }
+
+        const score = {
+            best: 0,
+            value: 0,
+            draw: function() {
+                ctx.fillStyle = "#FFF";
+                ctx.strokeStyle = "#000";
+                
+                if(state.current === state.game) {
+                    // Pontuação no canto direito
+                    ctx.font = "35px Arial";
+                    ctx.textAlign = "right"; // Alinha à direita
+                    ctx.fillText(this.value, cvs.width - 20, 50);
+                    
+                    // Pergunta Matemática CENTRALIZADA
+                    ctx.textAlign = "center";
+                    ctx.fillStyle = "#FFD700"; 
+                    ctx.font = "bold 50px Arial"; // Fonte maior
+                    ctx.lineWidth = 4;
+                    // Posiciona no topo central
+                    ctx.strokeText(mathSystem.currentQuestion, cvs.width / 2, 80);
+                    ctx.fillText(mathSystem.currentQuestion, cvs.width / 2, 80);
+
+                } else if(state.current === state.over) {
+                    ctx.textAlign = "center"; // Centraliza tudo
+
+                    ctx.fillStyle = "#FFF";
+                    ctx.font = "30px Arial";
+                    ctx.fillText("Pontos: " + this.value, cvs.width / 2, 180);
+                    ctx.fillText("Melhor: " + this.best, cvs.width / 2, 220);
+                    
+                    ctx.font = "bold 40px Arial";
+                    ctx.fillText("Errou a conta!", cvs.width / 2, 120);
+                    
+                    ctx.font = "35px Arial";
+                    ctx.fillText("Clique p/ tentar", cvs.width / 2, 320);
+
+                } else if (state.current === state.getReady) {
+                    ctx.textAlign = "center"; // Centraliza tudo
+
+                    ctx.fillStyle = "#FFF";
+                    ctx.font = "bold 50px Arial";
+                    ctx.strokeText("Math Capy", cvs.width / 2, 150);
+                    ctx.fillText("Math Capy", cvs.width / 2, 150);
+                    
+                    ctx.font = "25px Arial";
+                    ctx.fillText("Escolha a resposta certa (Cima ou Baixo)", cvs.width / 2, 250);
+                    ctx.fillText("Clique ou Espaço para voar", cvs.width / 2, 290);
+                }
+                
+                // Resetar alinhamento para o padrão (importante para outros desenhos)
+                ctx.textAlign = "left"; 
+            },
+            reset: function() { this.value = 0; }
+        }
+
+        function draw() {
+            ctx.fillStyle = "#70c5ce";
+            ctx.fillRect(0, 0, cvs.width, cvs.height);
+            gates.draw();
+            fg.draw();
+            bird.draw();
+            score.draw();
+        }
+
+        function update() {
+            bird.update();
+            gates.update();
+        }
+
+        function loop() {
+            update();
+            draw();
+            frames++;
+            requestAnimationFrame(loop);
+        }
+        loop();
+    </script>
+</body>
+</html>

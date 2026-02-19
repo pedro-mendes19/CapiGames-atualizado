@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador do Sistema Solar - Detalhado</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Fundo Estrelado Fixo */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px);
+            background-size: 550px 550px, 350px 350px;
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+
+        h1 { color: #fff; text-transform: uppercase; letter-spacing: 4px; font-weight: 300; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        p { color: #888; font-size: 0.9rem; }
+
+        /* Container dos planetas */
+        .solar-system {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px 20px;
+            overflow-x: auto;
+            width: 95%;
+            max-width: 1400px;
+        }
+
+        .planet-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+
+        .planet-container:hover {
+            transform: scale(1.1);
+        }
+
+        .planet-container:hover .planet-name {
+            color: #4facfe;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        .planet-img {
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+            transition: box-shadow 0.3s;
+        }
+
+        .planet-container:hover .planet-img {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+        }
+
+        .planet-name {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #aaa;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        /* --- TAMANHOS VISUAIS --- */
+        .size-sol { width: 160px; height: 160px; box-shadow: 0 0 50px #ff660044; }
+        .size-mercurio { width: 30px; height: 30px; }
+        .size-venus { width: 50px; height: 50px; }
+        .size-terra { width: 52px; height: 52px; }
+        .size-marte { width: 40px; height: 40px; }
+        .size-jupiter { width: 120px; height: 120px; }
+        .size-saturno { width: 140px; height: 70px; border-radius: 0 !important; object-fit: contain; }
+        .size-urano { width: 70px; height: 70px; }
+        .size-netuno { width: 68px; height: 68px; }
+
+        /* --- ESTILO DO MODAL --- */
+        #info-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: #111;
+            width: 90%;
+            max-width: 900px; /* Aumentei um pouco para caber mais texto */
+            border-radius: 15px;
+            border: 1px solid #333;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            animation: fadeIn 0.4s ease-out;
+            max-height: 90vh; /* Limite de altura */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-img-container {
+            width: 40%;
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #333;
+        }
+
+        #modal-img-big {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-text {
+            width: 60%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Permite rolar o texto se for muito grande */
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 2rem;
+            color: #555;
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 5;
+        }
+        .close-btn:hover { color: #fff; }
+
+        #modal-title { color: #fff; font-size: 2.2rem; margin: 0 0 10px 0; }
+        #modal-desc { font-size: 1rem; line-height: 1.5; color: #ccc; margin-bottom: 20px; text-align: justify; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 10px;
+            background: #161616;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            margin-bottom: 10px;
+        }
+        
+        .stat-label { 
+            font-size: 0.85rem; 
+            color: #4facfe; 
+            display: block; 
+            margin-bottom: 5px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 2px;
+        }
+
+        /* Lista de fatos personalizada */
+        .fact-list {
+            margin: 0;
+            padding-left: 20px;
+            color: #ddd;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .fact-list li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content { flex-direction: column; height: 85vh; }
+            .modal-img-container { width: 100%; height: 200px; border-right: none; border-bottom: 1px solid #333; flex-shrink: 0; }
+            .modal-text { width: 100%; padding: 20px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Sistema Solar</h1>
+        <p>Clique nos astros para visualizar dados reais</p>
+    </header>
+
+    <div class="solar-system" id="solar-system">
+        </div>
+
+    <div id="info-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            
+            <div class="modal-img-container">
+                <img id="modal-img-big" src="" alt="Planeta">
+            </div>
+
+            <div class="modal-text">
+                <h2 id="modal-title">Título</h2>
+                <p id="modal-desc">Descrição...</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Satélites & Luas</span>
+                        <div id="modal-satellites" style="font-weight: bold; color: white;">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" style="color: #ffd700;">Curiosidades</span>
+                        <ul id="modal-facts" class="fact-list">
+                            </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const celestialData = [
+            {
+                id: 'sol', name: 'Sol', sizeClass: 'size-sol',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/600px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg',
+                desc: 'A estrela central do nosso sistema, responsável por 99,86% da massa total do Sistema Solar. É uma esfera quase perfeita de plasma quente que sustenta a vida na Terra.',
+                satellites: '8 Planetas Principais, 5 Planetas Anões e milhares de asteroides.',
+                facts: [
+                    "A luz do Sol demora cerca de 8 minutos e 20 segundos para chegar à Terra.",
+                    "Sua temperatura no núcleo chega a 15 milhões de graus Celsius.",
+                    "O Sol converte 600 milhões de toneladas de hidrogênio em hélio a cada segundo.",
+                    "Ele é tão grande que caberiam cerca de 1,3 milhão de planetas Terra dentro dele."
+                ]
+            },
+            {
+                id: 'mercurio', name: 'Mercúrio', sizeClass: 'size-mercurio',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/600px-Mercury_in_true_color.jpg',
+                desc: 'O menor planeta do sistema solar e o mais próximo do Sol. Sua superfície cinza e cheia de crateras lembra muito a nossa Lua, mas é um mundo de extremos.',
+                satellites: 'Nenhum satélite natural.',
+                facts: [
+                    "Apesar de ser o mais próximo do Sol, não é o mais quente (Vênus ganha).",
+                    "Tem a maior variação de temperatura: 430°C de dia e -180°C à noite.",
+                    "Um ano em Mercúrio (volta no Sol) passa rápido: dura apenas 88 dias terrestres.",
+                    "A sonda MESSENGER da NASA encontrou gelo de água nas crateras polares onde o sol nunca bate."
+                ]
+            },
+            {
+                id: 'venus', name: 'Vênus', sizeClass: 'size-venus',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Venus-real_color.jpg/600px-Venus-real_color.jpg',
+                desc: 'Muitas vezes chamado de "irmão gêmeo" da Terra pelo tamanho, mas é um inferno tóxico. Possui uma atmosfera densa que cria um efeito estufa descontrolado.',
+                satellites: 'Nenhum satélite natural.',
+                facts: [
+                    "É o planeta mais quente do Sistema Solar, com temperatura média de 462°C.",
+                    "Vênus gira ao contrário (de leste para oeste). O Sol lá nasce no oeste.",
+                    "Um dia em Vênus (rotação) demora mais que um ano em Vênus (translação).",
+                    "A pressão na superfície é esmagadora: equivale a estar a 900m no fundo do mar da Terra."
+                ]
+            },
+            {
+                id: 'terra', name: 'Terra', sizeClass: 'size-terra',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/600px-The_Earth_seen_from_Apollo_17.jpg',
+                desc: 'O "Mármore Azul". É o único corpo celeste conhecido onde existe vida, graças à sua posição na zona habitável e à presença de água líquida abundante.',
+                satellites: '1 (Lua).',
+                facts: [
+                    "A Terra não é uma esfera perfeita, ela é levemente achatada nos polos.",
+                    "Viajamos pelo espaço a uma velocidade incrível de 107.000 km/h.",
+                    "70% da superfície do planeta é coberta por água.",
+                    "A atmosfera protege a Terra de meteoros: a maioria se desintegra antes de tocar o chão."
+                ]
+            },
+            {
+                id: 'marte', name: 'Marte', sizeClass: 'size-marte',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/600px-OSIRIS_Mars_true_color.jpg',
+                desc: 'O Planeta Vermelho, assim chamado devido ao óxido de ferro (ferrugem) em seu solo. É um deserto frio que já teve rios e lagos no passado distante.',
+                satellites: '2 (Fobos e Deimos).',
+                facts: [
+                    "Possui o Monte Olimpo, o maior vulcão do sistema solar (3x a altura do Everest).",
+                    "A gravidade em Marte é 38% da Terra. Se você pesa 100kg aqui, pesaria 38kg lá.",
+                    "Tem tempestades de areia globais que podem cobrir o planeta inteiro por meses.",
+                    "Um dia em Marte tem duração quase igual ao da Terra: 24 horas e 37 minutos."
+                ]
+            },
+            {
+                id: 'jupiter', name: 'Júpiter', sizeClass: 'size-jupiter',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/600px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg',
+                desc: 'O rei dos planetas. Um gigante gasoso massivo, composto principalmente de Hidrogênio e Hélio, com um campo magnético extremamente poderoso.',
+                satellites: '95 luas confirmadas (incluindo as 4 Luas de Galileu).',
+                facts: [
+                    "Sua 'Grande Mancha Vermelha' é uma tempestade que existe há mais de 300 anos.",
+                    "Júpiter tem o dia mais curto de todos os planetas: gira em menos de 10 horas.",
+                    "Não tem uma superfície sólida. Se você tentasse pisar lá, afundaria até ser esmagado.",
+                    "Ele atua como um 'escudo', atraindo muitos asteroides e cometas que poderiam atingir a Terra."
+                ]
+            },
+            {
+                id: 'saturno', name: 'Saturno', sizeClass: 'size-saturno',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/640px-Saturn_during_Equinox.jpg',
+                desc: 'A joia do sistema solar, famoso por seus anéis complexos e brilhantes feitos de pedaços de gelo e rocha. É o segundo maior planeta.',
+                satellites: '146 luas confirmadas (Titã é a maior delas).',
+                facts: [
+                    "É o planeta menos denso do sistema solar. Se houvesse uma piscina gigante, Saturno flutuaria.",
+                    "Seus anéis são muito largos, mas extremamente finos (alguns têm apenas 10 metros de espessura).",
+                    "No polo norte de Saturno existe uma tempestade bizarra em formato de hexágono perfeito.",
+                    "Ventos na atmosfera superior podem chegar a 1.800 km/h."
+                ]
+            },
+            {
+                id: 'urano', name: 'Urano', sizeClass: 'size-urano',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Uranus2.jpg/600px-Uranus2.jpg',
+                desc: 'O gigante de gelo. Sua cor azul-pálida vem do gás metano em sua atmosfera. É um mundo misterioso que foi visitado apenas uma vez pela Voyager 2.',
+                satellites: '27 luas conhecidas.',
+                facts: [
+                    "É o planeta mais frio do sistema solar, chegando a -224°C.",
+                    "Gira 'deitado': seu eixo é inclinado 98 graus, provavelmente devido a uma colisão no passado.",
+                    "Foi o primeiro planeta a ser descoberto com a ajuda de um telescópio, em 1781.",
+                    "Possui anéis também, mas são escuros e muito difíceis de ver."
+                ]
+            },
+            {
+                id: 'netuno', name: 'Netuno', sizeClass: 'size-netuno',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg/600px-Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg',
+                desc: 'O planeta mais distante do Sol. Um gigante de gelo varrido por ventos supersônicos, localizado na fronteira escura do nosso sistema planetário.',
+                satellites: '14 luas conhecidas (Tritão é a maior e gira ao contrário).',
+                facts: [
+                    "Foi descoberto através da matemática antes de ser visto por telescópio.",
+                    "Um ano em Netuno dura 165 anos terrestres. Ele completou apenas uma volta desde sua descoberta.",
+                    "Seus ventos são os mais rápidos do sistema solar, chegando a 2.100 km/h.",
+                    "Assim como Júpiter e Saturno, Netuno irradia mais calor interno do que recebe do Sol."
+                ]
+            }
+        ];
+
+        const container = document.getElementById('solar-system');
+        const modal = document.getElementById('info-modal');
+        const mTitle = document.getElementById('modal-title');
+        const mDesc = document.getElementById('modal-desc');
+        const mSat = document.getElementById('modal-satellites');
+        const mFactsList = document.getElementById('modal-facts');
+        const mImg = document.getElementById('modal-img-big');
+
+        function renderPlanets() {
+            container.innerHTML = '';
+            
+            celestialData.forEach(astro => {
+                const div = document.createElement('div');
+                div.className = 'planet-container';
+                div.onclick = () => openModal(astro);
+
+                const img = document.createElement('img');
+                img.className = `planet-img ${astro.sizeClass}`;
+                img.src = astro.img;
+                img.alt = astro.name;
+
+                const label = document.createElement('div');
+                label.className = 'planet-name';
+                label.innerText = astro.name;
+
+                div.appendChild(img);
+                div.appendChild(label);
+                container.appendChild(div);
+            });
+        }
+
+        function openModal(data) {
+            mTitle.innerText = data.name;
+            mDesc.innerText = data.desc;
+            mSat.innerText = data.satellites;
+            mImg.src = data.img; 
+
+            // Limpa a lista anterior
+            mFactsList.innerHTML = '';
+            
+            // Adiciona cada fato como um item de lista (li)
+            data.facts.forEach(factText => {
+                const li = document.createElement('li');
+                li.innerText = factText;
+                mFactsList.appendChild(li);
+            });
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        renderPlanets();
+
+    </script>
+</body>
+</html>

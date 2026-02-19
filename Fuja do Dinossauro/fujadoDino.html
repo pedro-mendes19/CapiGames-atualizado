@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FUGA DO DINOSSAURO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+    <link rel="apple-touch-icon" href="img/logo.svg">
+
+    <style>
+        /* --- ESTILOS DINOSSAURO / SELVA --- */
+        body {
+            background: linear-gradient(135deg, #2d5016 0%, #0a1f00 100%);
+            /* Jungle Green to Dark */
+            font-family: 'Fredoka One', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #f4ecd8;
+            /* Bone white / parchment */
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- CARD DE INSTRUÇÕES (NOVO) --- */
+        .instructions-card {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #4a3b2a;
+            padding: 15px;
+            border-radius: 15px;
+            width: 250px;
+            border: 4px solid #8e44ad;
+            /* Pop color or earthy */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+            z-index: 100;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .instructions-card h3 {
+            font-family: 'Fredoka One', cursive;
+            margin-top: 0;
+            color: #d35400;
+            text-align: center;
+        }
+
+        .instructions-card ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .instructions-card li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 800px) {
+            .instructions-card {
+                position: relative;
+                top: 0;
+                right: 0;
+                width: 85%;
+                margin-bottom: 20px;
+                order: -1;
+                /* Show before game on mobile */
+            }
+        }
+
+        /* --- FIM CARD DE INSTRUÇÕES --- */
+
+        .game-container {
+            background-color: rgba(60, 40, 20, 0.9);
+            /* Dark wood/mud */
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 6px solid #8bc34a;
+            /* Light jungle green */
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #f1c40f;
+            /* Amber/Gold */
+            margin-top: 0;
+            text-shadow: 3px 3px 0px #3e2723;
+            font-size: 36px;
+            letter-spacing: 1px;
+            animation: pulseTitle 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseTitle {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        p.subtitle {
+            color: #aed581;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        #status {
+            font-size: 24px;
+            margin: 15px 0;
+            color: #d35400;
+            /* Burnt Orange */
+            background-color: #fbeee6;
+            padding: 10px;
+            border-radius: 10px;
+            border: 3px dashed #d35400;
+        }
+
+        #tabuleiro {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            background-color: #5d4037;
+            /* Soil brown */
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #3e2723;
+        }
+
+        .quadrado {
+            width: 100%;
+            aspect-ratio: 1;
+            font-size: 28px;
+            cursor: pointer;
+            background-color: #a1887f;
+            /* Light earth */
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 5px 0 #5d4037;
+            transition: all 0.1s;
+        }
+
+        .quadrado:active {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        /* Hover effect specific */
+        .quadrado:hover:not(:disabled) {
+            background-color: #bcaaa4;
+        }
+
+        #resetBtn {
+            margin-top: 25px;
+            padding: 15px 30px;
+            background-color: #e67e22;
+            /* Warning orange */
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Fredoka One', cursive;
+            font-size: 20px;
+            box-shadow: 0 5px 0 #d35400;
+            display: none;
+            width: 100%;
+            transition: transform 0.1s;
+        }
+
+        #resetBtn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #d35400;
+        }
+
+        /* --- ESTILO DO MODAL DE PERGUNTAS --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            /* Darker overlay */
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: #fff8e1;
+            /* Old paper look */
+            padding: 25px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            border: 5px solid #6d4c41;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-box h2 {
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        .pergunta-texto {
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            color: #3e2723;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .opcoes-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .btn-opcao {
+            padding: 12px;
+            background-color: #8bc34a;
+            /* Leaf green */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Fredoka One', cursive;
+            color: #fff;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+            font-size: 16px;
+            transition: 0.2s;
+            border-bottom: 4px solid #558b2f;
+        }
+
+        .btn-opcao:hover {
+            background-color: #9ccc65;
+            transform: translateY(-2px);
+        }
+
+        .btn-opcao:active {
+            transform: translateY(2px);
+            border-bottom: 0px solid #558b2f;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CARD DE INSTRUÇÕES -->
+    <div class="instructions-card">
+        <h3>🔍 Como Jogar</h3>
+        <ul>
+            <li>Você está fugindo de um T-Rex!</li>
+            <li>Seu objetivo é encontrar a <strong>Saída Secreta (🌀)</strong>.</li>
+            <li>Clique em um quadrado para investigar.</li>
+            <li>Responda à pergunta corretamente para revelar o que há lá.</li>
+            <li><strong>PERIGO!</strong> Um T-Rex (🦖) está escondido. Se achá-lo, GAME OVER!</li>
+            <li><strong>Cuidado!</strong> Pedras (🪨) gastam seus passos.</li>
+            <li>Se errar a pergunta ou achar pedra, você perde 1 passo.</li>
+            <li>Seus passos acabarem: O Dino te pega! 🦕</li>
+        </ul>
+    </div>
+
+    <div class="game-container">
+        <h1>🦖 Fuga do Dino!</h1>
+        <p class="subtitle">Responda para escapar!</p>
+
+        <div id="status">🦶 Passos restantes: 10</div>
+
+        <div id="tabuleiro"></div>
+
+        <button id="resetBtn" onclick="iniciarJogo()">TENTAR ESCAPAR DE NOVO ↺</button>
+    </div>
+
+    <div id="modalPergunta" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="color: #6d4c41;">Desafio!</h2>
+            <p id="textoPergunta" class="pergunta-texto">Carregando...</p>
+            <div id="listaOpcoes" class="opcoes-grid">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- BANCO DE PERGUNTAS COMPLETO ---
+        // (Apenas re-utilizando        // --- BANCO DE PERGUNTAS COMPLETO ---
+        const bancoDePerguntas = [
+            // GERAIS
+            { p: "Qual é a capital da França?", opcoes: ["Londres", "Paris", "Roma", "Berlim"], correta: "Paris" },
+            { p: "Quantos dias tem um ano bissexto?", opcoes: ["364", "365", "366", "360"], correta: "366" },
+            { p: "Quem pintou a Mona Lisa?", opcoes: ["Van Gogh", "Da Vinci", "Picasso", "Michelangelo"], correta: "Da Vinci" },
+            { p: "Qual é o maior planeta do Sistema Solar?", opcoes: ["Terra", "Marte", "Júpiter", "Saturno"], correta: "Júpiter" },
+            { p: "Quantas pernas tem uma aranha?", opcoes: ["6", "8", "10", "4"], correta: "8" },
+            { p: "Qual fruta é conhecida por ter muita vitamina C?", opcoes: ["Banana", "Laranja", "Maçã", "Uva"], correta: "Laranja" },
+            { p: "Onde fica o Cristo Redentor?", opcoes: ["Salvador", "São Paulo", "Rio de Janeiro", "Brasília"], correta: "Rio de Janeiro" },
+            { p: "Qual é a cor da mistura de Azul com Amarelo?", opcoes: ["Roxo", "Laranja", "Verde", "Marrom"], correta: "Verde" },
+            { p: "Quantos estados tem o Brasil?", opcoes: ["26", "27", "25", "28"], correta: "26" },
+            { p: "Qual animal é conhecido como o rei da selva?", opcoes: ["Tigre", "Elefante", "Leão", "Girafa"], correta: "Leão" },
+            { p: "O que a vaca produz?", opcoes: ["Lã", "Ovos", "Leite", "Mel"], correta: "Leite" },
+            { p: "Qual personagem vive no fundo do mar?", opcoes: ["Pato Donald", "Bob Esponja", "Mickey", "Scooby-Doo"], correta: "Bob Esponja" },
+
+            // CIÊNCIAS E GEOGRAFIA
+            { p: "Qual é o satélite natural da Terra?", opcoes: ["Sol", "Marte", "Lua", "Estrela"], correta: "Lua" },
+            { p: "Em qual continente fica o Brasil?", opcoes: ["Europa", "África", "América", "Ásia"], correta: "América" },
+            { p: "O que as plantas usam para fazer fotossíntese?", opcoes: ["Luz do Sol", "Vento", "Fogo", "Pedras"], correta: "Luz do Sol" },
+            { p: "Qual é o maior animal do mundo?", opcoes: ["Elefante", "Baleia Azul", "Girafa", "Tubarão"], correta: "Baleia Azul" },
+            { p: "O Rio Amazonas fica em qual região do Brasil?", opcoes: ["Sul", "Nordeste", "Norte", "Sudeste"], correta: "Norte" },
+            { p: "Qual órgão bombeia o sangue?", opcoes: ["Pulmão", "Cérebro", "Coração", "Estômago"], correta: "Coração" },
+            { p: "A água ferve a quantos graus?", opcoes: ["50°C", "80°C", "90°C", "100°C"], correta: "100°C" },
+
+            // MATEMÁTICA
+            { p: "Quanto é 7 x 8?", opcoes: ["54", "56", "48", "64"], correta: "56" },
+            { p: "Qual é o dobro de 15?", opcoes: ["25", "30", "45", "20"], correta: "30" },
+            { p: "Quanto é 100 - 35?", opcoes: ["65", "75", "55", "45"], correta: "65" },
+            { p: "Qual número vem depois do 99?", opcoes: ["101", "110", "100", "98"], correta: "100" },
+            { p: "Quantos lados tem um triângulo?", opcoes: ["2", "3", "4", "5"], correta: "3" },
+            { p: "Quanto é a metade de 50?", opcoes: ["20", "15", "25", "10"], correta: "25" },
+            { p: "Quanto é 9 x 9?", opcoes: ["18", "81", "72", "99"], correta: "81" },
+            { p: "Uma dúzia são quantos ovos?", opcoes: ["6", "10", "12", "24"], correta: "12" },
+            { p: "Qual número é ímpar?", opcoes: ["2", "4", "10", "7"], correta: "7" },
+            { p: "Quanto é 12 + 12?", opcoes: ["20", "22", "24", "26"], correta: "24" },
+
+            // PORTUGUÊS
+            { p: "Qual é o plural de 'mão'?", opcoes: ["Mães", "Mãos", "Mões", "Manes"], correta: "Mãos" },
+            { p: "Qual palavra está escrita corretamente?", opcoes: ["Ezemplo", "Exemplo", "Ezenplo", "Esemplo"], correta: "Exemplo" },
+            { p: "Quantas sílabas tem a palavra 'Banana'?", opcoes: ["2", "3", "4", "1"], correta: "3" },
+            { p: "Qual é o feminino de 'Cavalo'?", opcoes: ["Cavala", "Égua", "Mula", "Burra"], correta: "Égua" },
+            { p: "Qual é o antônimo de 'Frio'?", opcoes: ["Gelado", "Quente", "Morno", "Fresco"], correta: "Quente" },
+            { p: "O que usamos no final de uma pergunta?", opcoes: ["Ponto Final", "Exclamação", "Interrogação", "Vírgula"], correta: "Interrogação" },
+            { p: "A palavra 'Árvore' é:", opcoes: ["Oxítona", "Paroxítona", "Proparoxítona", "Monossílaba"], correta: "Proparoxítona" },
+            { p: "Qual é o aumentativo de 'Casa'?", opcoes: ["Casinha", "Casarão", "Casona", "Casebre"], correta: "Casarão" }
+        ];
+
+        const totalQuadrados = 25;
+        let tesouroPosicao; // "SAÍDA"
+        let dinoPosicao;    // "DINOSSAURO" (Game Over instantâneo)
+        let chances;        // "Passos"
+        let jogoAtivo = true;
+        let quadradoPendente = null;
+        let perguntasDisponiveis = [];
+
+        const tabuleiroDiv = document.getElementById('tabuleiro');
+        const statusDiv = document.getElementById('status');
+        const resetBtn = document.getElementById('resetBtn');
+        const modal = document.getElementById('modalPergunta');
+        const textoP = document.getElementById('textoPergunta');
+        const listaOpcoes = document.getElementById('listaOpcoes');
+
+        function iniciarJogo() {
+            chances = 25; // AUMENTADO PARA 25
+            jogoAtivo = true;
+            statusDiv.innerHTML = "🦶 Passos restantes: " + chances;
+            statusDiv.style.backgroundColor = "#fbeee6";
+            statusDiv.style.color = "#d35400";
+            resetBtn.style.display = "none";
+            tabuleiroDiv.innerHTML = "";
+
+            // Clona o banco de perguntas para garantir que não repitam
+            perguntasDisponiveis = [...bancoDePerguntas];
+
+            // 1. Define a Saída
+            tesouroPosicao = Math.floor(Math.random() * totalQuadrados);
+
+            // 2. Define o Dino (garante que não seja a mesma da saída)
+            do {
+                dinoPosicao = Math.floor(Math.random() * totalQuadrados);
+            } while (dinoPosicao === tesouroPosicao);
+
+            console.log(`Dica: Saída=${tesouroPosicao}, Dino=${dinoPosicao}`);
+
+            for (let i = 0; i < totalQuadrados; i++) {
+                let botao = document.createElement("button");
+                botao.className = "quadrado";
+                botao.id = i;
+
+                botao.onclick = function () {
+                    processarClique(this, i);
+                };
+
+                tabuleiroDiv.appendChild(botao);
+            }
+        }
+
+        function processarClique(botao, id) {
+            if (!jogoAtivo || botao.style.backgroundColor !== "" || botao.disabled) return;
+
+            quadradoPendente = { botao: botao, id: id };
+
+            gerarDesafio();
+        }
+
+        function gerarDesafio() {
+            if (perguntasDisponiveis.length === 0) {
+                // Caso acabem as perguntas (improvável com 25 passos e 37 perguntas, mas seguro ter)
+                perguntasDisponiveis = [...bancoDeperguntas];
+            }
+
+            const indiceAleatorio = Math.floor(Math.random() * perguntasDisponiveis.length);
+            const pergunta = perguntasDisponiveis[indiceAleatorio];
+
+            // REMOVE A PERGUNTA SORTEADA DO ARRAY
+            perguntasDisponiveis.splice(indiceAleatorio, 1);
+
+            textoP.innerText = pergunta.p;
+            listaOpcoes.innerHTML = "";
+
+            pergunta.opcoes.forEach(opcao => {
+                let btn = document.createElement("button");
+                btn.className = "btn-opcao";
+                btn.innerText = opcao;
+                btn.onclick = () => verificarResposta(opcao, pergunta.correta);
+                listaOpcoes.appendChild(btn);
+            });
+
+            modal.style.display = "flex";
+        }
+
+        function verificarResposta(escolha, correta) {
+            modal.style.display = "none";
+
+            if (escolha === correta) {
+                // ACERTOU
+                abrirQuadrado(quadradoPendente.botao, quadradoPendente.id);
+            } else {
+                // ERROU
+                chances--;
+                atualizarStatus("❌ Resposta Errada! -1 Passo");
+                verificarFimDeJogo();
+            }
+        }
+
+        function abrirQuadrado(botao, id) {
+            botao.style.boxShadow = "none";
+            botao.style.transform = "translateY(5px)";
+            botao.style.cursor = "default";
+            botao.disabled = true;
+
+            if (id === tesouroPosicao) {
+                // --- SAÍDA ---
+                botao.style.backgroundColor = "#f1c40f";
+                botao.innerText = "🌀";
+                statusDiv.innerHTML = "VOCÊ ESCAPOU! 🎉";
+                statusDiv.style.backgroundColor = "#e8f8f5";
+                statusDiv.style.color = "#27ae60";
+                encerrarJogo();
+
+            } else if (id === dinoPosicao) {
+                // --- DINOSSAURO (GAME OVER) ---
+                botao.style.backgroundColor = "#c0392b";
+                botao.innerText = "🦖";
+                statusDiv.innerHTML = "VOCÊ ACORDOU O DINO! 😱";
+                statusDiv.style.backgroundColor = "#fadbd8";
+                statusDiv.style.color = "#c0392b";
+                encerrarJogo();
+
+            } else {
+                // --- PEDRA ---
+                botao.style.backgroundColor = "#795548";
+                botao.innerText = "🪨";
+                botao.style.color = "#d7ccc8";
+                chances--;
+                statusDiv.innerHTML = "🦶 Passos restantes: " + chances;
+                verificarFimDeJogo();
+            }
+        }
+
+        function atualizarStatus(msg) {
+            statusDiv.innerHTML = msg;
+            setTimeout(() => {
+                if (jogoAtivo) statusDiv.innerHTML = "🦶 Passos restantes: " + chances;
+            }, 1500);
+        }
+
+        function verificarFimDeJogo() {
+            if (chances <= 0) {
+                statusDiv.innerHTML = "SEM PASSOS! O DINO TE PEGOU! 🦕";
+                statusDiv.style.backgroundColor = "#fadbd8";
+                statusDiv.style.color = "#c0392b";
+                encerrarJogo();
+            }
+        }
+
+        function encerrarJogo() {
+            jogoAtivo = false;
+            resetBtn.style.display = "block";
+
+            // REVELAR O DINO E A SAÍDA
+            let dinoBtn = document.getElementById(dinoPosicao);
+            if (dinoBtn && dinoBtn.innerText === "") {
+                dinoBtn.style.backgroundColor = "#e74c3c";
+                dinoBtn.innerText = "🦖";
+                dinoBtn.disabled = true;
+                dinoBtn.style.boxShadow = "none";
+            }
+
+            let saidaBtn = document.getElementById(tesouroPosicao);
+            if (saidaBtn && saidaBtn.innerText === "") {
+                saidaBtn.style.backgroundColor = "#8bc34a"; // Verde para a saída
+                saidaBtn.innerText = "🌀";
+                saidaBtn.disabled = true;
+                saidaBtn.style.boxShadow = "none";
+            }
+        }
+
+        iniciarJogo();
+    </script>
+</body>
+
+</html>
