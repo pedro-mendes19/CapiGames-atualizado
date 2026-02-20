@@ -126,13 +126,14 @@
     .cartao-jogo {
       background-color: #ffffffb0;
       border-radius: 30px;
-      padding: 30px 20px; 
+      padding: 20px 15px; 
       width: 90%;
       max-width: 800px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
       border: 3px dashed #6398B6; 
       position: relative;
       margin-bottom: 50px;
+      box-sizing: border-box;
     }
 
     #painel-quiz {
@@ -377,6 +378,29 @@
       box-shadow: 0 0 0 #1565c0;
     }
 
+    /* RESPONSIVIDADE PARA CELULARES */
+    @media (max-width: 768px) {
+      .btn-jogar-capa { padding: 15px 50px; }
+      .cartao-jogo { width: 95%; padding: 20px 15px; }
+      .logo-game { max-height: 90px; }
+      #dica { font-size: 20px; }
+      .opcao { width: 130px; font-size: 18px; padding: 12px 10px; }
+      #img-resposta { width: 130px; height: 130px; }
+      #texto-resultado { font-size: 22px; }
+      .btn-proxima, .btn-reiniciar { padding: 15px 30px; font-size: 20px; width: 100%; box-sizing: border-box; }
+      .resumo-item { font-size: 18px; padding: 12px 20px; }
+    }
+
+    /* RESPONSIVIDADE PARA CHROMEBOOKS E NOTEBOOKS */
+    @media (max-height: 768px) {
+      .logo-game { max-height: 70px; margin-top: 10px; margin-bottom: 10px; }
+      .cartao-jogo { padding: 15px; margin-bottom: 20px; }
+      #dica { font-size: 20px; margin-top: 10px; }
+      .opcoes { margin-top: 15px; gap: 10px; }
+      .opcao { margin-bottom: 5px; }
+      #area-resultado { min-height: 160px; margin-top: 10px; }
+      .btn-proxima { margin: 10px auto; }
+    }
   </style>
 </head>
 
