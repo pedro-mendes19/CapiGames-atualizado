@@ -84,7 +84,7 @@
       color: white;
       font-size: clamp(20px, 6vw, 30px);
       font-weight: 960;
-      padding: 22px 80px;       
+      padding: 22px 80px;      
       border: 4px solid #fff;
       border-radius: 50px;
       cursor: pointer;
@@ -408,16 +408,16 @@
 
   <div id="intro-screen">
     <div class="capa-container">
-      <img src="capafundo.png" alt="Fundo" class="img-capa-fundo">
+      <img src="img/capafundo.png" alt="Fundo" class="img-capa-fundo">
       <div class="conteudo-central">
-        <img src="capafrente.png" alt="Capa" class="img-capa-frente">
+        <img src="img/capafrente.png" alt="Capa" class="img-capa-frente">
         <button class="btn-jogar-capa" onclick="iniciarJogo()">▶ JOGAR</button>
       </div>
     </div>
   </div>
 
   <div id="game-screen">
-    <img src="titulojogo.png" alt="Que Alimento é Esse?" class="logo-game">
+    <img src="img/titulo.png" alt="Que Alimento é Esse?" class="logo-game">
 
     <div id="painel-quiz" class="cartao-jogo">
         <div class="dica-container">
@@ -457,13 +457,13 @@
 
   <script>
     const bancoImagens = {
-      "Maçã": "maca.png", "Uva": "uva.png", "Pera": "pera.png", "Limão": "limao.png",
-      "Banana": "banana.png", "Abacaxi": "abacaxi.png", "Ameixa": "ameixa.png",
-      "Jabuticaba": "jabuticaba.png", "Melancia": "melancia.png", "Mamão": "mamao.png",
-      "Manga": "manga.png", "Melão": "melao.png", "Laranja": "laranja.png",
-      "Tangerina": "tangerina.png", "Alface": "alface.png", "Couve": "couve.png",
-      "Brócolis": "brocolis.png", "Batata": "batata.png", "Mandioca": "mandioca.png",
-      "Cenoura": "cenoura.png"
+      "Maçã": "img/maca.png", "Uva": "img/uva.png", "Pera": "img/pera.png", "Limão": "img/limao.png",
+      "Banana": "img/banana.png", "Abacaxi": "img/abacaxi.png", "Ameixa": "img/ameixa.png",
+      "Jabuticaba": "img/jabuticaba.png", "Melancia": "img/melancia.png", "Mamão": "img/mamao.png",
+      "Manga": "img/manga.png", "Melão": "img/melao.png", "Laranja": "img/laranja.png",
+      "Tangerina": "img/tangerina.png", "Alface": "img/alface.png", "Couve": "img/couve.png",
+      "Brócolis": "img/brocolis.png", "Batata": "img/batata.png", "Mandioca": "img/mandioca.png",
+      "Cenoura": "img/cenoura.png"
     };
 
     const perguntas = [
@@ -474,7 +474,7 @@
       { dica: "Tem casca verde e por dentro é vermelha e cheia de sementes.", correta: "Melancia", opcoes: ["Mamão", "Melancia", "Abacaxi"] },
       { dica: "Tem uma coroa, mas não é rei. Tem espinhos e é amarelo por dentro.", correta: "Abacaxi", opcoes: ["Manga", "Abacaxi", "Banana"] },
       { dica: "É doce, macia e muito usada no café da manhã.", correta: "Mamão", opcoes: ["Mamão", "Melão", "Pera"] },
-      { dica: "É pequena, redonda e nasce em árvores.", correta: "Laranja", opcoes: ["Laranja", "Limão", "Tangerina"] },
+      { dica: "Tem o mesmo nome da sua cor e é famosa por ser rica em vitamina C.", correta: "Laranja", opcoes: ["Laranja", "Limão", "Tangerina"] },
       { dica: "Tem casca colorida, polpa amarela bem doce e tem um caroço no meio.", correta: "Manga", opcoes: ["Jabuticaba", "Abacaxi", "Manga"] },
       { dica: "Tem casca amarela e dura, é doce, refrescante e as sementes ficam todas juntas no centro.", correta: "Melão", opcoes: ["Melão", "Mamão", "Abacaxi"] },
       { dica: "Tem folhas verdes e leves. É muito usada em sanduíches e saladas cruas.", correta: "Alface", opcoes: ["Alface", "Couve", "Brócolis"] },

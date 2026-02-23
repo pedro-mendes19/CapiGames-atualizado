@@ -15,7 +15,7 @@
       --card-success: #90EE90;
       --card-error: #FF6961;
       --text-color: #555;
-      --tamanho-carta: 110px;
+      --tamanho-carta: 110px; /* Será sobrescrito pelo JavaScript */
     }
 
     body {
@@ -27,7 +27,7 @@
       align-items: center;
       min-height: 100vh;
       user-select: none;
-      overflow-x: hidden;
+      overflow: hidden; /* Bloqueia barras de rolagem vertical e horizontal */
     }
 
     header {
@@ -166,14 +166,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 10px 20px 20px 20px;
       width: 100%;
       max-width: 1200px;
+      box-sizing: border-box;
     }
 
     .game-container {
       display: grid;
-      gap: 15px;
+      gap: clamp(5px, 1.5vmin, 15px); 
       perspective: 1000px;
       justify-content: center;
       align-content: center;
@@ -254,28 +255,23 @@
     }
 
     @keyframes pulo {
-
       0%,
       100% {
         transform: rotateY(180deg) scale(1)
       }
-
       50% {
         transform: rotateY(180deg) scale(1.15)
       }
     }
 
     @keyframes tremer {
-
       0%,
       100% {
         transform: rotateY(180deg) translateX(0)
       }
-
       25% {
         transform: rotateY(180deg) translateX(-5px)
       }
-
       75% {
         transform: rotateY(180deg) translateX(5px)
       }
@@ -284,58 +280,43 @@
     #overlay-inicio {
       position: fixed;
       inset: 0;
-      background: url('img/fundojogo.png') no-repeat center center;
-      background-size: contain; /* diminui o zoom */
-      background-color: #000; /* opcional para preencher laterais */
+      background-image: url('img/fundo2.png');
+      background-position: center; 
+      background-size: cover; 
+      background-color: #000;
       z-index: 200;
+      display: flex;
+      justify-content: center; 
+      align-items: center; 
     }
 
-    /*#overlay-inicio {
-      position: fixed;
-      inset: 0;
-      background: url('img/fundojogo.png') no-repeat center center;
-      background-size: 85%; /* quanto menor, menos zoom */
-      /*background-color: #000; */
-      /* z-index: 200;
-    */
-
     .btn-start {
-      position: absolute;
-      left: 50%;
-      bottom: 2vh;
-      transform: translateX(-80%);
-
       background: #FFB347;
       color: white;
-      border: 4px solid white;
-      padding: 15px 65px;
-      font-size: 2.2rem;
-      border-radius: 50px;
       cursor: pointer;
       font-family: 'Fredoka', sans-serif;
       font-weight: bold;
-      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2);
+      border-radius: 50px;
+      white-space: nowrap;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
       animation: pulse 1.5s infinite;
+      font-size: clamp(14px, 4vmin, 35px); 
+      padding: clamp(10px, 2.5vmin, 25px) clamp(25px, 7vmin, 70px); 
+      border: clamp(2px, 0.5vmin, 5px) solid white;
+      box-shadow: 0 clamp(4px, 1vmin, 8px) 0 rgba(0, 0, 0, 0.2);
+      margin-top: 60vh;
+      margin-left: 2vh;
     }
 
     .btn-start:hover {
-      transform: translateX(-50%) scale(1.05);
+      transform: scale(1.05);
       background: #c0ab87;
     }
 
     @keyframes pulse {
-      0% {
-        transform: translateX(-50%) scale(1);
-      }
-
-      50% {
-        transform: translateX(-50%) scale(1.05);
-      }
-
-      100% {
-        transform: translateX(-50%) scale(1);
-      }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
 
     #modal-nivel {
@@ -375,22 +356,12 @@
       background-size: contain;
     }
 
-    .modal-content:before {
-      left: 50px;
-    }
-
-    .modal-content:after {
-      right: 50px;
-    }
+    .modal-content:before { left: 50px; }
+    .modal-content:after { right: 50px; }
 
     @keyframes modalUp {
-      from {
-        transform: scale(0.5);
-      }
-
-      to {
-        transform: scale(1);
-      }
+      from { transform: scale(0.5); }
+      to { transform: scale(1); }
     }
 
     .btn-proximo {
@@ -405,6 +376,14 @@
       font-weight: bold;
       box-shadow: 0 5px 0 #4834d4;
       transition: transform 0.1s;
+    }
+
+    @media screen and (max-height: 500px) {
+      header { margin: 5px 0; width: 98%; }
+      .titulo { font-size: 1.4rem; margin-bottom: 5px; }
+      .painel { padding: 5px 15px; font-size: 1rem; border-width: 3px; }
+      .btn-icon { font-size: 1.1rem; }
+      .nivel-badge { padding: 4px 15px; font-size: 0.9em; }
     }
 
     @media screen and (max-width: 900px) and (orientation: portrait) {
@@ -422,7 +401,6 @@
         padding: 20px;
         z-index: 9999;
       }
-
       body>* {
         display: none;
       }
@@ -478,26 +456,19 @@
     let tempoTotal = 0;
 
     const todosAnimais = [
-      "img/javali.png",
-      "img/crocodilo.png",
-      "img/hipopotamo.png",
-      "img/rinoceronte.png",
-      "img/cobra.png",
-      "img/leopardo.png",
-      "img/leao.png",
-      "img/raposa.png",
-      "img/elefante.png",
-      "img/girafa.png",
-      "img/macaco.png",
-      "img/zebra.png"
+      "img/javali.png", "img/crocodilo.png", "img/hipopotamo.png",
+      "img/rinoceronte.png", "img/cobra.png", "img/leopardo.png",
+      "img/leao.png", "img/raposa.png", "img/elefante.png",
+      "img/girafa.png", "img/macaco.png", "img/zebra.png"
     ];
 
+    // O tamanho saiu daqui. Agora o Javascript calcula matematicamente!
     const niveis = [
-      { pares: 3, colunas: 3, tamanho: 170 },
-      { pares: 6, colunas: 4, tamanho: 140 },
-      { pares: 8, colunas: 4, tamanho: 130 },
-      { pares: 10, colunas: 5, tamanho: 120 },
-      { pares: 12, colunas: 6, tamanho: 115 }
+      { pares: 3, colunas: 3 },
+      { pares: 6, colunas: 4 },
+      { pares: 8, colunas: 4 },
+      { pares: 10, colunas: 5 },
+      { pares: 12, colunas: 6 }
     ];
 
     let nivelAtual = 0;
@@ -522,11 +493,51 @@
     const overlay = document.getElementById('overlay-inicio');
 
     // ==========================
+    // CÁLCULO INTELIGENTE DO TAMANHO DAS CARTAS
+    // ==========================
+    function ajustarTamanhoCartas() {
+      const config = niveis[nivelAtual];
+      const totalCartas = config.pares * 2;
+      const colunas = config.colunas;
+      const linhas = Math.ceil(totalCartas / colunas);
+
+      // Pega o espaço do cabeçalho
+      const header = document.querySelector('header');
+      const headerHeight = header ? header.offsetHeight : 150;
+      
+      // Calcula o espaço que SOBROU na tela para o jogo
+      // Descontamos 40px para não ficar colado nas bordas
+      const alturaDisponivel = window.innerHeight - headerHeight - 40; 
+      const larguraDisponivel = window.innerWidth - 40;
+
+      // Estimativa do espaço entre as cartas (gap)
+      const gap = 12;
+
+      // Descobre qual o tamanho máximo que a carta pode ter para caber na tela toda
+      const maxAlturaPorCarta = (alturaDisponivel - (gap * (linhas - 1))) / linhas;
+      const maxLarguraPorCarta = (larguraDisponivel - (gap * (colunas - 1))) / colunas;
+
+      // Como a carta é um quadrado, usamos o MENOR valor para garantir que cabe em tudo
+      let tamanhoFinal = Math.min(maxAlturaPorCarta, maxLarguraPorCarta);
+
+      // Colocamos um limite máximo (ex: 150px) para não ficar gigantesco em telas de PC grandes
+      tamanhoFinal = Math.min(tamanhoFinal, 150);
+
+      // Aplica o novo tamanho calculado dinamicamente no CSS!
+      document.documentElement.style.setProperty('--tamanho-carta', `${Math.floor(tamanhoFinal)}px`);
+    }
+
+    // Fica de olho se a tela for redimensionada ou virada (no celular)
+    window.addEventListener('resize', () => {
+      if (overlay.style.display === 'none') {
+        ajustarTamanhoCartas();
+      }
+    });
+
+    // ==========================
     //  INÍCIO DO JOGO
     // ==========================
     function comecarJogo() {
-
-      // Tentar tocar a música ao iniciar o jogo
       audioFundo.volume = 0.25;
 
       audioFundo.play()
@@ -536,7 +547,6 @@
           iconeMusica.style.color = "#6c5ce7";
         })
         .catch(() => {
-          // Chrome bloqueia autoplay – ícone indica silêncio
           musicaTocando = false;
           iconeMusica.className = "fas fa-volume-mute";
           iconeMusica.style.color = "#FF6961";
@@ -545,6 +555,7 @@
       overlay.style.opacity = '0';
       setTimeout(() => {
         overlay.style.display = 'none';
+        ajustarTamanhoCartas(); // Ajusta ao sumir a tela inicial
       }, 500);
 
       iniciarNivelLogica();
@@ -557,15 +568,11 @@
       if (musicaTocando) {
         audioFundo.pause();
         musicaTocando = false;
-
         iconeMusica.className = "fas fa-volume-mute";
         iconeMusica.style.color = "#FF6961";
       } else {
         audioFundo.volume = 0.25;
-        audioFundo.play().catch(() => {
-          console.log("Interação necessária para tocar áudio");
-        });
-
+        audioFundo.play().catch(() => console.log("Interação necessária"));
         musicaTocando = true;
         iconeMusica.className = "fas fa-music";
         iconeMusica.style.color = "#6c5ce7";
@@ -596,7 +603,9 @@
       modal.style.display = "none";
 
       container.style.gridTemplateColumns = `repeat(${config.colunas}, 1fr)`;
-      document.documentElement.style.setProperty('--tamanho-carta', `${config.tamanho}px`);
+      
+      // Ajusta o tamanho das cartas baseando-se no novo nível
+      ajustarTamanhoCartas();
 
       let listaCartas = [];
       let animaisDoNivel = embaralhar([...todosAnimais]);
@@ -711,19 +720,16 @@
     function mostrarVitoria() {
       pararTimer();
 
-      // ―― Somar o tempo deste nível ao total ――
       tempoTotal += segundos;
 
       const msg = document.getElementById('msg-vitoria');
       const btn = document.querySelector('.btn-proximo');
 
       if (nivelAtual < niveis.length - 1) {
-        // Ainda não é o último nível
         msg.innerText = `Nível ${nivelAtual + 1} completo em ${elTempo.innerText}!`;
         btn.innerHTML = `Ir para Nível ${nivelAtual + 2} <i class="fas fa-arrow-right"></i>`;
         btn.onclick = proximoNivel;
       } else {
-        // ――― FINAL DO JOGO / PLACAR GERAL ―――
 
         const minutos = String(Math.floor(tempoTotal / 60)).padStart(2, '0');
         const segundosFinais = String(tempoTotal % 60).padStart(2, '0');
@@ -738,7 +744,7 @@
         btn.innerHTML = `Jogar Novamente <i class="fas fa-redo"></i>`;
         btn.onclick = () => {
           nivelAtual = 0;
-          tempoTotal = 0; // resetar placar
+          tempoTotal = 0;
           overlay.style.display = 'flex';
           setTimeout(() => overlay.style.opacity = '1', 10);
           musicaTocando = false;
@@ -771,7 +777,6 @@
     function falar(texto) {
       if (!vozCarregada) return;
 
-      // Reduz a música suavemente para modo didático
       if (musicaTocando) audioFundo.volume = 0.08;
 
       window.speechSynthesis.cancel();
@@ -781,7 +786,6 @@
       voz.rate = 0.9;
 
       voz.onend = () => {
-        // Retorna ao volume normal após a fala
         if (musicaTocando) audioFundo.volume = 0.25;
       };
 

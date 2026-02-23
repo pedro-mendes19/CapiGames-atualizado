@@ -12,6 +12,29 @@ body {
     margin: 0;
     color: var(--branco);
     font-family: 'Roboto', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Custom global scrollbar for a cleaner look */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 10px;
+    border: 2px solid var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #484f58;
 }
 
 /* --- HEADER --- */
@@ -76,17 +99,23 @@ header h1 {
 .container {
     display: grid;
     grid-template-columns: 1fr 380px;
-    padding: 30px;
+    padding: 20px 30px;
     gap: 30px;
     max-width: 1600px;
     margin: 0 auto;
+    flex: 1;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* --- ÁREA DO CAMPO E BANCO --- */
 .area-jogo {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
+    overflow-y: auto;
+    padding-right: 10px;
 }
 
 .campo-wrapper {
@@ -231,13 +260,14 @@ header h1 {
 
 /* --- MERCADO (SIDEBAR STICKY) --- */
 .mercado {
-    position: sticky;
-    top: 110px;
-    /* Gruda logo abaixo do header */
-    height: fit-content;
     background: #161b22;
     border-radius: 20px;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .btn-limpar {
@@ -254,10 +284,12 @@ header h1 {
 }
 
 .lista-cards {
-    max-height: 60vh;
-    /* Limita apenas a lista se ela for muito longa */
+    flex: 1;
     overflow-y: auto;
     padding-right: 5px;
+    /* Sombras suaves para indicar continuidade */
+    mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 20px, black calc(100% - 20px), transparent);
 }
 
 /* Customização da barra de rolagem da lista (mais fina) */

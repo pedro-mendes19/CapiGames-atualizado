@@ -250,7 +250,7 @@
 
             <div class="brand-area">
                 <div class="mascot-icon" id="mascot">🧙‍♂️</div>
-                </div>
+            </div>
             
             <div class="progress-container">
                 <div class="progress-bar" id="progress-bar"></div>
@@ -267,7 +267,7 @@
             </div>
 
             <div class="options-grid" id="options-area">
-                </div>
+            </div>
         </div>
 
         <div id="end-screen">
@@ -281,47 +281,46 @@
     </div>
 
     <script>
-        // --- LÓGICA DO JOGO (Mesmo banco de dados, lógica robusta) ---
+        // --- LÓGICA DO JOGO ---
         const masterList = [
             // PRESENTE
-            { v: "Amar", t: "Hoje", s: "Eu ______ muito meus pais.", c: "Amo", o: ["Amei", "Amo", "Amarei"] },
-            { v: "Beber", t: "Agora", s: "Você ______ água?", c: "Bebe", o: ["Bebeu", "Bebe", "Beberá"] },
-            { v: "Abrir", t: "Hoje", s: "Nós ______ a porta.", c: "Abrimos", o: ["Abrimos", "Abriram", "Abriremos"] },
-            { v: "Correr", t: "Agora", s: "O cachorro ______ no quintal.", c: "Corre", o: ["Correu", "Corre", "Correrá"] },
-            { v: "Escrever", t: "Hoje", s: "A professora ______ no quadro.", c: "Escreve", o: ["Escreveu", "Escreve", "Escreverá"] },
-            { v: "Falar", t: "Agora", s: "Eu ______ inglês.", c: "Falo", o: ["Falei", "Falo", "Falarei"] },
-            { v: "Ler", t: "Hoje", s: "Eles ______ gibis.", c: "Leem", o: ["Leram", "Leem", "Lerão"] },
-            { v: "Dormir", t: "Agora", s: "O gato ______ no sofá.", c: "Dorme", o: ["Dormiu", "Dorme", "Dormirá"] },
-            { v: "Ver", t: "Hoje", s: "Nós ______ TV.", c: "Vemos", o: ["Vimos", "Vemos", "Veremos"] },
-            { v: "Ir", t: "Hoje", s: "Eu ______ ao mercado.", c: "Vou", o: ["Fui", "Vou", "Irei"] },
-            { v: "Ter", t: "Hoje", s: "Eles ______ uma casa azul.", c: "Têm", o: ["Têm", "Tem", "Terão"] },
-            { v: "Ser", t: "Hoje", s: "Nós ______ amigos.", c: "Somos", o: ["Fomos", "Somos", "Seremos"] },
+            { v: "Amar", t: "Presente", s: "Eu ______ muito meus pais.", c: "amo", o: ["amei", "amo", "amarei"] },
+            { v: "Beber", t: "Presente", s: "Você ______ água?", c: "bebe", o: ["bebeu", "bebe", "beberá"] },
+            { v: "Abrir", t: "Presente", s: "Nós ______ a porta.", c: "abrimos", o: ["abrimos", "abriram", "abriremos"] },
+            { v: "Correr", t: "Presente", s: "O cachorro ______ no quintal.", c: "corre", o: ["correu", "corre", "correrá"] },
+            { v: "Escrever", t: "Presente", s: "A professora ______ no quadro.", c: "escreve", o: ["escreveu", "escreve", "escreverá"] },
+            { v: "Falar", t: "Presente", s: "Eu ______ inglês.", c: "falo", o: ["falei", "falo", "falarei"] },
+            { v: "Ler", t: "Presente", s: "Eles ______ gibis.", c: "leem", o: ["leram", "leem", "lerão"] },
+            { v: "Dormir", t: "Presente", s: "O gato ______ no sofá.", c: "dorme", o: ["dormiu", "dorme", "dormirá"] },
+            { v: "Ver", t: "Presente", s: "Nós ______ TV.", c: "vemos", o: ["vimos", "vemos", "veremos"] },
+            { v: "Ir", t: "Presente", s: "Eu ______ ao mercado.", c: "vou", o: ["fui", "vou", "irei"] },
+            { v: "Ter", t: "Presente", s: "Eles ______ uma casa azul.", c: "têm", o: ["têm", "tem", "terão"] },
+            { v: "Ser", t: "Presente", s: "Nós ______ amigos.", c: "somos", o: ["fomos", "somos", "seremos"] },
             
-            // PASSADO
-            { v: "Comer", t: "Ontem", s: "Eu ______ bolo de chocolate.", c: "Comi", o: ["Comi", "Como", "Comerei"] },
-            { v: "Cair", t: "Ontem", s: "O menino ______ da bike.", c: "Caiu", o: ["Cai", "Caiu", "Cairá"] },
-            { v: "Estudar", t: "Passado", s: "Elas ______ para a prova.", c: "Estudaram", o: ["Estudam", "Estudarão", "Estudaram"] },
-            { v: "Fazer", t: "Ontem", s: "Nós ______ o dever.", c: "Fizemos", o: ["Fazemos", "Fizemos", "Faremos"] },
-            { v: "Dizer", t: "Passado", s: "Ele ______ a verdade.", c: "Disse", o: ["Diz", "Disse", "Dirá"] },
-            { v: "Chegar", t: "Ontem", s: "Você ______ tarde.", c: "Chegou", o: ["Chega", "Chegou", "Chegará"] },
-            { v: "Brincar", t: "Ontem", s: "Eles ______ na areia.", c: "Brincaram", o: ["Brincam", "Brincarão", "Brincaram"] },
-            { v: "Poder", t: "Ontem", s: "Ela não ______ vir.", c: "Pôde", o: ["Pode", "Pôde", "Poderá"] },
-            { v: "Dar", t: "Ontem", s: "Ele me ______ um presente.", c: "Deu", o: ["Dá", "Deu", "Dará"] },
-            { v: "Ir", t: "Ontem", s: "Nós ______ ao cinema.", c: "Fomos", o: ["Vamos", "Fomos", "Iremos"] },
+            // PASSADO (PRETÉRITO)
+            { v: "Comer", t: "Pretérito", s: "Eu ______ bolo de chocolate.", c: "comi", o: ["comi", "como", "comerei"] },
+            { v: "Cair", t: "Pretérito", s: "O menino ______ da bike.", c: "caiu", o: ["cai", "caiu", "cairá"] },
+            { v: "Estudar", t: "Pretérito", s: "Elas ______ para a prova.", c: "estudaram", o: ["estudam", "estudarão", "estudaram"] },
+            { v: "Fazer", t: "Pretérito", s: "Nós ______ o dever.", c: "fizemos", o: ["fazemos", "fizemos", "faremos"] },
+            { v: "Dizer", t: "Pretérito", s: "Ele ______ a verdade.", c: "disse", o: ["diz", "disse", "dirá"] },
+            { v: "Chegar", t: "Pretérito", s: "Você ______ tarde.", c: "chegou", o: ["chega", "chegou", "chegará"] },
+            { v: "Brincar", t: "Pretérito", s: "Eles ______ na areia.", c: "brincaram", o: ["brincam", "brincarão", "brincaram"] },
+            { v: "Poder", t: "Pretérito", s: "Ela não ______ vir.", c: "pôde", o: ["pode", "pôde", "poderá"] },
+            { v: "Dar", t: "Pretérito", s: "Ele me ______ um presente.", c: "deu", o: ["dá", "deu", "dará"] },
+            { v: "Ir", t: "Pretérito", s: "Nós ______ ao cinema.", c: "fomos", o: ["vamos", "fomos", "iremos"] },
             
             // FUTURO
-            { v: "Viajar", t: "Amanhã", s: "Eles ______ para a praia.", c: "Viajarão", o: ["Viajaram", "Viajam", "Viajarão"] },
-            { v: "Ser", t: "Futuro", s: "Eu ______ astronauta.", c: "Serei", o: ["Sou", "Fui", "Serei"] },
-            { v: "Comprar", t: "Amanhã", s: "Nós ______ o pão.", c: "Compraremos", o: ["Compramos", "Compramos", "Compraremos"] },
-            { v: "Ler", t: "Futuro", s: "Você ______ este livro?", c: "Lerá", o: ["Leu", "Lê", "Lerá"] },
-            { v: "Estar", t: "Amanhã", s: "Eu ______ lá.", c: "Estarei", o: ["Estou", "Estive", "Estarei"] },
-            { v: "Ter", t: "Futuro", s: "Ela ______ sucesso.", c: "Terá", o: ["Tem", "Teve", "Terá"] },
-            { v: "Fazer", t: "Amanhã", s: "Nós ______ uma festa.", c: "Faremos", o: ["Fazemos", "Fizemos", "Faremos"] },
-            { v: "Vir", t: "Futuro", s: "Todos ______ para o jantar.", c: "Virão", o: ["Vêm", "Vieram", "Virão"] },
-            { v: "Dormir", t: "Amanhã", s: "Eu ______ cedo.", c: "Dormirei", o: ["Dormi", "Durmo", "Dormirei"] },
-            { v: "Falar", t: "Futuro", s: "O diretor ______ com você.", c: "Falará", o: ["Falou", "Fala", "Falará"] }
+            { v: "Viajar", t: "Futuro", s: "Eles ______ para a praia.", c: "viajarão", o: ["viajaram", "viajam", "viajarão"] },
+            { v: "Ser", t: "Futuro", s: "Eu ______ astronauta.", c: "serei", o: ["sou", "fui", "serei"] },
+            { v: "Comprar", t: "Futuro", s: "Nós ______ o pão.", c: "compraremos", o: ["compramos", "compra", "compraremos"] },
+            { v: "Ler", t: "Futuro", s: "Você ______ este livro?", c: "lerá", o: ["leu", "lê", "lerá"] },
+            { v: "Estar", t: "Futuro", s: "Eu ______ lá.", c: "estarei", o: ["estou", "estive", "estarei"] },
+            { v: "Ter", t: "Futuro", s: "Ela ______ sucesso.", c: "terá", o: ["tem", "teve", "terá"] },
+            { v: "Fazer", t: "Futuro", s: "Nós ______ uma festa.", c: "faremos", o: ["fazemos", "fizemos", "faremos"] },
+            { v: "Vir", t: "Futuro", s: "Todos ______ para o jantar.", c: "virão", o: ["vêm", "vieram", "virão"] },
+            { v: "Dormir", t: "Futuro", s: "Eu ______ cedo.", c: "dormirei", o: ["dormi", "durmo", "dormirei"] },
+            { v: "Falar", t: "Futuro", s: "O diretor ______ com você.", c: "falará", o: ["falou", "fala", "falará"] }
         ];
-        // (Nota: Lista reduzida no código para brevidade, mas o algoritmo funciona com qualquer tamanho)
 
         let gameQueue = [];
         let currentIndex = 0;
