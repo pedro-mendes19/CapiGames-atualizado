@@ -208,7 +208,7 @@
         const GRAVIDADE = 0.7; const CHAO_Y = 460; const LARGURA_GOL = 90; const ALTURA_TRAVE = 290; const TEMPO_JOGO = 180;
 
         let scoreP1 = 0; let scoreP2 = 0; let tempo = TEMPO_JOGO; let jogoRodando = true;
-        let pausadoPorDesafio = false; let mensagemTela = ""; let ultimoTempo = Date.now();
+        let pausadoPorDesafio = false; let bolaEmJogo = false; let mensagemTela = ""; let ultimoTempo = Date.now();
         let confetes = []; let fatorTempo = 1.0; let golPendente = null;
 
         // DOM
@@ -324,12 +324,19 @@
 
         function resetarPosicoes() {
             bola.reset(); p1.reset(); cpu.reset(); confetes = [];
+            bolaEmJogo = false;
         }
 
         // --- GAME ENGINE ---
         const bola = {
-            x: canvas.width / 2, y: 200, vx: 0, vy: 0, raio: 18, anguloRotacao: 0, rastro: [],
-            reset: function () { this.x = canvas.width / 2; this.y = 200; this.vx = 0; this.vy = 0; this.rastro = []; },
+            x: canvas.width / 2, y: CHAO_Y - 18, vx: 0, vy: 0, raio: 18, anguloRotacao: 0, rastro: [],
+            reset: function () {
+                // Adiciona pequena aleatoriedade na posição inicial para evitar repetições
+                this.x = canvas.width / 2 + (Math.random() * 60 - 30);
+                this.y = CHAO_Y - this.raio;
+                this.vx = 0; this.vy = 0; this.rastro = [];
+                bolaEmJogo = false;
+            },
             atualizar: function () {
                 if ((!jogoRodando && mensagemTela.indexOf("GOL") === -1) || pausadoPorDesafio) return;
 
@@ -337,8 +344,14 @@
                 for (let i = 0; i < passos; i++) {
                     let spd = fatorTempo / passos;
                     this.vy += GRAVIDADE * spd; this.x += this.vx * spd; this.y += this.vy * spd;
-                    this.vx *= 0.99; this.anguloRotacao += (this.vx * spd) / 10;
-                    if (this.y + this.raio > CHAO_Y) { this.y = CHAO_Y - this.raio; this.vy *= -0.75; }
+                    this.vx *= 0.985; // Aumentado um pouco o atrito
+                    if (Math.abs(this.vx) < 0.1) this.vx = 0; // Para a bola completamente
+                    this.anguloRotacao += (this.vx * spd) / 10;
+                    if (this.y + this.raio > CHAO_Y) {
+                        this.y = CHAO_Y - this.raio;
+                        this.vy *= -0.65; // Reduzido o quique para ela parar mais rápido
+                        if (Math.abs(this.vy) < 1) this.vy = 0;
+                    }
                     if (this.x > canvas.width) { this.x = canvas.width; this.vx *= -0.8; }
                     if (this.x < 0) { this.x = 0; this.vx *= -0.8; }
                     if (this.y < 0) { this.y = 0; this.vy *= -0.5; }
@@ -438,9 +451,10 @@
             colisaoBola() {
                 let dx = bola.x - this.x, dy = bola.y - (this.y - 40), dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < this.raio + bola.raio) {
-                    let ang = Math.atan2(dy, dx), f = 10;
+                    let ang = Math.atan2(dy, dx), f = 10 + Math.random() * 2;
                     bola.vx = Math.cos(ang) * f; bola.vy = Math.sin(ang) * f;
                     bola.x += Math.cos(ang) * 5; bola.y += Math.sin(ang) * 5;
+                    bolaEmJogo = true; // Bola entra em jogo ao ser tocada
                 }
                 if (this.chute) {
                     let peX = this.x + (40 * this.dir), peY = this.y - 10, dPe = Math.sqrt((bola.x - peX) ** 2 + (bola.y - peY) ** 2);
@@ -496,10 +510,20 @@
 
         function controlarJogadores() {
             // CONTROLES P1
-            if (teclas['KeyD']) p1.mover(1); if (teclas['KeyA']) p1.mover(-1);
-            if (teclas['KeyW']) p1.pular(); if (teclas['KeyS'] || teclas['Space']) p1.chutar();
+            if (teclas['KeyD']) { p1.mover(1); bolaEmJogo = true; }
+            if (teclas['KeyA']) { p1.mover(-1); bolaEmJogo = true; }
+            if (teclas['KeyW']) { p1.pular(); bolaEmJogo = true; }
+            if (teclas['KeyS'] || teclas['Space']) { p1.chutar(); bolaEmJogo = true; }
 
             // === CPU 4.0 — IA REWRITTEN ===
+
+            // Se a bola não está em jogo, a CPU espera em sua posição defensiva
+            if (!bolaEmJogo) {
+                let posEspera = canvas.width - LARGURA_GOL - 60;
+                let erroEspera = posEspera - cpu.x;
+                if (Math.abs(erroEspera) > 5) cpu.mover(erroEspera > 0 ? 1 : -1);
+                return;
+            }
 
             // Future predictions
             let pred10 = preverTrajetoriaBola(10);
