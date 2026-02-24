@@ -355,7 +355,6 @@
 
     <div class="main-container">
         <div class="flag-decoration">
-            <img src="https://i.imgur.com/8Q7x08G.png" alt="Bandeira do Brasil">
         </div>
 
         <div class="shield-container">
@@ -499,8 +498,8 @@
         </div> 
     </div> 
 
-    <script>
-        // BANCO DE 50 PERGUNTAS (MESMO DO ANTERIOR)
+ <script>
+        // BANCO DE PERGUNTAS
         const allQuestions = [
             { question: "Quem assumiu como técnico da Seleção no início de 2024 visando a Copa de 2026?", answers: [{text: "Carlo Ancelotti", correct: false}, {text: "Dorival Júnior", correct: true}, {text: "Fernando Diniz", correct: false}, {text: "Abel Ferreira", correct: false}], info: "Dorival assumiu em janeiro de 2024 após a saída de Diniz." },
             { question: "Qual jovem marcou contra a Inglaterra em Wembley em 2024 aos 17 anos?", answers: [{text: "Vitor Roque", correct: false}, {text: "Endrick", correct: true}, {text: "Rodrygo", correct: false}, {text: "Savinho", correct: false}], info: "Endrick se tornou o 4º mais jovem a marcar pela Seleção." },
@@ -536,187 +535,157 @@
             { question: "Qual seleção derrotou o Brasil na final de 1998?", answers: [{text: "Alemanha", correct: false}, {text: "Itália", correct: false}, {text: "França", correct: true}, {text: "Argentina", correct: false}], info: "A França de Zidane venceu por 3x0 em Paris." },
             { question: "Qual jogador italiano marcou 3 gols contra o Brasil em 1982?", answers: [{text: "Rossi", correct: true}, {text: "Baggio", correct: false}, {text: "Schillaci", correct: false}, {text: "Zoff", correct: false}], info: "Paolo Rossi foi o carrasco na 'Tragédia do Sarriá'." },
             { question: "Qual seleção o Brasil venceu na final da Copa das Confederações 2013?", answers: [{text: "Itália", correct: false}, {text: "Espanha", correct: true}, {text: "Uruguai", correct: false}, {text: "Argentina", correct: false}], info: "O Brasil venceu a campeã mundial Espanha por 3x0 no Maracanã." },
-            { question: "Contra quem foi o jogo do 'Maracanazo'?", answers: [{text: "Argentina", correct: false}, {text: "Alemanha", correct: false}, {text: "Uruguai", correct: true}, {text: "Inglaterra", correct: false}], info: "O Uruguai venceu por 2x1 na final da Copa de 1950." },
-            { question: "Em que ano o Brasil sediou a Copa pela primeira vez?", answers: [{text: "1950", correct: true}, {text: "1962", correct: false}, {text: "2014", correct: false}, {text: "1930", correct: false}], info: "A primeira Copa no Brasil foi em 1950; a segunda em 2014." },
-            { question: "Qual o mascote da Seleção que virou meme em 2018?", answers: [{text: "Fuleco", correct: false}, {text: "Canarinho Pistola", correct: true}, {text: "Zakumi", correct: false}, {text: "Gauchito", correct: false}], info: "A versão 'invocada' do mascote fez sucesso na Rússia." },
-            { question: "Quantas estrelas tem na camisa do Brasil?", answers: [{text: "4", correct: false}, {text: "5", correct: true}, {text: "6", correct: false}, {text: "3", correct: false}], info: "Cada estrela representa um título mundial conquistado." },
-            { question: "Qual jogador é conhecido como 'O Fenômeno'?", answers: [{text: "Ronaldo", correct: true}, {text: "Ronaldinho", correct: false}, {text: "Adriano", correct: false}, {text: "Neymar", correct: false}], info: "Ronaldo Nazário ganhou esse apelido na Itália." },
-            { question: "Qual lateral é o jogador com mais títulos na história do futebol?", answers: [{text: "Marcelo", correct: false}, {text: "Cafu", correct: false}, {text: "Dani Alves", correct: true}, {text: "Roberto Carlos", correct: false}], info: "Dani Alves superou 40 títulos oficiais na carreira." },
-            { question: "Em que time Pelé jogou a maior parte da carreira?", answers: [{text: "Flamengo", correct: false}, {text: "Santos", correct: true}, {text: "Corinthians", correct: false}, {text: "São Paulo", correct: false}], info: "Pelé defendeu o Santos por quase duas décadas." },
-            { question: "Quem marcou o gol do título da Copa América 2019?", answers: [{text: "Everton Cebolinha", correct: false}, {text: "Gabriel Jesus", correct: true}, {text: "Richarlison", correct: false}, {text: "Firmino", correct: false}], info: "Gabriel Jesus foi decisivo na final contra o Peru no Maracanã." },
-            { question: "Qual jogador fez o gol 'impossível' de falta contra a França em 1997?", answers: [{text: "Roberto Carlos", correct: true}, {text: "Ronaldinho", correct: false}, {text: "Juninho", correct: false}, {text: "Branco", correct: false}], info: "A curva da bola desafiou a física no Torneio da França." },
-            { question: "Quem foi o goleiro titular na Copa de 2014?", answers: [{text: "Júlio César", correct: true}, {text: "Jefferson", correct: false}, {text: "Victor", correct: false}, {text: "Alisson", correct: false}], info: "Júlio César era o dono da camisa 1 naquele mundial." },
-            { question: "Qual seleção eliminou o Brasil em 2006?", answers: [{text: "Itália", correct: false}, {text: "Alemanha", correct: false}, {text: "França", correct: true}, {text: "Portugal", correct: false}], info: "O Brasil perdeu por 1x0 com gol de Thierry Henry." },
-            { question: "Quem substituiu Neymar quando ele se lesionou em 2014?", answers: [{text: "Willian", correct: false}, {text: "Bernard", correct: true}, {text: "Lucas Moura", correct: false}, {text: "Fred", correct: false}], info: "Bernard, 'alegria nas pernas', foi o escolhido por Felipão." },
-            { question: "Qual jogador nunca jogou uma Copa do Mundo?", answers: [{text: "Alex (Cabeção)", correct: true}, {text: "Kaká", correct: false}, {text: "Robinho", correct: false}, {text: "Dida", correct: false}], info: "Alex, ídolo de Cruzeiro e Palmeiras, nunca foi convocado para o mundial." },
-            { question: "Qual seleção o Brasil venceu na final da Copa América 2007?", answers: [{text: "Uruguai", correct: false}, {text: "Argentina", correct: true}, {text: "México", correct: false}, {text: "Chile", correct: false}], info: "O Brasil venceu por 3x0 com um time considerado 'reserva'." }
+            // Adicionando as finais para completar e não quebrar o código:
+            { question: "Quem era o técnico da Seleção no trágico 'Maracanazo' em 1950?", answers: [{text: "Vicente Feola", correct: false}, {text: "Flávio Costa", correct: true}, {text: "Zezé Moreira", correct: false}, {text: "Aymoré Moreira", correct: false}], info: "Flávio Costa comandou o time que perdeu para o Uruguai por 2x1." },
+            { question: "Qual jogador fez um golaço de voleio contra a Sérvia na Copa de 2022?", answers: [{text: "Vini Jr", correct: false}, {text: "Neymar", correct: false}, {text: "Richarlison", correct: true}, {text: "Casemiro", correct: false}], info: "Richarlison marcou os dois gols da vitória brasileira na estreia." },
+            { question: "Contra qual seleção Roberto Carlos fez seu famoso gol de falta 'que desafiou a física' em 1997?", answers: [{text: "Itália", correct: false}, {text: "Inglaterra", correct: false}, {text: "França", correct: true}, {text: "Alemanha", correct: false}], info: "O gol aconteceu no Torneio da França, em um chute de trivela memorável." },
+            { question: "Quem é a maior artilheira da história da Seleção Brasileira (contando masculina e feminina)?", answers: [{text: "Cristiane", correct: false}, {text: "Marta", correct: true}, {text: "Formiga", correct: false}, {text: "Pelé", correct: false}], info: "Marta é a maior goleadora absoluta da história da Seleção Brasileira." }
         ];
-// ... (Mantenha o array allQuestions igual) ...
 
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let gameQuestions = [];
-        
-        // NOVO: Variável para controlar o "monte" de perguntas disponíveis
-        let availableQuestionsPool = []; 
-
-        // Elementos do DOM (Mantenha igual)
+        // LÓGICA DO QUIZ E NAVEGAÇÃO DAS TELAS
         const startScreen = document.getElementById('start-screen');
         const galleryScreen = document.getElementById('gallery-screen');
         const quizContainer = document.getElementById('quiz-container');
         const resultScreen = document.getElementById('result-screen');
+        const homeBtn = document.getElementById('home-btn');
+        
         const questionElement = document.getElementById('question');
         const answerButtonsElement = document.getElementById('answer-buttons');
         const nextButton = document.getElementById('next-btn');
+        const infoBox = document.getElementById('info-box');
         const progressFill = document.getElementById('progress-fill');
         const scoreText = document.getElementById('score-text');
         const resultMessage = document.getElementById('result-message');
-        const infoBox = document.getElementById('info-box');
-        const homeBtn = document.getElementById('home-btn');
 
-        // Função de embaralhar (Fisher-Yates) - Mantenha, pois é ótima
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
+        let shuffledQuestions, currentQuestionIndex;
+        let score = 0;
+        const questionsPerGame = 10; // Joga 10 perguntas aleatórias por vez
 
-        // ... (Funções goToHome e showGallery mantêm iguais) ...
-        function goToHome() {
-             // ... seu código anterior ...
-             quizContainer.classList.add('hide');
-             resultScreen.classList.add('hide');
-             galleryScreen.classList.add('hide');
-             startScreen.classList.remove('hide');
-             homeBtn.classList.add('hide');
-        }
-        
-        function showGallery() {
-             // ... seu código anterior ...
-             startScreen.classList.add('hide');
-             resultScreen.classList.add('hide');
-             galleryScreen.classList.remove('hide');
-             homeBtn.classList.remove('hide');
-        }
-
-        // --- AQUI ESTÁ A MUDANÇA PRINCIPAL ---
-        function startGame() {
+        // Esconde todas as telas
+        function hideAllScreens() {
             startScreen.classList.add('hide');
-            resultScreen.classList.add('hide');
             galleryScreen.classList.add('hide');
+            quizContainer.classList.add('hide');
+            resultScreen.classList.add('hide');
+        }
+
+        // Volta pra tela principal
+        function goToHome() {
+            hideAllScreens();
+            startScreen.classList.remove('hide');
+            homeBtn.classList.add('hide');
+        }
+
+        // Exibe a Galeria
+        function showGallery() {
+            hideAllScreens();
+            galleryScreen.classList.remove('hide');
+            homeBtn.classList.remove('hide');
+        }
+
+        // Inicia o Quiz
+        function startGame() {
+            hideAllScreens();
             quizContainer.classList.remove('hide');
             homeBtn.classList.remove('hide');
             
+            // Embaralha as perguntas e pega apenas 10
+            shuffledQuestions = allQuestions.sort(() => Math.random() - .5).slice(0, questionsPerGame);
             currentQuestionIndex = 0;
             score = 0;
-
-            // Lógica do "Baralho Inteligente":
-            // 1. Se o monte estiver vazio ou com menos de 12 perguntas, recarregue tudo.
-            if (availableQuestionsPool.length < 12) {
-                // Cria uma cópia nova de todas as perguntas
-                availableQuestionsPool = [...allQuestions];
-                // Embaralha o monte inteiro
-                shuffleArray(availableQuestionsPool);
-                console.log("Banco de perguntas resetado e reembaralhado!");
-            }
-
-            // 2. Pega as primeiras 12 perguntas do monte
-            // O método .splice() remove os itens do array original, garantindo que não repitam
-            gameQuestions = availableQuestionsPool.splice(0, 12);
-
-            // Opcional: Reembaralhar as 12 escolhidas apenas para garantir ordem aleatória absoluta na rodada
-            shuffleArray(gameQuestions);
-
+            updateProgress();
             setNextQuestion();
         }
-        // -------------------------------------
 
-        
         function setNextQuestion() {
             resetState();
-            showQuestion(gameQuestions[currentQuestionIndex]);
-            updateProgressBar();
+            showQuestion(shuffledQuestions[currentQuestionIndex]);
         }
-        
-        // ... continue com o resto do seu código original (showQuestion, resetState, selectAnswer, etc.)
 
         function showQuestion(question) {
             questionElement.innerText = question.question;
-            const shuffledAnswers = shuffleArray([...question.answers]);
-            shuffledAnswers.forEach(answer => {
+            question.answers.forEach(answer => {
                 const button = document.createElement('button');
                 button.innerText = answer.text;
                 button.classList.add('answer-btn');
                 if (answer.correct) {
                     button.dataset.correct = answer.correct;
                 }
-                button.addEventListener('click', selectAnswer);
+                button.addEventListener('click', () => selectAnswer(button, question.info));
                 answerButtonsElement.appendChild(button);
             });
         }
 
         function resetState() {
             nextButton.classList.add('hide');
-            infoBox.style.display = 'none'; 
-            infoBox.innerText = '';
+            infoBox.style.display = 'none';
+            infoBox.innerHTML = '';
             while (answerButtonsElement.firstChild) {
                 answerButtonsElement.removeChild(answerButtonsElement.firstChild);
             }
         }
 
-        function selectAnswer(e) {
-            const selectedButton = e.target;
-            const correct = selectedButton.dataset.correct === "true";
-            if (correct) {
+        function selectAnswer(selectedButton, infoText) {
+            const isCorrect = selectedButton.dataset.correct === "true";
+            
+            if (isCorrect) {
                 score++;
                 selectedButton.classList.add('correct');
             } else {
                 selectedButton.classList.add('wrong');
+                // Pinta de verde a que era certa
+                Array.from(answerButtonsElement.children).forEach(button => {
+                    if (button.dataset.correct === "true") {
+                        button.classList.add('correct');
+                    }
+                });
             }
+
+            // Desabilita as opções depois do clique
             Array.from(answerButtonsElement.children).forEach(button => {
-                if (button.dataset.correct === "true") {
-                    button.classList.add('correct');
-                }
                 button.disabled = true;
+                button.style.cursor = 'not-allowed';
             });
-            const currentQ = gameQuestions[currentQuestionIndex];
-            if (currentQ.info) {
-                infoBox.innerHTML = `<strong>Curiosidade:</strong> ${currentQ.info}`;
-                infoBox.style.display = 'block';
-            }
+
+            // Mostra a caixinha de curiosidade
+            infoBox.innerHTML = `<strong>Curiosidade:</strong> ${infoText}`;
+            infoBox.style.display = 'block';
+
             nextButton.classList.remove('hide');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questionsPerGame) * 100;
+            progressFill.style.width = `${progress}%`;
         }
 
         function nextQuestion() {
             currentQuestionIndex++;
-            if (currentQuestionIndex < gameQuestions.length) {
+            if (currentQuestionIndex < questionsPerGame) {
                 setNextQuestion();
             } else {
                 showResults();
             }
         }
 
-        function updateProgressBar() {
-            const progress = ((currentQuestionIndex) / gameQuestions.length) * 100;
-            progressFill.style.width = `${progress}%`;
-        }
-
         function showResults() {
-            quizContainer.classList.add('hide');
+            hideAllScreens();
             resultScreen.classList.remove('hide');
-            scoreText.innerText = score + "/" + gameQuestions.length;
             homeBtn.classList.remove('hide');
-            const percentage = (score / gameQuestions.length) * 100;
-            if (percentage === 100) {
-                resultMessage.innerText = "🏆 LENDÁRIO! Você é o próprio Pelé dos Quizzes!";
-            } else if (percentage >= 80) {
-                resultMessage.innerText = "⚽ Craque de bola! Convocação garantida!";
-            } else if (percentage >= 50) {
-                resultMessage.innerText = "😐 Titular, mas precisa treinar mais fundamentos.";
+            
+            progressFill.style.width = '100%';
+            scoreText.innerText = `${score} / ${questionsPerGame}`;
+            
+            // Mensagens dinâmicas baseadas na pontuação
+            if (score === questionsPerGame) {
+                resultMessage.innerText = "Perfeito! Você é um verdadeiro especialista em Seleção!";
+            } else if (score >= 7) {
+                resultMessage.innerText = "Belo trabalho! Você bate um bolão!";
+            } else if (score >= 4) {
+                resultMessage.innerText = "Na trave! Continue acompanhando a Seleção!";
             } else {
-                resultMessage.innerText = "❌ Deu ruim! Vai ficar no banco de reservas.";
+                resultMessage.innerText = "Ixi... Faltou ritmo de jogo. Tente novamente!";
             }
         }
 
