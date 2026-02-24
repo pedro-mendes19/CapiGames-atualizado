@@ -55,11 +55,11 @@ label { font-weight: bold; color: #555; font-size: 0.9rem; }
 /* Paleta de Cores */
 .colors { 
     display: flex; 
-    gap: 6px; 
+    gap: 8px; 
     align-items: center; 
     flex-wrap: wrap; 
     justify-content: center;
-    max-width: 280px; 
+    max-width: 480px; 
 }
 
 .color {

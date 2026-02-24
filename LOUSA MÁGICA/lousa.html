@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,29 +8,64 @@
     <link rel="icon" type="image/png" href="img/logo.png">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div class="container">
         <div class="toolbar">
-            
+
             <div class="group">
                 <label>Cor:</label>
                 <div class="colors">
-                    <div class="color active" style="background: #000000;" onclick="setColor('#000000', this)"></div>
-                    <div class="color" style="background: #FFFFFF;" onclick="setColor('#FFFFFF', this)"></div>
-                    <div class="color" style="background: #FF0000;" onclick="setColor('#FF0000', this)"></div>
-                    <div class="color" style="background: #0000FF;" onclick="setColor('#0000FF', this)"></div>
-                    <div class="color" style="background: #008000;" onclick="setColor('#008000', this)"></div>
-                    <div class="color" style="background: #FFFF00;" onclick="setColor('#FFFF00', this)"></div>
-                    <div class="color" style="background: #800080;" onclick="setColor('#800080', this)"></div>
-                    
-                    <div class="color" style="background: #FFA500;" onclick="setColor('#FFA500', this)"></div>
-                    <div class="color" style="background: #FFC0CB;" onclick="setColor('#FFC0CB', this)"></div>
-                    <div class="color" style="background: #8B4513;" onclick="setColor('#8B4513', this)"></div>
-                    <div class="color" style="background: #00FFFF;" onclick="setColor('#00FFFF', this)"></div>
-                    <div class="color" style="background: #808080;" onclick="setColor('#808080', this)"></div>
-                    
-                    <input type="color" id="colorPicker" value="#000000" onchange="setCustomColor(this.value)" title="Escolher outra cor">
+                    <div class="color active" style="background: #000000;" onclick="setColor('#000000', this)"
+                        title="Preto"></div>
+                    <div class="color" style="background: #FFFFFF;" onclick="setColor('#FFFFFF', this)" title="Branco">
+                    </div>
+                    <div class="color" style="background: #808080;" onclick="setColor('#808080', this)" title="Cinza">
+                    </div>
+
+                    <div class="color" style="background: #FF0000;" onclick="setColor('#FF0000', this)"
+                        title="Vermelho"></div>
+                    <div class="color" style="background: #FF4500;" onclick="setColor('#FF4500', this)"
+                        title="Laranja avermelhado"></div>
+                    <div class="color" style="background: #FFA500;" onclick="setColor('#FFA500', this)" title="Laranja">
+                    </div>
+                    <div class="color" style="background: #FFD700;" onclick="setColor('#FFD700', this)" title="Dourado">
+                    </div>
+                    <div class="color" style="background: #FFFF00;" onclick="setColor('#FFFF00', this)" title="Amarelo">
+                    </div>
+
+                    <div class="color" style="background: #ADFF2F;" onclick="setColor('#ADFF2F', this)"
+                        title="Verde lima"></div>
+                    <div class="color" style="background: #00FF00;" onclick="setColor('#00FF00', this)"
+                        title="Verde brilhante"></div>
+                    <div class="color" style="background: #008000;" onclick="setColor('#008000', this)" title="Verde">
+                    </div>
+                    <div class="color" style="background: #006400;" onclick="setColor('#006400', this)"
+                        title="Verde escuro"></div>
+
+                    <div class="color" style="background: #00FFFF;" onclick="setColor('#00FFFF', this)" title="Ciano">
+                    </div>
+                    <div class="color" style="background: #00BFFF;" onclick="setColor('#00BFFF', this)"
+                        title="Azul piscina"></div>
+                    <div class="color" style="background: #0000FF;" onclick="setColor('#0000FF', this)" title="Azul">
+                    </div>
+                    <div class="color" style="background: #000080;" onclick="setColor('#000080', this)"
+                        title="Azul marinho"></div>
+
+                    <div class="color" style="background: #800080;" onclick="setColor('#800080', this)" title="Roxo">
+                    </div>
+                    <div class="color" style="background: #FF00FF;" onclick="setColor('#FF00FF', this)" title="Magenta">
+                    </div>
+                    <div class="color" style="background: #FF69B4;" onclick="setColor('#FF69B4', this)"
+                        title="Rosa choque"></div>
+                    <div class="color" style="background: #FFC0CB;" onclick="setColor('#FFC0CB', this)"
+                        title="Rosa claro"></div>
+                    <div class="color" style="background: #8B4513;" onclick="setColor('#8B4513', this)" title="Marrom">
+                    </div>
+
+                    <input type="color" id="colorPicker" value="#000000" onchange="setCustomColor(this.value)"
+                        title="Escolher outra cor">
                 </div>
             </div>
 
@@ -68,4 +104,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
