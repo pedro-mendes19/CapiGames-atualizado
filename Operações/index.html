@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMaze: As 4 Operações</title>
+    <style>
+        /* =========================================
+           ESTILOS CSS - Design Moderno e Responsivo
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap');
+
+        :root {
+            --bg-color: #1e1e2f;
+            --panel-bg: rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
+            --primary-color: #ff4757; /* Vermelho/Rosa vibrante */
+            --accent-color: #2ed573; /* Verde vibrante */
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        /* UI do Topo - Placar Moderno (Glassmorphism) */
+        #ui-container {
+            width: 90%;
+            max-width: 800px;
+            margin-top: 20px;
+            padding: 15px 25px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-size: 1.2rem;
+        }
+
+        #question-display {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffa502;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* Container do Jogo para manter a proporção */
+        #game-wrapper {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            margin-top: 20px;
+            aspect-ratio: 4 / 3; /* Proporção do labirinto */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            border-radius: 15px;
+            overflow: hidden;
+            background-color: #2f3542;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Ecrãs de Fim de Jogo e Vitória */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            display: none; /* Escondido por padrão */
+        }
+
+        .overlay h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .overlay button {
+            padding: 10px 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            border: none;
+            border-radius: 50px;
+            background: var(--accent-color);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(46, 213, 115, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .overlay button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-container">
+        <div class="stats">
+            <div>Vidas: <span id="lives-display">❤️❤️❤️</span></div>
+        </div>
+        <div id="question-display">Carregando...</div>
+        <div class="stats">
+            <div>Score: <span id="score-display">0</span></div>
+        </div>
+    </div>
+
+    <div id="game-wrapper">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <div id="gameOverScreen" class="overlay">
+            <h1 style="color: var(--primary-color);">Game Over!</h1>
+            <p>Ficaste sem vidas ou erraste demasiadas vezes.</p>
+            <button onclick="restartGame()">Tentar Novamente</button>
+        </div>
+
+        <div id="victoryScreen" class="overlay">
+            <h1 style="color: var(--accent-color);">Vitória!</h1>
+            <p>Completaste todos os desafios matemáticos!</p>
+            <button onclick="restartGame()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           LÓGICA DO JOGO (Vanilla JS)
+           ========================================= */
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Elementos de UI
+        const questionEl = document.getElementById('question-display');
+        const livesEl = document.getElementById('lives-display');
+        const scoreEl = document.getElementById('score-display');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const victoryScreen = document.getElementById('victoryScreen');
+
+        // Configuração do Labirinto (1 = Parede, 0 = Caminho)
+        // Tamanho: 20 colunas x 15 linhas (resolução interna 800x600 -> cada célula = 40x40 px)
+        const tileSize = 40;
+        const wallDepth = 15; // Altura do efeito 3D das paredes
+        
+        const map = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
+            [1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1],
+            [1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,1],
+            [1,0,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1],
+            [1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,1,1,1,0,1,1,0,1,0,1,1,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        // Lista de Perguntas (Array de Objetos)
+        const questionsList = [
+            { q: "7 + 5 + 5", a: 17, options: [17, 4, 10, 14] },
+            { q: "3 x 4", a: 12, options: [12, 10, 9, 6] },
+            { q: "39 - 20", a: 19, options: [20, 15, 4, 19] },
+            { q: "9 ÷ 3", a: 3, options: [2, 3, 6, 9] },
+            { q: "2 x 15", a: 30, options: [20, 30, 60, 15] }
+        ];
+
+        // Estado do Jogo
+        let currentQuestionIndex = 0;
+        let lives = 3;
+        let score = 0;
+        let isGameOver = false;
+        let animationId;
+        
+        // Teclado
+        const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+
+        window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+        window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+
+        // Objetos do Jogo
+        let player = { x: 0, y: 0, radius: 12, speed: 3, color: '#1e90ff' }; // Azul vibrante
+        let enemies = [];
+        let answerBlocks = [];
+
+        // Funções Auxiliares de Posição
+        function getEmptyCells() {
+            let cells = [];
+            for (let r = 1; r < map.length - 1; r++) {
+                for (let c = 1; c < map[0].length - 1; c++) {
+                    if (map[r][c] === 0) cells.push({ c, r });
+                }
+            }
+            return cells;
+        }
+
+        function spawnEntities() {
+            const emptyCells = getEmptyCells();
+            // Baralhar células vazias
+            emptyCells.sort(() => Math.random() - 0.5);
+
+            // Spawn Player (no centro de uma célula)
+            let pCell = emptyCells.pop();
+            player.x = pCell.c * tileSize + tileSize / 2;
+            player.y = pCell.r * tileSize + tileSize / 2;
+
+            // Spawn Inimigos (2 inimigos)
+            enemies = [];
+            for (let i = 0; i < 2; i++) {
+                let eCell = emptyCells.pop();
+                enemies.push({
+                    x: eCell.c * tileSize + tileSize / 2,
+                    y: eCell.r * tileSize + tileSize / 2,
+                    radius: 12, speed: 1.5,
+                    vx: Math.random() > 0.5 ? 1.5 : -1.5,
+                    vy: Math.random() > 0.5 ? 1.5 : -1.5,
+                    color: '#ff4757' // Vermelho inimigo
+                });
+            }
+
+            // Spawn Respostas
+            answerBlocks = [];
+            const currentQ = questionsList[currentQuestionIndex];
+            const shuffledOptions = [...currentQ.options].sort(() => Math.random() - 0.5);
+            
+            for (let i = 0; i < shuffledOptions.length; i++) {
+                let aCell = emptyCells.pop();
+                answerBlocks.push({
+                    x: aCell.c * tileSize + tileSize / 2,
+                    y: aCell.r * tileSize + tileSize / 2,
+                    value: shuffledOptions[i],
+                    isCorrect: shuffledOptions[i] === currentQ.a,
+                    radius: 14 // Para colisão
+                });
+            }
+        }
+
+        function updateUI() {
+            questionEl.innerText = questionsList[currentQuestionIndex].q + " = ?";
+            livesEl.innerText = '❤️'.repeat(lives);
+            scoreEl.innerText = score;
+        }
+
+        // Sistema de Colisão Círculo vs Retângulo (Paredes)
+        function circleRectCollide(circle, rectX, rectY, rectW, rectH) {
+            let testX = circle.x;
+            let testY = circle.y;
+
+            if (circle.x < rectX) testX = rectX;
+            else if (circle.x > rectX + rectW) testX = rectX + rectW;
+            if (circle.y < rectY) testY = rectY;
+            else if (circle.y > rectY + rectH) testY = rectY + rectH;
+
+            let distX = circle.x - testX;
+            let distY = circle.y - testY;
+            let distance = Math.sqrt((distX * distX) + (distY * distY));
+
+            return distance <= circle.radius;
+        }
+
+        // Colisão Círculo vs Círculo (Entidades)
+        function circleCollide(c1, c2) {
+            let dx = c1.x - c2.x;
+            let dy = c1.y - c2.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            return distance < (c1.radius + c2.radius);
+        }
+
+        // Atualização Lógica
+        function update() {
+            if (isGameOver) return;
+
+            // --- Movimento do Jogador ---
+            let nextX = player.x;
+            let nextY = player.y;
+
+            if (keys.ArrowUp) nextY -= player.speed;
+            if (keys.ArrowDown) nextY += player.speed;
+            if (keys.ArrowLeft) nextX -= player.speed;
+            if (keys.ArrowRight) nextX += player.speed;
+
+            // Verificar colisões do jogador com paredes
+            let canMoveX = true;
+            let canMoveY = true;
+
+            for (let r = 0; r < map.length; r++) {
+                for (let c = 0; c < map[0].length; c++) {
+                    if (map[r][c] === 1) {
+                        let rx = c * tileSize;
+                        let ry = r * tileSize;
+                        // Testa X independente
+                        if (circleRectCollide({x: nextX, y: player.y, radius: player.radius}, rx, ry, tileSize, tileSize)) {
+                            canMoveX = false;
+                        }
+                        // Testa Y independente
+                        if (circleRectCollide({x: player.x, y: nextY, radius: player.radius}, rx, ry, tileSize, tileSize)) {
+                            canMoveY = false;
+                        }
+                    }
+                }
+            }
+
+            if (canMoveX) player.x = nextX;
+            if (canMoveY) player.y = nextY;
+
+            // --- Movimento Inimigos (Simples Bounce AI) ---
+            enemies.forEach(e => {
+                let enextX = e.x + e.vx;
+                let enextY = e.y + e.vy;
+                let colX = false, colY = false;
+
+                for (let r = 0; r < map.length; r++) {
+                    for (let c = 0; c < map[0].length; c++) {
+                        if (map[r][c] === 1) {
+                            let rx = c * tileSize, ry = r * tileSize;
+                            if (circleRectCollide({x: enextX, y: e.y, radius: e.radius}, rx, ry, tileSize, tileSize)) colX = true;
+                            if (circleRectCollide({x: e.x, y: enextY, radius: e.radius}, rx, ry, tileSize, tileSize)) colY = true;
+                        }
+                    }
+                }
+
+                if (colX) e.vx *= -1; else e.x = enextX;
+                if (colY) e.vy *= -1; else e.y = enextY;
+
+                // Colisão Jogador -> Inimigo
+                if (circleCollide(player, e)) {
+                    handleLifeLoss();
+                }
+            });
+
+            // --- Interação com Respostas ---
+            for (let i = 0; i < answerBlocks.length; i++) {
+                if (circleCollide(player, answerBlocks[i])) {
+                    if (answerBlocks[i].isCorrect) {
+                        // Acertou!
+                        score += 100;
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex >= questionsList.length) {
+                            triggerVictory();
+                        } else {
+                            updateUI();
+                            spawnEntities(); // Reinicia nível para nova pergunta
+                        }
+                    } else {
+                        // Errou
+                        handleLifeLoss();
+                    }
+                    break;
+                }
+            }
+        }
+
+        function handleLifeLoss() {
+            lives--;
+            updateUI();
+            if (lives <= 0) {
+                triggerGameOver();
+            } else {
+                spawnEntities(); // Respawn no mesmo nível
+            }
+        }
+
+        function triggerGameOver() {
+            isGameOver = true;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        function triggerVictory() {
+            isGameOver = true;
+            victoryScreen.style.display = 'flex';
+        }
+
+        // --- RENDERIZAÇÃO 2.5D ---
+        function draw() {
+            // Limpar Ecrã
+            ctx.fillStyle = '#2f3542'; // Cor do chão
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Desenhar chão quadriculado subtil (opcional, dá noção de perspetiva)
+            ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=tileSize) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=tileSize) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); ctx.stroke(); }
+
+            // Para o efeito 3D correto, desenhamos de trás para a frente (Painters Algorithm)
+            // Lemos as linhas de cima (0) para baixo (map.length)
+            for (let r = 0; r < map.length; r++) {
+                
+                // 1. Primeiro passamos para desenhar entidades nesta linha de "profundidade"
+                // Desenhamos Respostas
+                answerBlocks.forEach(ans => {
+                    if (Math.floor(ans.y / tileSize) === r) {
+                        drawFloatingAnswer(ans);
+                    }
+                });
+                // Desenhamos Inimigos
+                enemies.forEach(e => {
+                    if (Math.floor(e.y / tileSize) === r) drawEntity(e.x, e.y, e.radius, e.color);
+                });
+                // Desenhamos Jogador
+                if (Math.floor(player.y / tileSize) === r) drawEntity(player.x, player.y, player.radius, player.color);
+
+                // 2. Agora desenhamos as paredes desta linha
+                for (let c = 0; c < map[0].length; c++) {
+                    if (map[r][c] === 1) {
+                        let rx = c * tileSize;
+                        let ry = r * tileSize;
+
+                        // Face Frontal (Escura) - Dá a altura
+                        ctx.fillStyle = '#4b6584'; 
+                        ctx.fillRect(rx, ry - wallDepth + tileSize, tileSize, wallDepth);
+
+                        // Face Superior (Clara) - O topo do bloco
+                        ctx.fillStyle = '#778ca3';
+                        ctx.fillRect(rx, ry - wallDepth, tileSize, tileSize);
+
+                        // Contornos do topo para definir melhor o bloco
+                        ctx.strokeStyle = '#a5b1c2';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(rx, ry - wallDepth, tileSize, tileSize);
+                    }
+                }
+            }
+        }
+
+        function drawEntity(x, y, radius, color) {
+            ctx.save();
+            // Sombra para flutuação
+            ctx.shadowColor = 'rgba(0,0,0,0.6)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetY = 8;
+
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            // Brilho interno (estilo esférico)
+            ctx.shadowColor = 'transparent';
+            ctx.beginPath();
+            ctx.arc(x - radius*0.3, y - radius*0.3, radius*0.2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawFloatingAnswer(ans) {
+            ctx.save();
+            // Efeito flutuante usando o tempo
+            let floatOffsetY = Math.sin(Date.now() / 200 + ans.x) * 4;
+            let drawY = ans.y + floatOffsetY;
+
+            // Sombra do chão
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetY = 15 - floatOffsetY; // Sombra afasta-se ao flutuar
+
+            // Bloco da resposta
+            ctx.fillStyle = '#fed330'; // Amarelo
+            ctx.beginPath();
+            ctx.roundRect(ans.x - 16, drawY - 16, 32, 32, 6); // roundRect para HTML5 Canvas
+            ctx.fill();
+
+            // Desativar sombra para o texto
+            ctx.shadowColor = 'transparent';
+            
+            // Texto da resposta
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 16px Poppins, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(ans.value, ans.x, drawY);
+
+            ctx.restore();
+        }
+
+        // Loop Principal
+        function gameLoop() {
+            update();
+            draw();
+            if (!isGameOver) {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Inicialização Global
+        window.restartGame = function() {
+            currentQuestionIndex = 0;
+            lives = 3;
+            score = 0;
+            isGameOver = false;
+            gameOverScreen.style.display = 'none';
+            victoryScreen.style.display = 'none';
+            updateUI();
+            spawnEntities();
+            cancelAnimationFrame(animationId);
+            gameLoop();
+        }
+
+        // Iniciar jogo pela primeira vez
+        restartGame();
+
+    </script>
+</body>
+</html>

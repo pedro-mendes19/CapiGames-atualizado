@@ -1,33 +1,54 @@
 const canvas = document.getElementById('drawingBoard');
-// willReadFrequently ajuda na performance do baldinho
 const ctx = canvas.getContext('2d', { willReadFrequently: true });
 const modal = document.getElementById('confirmModal');
 
 // Estados do Jogo
 let painting = false;
-let color = '#000000'; // Começa preto
-let lineWidth = 10;
-let currentTool = 'brush'; // Opções: 'brush', 'bucket', 'eraser'
+let color = '#000000'; 
+let lineWidth = 5;
+let currentTool = 'brush'; 
 
-// --- CONFIGURAÇÃO INICIAL ---
+// Variáveis para formas e desfazer
+let startX, startY;
+let snapshot; 
+let undoStack = []; 
 
 function resizeCanvas() {
     canvas.width = canvas.parentElement.offsetWidth;
     canvas.height = canvas.parentElement.offsetHeight - document.querySelector('.toolbar').offsetHeight;
     
-    // CORREÇÃO VITAL: Preenche o fundo de branco.
-    // Sem isso, o fundo é transparente e o baldinho "fura" as linhas pretas.
+    // Fundo inicial branco
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    saveState(); 
 }
 
 window.addEventListener('resize', resizeCanvas);
-// Inicia o canvas
 window.onload = resizeCanvas;
 
+// --- SISTEMA DE UNDO (DESFAZER) ---
+function saveState() {
+    if (undoStack.length > 20) undoStack.shift(); 
+    undoStack.push(canvas.toDataURL());
+}
 
-// --- SISTEMA DE COORDENADAS ---
-// Calcula onde está o mouse/dedo relativo ao canvas
+function undoDrawing() {
+    if (undoStack.length > 1) {
+        undoStack.pop(); 
+        let lastState = undoStack[undoStack.length - 1]; 
+        let img = new Image();
+        img.src = lastState;
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+        }
+    } else if (undoStack.length === 1) {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+// --- COORDENADAS ---
 function getCoordinates(e) {
     let clientX, clientY;
     if(e.type.includes('touch')) {
@@ -44,18 +65,28 @@ function getCoordinates(e) {
     };
 }
 
-// --- DESENHO (Pincel e Borracha) ---
-
+// --- DESENHO PRINCIPAL ---
 function startPosition(e) {
-    // Se for baldinho, executa preenchimento e para.
+    painting = true;
+    const coords = getCoordinates(e);
+    startX = coords.x;
+    startY = coords.y;
+
+    saveState(); 
+
     if (currentTool === 'bucket') {
-        const coords = getCoordinates(e);
-        const rgbColor = hexToRgb(color);
-        floodFill(coords.x, coords.y, rgbColor);
+        floodFill(coords.x, coords.y, hexToRgb(color));
+        painting = false;
         return;
     }
-    painting = true;
-    draw(e);
+
+    snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    if (currentTool === 'brush' || currentTool === 'eraser') {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        draw(e); 
+    }
 }
 
 function endPosition() {
@@ -66,40 +97,56 @@ function endPosition() {
 function draw(e) {
     if (!painting || currentTool === 'bucket') return;
 
-    ctx.lineWidth = lineWidth;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round'; // Deixa as curvas mais suaves
-    
-    // Se for borracha, pinta de branco. Se não, usa a cor selecionada.
-    ctx.strokeStyle = (currentTool === 'eraser') ? 'white' : color;
-
     const coords = getCoordinates(e);
 
-    ctx.lineTo(coords.x, coords.y);
-    ctx.stroke();
-    
-    // Começa novo path para suavizar serrilhado
-    ctx.beginPath();
-    ctx.moveTo(coords.x, coords.y);
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = (currentTool === 'eraser') ? 'white' : color;
+
+    if (currentTool === 'brush' || currentTool === 'eraser') {
+        ctx.lineTo(coords.x, coords.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(coords.x, coords.y);
+    } else {
+        ctx.putImageData(snapshot, 0, 0);
+        ctx.beginPath();
+
+        if (currentTool === 'line') {
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(coords.x, coords.y);
+        } else if (currentTool === 'rect') {
+            ctx.rect(startX, startY, coords.x - startX, coords.y - startY);
+        } else if (currentTool === 'circle') {
+            // Círculo com dinâmica perfeita (clique e arraste pelas pontas)
+            let centroX = (startX + coords.x) / 2;
+            let centroY = (startY + coords.y) / 2;
+            let raioX = Math.abs(coords.x - startX) / 2;
+            let raioY = Math.abs(coords.y - startY) / 2;
+            ctx.ellipse(centroX, centroY, raioX, raioY, 0, 0, 2 * Math.PI);
+        }
+        ctx.stroke();
+    }
 }
 
-
-// --- BALDINHO (Flood Fill) ---
-
+// --- BALDINHO DE TINTA (Flood Fill Melhorado) ---
 function floodFill(startX, startY, fillColor) {
-    // Pega os dados dos pixels
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const pixelData = imageData.data;
-    
-    // Índice do pixel inicial
     const startPos = (startY * canvas.width + startX) * 4;
     
     const startR = pixelData[startPos];
     const startG = pixelData[startPos + 1];
     const startB = pixelData[startPos + 2];
     
-    // Se a cor do clique for igual à cor que queremos pintar, sai.
-    if (startR === fillColor[0] && startG === fillColor[1] && startB === fillColor[2]) return;
+    const tolerance = 50; 
+
+    if (Math.abs(startR - fillColor[0]) <= tolerance &&
+        Math.abs(startG - fillColor[1]) <= tolerance &&
+        Math.abs(startB - fillColor[2]) <= tolerance) {
+        return;
+    }
 
     const pixelStack = [[startX, startY]];
 
@@ -110,8 +157,7 @@ function floodFill(startX, startY, fillColor) {
 
         let pixelPos = (y * canvas.width + x) * 4;
         
-        // Sobe até encontrar uma cor diferente
-        while (y-- >= 0 && matchColor(pixelPos, startR, startG, startB, pixelData)) {
+        while (y-- >= 0 && matchColor(pixelPos, startR, startG, startB, tolerance, pixelData)) {
             pixelPos -= canvas.width * 4;
         }
         
@@ -120,54 +166,50 @@ function floodFill(startX, startY, fillColor) {
         let reachLeft = false;
         let reachRight = false;
 
-        // Desce pintando
-        while (y++ < canvas.height - 1 && matchColor(pixelPos, startR, startG, startB, pixelData)) {
+        while (y++ < canvas.height - 1 && matchColor(pixelPos, startR, startG, startB, tolerance, pixelData)) {
             colorPixel(pixelPos, fillColor, pixelData);
 
-            // Verifica esquerda
             if (x > 0) {
-                if (matchColor(pixelPos - 4, startR, startG, startB, pixelData)) {
+                if (matchColor(pixelPos - 4, startR, startG, startB, tolerance, pixelData)) {
                     if (!reachLeft) {
                         pixelStack.push([x - 1, y]);
                         reachLeft = true;
                     }
-                } else if (reachLeft) {
-                    reachLeft = false;
-                }
+                } else if (reachLeft) { reachLeft = false; }
             }
 
-            // Verifica direita
             if (x < canvas.width - 1) {
-                if (matchColor(pixelPos + 4, startR, startG, startB, pixelData)) {
+                if (matchColor(pixelPos + 4, startR, startG, startB, tolerance, pixelData)) {
                     if (!reachRight) {
                         pixelStack.push([x + 1, y]);
                         reachRight = true;
                     }
-                } else if (reachRight) {
-                    reachRight = false;
-                }
+                } else if (reachRight) { reachRight = false; }
             }
-
             pixelPos += canvas.width * 4;
         }
     }
-
-    // Atualiza o canvas
     ctx.putImageData(imageData, 0, 0);
 }
 
-function matchColor(pixelPos, r, g, b, pixelData) {
-    return (pixelData[pixelPos] === r && pixelData[pixelPos + 1] === g && pixelData[pixelPos + 2] === b);
+function matchColor(pixelPos, r, g, b, tolerance, pixelData) {
+    const pr = pixelData[pixelPos];
+    const pg = pixelData[pixelPos + 1];
+    const pb = pixelData[pixelPos + 2];
+    return (
+        Math.abs(pr - r) <= tolerance &&
+        Math.abs(pg - g) <= tolerance &&
+        Math.abs(pb - b) <= tolerance
+    );
 }
 
 function colorPixel(pixelPos, fillColor, pixelData) {
     pixelData[pixelPos] = fillColor[0];
     pixelData[pixelPos + 1] = fillColor[1];
     pixelData[pixelPos + 2] = fillColor[2];
-    pixelData[pixelPos + 3] = 255; // Alpha total
+    pixelData[pixelPos + 3] = 255; 
 }
 
-// Converte HEX (#FF0000) para array RGB ([255, 0, 0])
 function hexToRgb(hex) {
     const r = parseInt(hex.substring(1, 3), 16);
     const g = parseInt(hex.substring(3, 5), 16);
@@ -175,76 +217,51 @@ function hexToRgb(hex) {
     return [r, g, b];
 }
 
-
-// --- CONTROLES DE INTERFACE ---
-
+// --- CONTROLES DA INTERFACE ---
 function setTool(toolName) {
     currentTool = toolName;
-    updateActiveButton();
+    document.querySelectorAll('.tool-btn, .eraser').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btn-' + toolName).classList.add('active');
 }
 
-function setEraser() {
-    currentTool = 'eraser';
-    updateActiveButton();
-}
-
-function updateActiveButton() {
-    // Remove classe active de todos
-    document.getElementById('btnBrush').classList.remove('active');
-    document.getElementById('btnBucket').classList.remove('active');
-    document.getElementById('btnEraser').classList.remove('active');
-
-    // Adiciona no correto
-    if(currentTool === 'brush') document.getElementById('btnBrush').classList.add('active');
-    if(currentTool === 'bucket') document.getElementById('btnBucket').classList.add('active');
-    if(currentTool === 'eraser') document.getElementById('btnEraser').classList.add('active');
-}
-
-function setColor(newColor) {
+function setColor(newColor, element) {
     color = newColor;
-    
-    // Atualiza visual das bolinhas
+    document.getElementById('colorPicker').value = newColor; 
+    updateColorUI(element);
+}
+
+function setCustomColor(newColor) {
+    color = newColor;
+    updateColorUI(null);
+}
+
+function updateColorUI(activeElement) {
     document.querySelectorAll('.color').forEach(el => el.classList.remove('active'));
-    // Acha a bolinha clicada (ou similar)
-    const selected = Array.from(document.querySelectorAll('.color')).find(el => {
-        // Converte rgb() do estilo para hex para comparar ou compara string direta
-        // Simplificação: compara se o estilo contém o hex ou rgb equivalente
-        return true; // Simplesmente vamos setar no onclick do HTML o 'active' visualmente se precisasse
-    });
-    
-    // Truque: Como passamos o 'this' ou buscamos pelo HEX, vamos fazer simples:
-    // O clique já define a cor. O loop abaixo acha a div certa pra dar destaque.
-    const allColors = document.querySelectorAll('.color');
-    allColors.forEach(c => {
-         // Verifica se o background inline contém a cor selecionada (case insensitive)
-         if(c.getAttribute('onclick').toLowerCase().includes(newColor.toLowerCase())) {
-             c.classList.add('active');
-         }
-    });
+    if (activeElement) {
+        activeElement.classList.add('active');
+    }
 }
 
 function setSize(newSize) {
     lineWidth = newSize;
 }
 
-// --- MODAL ---
+// --- MODAL LIMPAR ---
 function openModal() { modal.classList.remove('hidden'); }
 function closeModal() { modal.classList.add('hidden'); }
 function confirmClear() {
-    // Pinta de branco novamente ao invés de clearRect (para o balde continuar funcionando)
+    saveState(); 
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     closeModal();
 }
 
-
-// --- EVENT LISTENERS GLOBAIS ---
-
+// --- EVENTOS DO MOUSE/TOUCH ---
 canvas.addEventListener('mousedown', startPosition);
 canvas.addEventListener('mouseup', endPosition);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseout', endPosition); 
 
-canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPosition(e); });
-canvas.addEventListener('touchend', (e) => { e.preventDefault(); endPosition(); });
-canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPosition(e); }, {passive: false});
+canvas.addEventListener('touchend', (e) => { e.preventDefault(); endPosition(); }, {passive: false});
+canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, {passive: false});

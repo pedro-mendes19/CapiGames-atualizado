@@ -151,7 +151,7 @@
         </div>
     </div>
 
-    <div class="mobile-hint">Deslize para mover</div>
+    <div class="mobile-hint">Deslize ou use as setas/WASD para mover</div>
 
     <div id="modal-math" class="modal-overlay">
         <div class="modal-box">
@@ -255,7 +255,6 @@
                 document.body.addEventListener('click', () => AudioSys.init(), {once:true});
             },
 
-            // Algoritmo de Busca em Largura (BFS) para calcular distância REAL
             getWalkDistances: function(startX, startY) {
                 let dists = Array(this.gridSize).fill().map(() => Array(this.gridSize).fill(-1));
                 let queue = [{x: startX, y: startY, d: 0}];
@@ -267,7 +266,6 @@
                     [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx, dy]) => {
                         let nx = cur.x + dx;
                         let ny = cur.y + dy;
-                        // Se dentro do mapa, não é parede e não visitado
                         if(nx >= 0 && nx < this.gridSize && ny >= 0 && ny < this.gridSize && 
                            this.map[ny][nx] !== 1 && dists[ny][nx] === -1) {
                             dists[ny][nx] = cur.d + 1;
@@ -283,7 +281,6 @@
                 let stack = [{x:1, y:1}];
                 this.map[1][1] = 0;
                 
-                // Gerador de Labirinto
                 while(stack.length) {
                     let cur = stack[stack.length-1];
                     let n = [];
@@ -304,19 +301,13 @@
                 const exitX = this.gridSize-2, exitY = this.gridSize-2;
                 this.map[exitY][exitX] = 3; 
 
-                // --- NOVA LÓGICA DE DISTÂNCIA REAL (BFS) ---
-                // 1. Calcula a distância real de caminhada saindo do Spawn (1,1)
                 let walkFromStart = this.getWalkDistances(startX, startY);
-                // 2. Calcula a distância real de caminhada saindo da Saída
                 let walkFromExit = this.getWalkDistances(exitX, exitY);
 
                 let free = [];
                 for(let y=1; y<this.gridSize-1; y++) {
                     for(let x=1; x<this.gridSize-1; x++) {
-                        // Só considera espaços vazios que não são spawn
                         if(this.map[y][x]===0 && (x!==startX || y!==startY)) {
-                            // Score baseado na distância real de caminhada
-                            // Quanto maior a soma, mais "fundo" no labirinto está o ponto
                             let ds = walkFromStart[y][x];
                             let de = walkFromExit[y][x];
                             
@@ -327,20 +318,15 @@
                     }
                 }
 
-                // Ordena pelo Score (Distância Real) decrescente
-                // O primeiro da lista é o ponto mais longe possível de caminhar
                 free.sort((a, b) => b.score - a.score);
 
                 if(free.length > 0) {
-                    // Pega o Top 1 absoluto para garantir a maior distância
                     let keyPos = free[0];
                     this.map[keyPos.y][keyPos.x] = 5;
                 }
 
-                // Bônus aleatórios no resto
-                // Remove o local da chave da lista de livres para não sobrepor
                 free.shift(); 
-                free.sort(()=>Math.random()-0.5); // Embaralha para os bônus
+                free.sort(()=>Math.random()-0.5); 
                 
                 for(let i=0; i<bonusCount; i++) {
                     if(free.length) { let b=free.pop(); this.map[b.y][b.x] = 6; }
@@ -393,7 +379,7 @@
                 this.updateVis();
                 AudioSys.move();
 
-                if(t===5) { // Key
+                if(t===5) { 
                     this.hasKey = true;
                     this.map[ny][nx] = 0;
                     document.getElementById(`c-${nx}-${ny}`).className = 'cell';
@@ -403,11 +389,11 @@
                     this.el.keyStatus.style.color = "#2ecc71";
                     document.querySelector('.exit').classList.add('open');
                 }
-                else if(t===6) { // Bonus
+                else if(t===6) { 
                     this.mathTarget = {x:nx, y:ny};
                     this.openMath();
                 }
-                else if(t===3) { // Exit
+                else if(t===3) { 
                     if(this.hasKey) this.win();
                     else {
                         this.floatText(nx, ny, "Trancado!", "#e74c3c");
@@ -442,17 +428,39 @@
                 this.el.modalMath.classList.add('active');
                 document.getElementById('ans-input').value = '';
                 
-                let n1 = Math.floor(Math.random()*(10+this.currLvl*2))+3;
-                let n2 = Math.floor(Math.random()*(5+this.currLvl))+2;
-                
-                if(Math.random() > 0.5) {
-                    this.mathSol = n1 + n2;
-                    document.getElementById('q-text').innerText = `${n1} + ${n2} = ?`;
-                } else {
-                    let m1 = Math.floor(Math.random()*9)+2;
-                    this.mathSol = m1 * n2;
-                    document.getElementById('q-text').innerText = `${m1} x ${n2} = ?`;
+                // Escolhe o tipo de operação: 0=Soma, 1=Subtração, 2=Multiplicação, 3=Divisão
+                let op = Math.floor(Math.random() * 4); 
+                let n1, n2, result, text;
+
+                switch(op) {
+                    case 0: // Adição
+                        n1 = Math.floor(Math.random()*(10+this.currLvl*2))+3;
+                        n2 = Math.floor(Math.random()*(5+this.currLvl))+2;
+                        result = n1 + n2;
+                        text = `${n1} + ${n2} = ?`;
+                        break;
+                    case 1: // Subtração (Garante resultado positivo)
+                        n1 = Math.floor(Math.random()*(15+this.currLvl*2))+5;
+                        n2 = Math.floor(Math.random()*n1) + 1;
+                        result = n1 - n2;
+                        text = `${n1} - ${n2} = ?`;
+                        break;
+                    case 2: // Multiplicação
+                        n1 = Math.floor(Math.random()*(5+this.currLvl))+2;
+                        n2 = Math.floor(Math.random()*9)+2;
+                        result = n1 * n2;
+                        text = `${n1} x ${n2} = ?`;
+                        break;
+                    case 3: // Divisão (Garante resultado de número inteiro)
+                        let divisor = Math.floor(Math.random()*9)+2;
+                        result = Math.floor(Math.random()*(5+this.currLvl))+2;
+                        n1 = result * divisor;
+                        text = `${n1} ÷ ${divisor} = ?`;
+                        break;
                 }
+
+                this.mathSol = result;
+                document.getElementById('q-text').innerText = text;
                 setTimeout(()=>document.getElementById('ans-input').focus(), 100);
             },
 
@@ -547,13 +555,21 @@
             }
         };
 
+        // EVENTOS DE TECLADO ATUALIZADOS PARA INCLUIR W, A, S, D
         window.addEventListener('keydown', e => {
-            if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
-            if(e.key==='ArrowUp') Game.move(0,-1);
-            if(e.key==='ArrowDown') Game.move(0,1);
-            if(e.key==='ArrowLeft') Game.move(-1,0);
-            if(e.key==='ArrowRight') Game.move(1,0);
+            let key = e.key.toLowerCase();
+            
+            if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(key)) {
+                // Impede rolagem da tela se for as setinhas
+                if (key.startsWith('arrow')) e.preventDefault(); 
+            }
+            
+            if(key === 'arrowup' || key === 'w') Game.move(0,-1);
+            if(key === 'arrowdown' || key === 's') Game.move(0,1);
+            if(key === 'arrowleft' || key === 'a') Game.move(-1,0);
+            if(key === 'arrowright' || key === 'd') Game.move(1,0);
         });
+        
         document.getElementById('ans-input').addEventListener('keypress', e=>{ if(e.key==='Enter') Game.checkMath(); });
         window.addEventListener('resize', ()=>Game.resize());
 

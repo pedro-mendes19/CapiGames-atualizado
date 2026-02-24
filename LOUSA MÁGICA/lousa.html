@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOUSA MÁGICA INFANTIL</title>
-    <link rel="stylesheet" href="style.css">
+    <title>LOUSA MÁGICA INFANTIL - MODO PAINT</title>
     <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -14,27 +14,41 @@
             
             <div class="group">
                 <label>Cor:</label>
-               <div class="colors">
-    <div class="color white-swatch" style="background: #FFFFFF;" onclick="setColor('#FFFFFF', this)"></div>
-
-    <div class="color active" style="background: #000000;" onclick="setColor('#000000', this)"></div>
-    <div class="color" style="background: #FF0000;" onclick="setColor('#FF0000', this)"></div>
-    <div class="color" style="background: #0000FF;" onclick="setColor('#0000FF', this)"></div>
-    <div class="color" style="background: #008000;" onclick="setColor('#008000', this)"></div>
-    <div class="color" style="background: #E91E63;" onclick="setColor('#E91E63', this)"></div>
-    <div class="color" style="background: #FFA500;" onclick="setColor('#FFA500', this)"></div>
-</div>
+                <div class="colors">
+                    <div class="color active" style="background: #000000;" onclick="setColor('#000000', this)"></div>
+                    <div class="color" style="background: #FFFFFF;" onclick="setColor('#FFFFFF', this)"></div>
+                    <div class="color" style="background: #FF0000;" onclick="setColor('#FF0000', this)"></div>
+                    <div class="color" style="background: #0000FF;" onclick="setColor('#0000FF', this)"></div>
+                    <div class="color" style="background: #008000;" onclick="setColor('#008000', this)"></div>
+                    <div class="color" style="background: #FFFF00;" onclick="setColor('#FFFF00', this)"></div>
+                    <div class="color" style="background: #800080;" onclick="setColor('#800080', this)"></div>
+                    
+                    <div class="color" style="background: #FFA500;" onclick="setColor('#FFA500', this)"></div>
+                    <div class="color" style="background: #FFC0CB;" onclick="setColor('#FFC0CB', this)"></div>
+                    <div class="color" style="background: #8B4513;" onclick="setColor('#8B4513', this)"></div>
+                    <div class="color" style="background: #00FFFF;" onclick="setColor('#00FFFF', this)"></div>
+                    <div class="color" style="background: #808080;" onclick="setColor('#808080', this)"></div>
+                    
+                    <input type="color" id="colorPicker" value="#000000" onchange="setCustomColor(this.value)" title="Escolher outra cor">
+                </div>
             </div>
 
             <div class="group">
-                <label>Tamanho:</label>
-                <input type="range" id="brushSize" min="5" max="50" value="10" onchange="setSize(this.value)">
+                <label>Traço:</label>
+                <input type="range" id="brushSize" min="2" max="50" value="5" onchange="setSize(this.value)">
             </div>
 
-            <div class="group actions">
-                <button class="btn tool active" id="btnBrush" onclick="setTool('brush')">🖌️ Pincel</button>
-                <button class="btn tool" id="btnBucket" onclick="setTool('bucket')">🪣 Baldinho</button>
-                <button class="btn eraser" id="btnEraser" onclick="setEraser()">🧽 Borracha</button>
+            <div class="group">
+                <button class="btn tool-btn active" id="btn-brush" onclick="setTool('brush')">🖌️ Pincel</button>
+                <button class="btn tool-btn" id="btn-line" onclick="setTool('line')">📏 Linha</button>
+                <button class="btn tool-btn" id="btn-rect" onclick="setTool('rect')">🔲 Quadrado</button>
+                <button class="btn tool-btn" id="btn-circle" onclick="setTool('circle')">⭕ Círculo</button>
+                <button class="btn tool-btn" id="btn-bucket" onclick="setTool('bucket')">🪣 Balde</button>
+                <button class="btn eraser" id="btn-eraser" onclick="setTool('eraser')">🧽 Borracha</button>
+            </div>
+
+            <div class="group">
+                <button class="btn action" onclick="undoDrawing()">↩️ Desfazer</button>
                 <button class="btn clear" onclick="openModal()">🗑️ Limpar</button>
             </div>
         </div>
@@ -44,7 +58,7 @@
 
     <div id="confirmModal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h2>Quer apagar o desenho? 😮</h2>
+            <h2>Quer apagar o desenho todo? 😮</h2>
             <div class="modal-buttons">
                 <button class="btn confirm" onclick="confirmClear()">Sim, apagar!</button>
                 <button class="btn cancel" onclick="closeModal()">Não, voltar</button>
