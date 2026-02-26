@@ -11,44 +11,65 @@
   <style>
     :root {
       --bg-color: #848d1c;
-      --card-back: #FFB347;
+      --card-back: #ffbd61;
       --card-success: #90EE90;
       --card-error: #FF6961;
       --text-color: #555;
-      --tamanho-carta: 110px; /* Será sobrescrito pelo JavaScript */
+      --tamanho-carta: 110px;
     }
 
     body {
       font-family: 'Fredoka', sans-serif;
-      background-color: var(--bg-color);
+      background-image: url('img/fundojogo.png');
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+
+      padding: 8vh 12vw 6vh 12vw;
+      box-sizing: border-box;
+
       margin: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
+      
+      height: 100vh;
+      max-height: 100vh;
       user-select: none;
-      overflow: hidden; /* Bloqueia barras de rolagem vertical e horizontal */
+      overflow: hidden;
     }
 
+    /* ========================================= */
+    /* ESTILOS ORIGINAIS PARA COMPUTADOR (PC)    */
+    /* ========================================= */
     header {
       text-align: center;
       margin: 15px 0;
-      width: 95%;
+      width: 100%;
       max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .titulo {
-      color: #fff;
-      font-size: 2.5rem;
-      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
-      margin: 0 0 10px 0;
+    .nivel-badge {
+      background: #3a7c2d;
+      color: #f0ede8;
+      padding: 6px 35px;
+      border-radius: 15px;
+      font-size: 1.3em;
+      font-weight: bold;
+      border: 3px dashed #bcdfa5;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      margin-bottom: 12px;
     }
 
     .painel {
       padding: 15px 30px;
       border-radius: 22px;
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       align-items: center;
       width: 100%;
       font-size: 1.3rem;
@@ -56,13 +77,8 @@
       font-weight: bold;
       box-sizing: border-box;
       position: relative;
-      overflow: hidden;
 
-      background: linear-gradient(180deg,
-          #e4b06a 0%,
-          #e7b873 40%,
-          #dca45a 100%);
-
+      background: linear-gradient(180deg, #e4b06a 0%, #e7b873 40%, #dca45a 100%);
       border: 4px solid #a06a2e;
       box-shadow: 0 6px 0 #7a4d1f;
     }
@@ -72,12 +88,11 @@
       position: absolute;
       inset: 0;
       background: repeating-linear-gradient(90deg,
-          rgba(0, 0, 0, 0.08) 0px,
-          rgba(0, 0, 0, 0.08) 2px,
-          transparent 2px,
-          transparent 14px);
+          rgba(0, 0, 0, 0.08) 0px, rgba(0, 0, 0, 0.08) 2px,
+          transparent 2px, transparent 14px);
       opacity: 0.25;
       pointer-events: none;
+      border-radius: 18px;
     }
 
     .painel::after {
@@ -86,95 +101,28 @@
       inset: 0;
       box-shadow: inset 0 12px 20px rgba(0, 0, 0, 0.15),
         inset 0 -12px 20px rgba(0, 0, 0, 0.1);
-      border-radius: 22px;
+      border-radius: 18px;
       pointer-events: none;
     }
 
-    .painel .crack-left,
-    .painel .crack-right {
-      position: absolute;
-      width: 40px;
-      height: 12px;
-      border-bottom: 3px solid rgba(0, 0, 0, 0.25);
-      border-radius: 100%;
-      z-index: 2;
-      opacity: 0.5;
-    }
-
-    .painel .crack-left {
-      left: 15px;
-      bottom: 12px;
-      transform: rotate(-12deg);
-    }
-
-    .painel .crack-right {
-      right: 15px;
-      bottom: 12px;
-      transform: rotate(12deg);
-    }
-
-    .painel .crack-small {
-      position: absolute;
-      width: 25px;
-      height: 8px;
-      border-bottom: 2px solid rgba(0, 0, 0, 0.25);
-      border-radius: 100%;
-      opacity: 0.5;
-      top: 22px;
-      left: 50%;
-      transform: translateX(-50%) rotate(5deg);
-      z-index: 2;
-    }
-
-    .nivel-badge {
-      background: #5c3a16;
-      color: #f0ede8;
-      padding: 6px 25px;
-      border-radius: 10px;
-      font-size: 1.1em;
-      border: 3px dashed #3a230e;
-      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .botoes-controle {
-      display: flex;
-      gap: 15px;
-    }
-
-    .btn-icon {
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 1.3rem;
-      color: #555;
-      transition: transform 0.2s;
-    }
-
-    .btn-icon:hover {
-      transform: scale(1.1);
-      color: #6c5ce7;
-    }
+    .info-item { display: flex; align-items: center; gap: 10px; z-index: 5; }
+    .botoes-controle { display: flex; gap: 15px; z-index: 5; }
+    .btn-icon { border: none; background: none; cursor: pointer; font-size: 1.3rem; color: #fff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); transition: transform 0.2s; }
+    .btn-icon:hover { transform: scale(1.2); color: #6c5ce7; }
 
     .game-area {
       flex-grow: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 20px 20px 20px;
+      padding: 10px 0;
       width: 100%;
-      max-width: 1200px;
       box-sizing: border-box;
     }
 
     .game-container {
       display: grid;
-      gap: clamp(5px, 1.5vmin, 15px); 
+      gap: 10px;
       perspective: 1000px;
       justify-content: center;
       align-content: center;
@@ -189,221 +137,139 @@
       transition: transform 0.1s;
     }
 
-    .card:active {
-      transform: scale(0.95);
-    }
+    .card:active { transform: scale(0.95); }
 
     .card-inner {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
+      width: 100%; height: 100%; position: absolute;
+      transition: transform 0.6s; transform-style: preserve-3d;
     }
 
-    .card.flipped .card-inner {
-      transform: rotateY(180deg);
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    .card.correto .card-inner { animation: pulo 0.5s ease-in-out; }
+    .card.correto .card-back { background-color: var(--card-success); border-color: #72c772; }
+    .card.erro .card-inner { animation: tremer 0.4s ease-in-out; }
+    .card.erro .card-back { background-color: var(--card-error); }
+
+    .card-front, .card-back {
+      position: absolute; width: 100%; height: 100%;
+      backface-visibility: hidden; border-radius: 15px;
+      display: flex; justify-content: center; align-items: center;
+      border: 4px solid white; box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1); box-sizing: border-box;
     }
 
-    .card.correto .card-inner {
-      animation: pulo 0.5s ease-in-out;
-    }
-
-    .card.correto .card-back {
-      background-color: var(--card-success);
-      border-color: #72c772;
-    }
-
-    .card.erro .card-inner {
-      animation: tremer 0.4s ease-in-out;
-    }
-
-    .card.erro .card-back {
-      background-color: var(--card-error);
-    }
-
-    .card-front,
-    .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 4px solid white;
-      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
-      box-sizing: border-box;
-    }
-
-    .card-front {
-      background-color: var(--card-back);
-      color: white;
-      font-size: calc(var(--tamanho-carta) / 2.5);
-    }
-
-    .card-back {
-      background-color: #fff;
-      transform: rotateY(180deg);
-    }
-
-    .card-back img {
-      width: 80%;
-      height: 80%;
-      object-fit: contain;
-    }
+    .card-front { background-color: var(--card-back); color: white; font-size: calc(var(--tamanho-carta) / 2.5); }
+    .card-back { background-color: #fff; transform: rotateY(180deg); }
+    .card-back img { width: 80%; height: 80%; object-fit: contain; }
 
     @keyframes pulo {
-      0%,
-      100% {
-        transform: rotateY(180deg) scale(1)
-      }
-      50% {
-        transform: rotateY(180deg) scale(1.15)
-      }
+      0%, 100% { transform: rotateY(180deg) scale(1) }
+      50% { transform: rotateY(180deg) scale(1.15) }
     }
-
     @keyframes tremer {
-      0%,
-      100% {
-        transform: rotateY(180deg) translateX(0)
-      }
-      25% {
-        transform: rotateY(180deg) translateX(-5px)
-      }
-      75% {
-        transform: rotateY(180deg) translateX(5px)
-      }
+      0%, 100% { transform: rotateY(180deg) translateX(0) }
+      25% { transform: rotateY(180deg) translateX(-5px) }
+      75% { transform: rotateY(180deg) translateX(5px) }
     }
 
     #overlay-inicio {
-      position: fixed;
-      inset: 0;
-      background-image: url('img/fundo2.png');
-      background-position: center; 
-      background-size: cover; 
-      background-color: #000;
-      z-index: 200;
-      display: flex;
-      justify-content: center; 
-      align-items: center; 
+      position: fixed; inset: 0; background-image: url('img/capajogo.png');
+      background-position: center; background-size: cover; background-color: #000;
+      z-index: 200; display: flex; justify-content: center; align-items: center;
     }
 
     .btn-start {
-      background: #FFB347;
-      color: white;
-      cursor: pointer;
-      font-family: 'Fredoka', sans-serif;
-      font-weight: bold;
-      border-radius: 50px;
-      white-space: nowrap;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-      animation: pulse 1.5s infinite;
-      font-size: clamp(14px, 4vmin, 35px); 
-      padding: clamp(10px, 2.5vmin, 25px) clamp(25px, 7vmin, 70px); 
-      border: clamp(2px, 0.5vmin, 5px) solid white;
-      box-shadow: 0 clamp(4px, 1vmin, 8px) 0 rgba(0, 0, 0, 0.2);
-      margin-top: 60vh;
-      margin-left: 2vh;
+      background: #FFB347; color: white; cursor: pointer; font-family: 'Fredoka', sans-serif;
+      font-weight: bold; border-radius: 50px; white-space: nowrap; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      animation: pulse 1.5s infinite; font-size: clamp(14px, 4vmin, 35px);
+      padding: clamp(10px, 2.5vmin, 25px) clamp(25px, 7vmin, 70px);
+      border: clamp(2px, 0.5vmin, 5px) solid white; box-shadow: 0 clamp(4px, 1vmin, 8px) 0 rgba(0, 0, 0, 0.2);
+      margin-top: 60vh; margin-left: 2vh;
     }
 
-    .btn-start:hover {
-      transform: scale(1.05);
-      background: #c0ab87;
-    }
+    .btn-start:hover { transform: scale(1.05); background: #c0ab87; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
+    /* ========================================= */
+    /* MODAL DE VITÓRIA                          */
+    /* ========================================= */
     #modal-nivel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 100;
     }
 
     .modal-content {
-      background: #e2b06d;
-      background-image: url('img/madeira2.png');
-      background-size: cover;
-      padding: 45px 55px;
-      border-radius: 18px;
-      text-align: center;
-      animation: modalUp 0.3s ease-out;
-      box-shadow: 0 10px 0 #8a5a2f, 0 0 25px rgba(0, 0, 0, 0.4);
-      border: 5px solid #8a5a2f;
-      position: relative;
+      background: #e2b06d; background-image: url('img/madeira2.png'); background-size: cover;
+      padding: 45px 55px; border-radius: 18px; text-align: center; animation: modalUp 0.3s ease-out;
+      box-shadow: 0 10px 0 #8a5a2f, 0 0 25px rgba(0, 0, 0, 0.4); border: 5px solid #8a5a2f; position: relative;
     }
 
-    .modal-content:before,
-    .modal-content:after {
-      content: "";
-      position: absolute;
-      top: -40px;
-      width: 40px;
-      height: 40px;
-      background: url('img/corda.png') no-repeat center;
-      background-size: contain;
+    .modal-content:before, .modal-content:after {
+      content: ""; position: absolute; top: -40px; width: 40px; height: 40px;
+      background: url('img/corda.png') no-repeat center; background-size: contain;
     }
+    .modal-content:before { left: 50px; } .modal-content:after { right: 50px; }
+    @keyframes modalUp { from { transform: scale(0.5); } to { transform: scale(1); } }
 
-    .modal-content:before { left: 50px; }
-    .modal-content:after { right: 50px; }
-
-    @keyframes modalUp {
-      from { transform: scale(0.5); }
-      to { transform: scale(1); }
-    }
+    /* Classes novas para controlar o tamanho do texto do modal */
+    .icone-vitoria { margin: 0; font-size: 4rem; }
+    .titulo-vitoria { color: #6c5ce7; margin: 10px 0; font-size: 2rem; }
+    .texto-vitoria { font-size: 1.2rem; color: #555; margin-bottom: 20px;}
 
     .btn-proximo {
-      background: #6c5ce7;
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      font-size: 1.5rem;
-      border-radius: 50px;
-      cursor: pointer;
-      margin-top: 25px;
-      font-weight: bold;
-      box-shadow: 0 5px 0 #4834d4;
-      transition: transform 0.1s;
+      background: #6c5ce7; color: white; border: none; padding: 15px 40px;
+      font-size: 1.5rem; border-radius: 50px; cursor: pointer; margin-top: 15px;
+      font-weight: bold; box-shadow: 0 5px 0 #4834d4; transition: transform 0.1s;
     }
 
-    @media screen and (max-height: 500px) {
-      header { margin: 5px 0; width: 98%; }
-      .titulo { font-size: 1.4rem; margin-bottom: 5px; }
-      .painel { padding: 5px 15px; font-size: 1rem; border-width: 3px; }
+    /* ========================================= */
+    /* AJUSTES PARA CHROMEBOOKS E NOTEBOOKS      */
+    /* ========================================= */
+    @media screen and (max-width: 1024px), screen and (max-height: 800px) {
+      header { margin: 8px 0; }
+      .painel { padding: 8px 20px; font-size: 1.1rem; }
+      .nivel-badge { padding: 4px 25px; font-size: 1.1em; margin-bottom: 8px; }
       .btn-icon { font-size: 1.1rem; }
-      .nivel-badge { padding: 4px 15px; font-size: 0.9em; }
+      
+      /* Reduzindo o modal um pouco */
+      .modal-content { padding: 30px 40px; border-width: 4px; }
+      .icone-vitoria { font-size: 3rem; }
+      .titulo-vitoria { font-size: 1.6rem; }
+      .btn-proximo { padding: 12px 30px; font-size: 1.3rem; }
     }
 
+    /* ========================================= */
+    /* AJUSTES PARA CELULARES NA HORIZONTAL      */
+    /* ========================================= */
+    @media screen and (max-height: 500px) {
+      body { padding: 10vh 6vw 3vh 6vw; }
+      header { margin: 5px 0; width: 98%; }
+      .painel { padding: 5px 15px; font-size: 0.95rem; border-width: 3px; }
+      .btn-icon { font-size: 1rem; }
+      .nivel-badge { padding: 3px 20px; font-size: 1em; margin-bottom: 5px; border-width: 2px;}
+      .info-item { gap: 5px; }
+      .game-container { gap: 6px; } /* Cartas um pouco mais juntas no mobile */
+      .game-area { margin-top: -13px;}
+
+      /* Reduzindo o modal BASTANTE para caber no celular deitado */
+      .modal-content { padding: 15px 25px; border-width: 3px; border-radius: 12px; box-shadow: 0 6px 0 #8a5a2f; }
+      .icone-vitoria { font-size: 2.2rem; }
+      .titulo-vitoria { font-size: 1.3rem; margin: 5px 0; }
+      .texto-vitoria { font-size: 0.95rem; margin-bottom: 10px; }
+      .btn-proximo { padding: 8px 20px; font-size: 1rem; margin-top: 5px; box-shadow: 0 4px 0 #4834d4;}
+      
+      /* Encolhe as cordinhas decorativas do modal */
+      .modal-content:before, .modal-content:after { transform: scale(0.6); top: -28px; }
+    }
+
+    /* Trava Celular Vertical */
     @media screen and (max-width: 900px) and (orientation: portrait) {
       body::before {
         content: "🔄 Gire o celular para jogar na horizontal";
-        position: fixed;
-        inset: 0;
-        background: #000;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        font-size: 1.5rem;
-        padding: 20px;
-        z-index: 9999;
+        position: fixed; inset: 0; background: #000; color: #fff;
+        display: flex; justify-content: center; align-items: center;
+        text-align: center; font-size: 1.5rem; padding: 20px; z-index: 9999;
       }
-      body>* {
-        display: none;
-      }
+      body>* { display: none; }
     }
   </style>
 </head>
@@ -415,18 +281,17 @@
   </div>
 
   <header>
-    <h1 class="titulo">Savana da Memória</h1>
+    <div class="nivel-badge">Nível <span id="nivel-atual">1</span></div>
 
     <div class="painel">
-      <div class="nivel-badge">Nível <span id="nivel-atual">1</span></div>
-      <div class="info-item"><i class="fas fa-hand-pointer"></i> <span id="jogadas">0</span></div>
-      <div class="info-item"><i class="fas fa-stopwatch"></i> <span id="tempo">00:00</span></div>
+      <div class="info-item" title="Jogadas"><i class="fas fa-hand-pointer"></i> <span id="jogadas">0</span></div>
+      <div class="info-item" title="Pares Encontrados"><i class="fas fa-check-double"></i> <span id="pares-encontrados">0/0</span></div>
+      <div class="info-item" title="Tempo"><i class="fas fa-stopwatch"></i> <span id="tempo">00:00</span></div>
 
       <div class="botoes-controle">
         <button onclick="alternarMusica()" class="btn-icon" title="Ligar/Desligar Música">
           <i id="icone-musica" class="fas fa-music"></i>
         </button>
-
         <button onclick="reiniciarNivel()" class="btn-icon" title="Reiniciar Nível">
           <i class="fas fa-redo"></i>
         </button>
@@ -440,9 +305,9 @@
 
   <div id="modal-nivel">
     <div class="modal-content">
-      <h1 style="margin:0; font-size: 4rem;">🎉</h1>
-      <h2 style="color: #6c5ce7; margin: 10px 0;">Nível Concluído!</h2>
-      <p id="msg-vitoria" style="font-size: 1.2rem; color: #555;">Excelente memória!</p>
+      <h1 class="icone-vitoria">🎉</h1>
+      <h2 class="titulo-vitoria">Nível Concluído!</h2>
+      <p id="msg-vitoria" class="texto-vitoria">Excelente memória!</p>
       <button class="btn-proximo" onclick="proximoNivel()">Próximo Nível <i class="fas fa-arrow-right"></i></button>
     </div>
   </div>
@@ -452,7 +317,6 @@
   </audio>
 
   <script>
-
     let tempoTotal = 0;
 
     const todosAnimais = [
@@ -462,7 +326,6 @@
       "img/girafa.png", "img/macaco.png", "img/zebra.png"
     ];
 
-    // O tamanho saiu daqui. Agora o Javascript calcula matematicamente!
     const niveis = [
       { pares: 3, colunas: 3 },
       { pares: 6, colunas: 4 },
@@ -480,90 +343,79 @@
     let segundos = 0;
     let jogoIniciado = false;
 
-    // === CONTROLE DE MÚSICA ===
     let musicaTocando = false;
     const audioFundo = document.getElementById('musica-fundo');
     const iconeMusica = document.getElementById('icone-musica');
 
     const container = document.getElementById('game');
     const elJogadas = document.getElementById('jogadas');
+    const elPares = document.getElementById('pares-encontrados');
     const elTempo = document.getElementById('tempo');
     const elNivel = document.getElementById('nivel-atual');
     const modal = document.getElementById('modal-nivel');
     const overlay = document.getElementById('overlay-inicio');
 
-    // ==========================
-    // CÁLCULO INTELIGENTE DO TAMANHO DAS CARTAS
-    // ==========================
     function ajustarTamanhoCartas() {
       const config = niveis[nivelAtual];
       const totalCartas = config.pares * 2;
       const colunas = config.colunas;
       const linhas = Math.ceil(totalCartas / colunas);
 
-      // Pega o espaço do cabeçalho
       const header = document.querySelector('header');
       const headerHeight = header ? header.offsetHeight : 150;
-      
-      // Calcula o espaço que SOBROU na tela para o jogo
-      // Descontamos 40px para não ficar colado nas bordas
-      const alturaDisponivel = window.innerHeight - headerHeight - 40; 
-      const larguraDisponivel = window.innerWidth - 40;
 
-      // Estimativa do espaço entre as cartas (gap)
-      const gap = 12;
+      const estiloBody = window.getComputedStyle(document.body);
+      const paddingVertical = parseFloat(estiloBody.paddingTop) + parseFloat(estiloBody.paddingBottom);
+      const paddingHorizontal = parseFloat(estiloBody.paddingLeft) + parseFloat(estiloBody.paddingRight);
 
-      // Descobre qual o tamanho máximo que a carta pode ter para caber na tela toda
+      // AUMENTADO: Margem de respiro extra para as cartas não grudarem nas bordas (era 15, agora é 40)
+      const margemRespiro = 40; 
+      const alturaDisponivel = window.innerHeight - headerHeight - paddingVertical - margemRespiro;
+      const larguraDisponivel = window.innerWidth - paddingHorizontal - margemRespiro;
+
+      const gap = window.innerHeight <= 500 ? 12 : 10; // Gap menor no celular
+
       const maxAlturaPorCarta = (alturaDisponivel - (gap * (linhas - 1))) / linhas;
       const maxLarguraPorCarta = (larguraDisponivel - (gap * (colunas - 1))) / colunas;
 
-      // Como a carta é um quadrado, usamos o MENOR valor para garantir que cabe em tudo
       let tamanhoFinal = Math.min(maxAlturaPorCarta, maxLarguraPorCarta);
 
-      // Colocamos um limite máximo (ex: 150px) para não ficar gigantesco em telas de PC grandes
-      tamanhoFinal = Math.min(tamanhoFinal, 150);
+      // NOVA TRAVA: Se for celular (tela pequena ou muito achatada), o tamanho máximo da carta é menor
+      const isMobile = window.innerWidth <= 900 || window.innerHeight <= 500;
+      const limiteMaximo = isMobile ? 60 : 150; // Celular = máx 85px | PC = máx 150px
+      
+      tamanhoFinal = Math.min(tamanhoFinal, limiteMaximo);
 
-      // Aplica o novo tamanho calculado dinamicamente no CSS!
       document.documentElement.style.setProperty('--tamanho-carta', `${Math.floor(tamanhoFinal)}px`);
     }
 
-    // Fica de olho se a tela for redimensionada ou virada (no celular)
     window.addEventListener('resize', () => {
       if (overlay.style.display === 'none') {
         ajustarTamanhoCartas();
       }
     });
 
-    // ==========================
-    //  INÍCIO DO JOGO
-    // ==========================
     function comecarJogo() {
       audioFundo.volume = 0.25;
-
-      audioFundo.play()
-        .then(() => {
-          musicaTocando = true;
-          iconeMusica.className = "fas fa-music";
-          iconeMusica.style.color = "#6c5ce7";
-        })
-        .catch(() => {
-          musicaTocando = false;
-          iconeMusica.className = "fas fa-volume-mute";
-          iconeMusica.style.color = "#FF6961";
-        });
+      audioFundo.play().then(() => {
+        musicaTocando = true;
+        iconeMusica.className = "fas fa-music";
+        iconeMusica.style.color = "#6c5ce7";
+      }).catch(() => {
+        musicaTocando = false;
+        iconeMusica.className = "fas fa-volume-mute";
+        iconeMusica.style.color = "#FF6961";
+      });
 
       overlay.style.opacity = '0';
       setTimeout(() => {
         overlay.style.display = 'none';
-        ajustarTamanhoCartas(); // Ajusta ao sumir a tela inicial
+        ajustarTamanhoCartas();
       }, 500);
 
       iniciarNivelLogica();
     }
 
-    // ==========================
-    //   LIGAR / DESLIGAR MÚSICA
-    // ==========================
     function alternarMusica() {
       if (musicaTocando) {
         audioFundo.pause();
@@ -583,9 +435,6 @@
       return array.sort(() => Math.random() - 0.5);
     }
 
-    // ==========================
-    //   INICIAR NÍVEL
-    // ==========================
     function iniciarNivelLogica() {
       const config = niveis[nivelAtual];
 
@@ -600,11 +449,11 @@
       elJogadas.innerText = "0";
       elTempo.innerText = "00:00";
       elNivel.innerText = nivelAtual + 1;
-      modal.style.display = "none";
+      elPares.innerText = `0/${config.pares}`;
 
+      modal.style.display = "none";
       container.style.gridTemplateColumns = `repeat(${config.colunas}, 1fr)`;
       
-      // Ajusta o tamanho das cartas baseando-se no novo nível
       ajustarTamanhoCartas();
 
       let listaCartas = [];
@@ -639,15 +488,8 @@
       });
     }
 
-    // ==========================
-    //       VIRAR CARTA
-    // ==========================
     function virarCarta(carta) {
-      if (!jogoIniciado) {
-        iniciarTimer();
-        jogoIniciado = true;
-      }
-
+      if (!jogoIniciado) { iniciarTimer(); jogoIniciado = true; }
       if (bloqueado || carta.classList.contains('flipped')) return;
 
       carta.classList.add('flipped');
@@ -661,9 +503,6 @@
       }
     }
 
-    // ==========================
-    //       CHECAR PAR
-    // ==========================
     function checarPar() {
       const [c1, c2] = viradas;
       const animal1 = c1.dataset.animal;
@@ -671,14 +510,14 @@
 
       if (animal1 === animal2) {
         paresEncontrados++;
+        elPares.innerText = `${paresEncontrados}/${niveis[nivelAtual].pares}`;
+
         c1.classList.add('correto');
         c2.classList.add('correto');
 
         let nome = animal1.replace("img/", "").replace(".png", "");
         if (nome === "hipopotamo") nome = "hipopótamo";
-
         falar(nome);
-
         resetarJogada();
 
         if (paresEncontrados === niveis[nivelAtual].pares) {
@@ -696,10 +535,7 @@
       }
     }
 
-    function resetarJogada() {
-      viradas = [];
-      bloqueado = false;
-    }
+    function resetarJogada() { viradas = []; bloqueado = false; }
 
     function iniciarTimer() {
       timerInterval = setInterval(() => {
@@ -710,16 +546,10 @@
       }, 1000);
     }
 
-    function pararTimer() {
-      clearInterval(timerInterval);
-    }
+    function pararTimer() { clearInterval(timerInterval); }
 
-    // ==========================
-    //   TELAS DE VITÓRIA
-    // ==========================
     function mostrarVitoria() {
       pararTimer();
-
       tempoTotal += segundos;
 
       const msg = document.getElementById('msg-vitoria');
@@ -730,7 +560,6 @@
         btn.innerHTML = `Ir para Nível ${nivelAtual + 2} <i class="fas fa-arrow-right"></i>`;
         btn.onclick = proximoNivel;
       } else {
-
         const minutos = String(Math.floor(tempoTotal / 60)).padStart(2, '0');
         const segundosFinais = String(tempoTotal % 60).padStart(2, '0');
         const tempoFinalFormatado = `${minutos}:${segundosFinais}`;
@@ -740,58 +569,35 @@
           <strong>Seu tempo total foi:</strong><br>
           <span style="font-size: 2rem; color:#6c5ce7;">${tempoFinalFormatado}</span>
         `;
-
         btn.innerHTML = `Jogar Novamente <i class="fas fa-redo"></i>`;
         btn.onclick = () => {
-          nivelAtual = 0;
-          tempoTotal = 0;
+          nivelAtual = 0; tempoTotal = 0;
           overlay.style.display = 'flex';
           setTimeout(() => overlay.style.opacity = '1', 10);
-          musicaTocando = false;
-          audioFundo.pause();
-          audioFundo.currentTime = 0;
+          musicaTocando = false; audioFundo.pause(); audioFundo.currentTime = 0;
           iniciarNivelLogica();
         };
       }
-
       modal.style.display = "flex";
     }
 
-    function proximoNivel() {
-      nivelAtual++;
-      iniciarNivelLogica();
-    }
+    function proximoNivel() { nivelAtual++; iniciarNivelLogica(); }
+    function reiniciarNivel() { if (confirm("Reiniciar este nível?")) iniciarNivelLogica(); }
 
-    function reiniciarNivel() {
-      if (confirm("Reiniciar este nível?")) iniciarNivelLogica();
-    }
-
-    // ==========================
-    //   VOZ DO ANIMAL
-    // ==========================
     let vozCarregada = false;
-    window.speechSynthesis.onvoiceschanged = () => {
-      vozCarregada = true;
-    };
+    window.speechSynthesis.onvoiceschanged = () => { vozCarregada = true; };
 
     function falar(texto) {
       if (!vozCarregada) return;
-
       if (musicaTocando) audioFundo.volume = 0.08;
 
       window.speechSynthesis.cancel();
-
       const voz = new SpeechSynthesisUtterance(texto);
-      voz.lang = "pt-BR";
-      voz.rate = 0.9;
+      voz.lang = "pt-BR"; voz.rate = 0.9;
 
-      voz.onend = () => {
-        if (musicaTocando) audioFundo.volume = 0.25;
-      };
-
+      voz.onend = () => { if (musicaTocando) audioFundo.volume = 0.25; };
       speechSynthesis.speak(voz);
     }
   </script>
 </body>
-
 </html>

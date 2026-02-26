@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,10 +9,14 @@
     <link rel="icon" type="image/png" href="img/logo.png">
     <style>
         :root {
-            --primary: #FF8E72; /* Coral suave */
-            --secondary: #6C5CE7; /* Roxo divertido */
-            --accent: #00B894; /* Verde menta */
-            --wrong: #FF7675; /* Vermelho suave */
+            --primary: #FF8E72;
+            /* Coral suave */
+            --secondary: #6C5CE7;
+            /* Roxo divertido */
+            --accent: #00B894;
+            /* Verde menta */
+            --wrong: #FF7675;
+            /* Vermelho suave */
             --bg-gradient: linear-gradient(135deg, #81ECEC 0%, #74B9FF 100%);
             --card-bg: #ffffff;
             --text-color: #2D3436;
@@ -19,7 +24,8 @@
 
         * {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* Remove highlight de toque no mobile */
+            -webkit-tap-highlight-color: transparent;
+            /* Remove highlight de toque no mobile */
         }
 
         body {
@@ -41,16 +47,48 @@
             opacity: 0.2;
             z-index: 0;
             animation: float 6s infinite ease-in-out;
-            pointer-events: none; /* Não interfere no clique */
+            pointer-events: none;
+            /* Não interfere no clique */
         }
-        .shape-1 { top: 10%; left: 10%; font-size: 4rem; animation-delay: 0s; }
-        .shape-2 { bottom: 15%; right: 10%; font-size: 5rem; animation-delay: 1s; }
-        .shape-3 { bottom: 20%; left: 20%; font-size: 3rem; animation-delay: 2s; }
-        .shape-4 { top: 15%; right: 20%; font-size: 4rem; animation-delay: 3s; }
+
+        .shape-1 {
+            top: 10%;
+            left: 10%;
+            font-size: 4rem;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            bottom: 15%;
+            right: 10%;
+            font-size: 5rem;
+            animation-delay: 1s;
+        }
+
+        .shape-3 {
+            bottom: 20%;
+            left: 20%;
+            font-size: 3rem;
+            animation-delay: 2s;
+        }
+
+        .shape-4 {
+            top: 15%;
+            right: 20%;
+            font-size: 4rem;
+            animation-delay: 3s;
+        }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
         }
 
         .game-card {
@@ -58,7 +96,7 @@
             width: 90%;
             max-width: 480px;
             border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
             padding: 30px 20px;
             text-align: center;
             position: relative;
@@ -66,7 +104,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 500px; /* Garante altura mínima visual */
+            min-height: 500px;
+            /* Garante altura mínima visual */
         }
 
         /* Barra de progresso */
@@ -78,7 +117,7 @@
             overflow: hidden;
             width: 90%;
         }
-        
+
         .progress-fill {
             height: 100%;
             background: var(--secondary);
@@ -87,8 +126,17 @@
             transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        h1 { color: var(--secondary); font-size: 1.6rem; margin: 0 0 5px 0; }
-        .subtitle { color: #b2bec3; font-size: 1rem; margin-bottom: 20px; }
+        h1 {
+            color: var(--secondary);
+            font-size: 1.6rem;
+            margin: 0 0 5px 0;
+        }
+
+        .subtitle {
+            color: #b2bec3;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
 
         /* Área da palavra */
         .word-box {
@@ -97,23 +145,40 @@
             border-radius: 20px;
             padding: 20px;
             margin: 10px 0 20px 0;
-            min-height: 120px; /* Altura fixa para evitar pulos */
+            min-height: 120px;
+            /* Altura fixa para evitar pulos */
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 8px;
         }
 
-        .word-display {
-            font-size: clamp(2rem, 8vw, 3.5rem); /* Tamanho responsivo */
-            color: var(--text-color);
-            font-weight: 600;
-            letter-spacing: 1px;
-            word-break: break-word; 
-            line-height: 1.2;
+        .sentence-display {
+            font-size: clamp(1.05rem, 3.5vw, 1.3rem);
+            color: #636e72;
+            line-height: 1.6;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .sentence-display .highlight-word {
+            font-weight: 700;
+            font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+            color: var(--secondary);
+            background: linear-gradient(120deg, rgba(108, 92, 231, 0.12) 0%, rgba(108, 92, 231, 0.18) 100%);
+            padding: 2px 10px;
+            border-radius: 8px;
+            border-bottom: 3px solid var(--secondary);
+            display: inline;
         }
 
         /* Botões */
-        .buttons-container { display: flex; gap: 15px; margin-top: 10px; }
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
 
         .btn {
             flex: 1;
@@ -130,32 +195,59 @@
             flex-direction: column;
             align-items: center;
             gap: 5px;
-            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
         }
 
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-        .btn-yes { background-color: var(--accent); }
-        .btn-no { background-color: var(--wrong); }
-        .btn span { font-size: 1.8rem; display: block; margin-bottom: 5px; }
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-yes {
+            background-color: var(--accent);
+        }
+
+        .btn-no {
+            background-color: var(--wrong);
+        }
+
+        .btn span {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 5px;
+        }
 
         /* Feedback */
         .feedback {
             margin-top: 15px;
             font-size: 1.2rem;
-            min-height: 80px; /* Reserva espaço */
+            min-height: 80px;
+            /* Reserva espaço */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            pointer-events: none; /* Evita clique na área vazia */
+            pointer-events: none;
+            /* Evita clique na área vazia */
             transition: opacity 0.3s;
         }
-        
-        .feedback.show { opacity: 1; pointer-events: auto; }
-        .feedback-correct { color: var(--accent); font-weight: bold; }
-        .feedback-wrong { color: var(--wrong); font-weight: bold; }
-        
+
+        .feedback.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .feedback-correct {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .feedback-wrong {
+            color: var(--wrong);
+            font-weight: bold;
+        }
+
         .correction-text {
             font-size: 1rem;
             color: #636e72;
@@ -164,7 +256,7 @@
             padding: 8px 15px;
             border-radius: 15px;
             display: inline-block;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
         /* Botão Próximo */
@@ -181,28 +273,44 @@
             display: none;
             box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            align-self: center; /* Centraliza no flex container */
+            align-self: center;
+            /* Centraliza no flex container */
         }
-        
+
         @keyframes popIn {
-            from { transform: scale(0); }
-            to { transform: scale(1); }
+            from {
+                transform: scale(0);
+            }
+
+            to {
+                transform: scale(1);
+            }
         }
 
         /* Tela Final */
-        #end-screen { display: none; width: 100%; }
+        #end-screen {
+            display: none;
+            width: 100%;
+        }
+
         .final-score-badge {
             font-size: 4.5rem;
             background: var(--bg-gradient);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; /* Gradiente no texto */
+            -webkit-text-fill-color: transparent;
+            /* Gradiente no texto */
             font-weight: 800;
             margin: 10px 0;
         }
-        .medal { font-size: 5rem; margin-bottom: 5px; display: block; }
 
+        .medal {
+            font-size: 5rem;
+            margin-bottom: 5px;
+            display: block;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="bg-shape shape-1">✏️</div>
@@ -211,21 +319,21 @@
     <div class="bg-shape shape-4">🅰️</div>
 
     <div class="game-card">
-        
+
         <div id="game-screen">
             <h1>Certo ou Errado?</h1>
-            <div class="subtitle">Leia com atenção!</div>
+            <div class="subtitle">A palavra destacada está escrita corretamente?</div>
 
             <div class="progress-track">
                 <div class="progress-fill" id="progress-bar"></div>
             </div>
 
             <div class="word-box">
-                <div class="word-display" id="word-display">...</div>
+                <div class="sentence-display" id="word-display">...</div>
             </div>
 
             <div class="feedback" id="feedback-area">
-                </div>
+            </div>
 
             <div class="buttons-container" id="control-buttons">
                 <button class="btn btn-yes" onclick="handleAnswer(true)">
@@ -250,7 +358,8 @@
             <div class="final-score-badge" id="final-score">0</div>
             <p id="final-message" style="color:#636e72; margin-top:0px; font-weight: 600;">Mensagem...</p>
             <br>
-            <button class="btn btn-yes" onclick="restartGame()" style="width:100%; margin-top: 10px;">Jogar de Novo</button>
+            <button class="btn btn-yes" onclick="restartGame()" style="width:100%; margin-top: 10px;">Jogar de
+                Novo</button>
         </div>
 
     </div>
@@ -266,176 +375,176 @@
          */
         const fullDatabase = [
             // --- SS / Ç / S / Z ---
-            { t: "Pássaro", ok: true, c: "Pássaro" },
-            { t: "Páçaro", ok: false, c: "Pássaro" },
-            { t: "Crescer", ok: true, c: "Crescer" },
-            { t: "Crecer", ok: false, c: "Crescer" },
-            { t: "Nascer", ok: true, c: "Nascer" },
-            { t: "Naser", ok: false, c: "Nascer" },
-            { t: "Assado", ok: true, c: "Assado" },
-            { t: "Açado", ok: false, c: "Assado" },
-            { t: "Casa", ok: true, c: "Casa" },
-            { t: "Caza", ok: false, c: "Casa" },
-            { t: "Beleza", ok: true, c: "Beleza" },
-            { t: "Belesa", ok: false, c: "Beleza" },
-            { t: "Cabeça", ok: true, c: "Cabeça" },
-            { t: "Cabessa", ok: false, c: "Cabeça" },
-            { t: "Piscina", ok: true, c: "Piscina" },
-            { t: "Picina", ok: false, c: "Piscina" },
-            { t: "Excelente", ok: true, c: "Excelente" },
-            { t: "Ecelente", ok: false, c: "Excelente" },
-            { t: "Descida", ok: true, c: "Descida" },
-            { t: "Decida", ok: false, c: "Descida" },
-            { t: "Carrossel", ok: true, c: "Carrossel" },
-            { t: "Carrocel", ok: false, c: "Carrossel" },
-            { t: "Osso", ok: true, c: "Osso" },
-            { t: "Oço", ok: false, c: "Osso" },
-            { t: "Açúcar", ok: true, c: "Açúcar" },
-            { t: "Assúcar", ok: false, c: "Açúcar" },
-            { t: "Coração", ok: true, c: "Coração" },
-            { t: "Corassão", ok: false, c: "Coração" },
-            { t: "Sossego", ok: true, c: "Sossego" },
-            { t: "Socego", ok: false, c: "Sossego" },
-            
+            { t: "Pássaro", ok: true, c: "Pássaro", f: "O {w} cantava alegremente no galho da árvore." },
+            { t: "Páçaro", ok: false, c: "Pássaro", f: "O {w} cantava alegremente no galho da árvore." },
+            { t: "Crescer", ok: true, c: "Crescer", f: "As plantas precisam de água para {w}." },
+            { t: "Crecer", ok: false, c: "Crescer", f: "As plantas precisam de água para {w}." },
+            { t: "Nascer", ok: true, c: "Nascer", f: "O sol vai {w} bem cedo amanhã." },
+            { t: "Naser", ok: false, c: "Nascer", f: "O sol vai {w} bem cedo amanhã." },
+            { t: "Assado", ok: true, c: "Assado", f: "O frango {w} ficou delicioso." },
+            { t: "Açado", ok: false, c: "Assado", f: "O frango {w} ficou delicioso." },
+            { t: "Casa", ok: true, c: "Casa", f: "Minha {w} fica perto da escola." },
+            { t: "Caza", ok: false, c: "Casa", f: "Minha {w} fica perto da escola." },
+            { t: "Beleza", ok: true, c: "Beleza", f: "A {w} da natureza nos encanta." },
+            { t: "Belesa", ok: false, c: "Beleza", f: "A {w} da natureza nos encanta." },
+            { t: "Cabeça", ok: true, c: "Cabeça", f: "Use a {w} para pensar antes de agir." },
+            { t: "Cabessa", ok: false, c: "Cabeça", f: "Use a {w} para pensar antes de agir." },
+            { t: "Piscina", ok: true, c: "Piscina", f: "As crianças adoram brincar na {w}." },
+            { t: "Picina", ok: false, c: "Piscina", f: "As crianças adoram brincar na {w}." },
+            { t: "Excelente", ok: true, c: "Excelente", f: "Sua nota na prova foi {w}!" },
+            { t: "Ecelente", ok: false, c: "Excelente", f: "Sua nota na prova foi {w}!" },
+            { t: "Descida", ok: true, c: "Descida", f: "Cuidado com a {w} escorregadia." },
+            { t: "Decida", ok: false, c: "Descida", f: "Cuidado com a {w} escorregadia." },
+            { t: "Carrossel", ok: true, c: "Carrossel", f: "As crianças se divertiram no {w} do parque." },
+            { t: "Carrocel", ok: false, c: "Carrossel", f: "As crianças se divertiram no {w} do parque." },
+            { t: "Osso", ok: true, c: "Osso", f: "O cachorro enterrou o {w} no quintal." },
+            { t: "Oço", ok: false, c: "Osso", f: "O cachorro enterrou o {w} no quintal." },
+            { t: "Açúcar", ok: true, c: "Açúcar", f: "Coloque menos {w} no suco." },
+            { t: "Assúcar", ok: false, c: "Açúcar", f: "Coloque menos {w} no suco." },
+            { t: "Coração", ok: true, c: "Coração", f: "O {w} bate mais rápido quando corremos." },
+            { t: "Corassão", ok: false, c: "Coração", f: "O {w} bate mais rápido quando corremos." },
+            { t: "Sossego", ok: true, c: "Sossego", f: "Preciso de um pouco de {w} para estudar." },
+            { t: "Socego", ok: false, c: "Sossego", f: "Preciso de um pouco de {w} para estudar." },
+
             // --- X / CH ---
-            { t: "Xícara", ok: true, c: "Xícara" },
-            { t: "Chícara", ok: false, c: "Xícara" },
-            { t: "Chave", ok: true, c: "Chave" },
-            { t: "Xave", ok: false, c: "Chave" },
-            { t: "Enxergar", ok: true, c: "Enxergar" },
-            { t: "Enchergar", ok: false, c: "Enxergar" },
-            { t: "Enchente", ok: true, c: "Enchente" },
-            { t: "Enxente", ok: false, c: "Enchente" },
-            { t: "Lagartixa", ok: true, c: "Lagartixa" },
-            { t: "Lagarticha", ok: false, c: "Lagartixa" },
-            { t: "Chuveiro", ok: true, c: "Chuveiro" },
-            { t: "Xuveiro", ok: false, c: "Chuveiro" },
-            { t: "Lixo", ok: true, c: "Lixo" },
-            { t: "Licho", ok: false, c: "Lixo" },
-            { t: "Caixa", ok: true, c: "Caixa" },
-            { t: "Caicha", ok: false, c: "Caixa" },
-            { t: "Bexiga", ok: true, c: "Bexiga" },
-            { t: "Bechiga", ok: false, c: "Bexiga" },
-            { t: "Mochila", ok: true, c: "Mochila" },
-            { t: "Moxila", ok: false, c: "Mochila" },
-            { t: "Abacaxi", ok: true, c: "Abacaxi" },
-            { t: "Abacachi", ok: false, c: "Abacaxi" },
+            { t: "Xícara", ok: true, c: "Xícara", f: "Mamãe tomou café em uma {w} bonita." },
+            { t: "Chícara", ok: false, c: "Xícara", f: "Mamãe tomou café em uma {w} bonita." },
+            { t: "Chave", ok: true, c: "Chave", f: "Perdi a {w} de casa no caminho." },
+            { t: "Xave", ok: false, c: "Chave", f: "Perdi a {w} de casa no caminho." },
+            { t: "Enxergar", ok: true, c: "Enxergar", f: "Sem os óculos, não consigo {w} direito." },
+            { t: "Enchergar", ok: false, c: "Enxergar", f: "Sem os óculos, não consigo {w} direito." },
+            { t: "Enchente", ok: true, c: "Enchente", f: "A {w} alagou várias ruas da cidade." },
+            { t: "Enxente", ok: false, c: "Enchente", f: "A {w} alagou várias ruas da cidade." },
+            { t: "Lagartixa", ok: true, c: "Lagartixa", f: "A {w} subiu pela parede rapidinho." },
+            { t: "Lagarticha", ok: false, c: "Lagartixa", f: "A {w} subiu pela parede rapidinho." },
+            { t: "Chuveiro", ok: true, c: "Chuveiro", f: "O {w} do banheiro está pingando." },
+            { t: "Xuveiro", ok: false, c: "Chuveiro", f: "O {w} do banheiro está pingando." },
+            { t: "Lixo", ok: true, c: "Lixo", f: "Jogue o papel no {w}, por favor." },
+            { t: "Licho", ok: false, c: "Lixo", f: "Jogue o papel no {w}, por favor." },
+            { t: "Caixa", ok: true, c: "Caixa", f: "Guarde os brinquedos na {w}." },
+            { t: "Caicha", ok: false, c: "Caixa", f: "Guarde os brinquedos na {w}." },
+            { t: "Bexiga", ok: true, c: "Bexiga", f: "A {w} estourou durante a festa." },
+            { t: "Bechiga", ok: false, c: "Bexiga", f: "A {w} estourou durante a festa." },
+            { t: "Mochila", ok: true, c: "Mochila", f: "Coloquei o caderno dentro da {w}." },
+            { t: "Moxila", ok: false, c: "Mochila", f: "Coloquei o caderno dentro da {w}." },
+            { t: "Abacaxi", ok: true, c: "Abacaxi", f: "O suco de {w} estava bem gelado." },
+            { t: "Abacachi", ok: false, c: "Abacaxi", f: "O suco de {w} estava bem gelado." },
 
             // --- G / J ---
-            { t: "Girafa", ok: true, c: "Girafa" },
-            { t: "Jirafa", ok: false, c: "Girafa" },
-            { t: "Jeito", ok: true, c: "Jeito" },
-            { t: "Geito", ok: false, c: "Jeito" },
-            { t: "Jiló", ok: true, c: "Jiló" },
-            { t: "Giló", ok: false, c: "Jiló" },
-            { t: "Gelo", ok: true, c: "Gelo" },
-            { t: "Jelo", ok: false, c: "Gelo" },
-            { t: "Relógio", ok: true, c: "Relógio" },
-            { t: "Relójio", ok: false, c: "Relógio" },
-            { t: "Tigela", ok: true, c: "Tigela" },
-            { t: "Tijela", ok: false, c: "Tigela" },
-            { t: "Sujeira", ok: true, c: "Sujeira" },
-            { t: "Sugeira", ok: false, c: "Sujeira" },
-            { t: "Laranja", ok: true, c: "Laranja" },
-            { t: "Laranga", ok: false, c: "Laranja" },
-            { t: "Gente", ok: true, c: "Gente" },
-            { t: "Jente", ok: false, c: "Gente" },
-            { t: "Majestade", ok: true, c: "Majestade" },
-            { t: "Magestade", ok: false, c: "Majestade" },
-            { t: "Canjica", ok: true, c: "Canjica" },
-            { t: "Cangica", ok: false, c: "Canjica" },
+            { t: "Girafa", ok: true, c: "Girafa", f: "A {w} é o animal mais alto do mundo." },
+            { t: "Jirafa", ok: false, c: "Girafa", f: "A {w} é o animal mais alto do mundo." },
+            { t: "Jeito", ok: true, c: "Jeito", f: "Cada pessoa tem seu próprio {w} de fazer as coisas." },
+            { t: "Geito", ok: false, c: "Jeito", f: "Cada pessoa tem seu próprio {w} de fazer as coisas." },
+            { t: "Jiló", ok: true, c: "Jiló", f: "Muita gente acha que {w} é amargo." },
+            { t: "Giló", ok: false, c: "Jiló", f: "Muita gente acha que {w} é amargo." },
+            { t: "Gelo", ok: true, c: "Gelo", f: "Coloque {w} no copo para refrescar." },
+            { t: "Jelo", ok: false, c: "Gelo", f: "Coloque {w} no copo para refrescar." },
+            { t: "Relógio", ok: true, c: "Relógio", f: "Olhe no {w} para ver que horas são." },
+            { t: "Relójio", ok: false, c: "Relógio", f: "Olhe no {w} para ver que horas são." },
+            { t: "Tigela", ok: true, c: "Tigela", f: "Comi cereal em uma {w} grande." },
+            { t: "Tijela", ok: false, c: "Tigela", f: "Comi cereal em uma {w} grande." },
+            { t: "Sujeira", ok: true, c: "Sujeira", f: "Limpe essa {w} do chão agora." },
+            { t: "Sugeira", ok: false, c: "Sujeira", f: "Limpe essa {w} do chão agora." },
+            { t: "Laranja", ok: true, c: "Laranja", f: "Tomei um suco de {w} no café da manhã." },
+            { t: "Laranga", ok: false, c: "Laranja", f: "Tomei um suco de {w} no café da manhã." },
+            { t: "Gente", ok: true, c: "Gente", f: "Tinha muita {w} na praça hoje." },
+            { t: "Jente", ok: false, c: "Gente", f: "Tinha muita {w} na praça hoje." },
+            { t: "Majestade", ok: true, c: "Majestade", f: "O rei foi chamado de Sua {w}." },
+            { t: "Magestade", ok: false, c: "Majestade", f: "O rei foi chamado de Sua {w}." },
+            { t: "Canjica", ok: true, c: "Canjica", f: "A {w} da vovó é a melhor da festa junina." },
+            { t: "Cangica", ok: false, c: "Canjica", f: "A {w} da vovó é a melhor da festa junina." },
 
             // --- L / U / LH ---
-            { t: "Azul", ok: true, c: "Azul" },
-            { t: "Azu", ok: false, c: "Azul" },
-            { t: "Pastel", ok: true, c: "Pastel" },
-            { t: "Pasteu", ok: false, c: "Pastel" },
-            { t: "Céu", ok: true, c: "Céu" },
-            { t: "Cel", ok: false, c: "Céu" },
-            { t: "Anel", ok: true, c: "Anel" },
-            { t: "Aneu", ok: false, c: "Anel" },
-            { t: "Família", ok: true, c: "Família" },
-            { t: "Famílha", ok: false, c: "Família" },
-            { t: "Brasília", ok: true, c: "Brasília" },
-            { t: "Brasílha", ok: false, c: "Brasília" },
-            { t: "Sandália", ok: true, c: "Sandália" },
-            { t: "Sandálha", ok: false, c: "Sandália" },
-            { t: "Folha", ok: true, c: "Folha" },
-            { t: "Folia", ok: false, c: "Folha" },
-            { t: "Mingau", ok: true, c: "Mingau" },
-            { t: "Mingal", ok: false, c: "Mingau" },
-            { t: "Filme", ok: true, c: "Filme" },
-            { t: "Fiume", ok: false, c: "Filme" },
+            { t: "Azul", ok: true, c: "Azul", f: "O céu estava bem {w} naquele dia." },
+            { t: "Azu", ok: false, c: "Azul", f: "O céu estava bem {w} naquele dia." },
+            { t: "Pastel", ok: true, c: "Pastel", f: "Comi um {w} de carne na feira." },
+            { t: "Pasteu", ok: false, c: "Pastel", f: "Comi um {w} de carne na feira." },
+            { t: "Céu", ok: true, c: "Céu", f: "As estrelas brilham no {w} à noite." },
+            { t: "Cel", ok: false, c: "Céu", f: "As estrelas brilham no {w} à noite." },
+            { t: "Anel", ok: true, c: "Anel", f: "Ela ganhou um {w} de presente." },
+            { t: "Aneu", ok: false, c: "Anel", f: "Ela ganhou um {w} de presente." },
+            { t: "Família", ok: true, c: "Família", f: "Minha {w} se reuniu no domingo." },
+            { t: "Famílha", ok: false, c: "Família", f: "Minha {w} se reuniu no domingo." },
+            { t: "Brasília", ok: true, c: "Brasília", f: "{w} é a capital do Brasil." },
+            { t: "Brasílha", ok: false, c: "Brasília", f: "{w} é a capital do Brasil." },
+            { t: "Sandália", ok: true, c: "Sandália", f: "Comprei uma {w} nova para o verão." },
+            { t: "Sandálha", ok: false, c: "Sandália", f: "Comprei uma {w} nova para o verão." },
+            { t: "Folha", ok: true, c: "Folha", f: "A {w} caiu da árvore com o vento." },
+            { t: "Folia", ok: false, c: "Folha", f: "A {w} caiu da árvore com o vento." },
+            { t: "Mingau", ok: true, c: "Mingau", f: "O bebê comeu {w} de aveia no almoço." },
+            { t: "Mingal", ok: false, c: "Mingau", f: "O bebê comeu {w} de aveia no almoço." },
+            { t: "Filme", ok: true, c: "Filme", f: "Vamos assistir a um {w} juntos?" },
+            { t: "Fiume", ok: false, c: "Filme", f: "Vamos assistir a um {w} juntos?" },
 
             // --- M / N ---
-            { t: "Campo", ok: true, c: "Campo" },
-            { t: "Canpo", ok: false, c: "Campo" },
-            { t: "Bomba", ok: true, c: "Bomba" },
-            { t: "Bonba", ok: false, c: "Bomba" },
-            { t: "Lâmpada", ok: true, c: "Lâmpada" },
-            { t: "Lânpada", ok: false, c: "Lâmpada" },
-            { t: "Vento", ok: true, c: "Vento" },
-            { t: "Vemto", ok: false, c: "Vento" },
-            { t: "Cinto", ok: true, c: "Cinto" },
-            { t: "Cimto", ok: false, c: "Cinto" },
-            { t: "Umbigo", ok: true, c: "Umbigo" },
-            { t: "Unbigo", ok: false, c: "Umbigo" },
-            { t: "Tambor", ok: true, c: "Tambor" },
-            { t: "Tanbor", ok: false, c: "Tambor" },
+            { t: "Campo", ok: true, c: "Campo", f: "Jogamos futebol no {w} da escola." },
+            { t: "Canpo", ok: false, c: "Campo", f: "Jogamos futebol no {w} da escola." },
+            { t: "Bomba", ok: true, c: "Bomba", f: "A {w} de água parou de funcionar." },
+            { t: "Bonba", ok: false, c: "Bomba", f: "A {w} de água parou de funcionar." },
+            { t: "Lâmpada", ok: true, c: "Lâmpada", f: "A {w} da sala queimou ontem." },
+            { t: "Lânpada", ok: false, c: "Lâmpada", f: "A {w} da sala queimou ontem." },
+            { t: "Vento", ok: true, c: "Vento", f: "O {w} forte derrubou a cerca." },
+            { t: "Vemto", ok: false, c: "Vento", f: "O {w} forte derrubou a cerca." },
+            { t: "Cinto", ok: true, c: "Cinto", f: "Sempre use o {w} de segurança no carro." },
+            { t: "Cimto", ok: false, c: "Cinto", f: "Sempre use o {w} de segurança no carro." },
+            { t: "Umbigo", ok: true, c: "Umbigo", f: "O {w} fica no meio da barriga." },
+            { t: "Unbigo", ok: false, c: "Umbigo", f: "O {w} fica no meio da barriga." },
+            { t: "Tambor", ok: true, c: "Tambor", f: "O som do {w} animou a festa." },
+            { t: "Tanbor", ok: false, c: "Tambor", f: "O som do {w} animou a festa." },
 
             // --- H Inicial ---
-            { t: "Hoje", ok: true, c: "Hoje" },
-            { t: "Oje", ok: false, c: "Hoje" },
-            { t: "Humano", ok: true, c: "Humano" },
-            { t: "Umano", ok: false, c: "Humano" },
-            { t: "Helicóptero", ok: true, c: "Helicóptero" },
-            { t: "Elicóptero", ok: false, c: "Helicóptero" },
-            { t: "Ontem", ok: true, c: "Ontem" },
-            { t: "Hontem", ok: false, c: "Ontem" },
-            { t: "Horta", ok: true, c: "Horta" },
-            { t: "Orta", ok: false, c: "Horta" },
+            { t: "Hoje", ok: true, c: "Hoje", f: "{w} é um ótimo dia para aprender." },
+            { t: "Oje", ok: false, c: "Hoje", f: "{w} é um ótimo dia para aprender." },
+            { t: "Humano", ok: true, c: "Humano", f: "O corpo {w} é muito complexo." },
+            { t: "Umano", ok: false, c: "Humano", f: "O corpo {w} é muito complexo." },
+            { t: "Helicóptero", ok: true, c: "Helicóptero", f: "O {w} sobrevoou a cidade." },
+            { t: "Elicóptero", ok: false, c: "Helicóptero", f: "O {w} sobrevoou a cidade." },
+            { t: "Ontem", ok: true, c: "Ontem", f: "{w} fui ao parque com meus amigos." },
+            { t: "Hontem", ok: false, c: "Ontem", f: "{w} fui ao parque com meus amigos." },
+            { t: "Horta", ok: true, c: "Horta", f: "Plantamos tomates na {w} da escola." },
+            { t: "Orta", ok: false, c: "Horta", f: "Plantamos tomates na {w} da escola." },
 
             // --- E / I e O / U ---
-            { t: "Cadeado", ok: true, c: "Cadeado" },
-            { t: "Cadiado", ok: false, c: "Cadeado" },
-            { t: "Corrimão", ok: true, c: "Corrimão" },
-            { t: "Currimão", ok: false, c: "Corrimão" },
-            { t: "Tabuada", ok: true, c: "Tabuada" },
-            { t: "Taboada", ok: false, c: "Tabuada" },
-            { t: "Jabuticaba", ok: true, c: "Jabuticaba" },
-            { t: "Jaboticaba", ok: false, c: "Jabuticaba" },
-            { t: "Pátio", ok: true, c: "Pátio" },
-            { t: "Páteo", ok: false, c: "Pátio" },
+            { t: "Cadeado", ok: true, c: "Cadeado", f: "Tranquei o portão com um {w}." },
+            { t: "Cadiado", ok: false, c: "Cadeado", f: "Tranquei o portão com um {w}." },
+            { t: "Corrimão", ok: true, c: "Corrimão", f: "Segure no {w} ao descer a escada." },
+            { t: "Currimão", ok: false, c: "Corrimão", f: "Segure no {w} ao descer a escada." },
+            { t: "Tabuada", ok: true, c: "Tabuada", f: "Aprendi a {w} de multiplicação na escola." },
+            { t: "Taboada", ok: false, c: "Tabuada", f: "Aprendi a {w} de multiplicação na escola." },
+            { t: "Jabuticaba", ok: true, c: "Jabuticaba", f: "A {w} do quintal está bem doce." },
+            { t: "Jaboticaba", ok: false, c: "Jabuticaba", f: "A {w} do quintal está bem doce." },
+            { t: "Pátio", ok: true, c: "Pátio", f: "As crianças brincam no {w} da escola." },
+            { t: "Páteo", ok: false, c: "Pátio", f: "As crianças brincam no {w} da escola." },
 
             // --- Erros Clássicos ---
-            { t: "Menas", ok: false, c: "Menos" },
-            { t: "Menos", ok: true, c: "Menos" },
-            { t: "Seje", ok: false, c: "Seja" },
-            { t: "Seja", ok: true, c: "Seja" },
-            { t: "Esteja", ok: true, c: "Esteja" },
-            { t: "Esteje", ok: false, c: "Esteja" },
-            { t: "Mortadela", ok: true, c: "Mortadela" },
-            { t: "Mortandela", ok: false, c: "Mortadela" },
-            { t: "Sobrancelha", ok: true, c: "Sobrancelha" },
-            { t: "Sombrancelha", ok: false, c: "Sobrancelha" },
-            { t: "Iogurte", ok: true, c: "Iogurte" },
-            { t: "Iorgute", ok: false, c: "Iogurte" },
-            { t: "Cérebro", ok: true, c: "Cérebro" },
-            { t: "Celebro", ok: false, c: "Cérebro" },
-            { t: "Problema", ok: true, c: "Problema" },
-            { t: "Pobrema", ok: false, c: "Problema" },
-            { t: "Mendigo", ok: true, c: "Mendigo" },
-            { t: "Mendingo", ok: false, c: "Mendigo" },
-            { t: "Cabeleireiro", ok: true, c: "Cabeleireiro" },
-            { t: "Cabeleileiro", ok: false, c: "Cabeleireiro" },
-            { t: "Asterisco", ok: true, c: "Asterisco" },
-            { t: "Asterístico", ok: false, c: "Asterisco" },
-            { t: "Reivindicar", ok: true, c: "Reivindicar" },
-            { t: "Renvidicar", ok: false, c: "Reivindicar" },
-            { t: "Beneficente", ok: true, c: "Beneficente" },
-            { t: "Beneficiente", ok: false, c: "Beneficente" },
-            { t: "Privilégio", ok: true, c: "Privilégio" },
-            { t: "Previlégio", ok: false, c: "Privilégio" }
+            { t: "Menas", ok: false, c: "Menos", f: "Tem que ter {w} bagunça na sala." },
+            { t: "Menos", ok: true, c: "Menos", f: "Tem que ter {w} bagunça na sala." },
+            { t: "Seje", ok: false, c: "Seja", f: "Espero que ele {w} feliz." },
+            { t: "Seja", ok: true, c: "Seja", f: "Espero que ele {w} feliz." },
+            { t: "Esteja", ok: true, c: "Esteja", f: "Espero que tudo {w} bem com você." },
+            { t: "Esteje", ok: false, c: "Esteja", f: "Espero que tudo {w} bem com você." },
+            { t: "Mortadela", ok: true, c: "Mortadela", f: "Fiz um sanduíche de {w} para o lanche." },
+            { t: "Mortandela", ok: false, c: "Mortadela", f: "Fiz um sanduíche de {w} para o lanche." },
+            { t: "Sobrancelha", ok: true, c: "Sobrancelha", f: "A {w} dela é bem grossa e bonita." },
+            { t: "Sombrancelha", ok: false, c: "Sobrancelha", f: "A {w} dela é bem grossa e bonita." },
+            { t: "Iogurte", ok: true, c: "Iogurte", f: "Tomei um {w} de morango no café da manhã." },
+            { t: "Iorgute", ok: false, c: "Iogurte", f: "Tomei um {w} de morango no café da manhã." },
+            { t: "Cérebro", ok: true, c: "Cérebro", f: "O {w} é responsável por tudo que pensamos." },
+            { t: "Celebro", ok: false, c: "Cérebro", f: "O {w} é responsável por tudo que pensamos." },
+            { t: "Problema", ok: true, c: "Problema", f: "Vamos resolver esse {w} juntos." },
+            { t: "Pobrema", ok: false, c: "Problema", f: "Vamos resolver esse {w} juntos." },
+            { t: "Mendigo", ok: true, c: "Mendigo", f: "O {w} pediu ajuda na esquina." },
+            { t: "Mendingo", ok: false, c: "Mendigo", f: "O {w} pediu ajuda na esquina." },
+            { t: "Cabeleireiro", ok: true, c: "Cabeleireiro", f: "Fui ao {w} cortar o cabelo." },
+            { t: "Cabeleileiro", ok: false, c: "Cabeleireiro", f: "Fui ao {w} cortar o cabelo." },
+            { t: "Asterisco", ok: true, c: "Asterisco", f: "Coloque um {w} ao lado da resposta." },
+            { t: "Asterístico", ok: false, c: "Asterisco", f: "Coloque um {w} ao lado da resposta." },
+            { t: "Reivindicar", ok: true, c: "Reivindicar", f: "Vamos {w} nossos direitos." },
+            { t: "Renvidicar", ok: false, c: "Reivindicar", f: "Vamos {w} nossos direitos." },
+            { t: "Beneficente", ok: true, c: "Beneficente", f: "A festa {w} arrecadou muitas doações." },
+            { t: "Beneficiente", ok: false, c: "Beneficente", f: "A festa {w} arrecadou muitas doações." },
+            { t: "Privilégio", ok: true, c: "Privilégio", f: "É um {w} estudar em uma boa escola." },
+            { t: "Previlégio", ok: false, c: "Privilégio", f: "É um {w} estudar em uma boa escola." }
         ];
 
         // Estado do Jogo
@@ -471,20 +580,22 @@
             gameList = shuffle([...fullDatabase]).slice(0, totalRounds);
             currentIndex = 0;
             score = 0;
-            
+
             // UI Reset
             els.endScreen.style.display = 'none';
             els.gameScreen.style.display = 'block';
-            
+
             loadWord();
         }
 
         function loadWord() {
             const item = gameList[currentIndex];
-            els.wordDisplay.innerText = item.t;
-            
+
+            // Monta a frase com a palavra destacada
+            const sentenceHTML = item.f.replace('{w}', `<span class="highlight-word">${item.t}</span>`);
+            els.wordDisplay.innerHTML = sentenceHTML;
+
             // Reset visual da rodada
-            els.wordDisplay.style.color = 'var(--text-color)';
             els.feedbackArea.innerHTML = '';
             els.feedbackArea.classList.remove('show');
             els.btns.style.display = 'flex';
@@ -498,7 +609,7 @@
         function handleAnswer(userSaidYes) {
             const item = gameList[currentIndex];
             const isCorrect = (userSaidYes === item.ok);
-            
+
             let html = '';
 
             if (isCorrect) {
@@ -511,7 +622,7 @@
             } else {
                 html = `<span class="feedback-wrong">Ops! Errou...</span>`;
                 html += `<div class="correction-text">`;
-                
+
                 if (item.ok) {
                     // Era Certo e usuário disse Errado
                     html += `Na verdade, <b>${item.t}</b> está correto!`;
@@ -524,7 +635,7 @@
 
             els.feedbackArea.innerHTML = html;
             els.feedbackArea.classList.add('show');
-            
+
             els.btns.style.display = 'none';
             els.btnNext.style.display = 'block';
         }
@@ -542,9 +653,9 @@
             els.gameScreen.style.display = 'none';
             els.endScreen.style.display = 'block';
             els.progressBar.style.width = '100%'; // Completa a barra visualmente
-            
+
             els.finalScore.innerText = `${score}/${totalRounds}`;
-            
+
             // Mensagens motivacionais baseadas na nota
             if (score === totalRounds) els.finalMsg.innerText = "Uau! Perfeito! Você sabe tudo! 🌟";
             else if (score >= 8) els.finalMsg.innerText = "Incrível! Mandou muito bem! 🚀";
@@ -561,4 +672,5 @@
 
     </script>
 </body>
+
 </html>
