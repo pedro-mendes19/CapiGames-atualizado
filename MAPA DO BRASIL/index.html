@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,12 +11,13 @@
         /* --- INÍCIO DAS MUDANÇAS VISUAIS (FUNDO BRASIL) --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            
+
             /* Substituímos o cinza (#f0f2f5) por um gradiente temático */
-            background: rgb(0,112,53); /* Cor sólida de fallback */
+            background: rgb(0, 112, 53);
+            /* Cor sólida de fallback */
             /* Gradiente diagonal vibrante: Verde -> Amarelo -> pontinha de Azul */
-            background: linear-gradient(135deg, rgba(0,112,53,1) 10%, rgba(242,201,0,1) 70%, rgba(0,39,118,1) 100%);
-            
+            background: linear-gradient(135deg, rgba(0, 112, 53, 1) 10%, rgba(242, 201, 0, 1) 70%, rgba(0, 39, 118, 1) 100%);
+
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -23,24 +25,26 @@
             min-height: 100vh;
             margin: 0;
             /* Adiciona um padrão sutil por cima do gradiente (opcional, mas fica bonito) */
-            background-image: 
-                linear-gradient(135deg, rgba(0,112,53,0.9) 10%, rgba(242,201,0,0.9) 70%, rgba(0,39,118,0.9) 100%),
+            background-image:
+                linear-gradient(135deg, rgba(0, 112, 53, 0.9) 10%, rgba(242, 201, 0, 0.9) 70%, rgba(0, 39, 118, 0.9) 100%),
                 url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
         /* Mudamos a cor do título para BRANCO para destacar no fundo colorido */
-        h1 { 
-            color: #ffffff; 
-            margin-bottom: 5px; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* Sombra para dar leitura */
+        h1 {
+            color: #ffffff;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            /* Sombra para dar leitura */
         }
-        
+
         /* Mudamos a cor do subtítulo para um branco gelo */
-        p { 
-            color: #f0f0f0; 
-            margin-bottom: 20px; 
+        p {
+            color: #f0f0f0;
+            margin-bottom: 20px;
             font-weight: 500;
         }
+
         /* --- FIM DAS MUDANÇAS VISUAIS --- */
 
         .container {
@@ -48,8 +52,10 @@
             gap: 20px;
             background: white;
             padding: 20px;
-            border-radius: 15px; /* Arredondei um pouco mais as bordas */
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); /* Sombra mais marcante */
+            border-radius: 15px;
+            /* Arredondei um pouco mais as bordas */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            /* Sombra mais marcante */
             align-items: flex-start;
             height: 600px;
         }
@@ -65,10 +71,23 @@
         }
 
         /* Barra de rolagem estilizada para combinar */
-        .sidebar::-webkit-scrollbar { width: 8px; }
-        .sidebar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        .sidebar::-webkit-scrollbar-thumb { background: #009c3b; border-radius: 4px; }
-        .sidebar::-webkit-scrollbar-thumb:hover { background: #007a2e; }
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #009c3b;
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #007a2e;
+        }
 
         .label {
             background-color: #2c3e50;
@@ -83,14 +102,20 @@
             transition: all 0.2s;
             border: 2px solid transparent;
         }
-        
-        .label:hover { background-color: #34495e; transform: translateY(-2px); }
 
-        .label:active { cursor: grabbing; }
-        .label.matched { 
-            background-color: #22c55e; 
-            opacity: 0.6; 
-            cursor: default; 
+        .label:hover {
+            background-color: #34495e;
+            transform: translateY(-2px);
+        }
+
+        .label:active {
+            cursor: grabbing;
+        }
+
+        .label.matched {
+            background-color: #22c55e;
+            opacity: 0.6;
+            cursor: default;
             text-decoration: line-through;
             border-color: #166534;
             transform: none !important;
@@ -101,7 +126,8 @@
             width: 600px;
             height: 600px;
             border: 2px solid #e0e0e0;
-            background-color: #eef8ff; /* Azul um pouco mais vivo pro mar */
+            background-color: #eef8ff;
+            /* Azul um pouco mais vivo pro mar */
             border-radius: 8px;
         }
 
@@ -113,7 +139,8 @@
         }
 
         path {
-            fill: #e0e0e0; /* Cinza um pouco mais claro */
+            fill: #e0e0e0;
+            /* Cinza um pouco mais claro */
             stroke: #fff;
             stroke-width: 1;
             transition: fill 0.3s, transform 0.2s;
@@ -135,9 +162,19 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-3px); }
-            75% { transform: translateX(3px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-3px);
+            }
+
+            75% {
+                transform: translateX(3px);
+            }
         }
 
         #mensagem {
@@ -145,8 +182,9 @@
             font-weight: bold;
             height: 20px;
             font-size: 18px;
-            color: white; /* Mensagem final em branco também */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            color: white;
+            /* Mensagem final em branco também */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .loading {
@@ -157,27 +195,196 @@
             font-size: 1.2rem;
             color: #666;
         }
+
+        /* --- ESTILOS NOVOS (NÍVEIS, MODAL E QUIZ) --- */
+        .level-indicator {
+            background-color: #f2c900;
+            color: #002776;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            object-fit: contain;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-next {
+            background: #009c3b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: #007a2e;
+            transform: translateY(-2px);
+        }
+
+        .btn-next:disabled {
+            background: #888;
+            cursor: not-allowed;
+        }
+
+        .quiz-container {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 600px;
+            max-width: 90%;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .quiz-btn {
+            background: #eef8ff;
+            border: 2px solid #bce0fd;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .quiz-btn:hover:not(:disabled) {
+            background: #d4efff;
+            border-color: #6ebbf5;
+        }
+
+        .quiz-btn.correct {
+            background: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534;
+        }
+
+        .quiz-btn.wrong {
+            background: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b;
+        }
+
+        .quiz-feedback {
+            font-weight: bold;
+            text-align: center;
+            min-height: 24px;
+            color: #2c3e50;
+        }
     </style>
 </head>
+
 <body>
 
+    <div class="level-indicator" id="level-indicator">Nível 1: Estados</div>
     <h1>Monte o Mapa do Brasil</h1>
-    <p>Arraste o nome do estado para a área correta no mapa.</p>
+    <p id="game-subtitle">Arraste o nome do estado para a área correta no mapa.</p>
 
     <div class="container">
         <div class="sidebar" id="sidebar-items">
-            </div>
+        </div>
 
         <div class="map-area" id="map-container">
             <div class="loading" id="loading-msg">Carregando mapa oficial...</div>
-            </div>
+        </div>
     </div>
     <div id="mensagem"></div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="level-modal">
+        <div class="modal-content">
+            <h2 id="modal-title">🎉 Parabéns! 🎉</h2>
+            <img src="img/mapa-turistico-do-brasil.png" alt="Mapa Turístico do Brasil" class="modal-image"
+                id="modal-image">
+            <p id="modal-desc">Você completou o mapa dos estados! Que tal conhecer algumas atrações turísticas, fauna e
+                flora do nosso país?</p>
+            <button class="btn-next" id="btn-next-level">Próximo Nível →</button>
+        </div>
+    </div>
+
+    <!-- Quiz UI (replaces map area in level 3) -->
+    <div class="quiz-container" id="quiz-container">
+        <div class="level-indicator" style="align-self: flex-start; margin-bottom: 0;">Nível 3: Quiz</div>
+        <div class="quiz-question" id="quiz-question">Pergunta do Quiz aqui?</div>
+        <div class="quiz-options" id="quiz-options">
+            <!-- Buttons injected via JS -->
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button class="btn-next" id="btn-quiz-next" style="display: none; width: 100%;">Próxima Pergunta →</button>
+    </div>
 
     <script>
         const width = 600;
         const height = 600;
-        
+
         const mapContainer = document.getElementById("map-container");
         const mensagem = document.getElementById('mensagem');
         const sidebar = document.getElementById('sidebar-items');
@@ -195,12 +402,116 @@
         const pathGenerator = d3.geoPath().projection(projection);
 
         let stateCentroids = [];
+        let currentLevel = 1;
+
+        const capitalsData = {
+            "AC": "Rio Branco", "AL": "Maceió", "AP": "Macapá", "AM": "Manaus",
+            "BA": "Salvador", "CE": "Fortaleza", "DF": "Brasília", "ES": "Vitória",
+            "GO": "Goiânia", "MA": "São Luís", "MT": "Cuiabá", "MS": "Campo Grande",
+            "MG": "Belo Horizonte", "PA": "Belém", "PB": "João Pessoa", "PR": "Curitiba",
+            "PE": "Recife", "PI": "Teresina", "RJ": "Rio de Janeiro", "RN": "Natal",
+            "RS": "Porto Alegre", "RO": "Porto Velho", "RR": "Boa Vista", "SC": "Florianópolis",
+            "SP": "São Paulo", "SE": "Aracaju", "TO": "Palmas"
+        };
+
+        const quizData = [
+            {
+                question: "Qual é o maior estado do Brasil em extensão territorial?",
+                options: ["Minas Gerais", "Mato Grosso", "Pará", "Amazonas"],
+                correct: 3,
+                explanation: "Amazonas é o maior estado do Brasil, coberto em grande parte pela Floresta Amazônica."
+            },
+            {
+                question: "Qual estado brasileiro abriga a maior parte do Pantanal?",
+                options: ["Mato Grosso do Sul", "Goiás", "Rondônia", "Tocantins"],
+                correct: 0,
+                explanation: "O Mato Grosso do Sul (junto com MT) abriga a maior parte do Pantanal no Brasil."
+            },
+            {
+                question: "O Rio São Francisco, conhecido como 'Velho Chico', nasce em qual estado?",
+                options: ["Bahia", "Alagoas", "Minas Gerais", "Pernambuco"],
+                correct: 2,
+                explanation: "Ele nasce na Serra da Canastra, em Minas Gerais, e atravessa o Nordeste."
+            },
+            {
+                question: "Qual é o menor estado do Brasil em território?",
+                options: ["Sergipe", "Alagoas", "Rio de Janeiro", "Espírito Santo"],
+                correct: 0,
+                explanation: "Sergipe é o menor estado brasileiro em extensão territorial."
+            },
+            {
+                question: "A Caatinga é um bioma quase exclusivo de qual região brasileira?",
+                options: ["Norte", "Nordeste", "Centro-Oeste", "Sul"],
+                correct: 1,
+                explanation: "A Caatinga é um bioma exclusivamente brasileiro, concentrado no Nordeste."
+            },
+            {
+                question: "Qual estado é conhecido mundialmente por abrigar as Cataratas do Iguaçu?",
+                options: ["Rio Grande do Sul", "Santa Catarina", "Paraná", "Mato Grosso do Sul"],
+                correct: 2,
+                explanation: "As Cataratas do Iguaçu ficam localizadas no estado do Paraná, na fronteira com a Argentina."
+            },
+            {
+                question: "Onde se localiza o arquipélago de Fernando de Noronha?",
+                options: ["Ceará", "Pernambuco", "Rio Grande do Norte", "Bahia"],
+                correct: 1,
+                explanation: "Apesar de estar no Oceano Atlântico, o arquipélago pertence ao estado de Pernambuco."
+            },
+            {
+                question: "Qual estado possui o maior litoral do Brasil?",
+                options: ["Bahia", "Maranhão", "Ceará", "Rio de Janeiro"],
+                correct: 0,
+                explanation: "A Bahia tem o maior litoral do país, com cerca de 932 quilômetros de praias."
+            },
+            {
+                question: "O 'Elevador Lacerda', um famoso marco histórico, fica em qual capital?",
+                options: ["Recife", "Salvador", "Fortaleza", "São Luís"],
+                correct: 1,
+                explanation: "O Elevador Lacerda fica em Salvador, ligando a Cidade Alta à Cidade Baixa."
+            },
+            {
+                question: "Qual estado é atravessado pela Linha do Equador e pelo Trópico de Capricórnio?",
+                options: ["Nenhum", "São Paulo", "Amazonas", "Amapá"],
+                correct: 0,
+                explanation: "Pegadinha! Nenhum estado é cortado por ambas. O Equador corta o norte (ex: Amapá) e o Trópico o sul (ex: SP e PR)."
+            },
+            {
+                question: "Qual é a capital mais alta do Brasil, a mais de 900 metros de altitude?",
+                options: ["Curitiba", "Belo Horizonte", "São Paulo", "Brasília"],
+                correct: 0,
+                explanation: "Curitiba (PR) tem a maior altitude média entre as capitais brasileiras, a cerca de 934 metros."
+            },
+            {
+                question: "O bioma Pampa está presente em apenas um estado brasileiro. Qual é?",
+                options: ["Paraná", "Mato Grosso do Sul", "Rio Grande do Sul", "Santa Catarina"],
+                correct: 2,
+                explanation: "O Pampa se restringe ao Rio Grande do Sul e se estende por Uruguai e Argentina."
+            },
+            {
+                question: "Qual desses estados NÃO faz fronteira com outro país?",
+                options: ["Mato Grosso", "Roraima", "Amapá", "Goiás"],
+                correct: 3,
+                explanation: "Goiás fica na região Centro-Oeste e é cercado apenas por outros estados brasileiros."
+            },
+            {
+                question: "A cidade de Ouro Preto, famosa pela arquitetura barroca e ciclo do ouro, fica em:",
+                options: ["Rio de Janeiro", "Espírito Santo", "Minas Gerais", "Bahia"],
+                correct: 2,
+                explanation: "Ouro Preto foi o principal polo da exploração de ouro em Minas Gerais no século XVIII."
+            },
+            {
+                question: "O Pico da Neblina, ponto mais alto do Brasil, fica em qual estado?",
+                options: ["Roraima", "Amapá", "Pará", "Amazonas"],
+                correct: 3,
+                explanation: "O Pico da Neblina fica na serra do Imeri, no estado do Amazonas."
+            }
+        ];
 
         const geoJsonUrl = "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
 
         d3.json(geoJsonUrl).then(data => {
             document.getElementById('loading-msg').style.display = 'none';
-            
+
             data.features.sort((a, b) => a.properties.name.localeCompare(b.properties.name));
 
             // 1. DESENHAR MAPA E CALCULAR CENTROIDES
@@ -211,7 +522,7 @@
                 .attr("d", pathGenerator)
                 .attr("id", d => `state-${d.properties.sigla}`)
                 .attr("class", "state-path")
-                .each(function(d) {
+                .each(function (d) {
                     const centroid = pathGenerator.centroid(d);
                     stateCentroids.push({
                         sigla: d.properties.sigla,
@@ -230,13 +541,13 @@
                 div.draggable = true;
                 div.id = `drag-${sigla}`;
                 div.textContent = feature.properties.name;
-                
+
                 div.addEventListener('dragstart', (e) => {
                     e.dataTransfer.setData('text/plain', e.target.id);
                     div.style.opacity = '0.5';
                 });
                 div.addEventListener('dragend', () => {
-                    if(!div.classList.contains('matched')) div.style.opacity = '1';
+                    if (!div.classList.contains('matched')) div.style.opacity = '1';
                 });
                 sidebar.appendChild(div);
             });
@@ -255,7 +566,7 @@
                 const siglaArrastada = idArrastado.split('-')[1];
 
                 const rect = svg.node().getBoundingClientRect();
-                
+
                 const scaleX = width / rect.width;
                 const scaleY = height / rect.height;
                 const mouseX = (e.clientX - rect.left) * scaleX;
@@ -264,7 +575,7 @@
                 const closest = findClosestState(mouseX, mouseY);
 
                 // Distância do imã (60px)
-                if (closest && closest.distance < 60) { 
+                if (closest && closest.distance < 60) {
                     const statePath = closest.state.element;
                     const siglaAlvo = closest.state.sigla;
 
@@ -273,11 +584,12 @@
                             statePath.classList.add('correct');
                             itemArrastado.classList.add('matched');
                             itemArrastado.draggable = false;
-                            
+
                             mensagem.textContent = `Correto! ${closest.state.name}.`;
                             mensagem.style.color = "#22c55e"; // Verde claro para contrastar com o fundo
-                            
+
                             d3.select(statePath).raise();
+                            checkLevelCompletion(); // Verifica se passou de nível
                         }
                     } else {
                         statePath.classList.add('wrong');
@@ -299,7 +611,7 @@
             stateCentroids.forEach(state => {
                 const dx = x - state.x;
                 const dy = y - state.y;
-                const distance = Math.sqrt(dx*dx + dy*dy);
+                const distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -309,6 +621,177 @@
 
             return { state: closestState, distance: minDistance };
         }
+
+        // --- LÓGICA DE PROGRESSÃO DE NÍVEIS ---
+        function checkLevelCompletion() {
+            const totalStates = 27; // 26 estados + DF
+            const correctStates = document.querySelectorAll('.correct').length;
+
+            if (correctStates === totalStates) {
+                setTimeout(() => {
+                    const modal = document.getElementById('level-modal');
+                    const title = document.getElementById('modal-title');
+                    const desc = document.getElementById('modal-desc');
+                    const btn = document.getElementById('btn-next-level');
+
+                    if (currentLevel === 1) {
+                        title.textContent = "🎉 Parabéns! 🎉";
+                        desc.textContent = "Você completou o mapa dos estados! Que tal conhecer algumas atrações turísticas, fauna e flora do nosso país?";
+                        modal.classList.add('active');
+
+                        btn.onclick = () => {
+                            modal.classList.remove('active');
+                            startCapitalsLevel();
+                        };
+                    } else if (currentLevel === 2) {
+                        title.textContent = "🏆 Incrível! 🏆";
+                        desc.textContent = "Você acertou todas as capitais! Agora vamos testar seus conhecimentos em um Quiz de Curiosidades.";
+                        modal.classList.add('active');
+
+                        btn.onclick = () => {
+                            modal.classList.remove('active');
+                            startQuizLevel();
+                        };
+                    }
+                }, 500);
+            }
+        }
+
+        function createDraggableItems(items, type) {
+            sidebar.innerHTML = '';
+
+            // Randomize order
+            items.sort(() => Math.random() - 0.5);
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'label';
+                div.draggable = true;
+                div.id = `drag-${item.sigla}-${type}`;
+                div.textContent = item.label;
+                div.dataset.sigla = item.sigla;
+
+                div.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', e.target.id);
+                    div.style.opacity = '0.5';
+                });
+                div.addEventListener('dragend', () => {
+                    if (!div.classList.contains('matched')) div.style.opacity = '1';
+                });
+                sidebar.appendChild(div);
+            });
+        }
+
+        function startCapitalsLevel() {
+            currentLevel = 2;
+            document.getElementById('level-indicator').textContent = "Nível 2: Capitais";
+            document.getElementById('game-subtitle').textContent = "Arraste o nome da CAPITAL para o estado correto no mapa.";
+            mensagem.textContent = "";
+
+            // Reset map
+            document.querySelectorAll('.state-path').forEach(path => {
+                path.classList.remove('correct', 'wrong');
+            });
+
+            const items = [];
+            for (const [sigla, capital] of Object.entries(capitalsData)) {
+                items.push({ sigla: sigla, label: capital });
+            }
+
+            createDraggableItems(items, 'capital');
+        }
+
+        // --- LÓGICA DO QUIZ ---
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let activeQuizQuestions = [];
+
+        function startQuizLevel() {
+            currentLevel = 3;
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('game-subtitle').style.display = 'none';
+            mensagem.style.display = 'none';
+            document.getElementById('level-indicator').style.display = 'none';
+
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.style.display = 'flex';
+
+            // Shuffle questions and pick 5
+            const shuffled = [...quizData].sort(() => Math.random() - 0.5);
+            activeQuizQuestions = shuffled.slice(0, 5);
+
+            currentQuizIndex = 0;
+            quizScore = 0;
+
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            if (currentQuizIndex >= activeQuizQuestions.length) {
+                endQuiz();
+                return;
+            }
+
+            const q = activeQuizQuestions[currentQuizIndex];
+            document.getElementById('quiz-question').textContent = `(${currentQuizIndex + 1}/${activeQuizQuestions.length}) ${q.question}`;
+            document.getElementById('quiz-feedback').textContent = "";
+            document.getElementById('btn-quiz-next').style.display = 'none';
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-btn';
+                btn.textContent = opt;
+                btn.onclick = () => handleQuizAnswer(index, btn, q);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(selectedIndex, btnElement, questionData) {
+            const btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(b => b.disabled = true);
+
+            const nextBtn = document.getElementById('btn-quiz-next');
+            const feedback = document.getElementById('quiz-feedback');
+
+            if (selectedIndex === questionData.correct) {
+                btnElement.classList.add('correct');
+                feedback.innerHTML = "✅ Correto!<br><span style='font-size:0.9em;font-weight:normal;'>" + questionData.explanation + "</span>";
+                feedback.style.color = "#166534";
+                quizScore++;
+            } else {
+                btnElement.classList.add('wrong');
+                btns[questionData.correct].classList.add('correct');
+                feedback.innerHTML = "❌ Incorreto.<br><span style='font-size:0.9em;font-weight:normal;'>" + questionData.explanation + "</span>";
+                feedback.style.color = "#991b1b";
+            }
+
+            nextBtn.style.display = 'block';
+            nextBtn.onclick = () => {
+                currentQuizIndex++;
+                loadQuizQuestion();
+            };
+        }
+
+        function endQuiz() {
+            document.getElementById('quiz-question').textContent = `Fim do Jogo! 🎉`;
+            document.getElementById('quiz-options').innerHTML = '';
+            document.getElementById('btn-quiz-next').style.display = 'none';
+
+            const feedback = document.getElementById('quiz-feedback');
+            const percentage = Math.round((quizScore / activeQuizQuestions.length) * 100);
+
+            feedback.innerHTML = `Você acertou ${quizScore} de ${activeQuizQuestions.length} questões (${percentage}%).<br><br>`;
+
+            const restartBtn = document.createElement('button');
+            restartBtn.className = 'btn-next';
+            restartBtn.textContent = '🔄 Jogar Novamente';
+            restartBtn.onclick = () => location.reload();
+            feedback.appendChild(restartBtn);
+        }
     </script>
 </body>
+
 </html>
