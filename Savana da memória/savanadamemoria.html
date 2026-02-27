@@ -20,6 +20,7 @@
 
     body {
       font-family: 'Fredoka', sans-serif;
+      text-transform: uppercase; /* ADICIONE ESTA LINHA */
       background-image: url('img/fundojogo.png');
       background-size: 100% 100%;
       background-position: center;
@@ -54,6 +55,7 @@
     }
 
     .nivel-badge {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       background: #3a7c2d;
       color: #f0ede8;
       padding: 6px 35px;
@@ -177,17 +179,64 @@
       z-index: 200; display: flex; justify-content: center; align-items: center;
     }
 
+    /* Estilo principal do botão JOGAR - NOVO TEMA LARANJA */
     .btn-start {
-      background: #FFB347; color: white; cursor: pointer; font-family: 'Fredoka', sans-serif;
-      font-weight: bold; border-radius: 50px; white-space: nowrap; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-      animation: pulse 1.5s infinite; font-size: clamp(14px, 4vmin, 35px);
-      padding: clamp(10px, 2.5vmin, 25px) clamp(25px, 7vmin, 70px);
-      border: clamp(2px, 0.5vmin, 5px) solid white; box-shadow: 0 clamp(4px, 1vmin, 8px) 0 rgba(0, 0, 0, 0.2);
-      margin-top: 60vh; margin-left: 2vh;
+      /* NOVA COR DE FUNDO: Degradê laranja (combina com o pôr do sol) */
+      background: linear-gradient(180deg, #f5b358 0%, #FF8C00 100%); 
+      
+      /* NOVA COR DO TEXTO: Branco para bom contraste */
+      color: white; 
+      
+      cursor: pointer; 
+      font-family: 'Fredoka', sans-serif;
+      font-weight: bold; 
+      border-radius: 50px; 
+      white-space: nowrap; 
+      text-transform: uppercase;
+      
+      /* NOVA SOMBRA NO TEXTO: Laranja escuro para destaque */
+      text-shadow: 2px 2px 0px #cc6a00; 
+      
+      font-size: clamp(20px, 5vmin, 45px); /* Letra um pouco maior */
+      padding: clamp(15px, 3vmin, 25px) clamp(35px, 8vmin, 80px);
+      
+      /* Bordinha branca (manteve) */
+      border: 4px solid #fff; 
+      
+      /* NOVA SOMBRA 3D: Laranja avermelhado escuro sólido + sombra esfumaçada preta */
+      box-shadow: 0 8px 0 #a04000, 0 15px 20px rgba(0, 0, 0, 0.4);
+      
+      margin-top: 60vh; 
+      margin-left: 2vh;
+      
+      /* Transição suave para o hover e clique */
+      transition: all 0.2s ease-in-out;
+      animation: pulseStart 2s infinite; 
     }
 
-    .btn-start:hover { transform: scale(1.05); background: #c0ab87; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    /* Efeito ao passar o mouse (Hover): Ele "acende" */
+    .btn-start:hover { 
+      /* NOVA COR DE HOVER: Um laranja mais claro e brilhante */
+      background: linear-gradient(180deg, #ffd394 0%, #ffa02e 100%);
+      transform: translateY(-3px) scale(1.05);
+      
+      /* Sombra 3D de hover manteve o laranja avermelhado escuro sólido */
+      box-shadow: 0 11px 0 #a04000, 0 20px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Efeito ao clicar (Active): O botão "afunda" - SEM ALTERAÇÃO NA LÓGICA, APENAS NA COR DA SOMBRA */
+    .btn-start:active {
+      transform: translateY(4px) scale(1);
+      box-shadow: 0 4px 0 #a04000, 0 5px 10px rgba(0, 0, 0, 0.4);
+      animation: none; /* Para de pulsar enquanto está apertado */
+    }
+
+    /* Animação de pulso (não quebra o 3D) */
+    @keyframes pulseStart { 
+      0% { transform: scale(1); } 
+      50% { transform: scale(1.03); } 
+      100% { transform: scale(1); } 
+    }
 
     /* ========================================= */
     /* MODAL DE VITÓRIA                          */
@@ -198,27 +247,58 @@
     }
 
     .modal-content {
-      background: #e2b06d; background-image: url('img/madeira2.png'); background-size: cover;
-      padding: 45px 55px; border-radius: 18px; text-align: center; animation: modalUp 0.3s ease-out;
-      box-shadow: 0 10px 0 #8a5a2f, 0 0 25px rgba(0, 0, 0, 0.4); border: 5px solid #8a5a2f; position: relative;
+      padding: 45px 55px;
+      border-radius: 22px; /* Arredondamento igual ao painel */
+      text-align: center;
+      animation: modalUp 0.3s ease-out;
+      position: relative;
+      
+      /* Cores e bordas importadas da classe .painel */
+      background: linear-gradient(180deg, #e4b06a 0%, #e7b873 40%, #dca45a 100%);
+      border: 4px solid #a06a2e;
+      box-shadow: 0 6px 0 #7a4d1f, 0 0 25px rgba(0, 0, 0, 0.4);
     }
 
-    .modal-content:before, .modal-content:after {
-      content: ""; position: absolute; top: -40px; width: 40px; height: 40px;
-      background: url('img/corda.png') no-repeat center; background-size: contain;
+    /* Listras sutis de fundo (igual ao painel) */
+    .modal-content::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(90deg,
+          rgba(0, 0, 0, 0.08) 0px, rgba(0, 0, 0, 0.08) 2px,
+          transparent 2px, transparent 14px);
+      opacity: 0.25;
+      pointer-events: none;
+      border-radius: 18px;
     }
-    .modal-content:before { left: 50px; } .modal-content:after { right: 50px; }
+
+    /* Sombreamento interno (igual ao painel) */
+    .modal-content::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 12px 20px rgba(0, 0, 0, 0.15),
+        inset 0 -12px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 18px;
+      pointer-events: none;
+    }
+
     @keyframes modalUp { from { transform: scale(0.5); } to { transform: scale(1); } }
 
-    /* Classes novas para controlar o tamanho do texto do modal */
-    .icone-vitoria { margin: 0; font-size: 4rem; }
-    .titulo-vitoria { color: #6c5ce7; margin: 10px 0; font-size: 2rem; }
-    .texto-vitoria { font-size: 1.2rem; color: #555; margin-bottom: 20px;}
+    /* Ajuste de cor e contorno das fontes para combinar com o fundo */
+    .icone-vitoria { margin: 0; font-size: 4rem; position: relative; z-index: 5; }
+    .titulo-vitoria { font-family: 'Comic Sans MS', cursive, sans-serif; color: #fff; text-shadow: 2px 2px 0px #a06a2e; margin: 10px 0; font-size: 2rem; position: relative; z-index: 5; }
+    .texto-vitoria { font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 1.2rem; color: #fff; text-shadow: 1px 1px 0px #a06a2e; margin-bottom: 20px; font-weight: bold; position: relative; z-index: 5;}
 
     .btn-proximo {
-      background: #6c5ce7; color: white; border: none; padding: 15px 40px;
-      font-size: 1.5rem; border-radius: 50px; cursor: pointer; margin-top: 15px;
-      font-weight: bold; box-shadow: 0 5px 0 #4834d4; transition: transform 0.1s;
+      background: #985e29; color: white; border: none; padding: 15px 40px;
+      font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 1.5rem; border-radius: 50px; 
+      cursor: pointer; margin-top: 15px; font-weight: bold; box-shadow: 0 5px 0 #693600; 
+      transition: transform 0.1s; position: relative; z-index: 5;
+    }
+
+    .btn-proximo:hover {
+      background: #b57336;
     }
 
     /* ========================================= */
@@ -229,12 +309,13 @@
       .painel { padding: 8px 20px; font-size: 1.1rem; }
       .nivel-badge { padding: 4px 25px; font-size: 1.1em; margin-bottom: 8px; }
       .btn-icon { font-size: 1.1rem; }
-      
-      /* Reduzindo o modal um pouco */
+      .btn-start { border-width: 3px; box-shadow: 0 6px 0 #a04000, 0 12px 18px rgba(0, 0, 0, 0.4);}
+      .btn-start:hover { box-shadow: 0 8px 0 #a04000, 0 16px 22px rgba(0, 0, 0, 0.5);}
+      .btn-start:active { transform: translateY(2px) scale(1); box-shadow: 0 3px 0 #a04000, 0 4px 8px rgba(0, 0, 0, 0.4);}
       .modal-content { padding: 30px 40px; border-width: 4px; }
       .icone-vitoria { font-size: 3rem; }
       .titulo-vitoria { font-size: 1.6rem; }
-      .btn-proximo { padding: 12px 30px; font-size: 1.3rem; }
+      .btn-proximo { padding: 8px 20px; font-size: 1rem; margin-top: 5px; box-shadow: 0 4px 0 #693600;}
     }
 
     /* ========================================= */
@@ -243,22 +324,25 @@
     @media screen and (max-height: 500px) {
       body { padding: 10vh 6vw 3vh 6vw; }
       header { margin: 5px 0; width: 98%; }
-      .painel { padding: 5px 15px; font-size: 0.95rem; border-width: 3px; }
+      .painel { padding: 5px 15px; font-size: 0.95rem; border-width: 3px; box-shadow: 0 4px 0 #7a4d1f; }
       .btn-icon { font-size: 1rem; }
       .nivel-badge { padding: 3px 20px; font-size: 1em; margin-bottom: 5px; border-width: 2px;}
       .info-item { gap: 5px; }
-      .game-container { gap: 6px; } /* Cartas um pouco mais juntas no mobile */
+      .game-container { gap: 6px; }
       .game-area { margin-top: -13px;}
+      .btn-start { border-width: 2px; box-shadow: 0 5px 0 #a04000, 0 10px 15px rgba(0, 0, 0, 0.4);}
+      .btn-start:hover { box-shadow: 0 7px 0 #a04000, 0 15px 20px rgba(0, 0, 0, 0.5);}
+      .btn-start:active { transform: translateY(2px) scale(1); box-shadow: 0 3px 0 #a04000, 0 4px 8px rgba(0, 0, 0, 0.4);}
 
       /* Reduzindo o modal BASTANTE para caber no celular deitado */
       .modal-content { padding: 15px 25px; border-width: 3px; border-radius: 12px; box-shadow: 0 6px 0 #8a5a2f; }
       .icone-vitoria { font-size: 2.2rem; }
       .titulo-vitoria { font-size: 1.3rem; margin: 5px 0; }
       .texto-vitoria { font-size: 0.95rem; margin-bottom: 10px; }
-      .btn-proximo { padding: 8px 20px; font-size: 1rem; margin-top: 5px; box-shadow: 0 4px 0 #4834d4;}
+      .btn-proximo { padding: 8px 20px; font-size: 1rem; margin-top: 5px; box-shadow: 0 4px 0 #693600;}
       
-      /* Encolhe as cordinhas decorativas do modal */
-      .modal-content:before, .modal-content:after { transform: scale(0.6); top: -28px; }
+     /* Ajusta as listras e sombras para o tamanho mobile */
+      .modal-content::before, .modal-content::after { transform: none; inset: 0; border-radius: 8px; }
     }
 
     /* Trava Celular Vertical */
@@ -305,15 +389,19 @@
 
   <div id="modal-nivel">
     <div class="modal-content">
-      <h1 class="icone-vitoria">🎉</h1>
+      <h1 class="icone-vitoria">🐾</h1>
       <h2 class="titulo-vitoria">Nível Concluído!</h2>
       <p id="msg-vitoria" class="texto-vitoria">Excelente memória!</p>
-      <button class="btn-proximo" onclick="proximoNivel()">Próximo Nível <i class="fas fa-arrow-right"></i></button>
+      <button class="btn-proximo" onclick="proximoNivel()">PRÓXIMO NÍVEL <i class="fas fa-arrow-right"></i></button>
     </div>
   </div>
 
   <audio id="musica-fundo" loop>
     <source src="musicajogo.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="som-vitoria">
+    <source src="somvitoria-5segundos.mp3" type="audio/mpeg">
   </audio>
 
   <script>
@@ -369,7 +457,7 @@
       const paddingHorizontal = parseFloat(estiloBody.paddingLeft) + parseFloat(estiloBody.paddingRight);
 
       // AUMENTADO: Margem de respiro extra para as cartas não grudarem nas bordas (era 15, agora é 40)
-      const margemRespiro = 40; 
+      const margemRespiro = 60; 
       const alturaDisponivel = window.innerHeight - headerHeight - paddingVertical - margemRespiro;
       const larguraDisponivel = window.innerWidth - paddingHorizontal - margemRespiro;
 
@@ -382,7 +470,7 @@
 
       // NOVA TRAVA: Se for celular (tela pequena ou muito achatada), o tamanho máximo da carta é menor
       const isMobile = window.innerWidth <= 900 || window.innerHeight <= 500;
-      const limiteMaximo = isMobile ? 60 : 150; // Celular = máx 85px | PC = máx 150px
+      const limiteMaximo = isMobile ? 60 : 130; // Celular = máx 85px | PC = máx 150px
       
       tamanhoFinal = Math.min(tamanhoFinal, limiteMaximo);
 
@@ -515,9 +603,6 @@
         c1.classList.add('correto');
         c2.classList.add('correto');
 
-        let nome = animal1.replace("img/", "").replace(".png", "");
-        if (nome === "hipopotamo") nome = "hipopótamo";
-        falar(nome);
         resetarJogada();
 
         if (paresEncontrados === niveis[nivelAtual].pares) {
@@ -557,12 +642,18 @@
 
       if (nivelAtual < niveis.length - 1) {
         msg.innerText = `Nível ${nivelAtual + 1} completo em ${elTempo.innerText}!`;
-        btn.innerHTML = `Ir para Nível ${nivelAtual + 2} <i class="fas fa-arrow-right"></i>`;
+        btn.innerHTML = `PRÓXIMO NÍVEL <i class="fas fa-arrow-right"></i>`;
         btn.onclick = proximoNivel;
       } else {
         const minutos = String(Math.floor(tempoTotal / 60)).padStart(2, '0');
         const segundosFinais = String(tempoTotal % 60).padStart(2, '0');
         const tempoFinalFormatado = `${minutos}:${segundosFinais}`;
+
+        // === NOVO CÓDIGO DO SOM DE VITÓRIA ===
+        const audioVitoria = document.getElementById('som-vitoria');
+        if (musicaTocando) audioFundo.pause(); // Pausa a música de fundo para não misturar
+        audioVitoria.play(); // Toca o seu som de 5 segundos
+        // =====================================
 
         msg.innerHTML = `
           PARABÉNS! Você zerou todos os níveis! 🎉<br><br>
@@ -574,6 +665,11 @@
           nivelAtual = 0; tempoTotal = 0;
           overlay.style.display = 'flex';
           setTimeout(() => overlay.style.opacity = '1', 10);
+          
+          // Para o som de vitória caso o jogador clique rápido em "Jogar Novamente"
+          audioVitoria.pause();
+          audioVitoria.currentTime = 0; 
+
           musicaTocando = false; audioFundo.pause(); audioFundo.currentTime = 0;
           iniciarNivelLogica();
         };
@@ -584,20 +680,6 @@
     function proximoNivel() { nivelAtual++; iniciarNivelLogica(); }
     function reiniciarNivel() { if (confirm("Reiniciar este nível?")) iniciarNivelLogica(); }
 
-    let vozCarregada = false;
-    window.speechSynthesis.onvoiceschanged = () => { vozCarregada = true; };
-
-    function falar(texto) {
-      if (!vozCarregada) return;
-      if (musicaTocando) audioFundo.volume = 0.08;
-
-      window.speechSynthesis.cancel();
-      const voz = new SpeechSynthesisUtterance(texto);
-      voz.lang = "pt-BR"; voz.rate = 0.9;
-
-      voz.onend = () => { if (musicaTocando) audioFundo.volume = 0.25; };
-      speechSynthesis.speak(voz);
-    }
   </script>
 </body>
 </html>
