@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -349,9 +348,10 @@
     @media screen and (max-width: 900px) and (orientation: portrait) {
       body::before {
         content: "🔄 Gire o celular para jogar na horizontal";
-        position: fixed; inset: 0; background: #000; color: #fff;
-        display: flex; justify-content: center; align-items: center;
-        text-align: center; font-size: 1.5rem; padding: 20px; z-index: 9999;
+        font-family: 'Comic Sans MS', cursive, sans-serif; position: fixed; 
+        inset: 0; background: #e28c1b; color: #fff; display: flex; 
+        justify-content: center; align-items: center; font-weight: bold;
+        text-align: center; font-size: 2rem; padding: 20px; z-index: 9999;
       }
       body>* { display: none; }
     }
@@ -401,7 +401,7 @@
   </audio>
 
   <audio id="som-vitoria">
-    <source src="somvitoria-5segundos.mp3" type="audio/mpeg">
+    <source src="somvitoria-5segundos (mp3cut.net).mp3" type="audio/mpeg">
   </audio>
 
   <script>
@@ -657,10 +657,10 @@
 
         msg.innerHTML = `
           PARABÉNS! Você zerou todos os níveis! 🎉<br><br>
-          <strong>Seu tempo total foi:</strong><br>
-          <span style="font-size: 2rem; color:#6c5ce7;">${tempoFinalFormatado}</span>
+          <strong style="color: #000; text-shadow: none;">Seu tempo total foi:</strong><br>
+          <span style="font-size: 2.2rem; color: #5c2c00; text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4); display: inline-block; margin-bottom: 10px;">${tempoFinalFormatado}</span>
         `;
-        btn.innerHTML = `Jogar Novamente <i class="fas fa-redo"></i>`;
+        btn.innerHTML = `JOGAR NOVAMENTE <i class="fas fa-redo"></i>`;
         btn.onclick = () => {
           nivelAtual = 0; tempoTotal = 0;
           overlay.style.display = 'flex';

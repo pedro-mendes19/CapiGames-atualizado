@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>SPACE ORTOGRAFIA</title>
@@ -27,35 +28,56 @@
         }
 
         #sidebar {
-            width: 280px;
+            width: 250px;
             background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
             border: 2px solid #00d2ff;
             box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
             border-radius: 12px;
-            padding: 25px;
-            height: 560px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            position: relative;
+            justify-content: center;
         }
 
-        #sidebar h2 { 
-            color: #00d2ff; 
-            text-align: center; 
-            margin-bottom: 30px; 
+        #sidebar h2 {
+            color: #00d2ff;
+            text-align: center;
+            margin: 0 0 15px 0;
+            font-size: 16px;
             text-transform: uppercase;
             letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
             border-bottom: 1px solid rgba(0, 210, 255, 0.3);
-            padding-bottom: 15px;
+            padding-bottom: 10px;
         }
 
-        .instruction-item { margin-bottom: 20px; font-size: 14px; color: #b0c4de; }
-        .key { 
-            background: #0f3460; 
-            padding: 4px 10px; 
-            border-radius: 4px; 
-            border: 1px solid #00d2ff; 
+        .instruction-item {
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #b0c4de;
+        }
+
+        .mission-text {
+            font-size: 11px;
+            color: #8899aa;
+            margin: 10px 0;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .tip-box {
+            font-size: 10px;
+            color: #ffcc00;
+            margin-top: auto;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .key {
+            background: #0f3460;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid #00d2ff;
             color: #00d2ff;
             font-size: 12px;
             box-shadow: 0 0 5px rgba(0, 210, 255, 0.2);
@@ -68,8 +90,14 @@
             margin-top: 15px;
             border-radius: 0 8px 8px 0;
         }
-        .rule-wrong { border-color: #ff0055; }
-        .rule-right { border-color: #00ff88; }
+
+        .rule-wrong {
+            border-color: #ff0055;
+        }
+
+        .rule-right {
+            border-color: #00ff88;
+        }
 
         #game-container {
             position: relative;
@@ -80,12 +108,19 @@
             overflow: hidden;
         }
 
-        canvas { display: block; }
+        canvas {
+            display: block;
+        }
 
         /* HUD */
         #ui-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 10;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
         }
 
         .hud-panel {
@@ -101,8 +136,16 @@
             gap: 10px;
         }
 
-        #score-box { left: 20px; border-bottom: 3px solid #00ff88; }
-        #lives-box { right: 20px; border-bottom: 3px solid #ff0055; width: 140px; }
+        #score-box {
+            left: 20px;
+            border-bottom: 3px solid #00ff88;
+        }
+
+        #lives-box {
+            right: 20px;
+            border-bottom: 3px solid #ff0055;
+            width: 140px;
+        }
 
         /* Barra de Vida Visual */
         #health-bar-container {
@@ -112,6 +155,7 @@
             border-radius: 5px;
             overflow: hidden;
         }
+
         #health-bar-fill {
             height: 100%;
             background: #00ff88;
@@ -120,56 +164,88 @@
         }
 
         #level-display {
-            position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
-            font-size: 12px; letter-spacing: 4px; color: rgba(255, 255, 255, 0.5);
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
         }
 
         #game-over {
-            display: none; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); text-align: center;
-            background: rgba(16, 16, 20, 0.95); padding: 50px;
-            border: 2px solid #ff0055; border-radius: 20px; z-index: 50;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(16, 16, 20, 0.95);
+            padding: 50px;
+            border: 2px solid #ff0055;
+            border-radius: 20px;
+            z-index: 50;
             box-shadow: 0 0 80px rgba(255, 0, 85, 0.4);
             min-width: 350px;
         }
 
         button {
-            background: linear-gradient(45deg, #00d2ff, #007bff); 
-            color: #fff; border: none; padding: 15px 40px;
-            font-size: 18px; cursor: pointer; font-family: 'Orbitron', sans-serif; 
-            margin-top: 25px; font-weight: bold; text-transform: uppercase; border-radius: 5px;
+            background: linear-gradient(45deg, #00d2ff, #007bff);
+            color: #fff;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 5px;
             letter-spacing: 1px;
             box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
             transition: 0.3s;
         }
-        button:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 123, 255, 0.6); }
 
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.6);
+        }
     </style>
 </head>
+
 <body>
 
     <div id="main-wrapper">
         <div id="sidebar">
             <h2>Comando Estelar</h2>
-            
+
             <div class="instruction-item">
-                <span class="key">⬅️</span> <span class="key">➡️</span> Mover Nave
+                <span class="key">⬅️ ➡️</span> / <span class="key">A D</span> Mover
             </div>
             <div class="instruction-item">
-                <span class="key">ESPAÇO</span> Disparar Laser
+                <span class="key">ESPAÇO</span> Atirar
+            </div>
+
+            <div class="mission-text">
+                🚀 Destrua palavras <strong style="color:#ff0055">erradas</strong> e proteja as <strong
+                    style="color:#00ff88">certas</strong>!
             </div>
 
             <div class="rule-card rule-wrong">
-                <strong style="color:#ff0055">ALVO: ERROS</strong><br>
-                <span style="font-size:12px; color:#aaa">Ex: "Caza"</span><br>
-                💥 DESTRUA!
+                <strong style="color:#ff0055">🎯 ALVO</strong> — Escrita errada<br>
+                <span style="font-size:11px; color:#aaa">Ex: "Caza", "Canpo"</span><br>
+                💥 Destrua! <strong style="color:#00ff88">+20 pts</strong>
             </div>
 
             <div class="rule-card rule-right">
-                <strong style="color:#00ff88">ALIADO: CERTOS</strong><br>
-                <span style="font-size:12px; color:#aaa">Ex: "Casa"</span><br>
-                🛡️ PROTEJA!
+                <strong style="color:#00ff88">🛡️ ALIADO</strong> — Escrita certa<br>
+                <span style="font-size:11px; color:#aaa">Ex: "Casa", "Campo"</span><br>
+                🕊️ Deixe passar! <strong style="color:#00ff88">+5 pts</strong>
+            </div>
+
+            <div class="tip-box">
+                ⚡ Leia com atenção antes de atirar!
             </div>
         </div>
 
@@ -187,7 +263,7 @@
                 </div>
                 <div id="level-display">Setor 01</div>
             </div>
-            
+
             <div id="game-over">
                 <h2 style="color:#ff0055; font-size:40px; margin:0;">ENERGIA ESGOTADA</h2>
                 <p style="color:#fff; margin-top:10px;">Pontuação Final</p>
@@ -199,434 +275,435 @@
         </div>
     </div>
 
-<script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreEl = document.getElementById('score');
-    const healthFillEl = document.getElementById('health-bar-fill');
-    const levelEl = document.getElementById('level-display');
-    const gameOverScreen = document.getElementById('game-over');
-    const finalScoreEl = document.getElementById('final-score');
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const healthFillEl = document.getElementById('health-bar-fill');
+        const levelEl = document.getElementById('level-display');
+        const gameOverScreen = document.getElementById('game-over');
+        const finalScoreEl = document.getElementById('final-score');
 
-    // --- CONFIGURAÇÃO ---
-    let gameActive = false;
-    let score = 0;
-    
-    // Sistema de Pontos de Vida (HP)
-    let maxHealth = 100;
-    let currentHealth = 100;
+        // --- CONFIGURAÇÃO ---
+        let gameActive = false;
+        let score = 0;
 
-    let frames = 0;
-    let difficultyLevel = 1;
-    let spawnRate = 140;
-    let globalSpeed = 1;
+        // Sistema de Pontos de Vida (HP)
+        let maxHealth = 100;
+        let currentHealth = 100;
 
-    // --- BANCO DE PALAVRAS COMPLETO (+100 Palavras) ---
-    // isCorrect: false = PALAVRA ERRADA (O ALVO)
-    const wordDatabase = [
-        // S, Z, Ç, SS
-        { text: "Casa", isCorrect: true },      { text: "Caza", isCorrect: false },
-        { text: "Mesa", isCorrect: true },      { text: "Meza", isCorrect: false },
-        { text: "Azul", isCorrect: true },      { text: "Asul", isCorrect: false },
-        { text: "Beleza", isCorrect: true },    { text: "Belesa", isCorrect: false },
-        { text: "Cabeça", isCorrect: true },    { text: "Cabesa", isCorrect: false },
-        { text: "Pássaro", isCorrect: true },   { text: "Pásaro", isCorrect: false },
-        { text: "Osso", isCorrect: true },      { text: "Oço", isCorrect: false },
-        { text: "Palhaço", isCorrect: true },   { text: "Palhasso", isCorrect: false },
-        { text: "Cebola", isCorrect: true },    { text: "Sebola", isCorrect: false },
-        { text: "Cidade", isCorrect: true },    { text: "Sidade", isCorrect: false },
-        { text: "Cinema", isCorrect: true },    { text: "Sinema", isCorrect: false },
-        { text: "Vassoura", isCorrect: true },  { text: "Vasoura", isCorrect: false },
-        { text: "Princesa", isCorrect: true },  { text: "Princeza", isCorrect: false },
-        { text: "Tesoura", isCorrect: true },   { text: "Tezoura", isCorrect: false },
+        let frames = 0;
+        let difficultyLevel = 1;
+        let spawnRate = 140;
+        let globalSpeed = 1;
 
-        // M antes de P e B
-        { text: "Campo", isCorrect: true },     { text: "Canpo", isCorrect: false },
-        { text: "Bomba", isCorrect: true },     { text: "Bonba", isCorrect: false },
-        { text: "Limpo", isCorrect: true },     { text: "Linpo", isCorrect: false },
-        { text: "Tambor", isCorrect: true },    { text: "Tanbor", isCorrect: false },
-        { text: "Sombra", isCorrect: true },    { text: "Sonbra", isCorrect: false },
-        { text: "Bambolê", isCorrect: true },   { text: "Banbolê", isCorrect: false },
-        { text: "Tempo", isCorrect: true },     { text: "Tenpo", isCorrect: false },
-        { text: "Umbigo", isCorrect: true },    { text: "Unbigo", isCorrect: false },
-        { text: "Lâmpada", isCorrect: true },   { text: "Lânpada", isCorrect: false },
+        // --- BANCO DE PALAVRAS COMPLETO (+100 Palavras) ---
+        // isCorrect: false = PALAVRA ERRADA (O ALVO)
+        const wordDatabase = [
+            // S, Z, Ç, SS
+            { text: "Casa", isCorrect: true }, { text: "Caza", isCorrect: false },
+            { text: "Mesa", isCorrect: true }, { text: "Meza", isCorrect: false },
+            { text: "Azul", isCorrect: true }, { text: "Asul", isCorrect: false },
+            { text: "Beleza", isCorrect: true }, { text: "Belesa", isCorrect: false },
+            { text: "Cabeça", isCorrect: true }, { text: "Cabesa", isCorrect: false },
+            { text: "Pássaro", isCorrect: true }, { text: "Pásaro", isCorrect: false },
+            { text: "Osso", isCorrect: true }, { text: "Oço", isCorrect: false },
+            { text: "Palhaço", isCorrect: true }, { text: "Palhasso", isCorrect: false },
+            { text: "Cebola", isCorrect: true }, { text: "Sebola", isCorrect: false },
+            { text: "Cidade", isCorrect: true }, { text: "Sidade", isCorrect: false },
+            { text: "Cinema", isCorrect: true }, { text: "Sinema", isCorrect: false },
+            { text: "Vassoura", isCorrect: true }, { text: "Vasoura", isCorrect: false },
+            { text: "Princesa", isCorrect: true }, { text: "Princeza", isCorrect: false },
+            { text: "Tesoura", isCorrect: true }, { text: "Tezoura", isCorrect: false },
 
-        // X e CH
-        { text: "Chuva", isCorrect: true },     { text: "Xuva", isCorrect: false },
-        { text: "Lixo", isCorrect: true },      { text: "Licho", isCorrect: false },
-        { text: "Caixa", isCorrect: true },     { text: "Caicha", isCorrect: false },
-        { text: "Chave", isCorrect: true },     { text: "Xave", isCorrect: false },
-        { text: "Peixe", isCorrect: true },     { text: "Peiche", isCorrect: false },
-        { text: "Chocolate", isCorrect: true }, { text: "Xocolate", isCorrect: false },
-        { text: "Bexiga", isCorrect: true },    { text: "Bechiga", isCorrect: false },
-        { text: "Abacaxi", isCorrect: true },   { text: "Abacachi", isCorrect: false },
-        { text: "Lagartixa", isCorrect: true }, { text: "Lagarticha", isCorrect: false },
+            // M antes de P e B
+            { text: "Campo", isCorrect: true }, { text: "Canpo", isCorrect: false },
+            { text: "Bomba", isCorrect: true }, { text: "Bonba", isCorrect: false },
+            { text: "Limpo", isCorrect: true }, { text: "Linpo", isCorrect: false },
+            { text: "Tambor", isCorrect: true }, { text: "Tanbor", isCorrect: false },
+            { text: "Sombra", isCorrect: true }, { text: "Sonbra", isCorrect: false },
+            { text: "Bambolê", isCorrect: true }, { text: "Banbolê", isCorrect: false },
+            { text: "Tempo", isCorrect: true }, { text: "Tenpo", isCorrect: false },
+            { text: "Umbigo", isCorrect: true }, { text: "Unbigo", isCorrect: false },
+            { text: "Lâmpada", isCorrect: true }, { text: "Lânpada", isCorrect: false },
 
-        // H Inicial
-        { text: "Hoje", isCorrect: true },      { text: "Oje", isCorrect: false },
-        { text: "Homem", isCorrect: true },     { text: "Omem", isCorrect: false },
-        { text: "Hotel", isCorrect: true },     { text: "Otel", isCorrect: false },
-        { text: "Horta", isCorrect: true },     { text: "Orta", isCorrect: false },
-        { text: "Helicóptero", isCorrect: true },{ text: "Elicóptero", isCorrect: false },
-        { text: "Hipopótamo", isCorrect: true },{ text: "Ipopótamo", isCorrect: false },
+            // X e CH
+            { text: "Chuva", isCorrect: true }, { text: "Xuva", isCorrect: false },
+            { text: "Lixo", isCorrect: true }, { text: "Licho", isCorrect: false },
+            { text: "Caixa", isCorrect: true }, { text: "Caicha", isCorrect: false },
+            { text: "Chave", isCorrect: true }, { text: "Xave", isCorrect: false },
+            { text: "Peixe", isCorrect: true }, { text: "Peiche", isCorrect: false },
+            { text: "Chocolate", isCorrect: true }, { text: "Xocolate", isCorrect: false },
+            { text: "Bexiga", isCorrect: true }, { text: "Bechiga", isCorrect: false },
+            { text: "Abacaxi", isCorrect: true }, { text: "Abacachi", isCorrect: false },
+            { text: "Lagartixa", isCorrect: true }, { text: "Lagarticha", isCorrect: false },
 
-        // G e J
-        { text: "Gelo", isCorrect: true },      { text: "Jelo", isCorrect: false },
-        { text: "Jiló", isCorrect: true },      { text: "Giló", isCorrect: false },
-        { text: "Gente", isCorrect: true },     { text: "Jente", isCorrect: false },
-        { text: "Jipe", isCorrect: true },      { text: "Gipe", isCorrect: false },
-        { text: "Girafa", isCorrect: true },    { text: "Jirafa", isCorrect: false },
-        { text: "Relógio", isCorrect: true },   { text: "Relójo", isCorrect: false },
+            // H Inicial
+            { text: "Hoje", isCorrect: true }, { text: "Oje", isCorrect: false },
+            { text: "Homem", isCorrect: true }, { text: "Omem", isCorrect: false },
+            { text: "Hotel", isCorrect: true }, { text: "Otel", isCorrect: false },
+            { text: "Horta", isCorrect: true }, { text: "Orta", isCorrect: false },
+            { text: "Helicóptero", isCorrect: true }, { text: "Elicóptero", isCorrect: false },
+            { text: "Hipopótamo", isCorrect: true }, { text: "Ipopótamo", isCorrect: false },
 
-        // R e RR
-        { text: "Terra", isCorrect: true },     { text: "Tera", isCorrect: false },
-        { text: "Barriga", isCorrect: true },   { text: "Bariga", isCorrect: false },
-        { text: "Cachorro", isCorrect: true },  { text: "Cachoro", isCorrect: false },
-        { text: "Carrossel", isCorrect: true }, { text: "Carosel", isCorrect: false },
-        { text: "Garrafa", isCorrect: true },   { text: "Garafa", isCorrect: false },
-        { text: "Corrida", isCorrect: true },   { text: "Corida", isCorrect: false }
-    ];
+            // G e J
+            { text: "Gelo", isCorrect: true }, { text: "Jelo", isCorrect: false },
+            { text: "Jiló", isCorrect: true }, { text: "Giló", isCorrect: false },
+            { text: "Gente", isCorrect: true }, { text: "Jente", isCorrect: false },
+            { text: "Jipe", isCorrect: true }, { text: "Gipe", isCorrect: false },
+            { text: "Girafa", isCorrect: true }, { text: "Jirafa", isCorrect: false },
+            { text: "Relógio", isCorrect: true }, { text: "Relójo", isCorrect: false },
 
-    const stars = [];
-    for(let i=0; i<100; i++) {
-        stars.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 2,
-            speed: Math.random() * 2 + 0.5,
-            opacity: Math.random()
-        });
-    }
+            // R e RR
+            { text: "Terra", isCorrect: true }, { text: "Tera", isCorrect: false },
+            { text: "Barriga", isCorrect: true }, { text: "Bariga", isCorrect: false },
+            { text: "Cachorro", isCorrect: true }, { text: "Cachoro", isCorrect: false },
+            { text: "Carrossel", isCorrect: true }, { text: "Carosel", isCorrect: false },
+            { text: "Garrafa", isCorrect: true }, { text: "Garafa", isCorrect: false },
+            { text: "Corrida", isCorrect: true }, { text: "Corida", isCorrect: false }
+        ];
 
-    const player = { x: 270, y: 520, width: 60, height: 70, speed: 7, engineFrame: 0 };
-    let bullets = [];
-    let enemies = [];
-    let particles = []; 
-    let popups = []; 
-
-    const keys = { ArrowRight: false, ArrowLeft: false, Space: false };
-
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'ArrowRight') keys.ArrowRight = true;
-        if (e.code === 'ArrowLeft') keys.ArrowLeft = true;
-        if (e.code === 'Space') {
-             if(gameActive) { shoot(); e.preventDefault(); }
-             else if(gameOverScreen.style.display === 'block') { startGame(); }
-        }
-    });
-    document.addEventListener('keyup', (e) => {
-        if (e.code === 'ArrowRight') keys.ArrowRight = false;
-        if (e.code === 'ArrowLeft') keys.ArrowLeft = false;
-    });
-
-    function shoot() {
-        if(bullets.length > 5) return;
-        // Tiro Único Centralizado
-        bullets.push({ 
-            x: player.x + player.width / 2 - 4, // Exatamente no centro
-            y: player.y, 
-            width: 8, 
-            height: 25, 
-            speed: 16, 
-            color: '#00ffff' 
-        });
-    }
-
-    function checkLevelUp() {
-        const newLevel = Math.floor(score / 100) + 1; // A cada 100 pontos
-        if (newLevel > difficultyLevel) {
-            difficultyLevel = newLevel;
-            // Aumento de dificuldade
-            globalSpeed = Math.min(3.0, 1 + (difficultyLevel * 0.15));
-            spawnRate = Math.max(40, 140 - (difficultyLevel * 10));
-            
-            showFeedback(`NÍVEL ${difficultyLevel}`, canvas.width/2 - 60, canvas.height/2, '#00ffff', 100);
-            levelEl.innerText = `SETOR 0${difficultyLevel}`;
-        }
-    }
-
-    function spawnEnemy() {
-        if (frames % Math.floor(spawnRate) === 0) {
-            let wordObj = wordDatabase[Math.floor(Math.random() * wordDatabase.length)];
-            
-            ctx.font = "bold 24px 'Orbitron'";
-            const textWidth = ctx.measureText(wordObj.text).width;
-            
-            enemies.push({
-                x: Math.random() * (canvas.width - textWidth - 20) + 10,
-                y: -40,
-                text: wordObj.text,
-                isCorrect: wordObj.isCorrect,
-                width: textWidth,
-                height: 30,
-                speed: (Math.random() * 0.5 + 1.0) * globalSpeed 
+        const stars = [];
+        for (let i = 0; i < 100; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 2 + 0.5,
+                opacity: Math.random()
             });
         }
-    }
 
-    function takeDamage(amount) {
-        currentHealth -= amount;
-        if (currentHealth < 0) currentHealth = 0;
-        updateUI();
-        if (currentHealth <= 0) {
-            createExplosion(player.x + player.width/2, player.y + 30, '#ff0000'); // Explosão na nave
-            setTimeout(checkGameOver, 100);
-        }
-    }
+        const player = { x: 270, y: 520, width: 60, height: 70, speed: 7, engineFrame: 0 };
+        let bullets = [];
+        let enemies = [];
+        let particles = [];
+        let popups = [];
 
-    function createExplosion(x, y, color) {
-        for(let i=0; i<20; i++){
-            particles.push({
-                x: x, y: y,
-                dx: (Math.random() - 0.5) * 8,
-                dy: (Math.random() - 0.5) * 8,
-                life: Math.random() * 30 + 20,
-                color: color,
-                size: Math.random() * 4
+        const keys = { ArrowRight: false, ArrowLeft: false, Space: false };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.ArrowRight = true;
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.ArrowLeft = true;
+            if (e.code === 'Space') {
+                if (gameActive) { shoot(); e.preventDefault(); }
+                else if (gameOverScreen.style.display === 'block') { startGame(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.ArrowRight = false;
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.ArrowLeft = false;
+        });
+
+        function shoot() {
+            if (bullets.length > 5) return;
+            // Tiro Único Centralizado
+            bullets.push({
+                x: player.x + player.width / 2 - 4, // Exatamente no centro
+                y: player.y,
+                width: 8,
+                height: 25,
+                speed: 16,
+                color: '#00ffff'
             });
         }
-    }
 
-    function showFeedback(text, x, y, color, life = 60) {
-        popups.push({ text: text, x: x, y: y, life: life, color: color });
-    }
+        function checkLevelUp() {
+            const newLevel = Math.floor(score / 100) + 1; // A cada 100 pontos
+            if (newLevel > difficultyLevel) {
+                difficultyLevel = newLevel;
+                // Aumento de dificuldade
+                globalSpeed = Math.min(3.0, 1 + (difficultyLevel * 0.15));
+                spawnRate = Math.max(40, 140 - (difficultyLevel * 10));
 
-    function drawStars() {
-        ctx.fillStyle = "#ffffff";
-        stars.forEach(star => {
-            ctx.globalAlpha = star.opacity;
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.size, 0, Math.PI*2);
-            ctx.fill();
-            if(gameActive) star.y += star.speed * 0.5; 
-            if(star.y > canvas.height) {
-                star.y = 0;
-                star.x = Math.random() * canvas.width;
-            }
-        });
-        ctx.globalAlpha = 1.0;
-    }
-
-    function drawSpaceShip(x, y, w, h) {
-        ctx.save();
-        ctx.translate(x, y);
-
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = "#00d2ff";
-
-        // Motores
-        ctx.fillStyle = "#333";
-        ctx.fillRect(5, h - 20, 15, 20);
-        ctx.fillRect(w - 20, h - 20, 15, 20);
-
-        // Fogo
-        player.engineFrame++;
-        const fireH = (Math.sin(player.engineFrame * 0.5) * 5) + 15;
-        ctx.fillStyle = "#ff6600";
-        ctx.beginPath();
-        ctx.moveTo(7, h); ctx.lineTo(12, h + fireH); ctx.lineTo(18, h);
-        ctx.moveTo(w-18, h); ctx.lineTo(w-12, h + fireH); ctx.lineTo(w-7, h);
-        ctx.fill();
-
-        // Corpo
-        ctx.fillStyle = "#1a1a2e";
-        ctx.beginPath();
-        ctx.moveTo(0, h - 10); ctx.lineTo(w, h - 10); ctx.lineTo(w/2, 5);
-        ctx.fill();
-        ctx.strokeStyle = "#00d2ff"; ctx.lineWidth = 2; ctx.stroke();
-
-        // Cockpit
-        ctx.fillStyle = "#000";
-        ctx.beginPath(); ctx.ellipse(w/2, 45, 8, 14, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-        ctx.beginPath(); ctx.ellipse(w/2 - 2, 42, 2, 5, 0, 0, Math.PI * 2); ctx.fill();
-
-        // Canhão Central (Único)
-        ctx.fillStyle = "#aaa";
-        ctx.fillRect(w/2 - 4, 15, 8, 20);
-        ctx.fillStyle = "#00ffff"; // Ponta brilhante
-        ctx.fillRect(w/2 - 2, 15, 4, 5);
-
-        ctx.restore();
-    }
-
-    function update() {
-        if (!gameActive) return;
-
-        if (keys.ArrowRight && player.x + player.width < canvas.width) player.x += player.speed;
-        if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
-
-        for (let i = bullets.length - 1; i >= 0; i--) {
-            bullets[i].y -= bullets[i].speed;
-            if (bullets[i].y < 0) bullets.splice(i, 1);
-        }
-
-        const dangerLine = canvas.height - 70; 
-
-        for (let i = enemies.length - 1; i >= 0; i--) {
-            let enemy = enemies[i];
-            enemy.y += enemy.speed;
-
-            // TOCOU NO CHÃO
-            if (enemy.y > dangerLine) {
-                enemies.splice(i, 1);
-                
-                if (enemy.isCorrect === false) {
-                    // DEIXOU PASSAR ERRO
-                    takeDamage(20); // Dano moderado
-                    showFeedback("-20% ENERGIA", canvas.width/2, canvas.height/2, '#ff0055');
-                    createExplosion(enemy.x + enemy.width/2, canvas.height, '#ff0055');
-                } else {
-                    score += 5;
-                    checkLevelUp();
-                }
-                updateUI();
-                continue; 
-            }
-
-            // COLISÃO
-            for (let j = bullets.length - 1; j >= 0; j--) {
-                let b = bullets[j];
-                if (
-                    b.x < enemy.x + enemy.width + 10 &&
-                    b.x + b.width > enemy.x - 10 &&
-                    b.y < enemy.y + 30 &&
-                    b.y + b.height > enemy.y - 10
-                ) {
-                    createExplosion(enemy.x + enemy.width/2, enemy.y, enemy.isCorrect ? '#ff0055' : '#00ff88');
-                    
-                    if (enemy.isCorrect === false) {
-                        // ACERTOU O ERRO
-                        score += 20;
-                        showFeedback("+20", enemy.x, enemy.y, '#00ff88');
-                        checkLevelUp();
-                    } else {
-                        // TIRO NA CERTA (FOGO AMIGO)
-                        score = Math.max(0, score - 10);
-                        takeDamage(15); 
-                        showFeedback("NÃO! CUIDADO! -15%", canvas.width/2 - 90, canvas.height/2 + 30, '#ffff00', 60);
-                    }
-
-                    bullets.splice(j, 1);
-                    enemies.splice(i, 1);
-                    updateUI();
-                    break; 
-                }
+                showFeedback(`NÍVEL ${difficultyLevel}`, canvas.width / 2 - 60, canvas.height / 2, '#00ffff', 100);
+                levelEl.innerText = `SETOR 0${difficultyLevel}`;
             }
         }
 
-        particles.forEach((p, i) => {
-            p.x += p.dx; p.y += p.dy; p.life--; p.size *= 0.95;
-            if(p.life <= 0) particles.splice(i, 1);
-        });
+        function spawnEnemy() {
+            if (frames % Math.floor(spawnRate) === 0) {
+                let wordObj = wordDatabase[Math.floor(Math.random() * wordDatabase.length)];
 
-        popups.forEach((p, i) => {
-            p.y -= 0.8; p.life--;
-            if(p.life <= 0) popups.splice(i, 1);
-        });
+                ctx.font = "bold 24px 'Orbitron'";
+                const textWidth = ctx.measureText(wordObj.text).width;
 
-        frames++;
-        spawnEnemy();
-    }
+                enemies.push({
+                    x: Math.random() * (canvas.width - textWidth - 20) + 10,
+                    y: -40,
+                    text: wordObj.text,
+                    isCorrect: wordObj.isCorrect,
+                    width: textWidth,
+                    height: 30,
+                    speed: (Math.random() * 0.5 + 1.0) * globalSpeed
+                });
+            }
+        }
 
-    function draw() {
-        const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGradient.addColorStop(0, "#020010");
-        bgGradient.addColorStop(1, "#1a0b2e");
-        ctx.fillStyle = bgGradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        function takeDamage(amount) {
+            currentHealth -= amount;
+            if (currentHealth < 0) currentHealth = 0;
+            updateUI();
+            if (currentHealth <= 0) {
+                createExplosion(player.x + player.width / 2, player.y + 30, '#ff0000'); // Explosão na nave
+                setTimeout(checkGameOver, 100);
+            }
+        }
 
-        drawStars();
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 20; i++) {
+                particles.push({
+                    x: x, y: y,
+                    dx: (Math.random() - 0.5) * 8,
+                    dy: (Math.random() - 0.5) * 8,
+                    life: Math.random() * 30 + 20,
+                    color: color,
+                    size: Math.random() * 4
+                });
+            }
+        }
 
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#ff0055';
-        ctx.strokeStyle = 'rgba(255, 0, 85, 0.5)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, canvas.height - 70);
-        ctx.lineTo(canvas.width, canvas.height - 70);
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+        function showFeedback(text, x, y, color, life = 60) {
+            popups.push({ text: text, x: x, y: y, life: life, color: color });
+        }
 
-        drawSpaceShip(player.x, player.y, player.width, player.height);
-
-        bullets.forEach(b => {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = b.color;
-            ctx.fillStyle = b.color;
-            ctx.fillRect(b.x, b.y, b.width, b.height);
-            ctx.shadowBlur = 0;
-        });
-
-        ctx.font = "bold 24px 'Orbitron'";
-        ctx.textBaseline = "middle"; 
-        enemies.forEach(e => {
-            ctx.shadowBlur = 5;
-            ctx.shadowColor = "rgba(255,255,255,0.5)";
-            ctx.fillStyle = '#ffffff'; 
-            ctx.fillText(e.text, e.x, e.y);
-            ctx.shadowBlur = 0;
-        });
-
-        particles.forEach(p => { 
-            ctx.fillStyle = p.color;
-            ctx.globalAlpha = p.life / 50; 
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-            ctx.fill();
+        function drawStars() {
+            ctx.fillStyle = "#ffffff";
+            stars.forEach(star => {
+                ctx.globalAlpha = star.opacity;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+                if (gameActive) star.y += star.speed * 0.5;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
+                }
+            });
             ctx.globalAlpha = 1.0;
-        });
-
-        ctx.font = "bold 16px 'Orbitron'";
-        popups.forEach(p => {
-            ctx.shadowBlur = 4; ctx.shadowColor = p.color;
-            ctx.fillStyle = p.color;
-            ctx.fillText(p.text, p.x, p.y);
-            ctx.shadowBlur = 0;
-        });
-    }
-
-    function loop() {
-        update();
-        draw();
-        if(gameActive) requestAnimationFrame(loop);
-    }
-
-    function updateUI() {
-        scoreEl.innerText = score.toString().padStart(4, '0');
-        
-        let pct = (currentHealth / maxHealth) * 100;
-        healthFillEl.style.width = pct + "%";
-        
-        if (pct > 60) healthFillEl.style.background = "#00ff88"; 
-        else if (pct > 30) healthFillEl.style.background = "#ffff00"; 
-        else healthFillEl.style.background = "#ff0055"; 
-    }
-
-    function checkGameOver() {
-        if (currentHealth <= 0) {
-            gameActive = false;
-            gameOverScreen.style.display = 'block';
-            finalScoreEl.innerText = score;
         }
-    }
 
-    function startGame() {
-        score = 0; 
-        currentHealth = maxHealth;
-        frames = 0; 
-        difficultyLevel = 1; spawnRate = 140; globalSpeed = 1;
-        bullets = []; enemies = []; particles = []; popups = [];
-        
-        gameActive = true;
-        updateUI();
-        levelEl.innerText = "SETOR 01";
-        gameOverScreen.style.display = 'none';
-        loop();
-    }
+        function drawSpaceShip(x, y, w, h) {
+            ctx.save();
+            ctx.translate(x, y);
 
-    startGame();
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#00d2ff";
 
-</script>
+            // Motores
+            ctx.fillStyle = "#333";
+            ctx.fillRect(5, h - 20, 15, 20);
+            ctx.fillRect(w - 20, h - 20, 15, 20);
+
+            // Fogo
+            player.engineFrame++;
+            const fireH = (Math.sin(player.engineFrame * 0.5) * 5) + 15;
+            ctx.fillStyle = "#ff6600";
+            ctx.beginPath();
+            ctx.moveTo(7, h); ctx.lineTo(12, h + fireH); ctx.lineTo(18, h);
+            ctx.moveTo(w - 18, h); ctx.lineTo(w - 12, h + fireH); ctx.lineTo(w - 7, h);
+            ctx.fill();
+
+            // Corpo
+            ctx.fillStyle = "#1a1a2e";
+            ctx.beginPath();
+            ctx.moveTo(0, h - 10); ctx.lineTo(w, h - 10); ctx.lineTo(w / 2, 5);
+            ctx.fill();
+            ctx.strokeStyle = "#00d2ff"; ctx.lineWidth = 2; ctx.stroke();
+
+            // Cockpit
+            ctx.fillStyle = "#000";
+            ctx.beginPath(); ctx.ellipse(w / 2, 45, 8, 14, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+            ctx.beginPath(); ctx.ellipse(w / 2 - 2, 42, 2, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+            // Canhão Central (Único)
+            ctx.fillStyle = "#aaa";
+            ctx.fillRect(w / 2 - 4, 15, 8, 20);
+            ctx.fillStyle = "#00ffff"; // Ponta brilhante
+            ctx.fillRect(w / 2 - 2, 15, 4, 5);
+
+            ctx.restore();
+        }
+
+        function update() {
+            if (!gameActive) return;
+
+            if (keys.ArrowRight && player.x + player.width < canvas.width) player.x += player.speed;
+            if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
+
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                bullets[i].y -= bullets[i].speed;
+                if (bullets[i].y < 0) bullets.splice(i, 1);
+            }
+
+            const dangerLine = canvas.height - 70;
+
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                let enemy = enemies[i];
+                enemy.y += enemy.speed;
+
+                // TOCOU NO CHÃO
+                if (enemy.y > dangerLine) {
+                    enemies.splice(i, 1);
+
+                    if (enemy.isCorrect === false) {
+                        // DEIXOU PASSAR ERRO
+                        takeDamage(20); // Dano moderado
+                        showFeedback("-20% ENERGIA", canvas.width / 2, canvas.height / 2, '#ff0055');
+                        createExplosion(enemy.x + enemy.width / 2, canvas.height, '#ff0055');
+                    } else {
+                        score += 5;
+                        checkLevelUp();
+                    }
+                    updateUI();
+                    continue;
+                }
+
+                // COLISÃO
+                for (let j = bullets.length - 1; j >= 0; j--) {
+                    let b = bullets[j];
+                    if (
+                        b.x < enemy.x + enemy.width + 10 &&
+                        b.x + b.width > enemy.x - 10 &&
+                        b.y < enemy.y + 30 &&
+                        b.y + b.height > enemy.y - 10
+                    ) {
+                        createExplosion(enemy.x + enemy.width / 2, enemy.y, enemy.isCorrect ? '#ff0055' : '#00ff88');
+
+                        if (enemy.isCorrect === false) {
+                            // ACERTOU O ERRO
+                            score += 20;
+                            showFeedback("+20", enemy.x, enemy.y, '#00ff88');
+                            checkLevelUp();
+                        } else {
+                            // TIRO NA CERTA (FOGO AMIGO)
+                            score = Math.max(0, score - 10);
+                            takeDamage(15);
+                            showFeedback("NÃO! CUIDADO! -15%", canvas.width / 2 - 90, canvas.height / 2 + 30, '#ffff00', 60);
+                        }
+
+                        bullets.splice(j, 1);
+                        enemies.splice(i, 1);
+                        updateUI();
+                        break;
+                    }
+                }
+            }
+
+            particles.forEach((p, i) => {
+                p.x += p.dx; p.y += p.dy; p.life--; p.size *= 0.95;
+                if (p.life <= 0) particles.splice(i, 1);
+            });
+
+            popups.forEach((p, i) => {
+                p.y -= 0.8; p.life--;
+                if (p.life <= 0) popups.splice(i, 1);
+            });
+
+            frames++;
+            spawnEnemy();
+        }
+
+        function draw() {
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            bgGradient.addColorStop(0, "#020010");
+            bgGradient.addColorStop(1, "#1a0b2e");
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawStars();
+
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ff0055';
+            ctx.strokeStyle = 'rgba(255, 0, 85, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 70);
+            ctx.lineTo(canvas.width, canvas.height - 70);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            drawSpaceShip(player.x, player.y, player.width, player.height);
+
+            bullets.forEach(b => {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = b.color;
+                ctx.fillStyle = b.color;
+                ctx.fillRect(b.x, b.y, b.width, b.height);
+                ctx.shadowBlur = 0;
+            });
+
+            ctx.font = "bold 24px 'Orbitron'";
+            ctx.textBaseline = "middle";
+            enemies.forEach(e => {
+                ctx.shadowBlur = 5;
+                ctx.shadowColor = "rgba(255,255,255,0.5)";
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(e.text, e.x, e.y);
+                ctx.shadowBlur = 0;
+            });
+
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life / 50;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            });
+
+            ctx.font = "bold 16px 'Orbitron'";
+            popups.forEach(p => {
+                ctx.shadowBlur = 4; ctx.shadowColor = p.color;
+                ctx.fillStyle = p.color;
+                ctx.fillText(p.text, p.x, p.y);
+                ctx.shadowBlur = 0;
+            });
+        }
+
+        function loop() {
+            update();
+            draw();
+            if (gameActive) requestAnimationFrame(loop);
+        }
+
+        function updateUI() {
+            scoreEl.innerText = score.toString().padStart(4, '0');
+
+            let pct = (currentHealth / maxHealth) * 100;
+            healthFillEl.style.width = pct + "%";
+
+            if (pct > 60) healthFillEl.style.background = "#00ff88";
+            else if (pct > 30) healthFillEl.style.background = "#ffff00";
+            else healthFillEl.style.background = "#ff0055";
+        }
+
+        function checkGameOver() {
+            if (currentHealth <= 0) {
+                gameActive = false;
+                gameOverScreen.style.display = 'block';
+                finalScoreEl.innerText = score;
+            }
+        }
+
+        function startGame() {
+            score = 0;
+            currentHealth = maxHealth;
+            frames = 0;
+            difficultyLevel = 1; spawnRate = 140; globalSpeed = 1;
+            bullets = []; enemies = []; particles = []; popups = [];
+
+            gameActive = true;
+            updateUI();
+            levelEl.innerText = "SETOR 01";
+            gameOverScreen.style.display = 'none';
+            loop();
+        }
+
+        startGame();
+
+    </script>
 </body>
+
 </html>
