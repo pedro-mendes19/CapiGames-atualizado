@@ -149,6 +149,7 @@
         justify-content: center;
         min-height: 300px; 
         margin-top: 30px;
+        padding: 6vh 4vw;        
     }
 
     .dica-container {
@@ -353,32 +354,48 @@
     .bg-verde { background: #66bb6a; border: 2px solid #2e7d32; }
     .bg-vermelho { background: #ef5350; border: 2px solid #c62828; }
 
-    .btn-reiniciar {
-      padding: 20px 50px;
-      font-size: 22px;
+    .botoes-finais {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3vh;
+    }
+
+    .btn-reiniciar, .btn-sair {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2vh 4vw;
+      font-size: clamp(18px, 2.5vh, 22px);
+      border-radius: 35px;
       border: none;
-      border-radius: 60px;
-      background: linear-gradient(to bottom, #42a5f5, #1e88e5);
-      color: #fff;
-      font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 8px 0 #1565c0, 0 15px 20px rgba(0,0,0,0.2);
-      transition: all 0.1s;
+      font-weight: 800;
+      color: white;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      text-decoration: none;
     }
 
-    .btn-reiniciar:hover {
-      background: linear-gradient(to bottom, #64b5f6, #2196f3);
-      transform: translateY(-2px);
+    .btn-reiniciar { 
+      background: linear-gradient(180deg, #4FC3F7, #039BE5); 
+      box-shadow: 0 0.8vh 0 #025a86; 
+    }
+    .btn-reiniciar:active { 
+      transform: translateY(0.4vh); 
+      box-shadow: 0 0.4vh 0 #025a86; 
     }
 
-    .btn-reiniciar:active {
-      transform: translateY(8px);
-      box-shadow: 0 0 0 #1565c0;
+    .btn-sair { 
+      background: linear-gradient(180deg, #FFB74D, #F57C00); 
+      box-shadow: 0 0.8vh 0 #b85d01;
+    }
+    .btn-sair:active { 
+      transform: translateY(0.4vh); 
+      box-shadow:0 0.4vh 0 #b85d01; 
     }
 
-    /* RESPONSIVIDADE PARA CELULARES */
     @media (max-width: 768px) {
       .btn-jogar-capa { padding: 15px 50px; }
       .cartao-jogo { width: 95%; padding: 20px 15px; }
@@ -391,7 +408,6 @@
       .resumo-item { font-size: 18px; padding: 12px 20px; }
     }
 
-    /* RESPONSIVIDADE PARA CHROMEBOOKS E NOTEBOOKS */
     @media (max-height: 768px) {
       .logo-game { max-height: 70px; margin-top: 10px; margin-bottom: 10px; }
       .cartao-jogo { padding: 15px; margin-bottom: 20px; }
@@ -450,7 +466,10 @@
             </div>
         </div>
         
-        <button class="btn-reiniciar" onclick="reiniciarJogo()">🔄 JOGAR NOVAMENTE</button>
+        <div class="botoes-finais">
+          <button class="btn-reiniciar" onclick="voltarParaIntro()">🔄 JOGAR NOVAMENTE</button>
+          <button class="btn-sair" onclick="sairDoJogo()">🚪 SAIR DO JOGO</button>
+        </div>
     </div>
 
   </div>
@@ -621,16 +640,16 @@
       }
     }
 
-    function reiniciarJogo() {
-        atual = 0;
-        acertos = 0;
-        erros = 0;
+    function voltarParaIntro() {
+      window.speechSynthesis.cancel();
+      document.getElementById('game-screen').style.display = 'none';
+      document.getElementById('intro-screen').style.display = 'flex';
+    }
 
-        document.getElementById("painel-quiz").style.display = "none";
-        document.getElementById("painel-final").style.display = "none";
-        document.getElementById("game-screen").style.display = "none";
-        
-        document.getElementById("intro-screen").style.display = "flex";
+    function sairDoJogo() {
+      window.speechSynthesis.cancel();
+      window.close();
+      window.location.href = "about:blank";
     }
   </script>
 </body>

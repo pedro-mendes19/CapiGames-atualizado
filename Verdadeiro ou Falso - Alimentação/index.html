@@ -27,9 +27,9 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    padding: 10px;
+    padding: 3vh 10px 0 10px;
   }
 
   h1{
@@ -92,9 +92,9 @@
   }
 
   .intro-card p{
-      font-size: clamp(16px, 3vh, 24px); 
-      line-height: 1.5;
-      color: #555;
+    font-size: clamp(16px, 3vh, 24px); 
+    line-height: 1.5;
+    color: #535252;
   }
 
   .btn-jogar{
@@ -218,10 +218,11 @@
     background:linear-gradient(180deg,#ffffff,#f9fdfb);
     border-radius:25px;
     box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.1);
-    min-height: 3vh;
+    min-height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 3px solid transparent;
   }
 
   #score{
@@ -318,6 +319,16 @@
     h1 { margin-bottom: 1vh; font-size: 20px; }
   }
 
+  @media screen and (max-width: 900px) and (orientation: portrait) {
+    body::before {
+      content: "🔄 Gire o celular para jogar na horizontal";
+      position: fixed; inset: 0; background: #000; color: #fff;
+      display: flex; justify-content: center; align-items: center;
+      text-align: center; font-size: 1.5rem; padding: 20px; z-index: 9999;
+    }
+    body>* { display: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -327,16 +338,15 @@
   <div id="intro">
     <div class="intro-card">
       <h2>VERDADEIRO OU FALSO: ALIMENTAÇÃO</h2>
-      <p>
-        Vamos brincar e aprender sobre alimentação saudável!<br>
-        Responda 15 perguntas de verdadeiro ou falso e descubra quais alimentos fazem bem ao corpo.
+      <p><strong>Vamos brincar e aprender sobre alimentação saudável!<br>
+        Responda 10 perguntas de verdadeiro ou falso e descubra quais alimentos fazem bem ao corpo.</strong>
       </p>
       <button class="btn-jogar" onclick="iniciarJogo()">▶ Jogar</button>
     </div>
   </div>
   <div id="container" style="display:none;">
     <div class="bloco-imagem">
-      <div id="progresso" class="label-progresso">Pergunta 1 de 15</div>
+      <div id="progresso" class="label-progresso">Pergunta 1 de 10</div>
       <img id="imagemPergunta" src="" alt="Imagem da pergunta">
     </div>
     <div id="pergunta">Clique para começar</div>
@@ -368,7 +378,7 @@
 </div>
 
 <script>
-const perguntas = [
+const bancoPerguntas = [
   { q:'Frutas e legumes são ricos em vitaminas.', a:true, exp:'Eles fornecem vitaminas, minerais e fibras essenciais.', img:'img/frutaslegumes.png' },
   { q:'Refrigerante ajuda a hidratar o corpo.', a:false, exp:'Ele contém muito açúcar e não substitui a água.', img:'img/refrigerante.png' },
   { q:'Comer muito açúcar pode prejudicar a saúde.', a:true, exp:'O excesso pode causar cáries e outros problemas.', img:'img/acucar.png' },
@@ -383,9 +393,25 @@ const perguntas = [
   { q:'Alimentos industrializados sempre são naturais.', a:false, exp:'Eles passam por muitos processos industriais.', img:'img/industrializados.png' },
   { q:'Ler rótulos ajuda a escolher melhor os alimentos.', a:true, exp:'Os rótulos informam ingredientes e nutrientes.', img:'img/rotulo.png' },
   { q:'Beber suco é sempre igual a comer a fruta.', a:false, exp:'A fruta inteira tem mais fibras.', img:'img/sucodelaranja.png' },
-  { q:'Uma alimentação variada é importante.', a:true, exp:'Ela garante diferentes nutrientes ao corpo.', img:'img/variada.png' }
+  { q:'Uma alimentação variada é importante.', a:true, exp:'Ela garante diferentes nutrientes ao corpo.', img:'img/variada.png' },
+  { q:'Água com gás substitui a água natural em todos os casos.', a:false, exp:'Ela pode ser consumida, mas não substitui totalmente a água natural.', img:'img/aguacomgas.png' },
+  { q:'Comer muitos alimentos coloridos deixa a alimentação mais saudável.', a:true, exp:'Cores diferentes indicam nutrientes variados.', img:'img/pratocolorido.png' },
+  { q:'Todo suco industrializado é tão saudável quanto a fruta.', a:false, exp:'Sucos industrializados costumam ter açúcar e menos fibras.', img:'img/sucoindustrializado.png' },
+  { q:'Leite e derivados são fontes de cálcio.', a:true, exp:'O cálcio ajuda na saúde dos ossos e dentes.', img:'img/leite.png' },
+  { q:'Comer assistindo TV ajuda a controlar melhor a quantidade de comida.', a:false, exp:'A distração pode fazer comer além do necessário.', img:'img/comertelevisao.png' },
+  { q:'Peixes são fontes de gorduras boas para o coração.', a:true, exp:'Eles contêm gorduras que fazem bem à saúde.', img:'img/peixe.png' },
+  { q:'Trocar refrigerante por água ou suco natural é uma escolha mais saudável.', a:true, exp:'Reduz o consumo de açúcar e ajuda na hidratação.', img:'img/trocarefrigerante.png' },
+  { q:'Comer só um tipo de alimento já garante todos os nutrientes.', a:false, exp:'O corpo precisa de variedade de alimentos.', img:'img/monotoniaalimentar.png' },
+  { q:'Castanhas e nozes devem ser consumidas com moderação.', a:true, exp:'São saudáveis, mas calóricas.', img:'img/castanhas.png' },
+  { q:'Fibras ajudam o funcionamento do intestino.', a:true, exp:'Elas auxiliam a digestão e a saciedade.', img:'img/fibras.png' },
+  { q:'Comer frutas de sobremesa é uma opção mais saudável que doces.', a:true, exp:'Frutas têm fibras e vitaminas.', img:'img/frutasobremesa.png' },
+  { q:'Planejar as refeições ajuda a comer melhor.', a:true, exp:'Ajuda a evitar escolhas pouco saudáveis.', img:'img/planejarrefeicoes.png' },
+  { q:'Todo alimento light é automaticamente saudável.', a:false, exp:'Mesmo light, pode conter açúcar, gordura ou sódio.', img:'img/light.png' },
+  { q:'Lavar frutas e verduras antes de comer é importante.', a:true, exp:'Ajuda a remover sujeiras e resíduos.', img:'img/lavarfrutas.png' },
+  { q:'Mel é um alimento sem açúcar.', a:false, exp:'Apesar de natural, o mel também é composto principalmente por açúcares.', img:'img/mel.png' }
 ];
 
+let perguntas = [];
 let atual = 0;
 let score = 0;
 
@@ -396,9 +422,7 @@ function mostrar(){
   
   const r = document.getElementById('resultado');
   r.innerHTML = '';
-  r.style.padding = '0'; 
-  r.style.border = 'none';
-  r.style.minHeight = '3vh';
+  r.style.border = '3px solid transparent';
 
   document.getElementById('progresso').innerText = `Pergunta ${atual+1} de ${perguntas.length}`;
 }
@@ -422,9 +446,9 @@ function responder(valor){
   document.getElementById('score').innerText = 'Pontuação: ' + score;
   atual++;
   if(atual < perguntas.length){
-    setTimeout(mostrar, 2500); 
+    setTimeout(mostrar, 5000); 
   } else {
-    setTimeout(fim, 2500);
+    setTimeout(fim, 5000);
   }
 }
 
@@ -437,7 +461,7 @@ function fim(){
   document.getElementById('painelFinal').style.display = 'block';
   document.getElementById('totalAcertos').innerText = score;
   document.getElementById('totalErros').innerText = erros;
-  document.getElementById('resumo').innerText = `Você respondeu ${perguntas.length} perguntas.`;
+  document.getElementById('resumo').innerText = `Você respondeu todas as perguntas.`;
 
   let mensagem = '';
   if(score === perguntas.length){
@@ -462,6 +486,10 @@ function iniciarJogo(){
 
   atual = 0;
   score = 0;
+
+  perguntas = [...bancoPerguntas]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10);
 
   document.getElementById('score').innerText = 'Pontuação: 0';
   document.querySelector('.botoes').style.display = 'flex';
