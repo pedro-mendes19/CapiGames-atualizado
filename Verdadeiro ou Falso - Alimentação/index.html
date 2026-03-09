@@ -1,519 +1,620 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Verdadeiro ou Falso: Alimentação</title>
-<style>
-  * {
-    box-sizing: border-box;
-  }
-
-  html, body{
-    height: 100%;
-    width: 100%;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: linear-gradient(135deg,#E8EAF6,#E3F2FD,#F3E5F5);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    margin: 0;
-    padding: 0;
-    text-transform: uppercase;
-    overflow: hidden;
-  }
-
-  .game-wrapper {
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 3vh 10px 0 10px;
-  }
-
-  h1{
-    display: none;
-    margin: 0 auto 3vh auto; 
-    padding: 1.5vh 4vw;
-    width: fit-content;
-    max-width: 90%;
-    font-size: clamp(24px, 4vh, 36px);
-    font-weight:900;
-    letter-spacing:1.5px;
-    text-align:center;
-    color:#039BE5;
-    background:linear-gradient(180deg,#ffffff,#E3F2FD);
-    border:0.5vh solid #4FC3F7;
-    border-radius:50px;
-    -webkit-text-stroke:1px #0277BD;
-    flex-shrink: 0;
-    box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.1);
-  }
-
-  #intro{
-    position:fixed;
-    inset:0;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background:
-      linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.65)),
-      url('img/fundointro.png');
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:999;
-  }
-
-  .intro-card{
-    background:rgba(255,255,255,0.95);
-    backdrop-filter:blur(6px);
-    padding: 5vh 5vw;
-    border-radius:25px;
-    
-    max-width: 1090px;
-    width: 93%;
-    
-    max-height: 90vh;
-    overflow-y: auto;
-    text-align:center;
-    box-shadow:0 15px 35px rgba(0,0,0,0.15);
-    animation:fadeUp .8s ease;
-  }
-
-  .intro-card h2{
-    font-size: clamp(24px, 5vh, 40px);
-    margin-bottom: 2vh;
-    font-weight:900;
-    color:#039BE5;
-    -webkit-text-stroke:1.5px #0277BD;
-  }
-
-  .intro-card p{
-    font-size: clamp(16px, 3vh, 24px); 
-    line-height: 1.5;
-    color: #535252;
-  }
-
-  .btn-jogar{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: auto;
-    margin-right: auto;
-    background: linear-gradient(180deg, #4FC3F7, #039BE5);
-    color:#fff;
-    font-size: clamp(20px, 3vh, 28px);
-    padding: 2vh 6vw;
-    border:none;
-    border-radius:40px;
-    cursor:pointer;
-    font-weight:800;
-    box-shadow:0 1vh 2vh rgba(3,155,229,0.5);
-    animation:pulse 1.5s infinite;
-    margin-top: 3vh;
-    text-transform: uppercase;
-    text-align: center;
-  }
-  .btn-jogar:hover{ transform:scale(1.05); }
-
-  #container{
-    width: 100%;
-    max-width: 900px;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5vh; 
-  }
-
-  .bloco-imagem{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    width: 100%;
-  }
-
-  .label-progresso{
-    margin-bottom: 1vh;
-    background:linear-gradient(180deg,#ffffff,#f4fbf7);
-    padding: 0.8vh 2vw;
-    border-radius:20px;
-    font-size: clamp(14px, 2vh, 18px);
-    font-weight:700;
-    color:#2c3e50;
-    border:2px solid #7fb3d5;
-  }
-
-  #imagemPergunta{
-    width: auto;
-    max-width: 100%;
-    height: auto;
-    max-height: 28vh; 
-    display:block;
-    border-radius:20px;
-    box-shadow:0 1vh 2vh rgba(0,0,0,0.15);
-    object-fit: contain;
-  }
-
-  #pergunta{
-    width: fit-content;
-    min-width: 50%;
-    max-width: 90%;
-    margin: 0 auto;
-    font-size: clamp(18px, 3.5vh, 28px);
-    font-weight:800;
-    text-align:center;
-    color:#2c3e50;
-    background:linear-gradient(180deg,#ffffff,#f4fbf7);
-    padding: 2vh 4vw;
-    border:0.4vh solid #7fb3d5;
-    border-radius:35px;
-    box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.12);
-  } 
-
-  .botoes{
-    display:flex;
-    gap: 2vw;
-    justify-content:center;
-    margin-top: 1vh;
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  button.true, button.false{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 2vh 4vw;
-    font-size: clamp(18px, 3vh, 24px);
-    font-weight:800;
-    border:none;
-    border-radius:35px;
-    cursor:pointer;
-    transition:transform .1s ease, box-shadow .1s ease;
-    min-width: 150px;
-    flex: 1;
-    max-width: 300px;
-    text-transform: uppercase;
-  }
-
-  .true{ background:linear-gradient(180deg,#2ecc71,#27ae60); color:#fff; box-shadow:0 0.8vh 0 #1e8449; }
-  .true:active{ transform:translateY(0.4vh); box-shadow:0 0.4vh 0 #1e8449; }
-
-  .false{ background:linear-gradient(180deg,#e74c3c,#c0392b); color:#fff; box-shadow:0 0.8vh 0 #922b21; }
-  .false:active{ transform:translateY(0.4vh); box-shadow:0 0.4vh 0 #922b21; }
-
-  #resultado{
-    margin: 1vh auto;
-    padding: 1.5vh 3vw;
-    max-width: 90%;
-    font-size: clamp(16px, 2.5vh, 22px);
-    font-weight:800;
-    text-align:center;
-    background:linear-gradient(180deg,#ffffff,#f9fdfb);
-    border-radius:25px;
-    box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.1);
-    min-height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid transparent;
-  }
-
-  #score{
-    font-size: clamp(14px, 2vh, 18px);
-    font-weight:700;
-    text-align:center;
-    margin-top: 0.5vh;
-    color: #362208;
-    background: rgba(255,255,255,0.7);
-    padding: 0.8vh 2vw;
-    border-radius: 18px;
-  }
-
-  #painelFinal{
-    display:none;
-    max-width:90%;
-    width: 700px;
-    padding: 4vh 4vw;
-    background:linear-gradient(180deg,#ffffff,#f2fbf6);
-    border-radius:35px;
-    border:0.5vh solid #7fb3d5;
-    text-align:center;
-    box-shadow:0 2vh 4vh rgba(0,0,0,0.18);
-    animation:fadeUp .6s ease;
-  }
-
-  #painelFinal h2{
-    font-size: clamp(30px, 5vh, 42px);
-    margin-bottom: 3vh;
-  }
-
-  #resumo, .totais, #mensagemFinal {
-      font-size: clamp(18px, 3vh, 24px);
-  }
-
-  .totais{
-    display:flex;
-    justify-content:center;
-    gap: 4vw;
-    margin: 3vh 0;
-  }
-  
-  .acertos{ color:#1e8449; }
-  .erros{ color:#922b21; }
-
-  .botoes-finais{
-    display:flex;
-    justify-content:center;
-    gap: 2vw;
-    margin-top: 4vh;
-    flex-wrap: wrap;
-  }
-
-  .btn-reiniciar, .btn-sair{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 2vh 4vw;
-    font-size: clamp(18px, 2.5vh, 22px);
-    border-radius:35px;
-    border: none;
-    cursor: pointer;
-    font-weight: 800;
-    color: white;
-    text-transform: uppercase;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
-  }
-
-  .btn-reiniciar{ 
-    background: linear-gradient(180deg, #4FC3F7, #039BE5); 
-    box-shadow: 0 0.8vh 0 #025a86; 
-  }
-  .btn-reiniciar:active{ 
-    transform:translateY(0.4vh); 
-    box-shadow:0 0.4vh 0 #025a86; 
-  }
-
-  .btn-sair{ 
-    background: linear-gradient(180deg, #FFB74D, #F57C00); 
-    box-shadow: 0 0.8vh 0 #b85d01;
-  }
-  .btn-sair:active{ 
-    transform:translateY(0.4vh); 
-    box-shadow:0 0.4vh 0 #b85d01; 
-  }
-
-
-  @keyframes pulse{ 0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)} }
-  @keyframes fadeUp{ from{opacity:0; transform:translateY(3vh)} to{opacity:1; transform:translateY(0)} }
-
-  @media (max-height: 400px) {
-    #imagemPergunta { max-height: 20vh; }
-    h1 { margin-bottom: 1vh; font-size: 20px; }
-  }
-
-  @media screen and (max-width: 900px) and (orientation: portrait) {
-    body::before {
-      content: "🔄 Gire o celular para jogar na horizontal";
-      position: fixed; inset: 0; background: #000; color: #fff;
-      display: flex; justify-content: center; align-items: center;
-      text-align: center; font-size: 1.5rem; padding: 20px; z-index: 9999;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verdadeiro ou Falso: Alimentação</title>
+  <style>
+    * {
+      box-sizing: border-box;
     }
-    body>* { display: none; }
-  }
 
-</style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(135deg, #E8EAF6, #E3F2FD, #F3E5F5);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+      text-transform: uppercase;
+      overflow: hidden;
+    }
+
+    .game-wrapper {
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 3vh 10px 0 10px;
+    }
+
+    h1 {
+      display: none;
+      margin: 0 auto 3vh auto;
+      padding: 1.5vh 4vw;
+      width: fit-content;
+      max-width: 90%;
+      font-size: clamp(24px, 4vh, 36px);
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-align: center;
+      color: #039BE5;
+      background: linear-gradient(180deg, #ffffff, #E3F2FD);
+      border: 0.5vh solid #4FC3F7;
+      border-radius: 50px;
+      -webkit-text-stroke: 1px #0277BD;
+      flex-shrink: 0;
+      box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+    }
+
+    #intro {
+      position: fixed;
+      inset: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)),
+        url('img/fundointro.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .intro-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      padding: 5vh 5vw;
+      border-radius: 25px;
+
+      max-width: 1090px;
+      width: 93%;
+
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      animation: fadeUp .8s ease;
+    }
+
+    .intro-card h2 {
+      font-size: clamp(24px, 5vh, 40px);
+      margin-bottom: 2vh;
+      font-weight: 900;
+      color: #039BE5;
+      -webkit-text-stroke: 1.5px #0277BD;
+    }
+
+    .intro-card p {
+      font-size: clamp(16px, 3vh, 24px);
+      line-height: 1.5;
+      color: #535252;
+    }
+
+    .btn-jogar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: auto;
+      margin-right: auto;
+      background: linear-gradient(180deg, #4FC3F7, #039BE5);
+      color: #fff;
+      font-size: clamp(20px, 3vh, 28px);
+      padding: 2vh 6vw;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 800;
+      box-shadow: 0 1vh 2vh rgba(3, 155, 229, 0.5);
+      animation: pulse 1.5s infinite;
+      margin-top: 3vh;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .btn-jogar:hover {
+      transform: scale(1.05);
+    }
+
+    #container {
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5vh;
+    }
+
+    .bloco-imagem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .label-progresso {
+      margin-bottom: 1vh;
+      background: linear-gradient(180deg, #ffffff, #f4fbf7);
+      padding: 0.8vh 2vw;
+      border-radius: 20px;
+      font-size: clamp(14px, 2vh, 18px);
+      font-weight: 700;
+      color: #2c3e50;
+      border: 2px solid #7fb3d5;
+    }
+
+    #imagemPergunta {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: 28vh;
+      display: block;
+      border-radius: 20px;
+      box-shadow: 0 1vh 2vh rgba(0, 0, 0, 0.15);
+      object-fit: contain;
+    }
+
+    #pergunta {
+      width: fit-content;
+      min-width: 50%;
+      max-width: 90%;
+      margin: 0 auto;
+      font-size: clamp(18px, 3.5vh, 28px);
+      font-weight: 800;
+      text-align: center;
+      color: #2c3e50;
+      background: linear-gradient(180deg, #ffffff, #f4fbf7);
+      padding: 2vh 4vw;
+      border: 0.4vh solid #7fb3d5;
+      border-radius: 35px;
+      box-shadow: 0 0.5vh 1.5vh rgba(0, 0, 0, 0.12);
+    }
+
+    .botoes {
+      display: flex;
+      gap: 2vw;
+      justify-content: center;
+      margin-top: 1vh;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    button.true,
+    button.false {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2vh 4vw;
+      font-size: clamp(18px, 3vh, 24px);
+      font-weight: 800;
+      border: none;
+      border-radius: 35px;
+      cursor: pointer;
+      transition: transform .1s ease, box-shadow .1s ease;
+      min-width: 150px;
+      flex: 1;
+      max-width: 300px;
+      text-transform: uppercase;
+    }
+
+    .true {
+      background: linear-gradient(180deg, #2ecc71, #27ae60);
+      color: #fff;
+      box-shadow: 0 0.8vh 0 #1e8449;
+    }
+
+    .true:active {
+      transform: translateY(0.4vh);
+      box-shadow: 0 0.4vh 0 #1e8449;
+    }
+
+    .false {
+      background: linear-gradient(180deg, #e74c3c, #c0392b);
+      color: #fff;
+      box-shadow: 0 0.8vh 0 #922b21;
+    }
+
+    .false:active {
+      transform: translateY(0.4vh);
+      box-shadow: 0 0.4vh 0 #922b21;
+    }
+
+    #resultado {
+      margin: 1vh auto;
+      padding: 1.5vh 3vw;
+      max-width: 90%;
+      font-size: clamp(16px, 2.5vh, 22px);
+      font-weight: 800;
+      text-align: center;
+      background: linear-gradient(180deg, #ffffff, #f9fdfb);
+      border-radius: 25px;
+      box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid transparent;
+    }
+
+    #score {
+      font-size: clamp(14px, 2vh, 18px);
+      font-weight: 700;
+      text-align: center;
+      margin-top: 0.5vh;
+      color: #362208;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 0.8vh 2vw;
+      border-radius: 18px;
+    }
+
+    #painelFinal {
+      display: none;
+      max-width: 90%;
+      width: 700px;
+      padding: 4vh 4vw;
+      background: linear-gradient(180deg, #ffffff, #f2fbf6);
+      border-radius: 35px;
+      border: 0.5vh solid #7fb3d5;
+      text-align: center;
+      box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.18);
+      animation: fadeUp .6s ease;
+    }
+
+    #painelFinal h2 {
+      font-size: clamp(30px, 5vh, 42px);
+      margin-bottom: 3vh;
+    }
+
+    #resumo,
+    .totais,
+    #mensagemFinal {
+      font-size: clamp(18px, 3vh, 24px);
+    }
+
+    .totais {
+      display: flex;
+      justify-content: center;
+      gap: 4vw;
+      margin: 3vh 0;
+    }
+
+    .acertos {
+      color: #1e8449;
+    }
+
+    .erros {
+      color: #922b21;
+    }
+
+    .botoes-finais {
+      display: flex;
+      justify-content: center;
+      gap: 2vw;
+      margin-top: 4vh;
+      flex-wrap: wrap;
+    }
+
+    .btn-reiniciar,
+    .btn-sair {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2vh 4vw;
+      font-size: clamp(18px, 2.5vh, 22px);
+      border-radius: 35px;
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      color: white;
+      text-transform: uppercase;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .btn-reiniciar {
+      background: linear-gradient(180deg, #4FC3F7, #039BE5);
+      box-shadow: 0 0.8vh 0 #025a86;
+    }
+
+    .btn-reiniciar:active {
+      transform: translateY(0.4vh);
+      box-shadow: 0 0.4vh 0 #025a86;
+    }
+
+    .btn-sair {
+      background: linear-gradient(180deg, #FFB74D, #F57C00);
+      box-shadow: 0 0.8vh 0 #b85d01;
+    }
+
+    .btn-sair:active {
+      transform: translateY(0.4vh);
+      box-shadow: 0 0.4vh 0 #b85d01;
+    }
+
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.05)
+      }
+
+      100% {
+        transform: scale(1)
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(3vh)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @media (max-height: 400px) {
+      #imagemPergunta {
+        max-height: 20vh;
+      }
+
+      h1 {
+        margin-bottom: 1vh;
+        font-size: 20px;
+      }
+    }
+
+    @media screen and (max-width: 900px) and (orientation: portrait) {
+      body::before {
+        content: "🔄 Gire o celular para jogar na horizontal";
+        position: fixed;
+        inset: 0;
+        background: #000;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 1.5rem;
+        padding: 20px;
+        z-index: 9999;
+      }
+
+      body>* {
+        display: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="game-wrapper">
-  <h1>VERDADEIRO OU FALSO: ALIMENTAÇÃO</h1>
-  <div id="intro">
-    <div class="intro-card">
-      <h2>VERDADEIRO OU FALSO: ALIMENTAÇÃO</h2>
-      <p><strong>Vamos brincar e aprender sobre alimentação saudável!<br>
-        Responda 10 perguntas de verdadeiro ou falso e descubra quais alimentos fazem bem ao corpo.</strong>
-      </p>
-      <button class="btn-jogar" onclick="iniciarJogo()">▶ Jogar</button>
+  <div class="game-wrapper">
+    <h1>VERDADEIRO OU FALSO: ALIMENTAÇÃO</h1>
+    <div id="intro">
+      <div class="intro-card">
+        <h2>VERDADEIRO OU FALSO: ALIMENTAÇÃO</h2>
+        <p><strong>Vamos brincar e aprender sobre alimentação saudável!<br>
+            Responda 10 perguntas de verdadeiro ou falso e descubra quais alimentos fazem bem ao corpo.</strong>
+        </p>
+        <button class="btn-jogar" onclick="iniciarJogo()">▶ Jogar</button>
+      </div>
     </div>
+    <div id="container" style="display:none;">
+      <div class="bloco-imagem">
+        <div id="progresso" class="label-progresso">Pergunta 1 de 10</div>
+        <img id="imagemPergunta" src="" alt="Imagem da pergunta">
+      </div>
+      <div id="pergunta">Clique para começar</div>
+      <div class="botoes">
+        <button class="true" onclick="responder(true)">Verdadeiro</button>
+        <button class="false" onclick="responder(false)">Falso</button>
+      </div>
+      <div id="resultado"></div>
+      <div id="score">Pontuação: 0</div>
+    </div>
+    <div id="painelFinal">
+      <h2>Fim do jogo!</h2>
+
+      <p id="resumo"></p>
+
+      <div class="totais">
+        <span class="acertos">✔ Acertos: <b id="totalAcertos"></b></span>
+        <span class="erros">✘ Erros: <b id="totalErros"></b></span>
+      </div>
+
+      <p id="mensagemFinal"></p>
+
+      <div class="botoes-finais">
+        <button class="btn-reiniciar" onclick="voltarIntroducao()">🔁 Jogar novamente</button>
+        <button class="btn-sair" onclick="fecharJogo()">🚪 Sair do jogo</button>
+      </div>
+    </div>
+
   </div>
-  <div id="container" style="display:none;">
-    <div class="bloco-imagem">
-      <div id="progresso" class="label-progresso">Pergunta 1 de 10</div>
-      <img id="imagemPergunta" src="" alt="Imagem da pergunta">
-    </div>
-    <div id="pergunta">Clique para começar</div>
-    <div class="botoes">
-      <button class="true" onclick="responder(true)">Verdadeiro</button>
-      <button class="false" onclick="responder(false)">Falso</button>
-    </div>
-    <div id="resultado"></div>
-    <div id="score">Pontuação: 0</div>
-  </div>
-  <div id="painelFinal">
-    <h2>Fim do jogo!</h2>
- 
-    <p id="resumo"></p>
 
-    <div class="totais">
-      <span class="acertos">✔ Acertos: <b id="totalAcertos"></b></span>
-      <span class="erros">✘ Erros: <b id="totalErros"></b></span>
-    </div>
+  <script>
+    const bancoPerguntas = [
+      { q: 'Frutas e legumes são ricos em vitaminas.', a: true, exp: 'Eles fornecem vitaminas, minerais e fibras essenciais.', img: 'img/frutaslegumes.png' },
+      { q: 'Refrigerante ajuda a hidratar o corpo.', a: false, exp: 'Ele contém muito açúcar e não substitui a água.', img: 'img/refrigerante.png' },
+      { q: 'Comer muito açúcar pode prejudicar a saúde.', a: true, exp: 'O excesso pode causar cáries e outros problemas.', img: 'img/acucar.png' },
+      { q: 'Ultraprocessados são sempre a melhor escolha.', a: false, exp: 'Eles devem ser consumidos com moderação.', img: 'img/ultraprocessados.png' },
+      { q: 'Beber água diariamente é importante para o corpo.', a: true, exp: 'A água é essencial para o funcionamento do organismo.', img: 'img/copoagua.png' },
+      { q: 'Pular refeições é uma boa prática.', a: false, exp: 'O ideal é manter refeições equilibradas.', img: 'img/pularefeicao.png' },
+      { q: 'Arroz e feijão juntos formam uma boa combinação nutricional.', a: true, exp: 'Juntos fornecem proteínas e energia.', img: 'img/arrozfeijao.png' },
+      { q: 'Vegetais só fazem bem se forem cozidos.', a: false, exp: 'Eles também são saudáveis crus.', img: 'img/vegetaiscozidos.png' },
+      { q: 'Comer frutas no lugar de doces é mais saudável.', a: true, exp: 'As frutas têm fibras e menos açúcar.', img: 'img/frutasdoces.png' },
+      { q: 'Todo tipo de gordura faz mal à saúde.', a: false, exp: 'Existem gorduras boas, como as das castanhas.', img: 'img/gordura.png' },
+      { q: 'Café da manhã é uma refeição importante.', a: true, exp: 'Ajuda a dar energia para o dia.', img: 'img/cafedamanha.png' },
+      { q: 'Alimentos industrializados sempre são naturais.', a: false, exp: 'Eles passam por muitos processos industriais.', img: 'img/industrializados.png' },
+      { q: 'Ler rótulos ajuda a escolher melhor os alimentos.', a: true, exp: 'Os rótulos informam ingredientes e nutrientes.', img: 'img/rotulo.png' },
+      { q: 'Beber suco é sempre igual a comer a fruta.', a: false, exp: 'A fruta inteira tem mais fibras.', img: 'img/sucodelaranja.png' },
+      { q: 'Uma alimentação variada é importante.', a: true, exp: 'Ela garante diferentes nutrientes ao corpo.', img: 'img/variada.png' },
+      { q: 'Água com gás substitui a água natural em todos os casos.', a: false, exp: 'Ela pode ser consumida, mas não substitui totalmente a água natural.', img: 'img/aguacomgas.png' },
+      { q: 'Comer muitos alimentos coloridos deixa a alimentação mais saudável.', a: true, exp: 'Cores diferentes indicam nutrientes variados.', img: 'img/pratocolorido.png' },
+      { q: 'Todo suco industrializado é tão saudável quanto a fruta.', a: false, exp: 'Sucos industrializados costumam ter açúcar e menos fibras.', img: 'img/sucoindustrializado.png' },
+      { q: 'Leite e derivados são fontes de cálcio.', a: true, exp: 'O cálcio ajuda na saúde dos ossos e dentes.', img: 'img/leite.png' },
+      { q: 'Comer assistindo TV ajuda a controlar melhor a quantidade de comida.', a: false, exp: 'A distração pode fazer comer além do necessário.', img: 'img/comertelevisao.png' },
+      { q: 'Peixes são fontes de gorduras boas para o coração.', a: true, exp: 'Eles contêm gorduras que fazem bem à saúde.', img: 'img/peixe.png' },
+      { q: 'Trocar refrigerante por água ou suco natural é uma escolha mais saudável.', a: true, exp: 'Reduz o consumo de açúcar e ajuda na hidratação.', img: 'img/trocarefrigerante.png' },
+      { q: 'Comer só um tipo de alimento já garante todos os nutrientes.', a: false, exp: 'O corpo precisa de variedade de alimentos.', img: 'img/monotoniaalimentar.png' },
+      { q: 'Castanhas e nozes devem ser consumidas com moderação.', a: true, exp: 'São saudáveis, mas calóricas.', img: 'img/castanhas.png' },
+      { q: 'Fibras ajudam o funcionamento do intestino.', a: true, exp: 'Elas auxiliam a digestão e a saciedade.', img: 'img/fibras.png' },
+      { q: 'Comer frutas de sobremesa é uma opção mais saudável que doces.', a: true, exp: 'Frutas têm fibras e vitaminas.', img: 'img/frutasobremesa.png' },
+      { q: 'Planejar as refeições ajuda a comer melhor.', a: true, exp: 'Ajuda a evitar escolhas pouco saudáveis.', img: 'img/planejarrefeicoes.png' },
+      { q: 'Todo alimento light é automaticamente saudável.', a: false, exp: 'Mesmo light, pode conter açúcar, gordura ou sódio.', img: 'img/light.png' },
+      { q: 'Lavar frutas e verduras antes de comer é importante.', a: true, exp: 'Ajuda a remover sujeiras e resíduos.', img: 'img/lavarfrutas.png' },
+      { q: 'Mel é um alimento sem açúcar.', a: false, exp: 'Apesar de natural, o mel também é composto principalmente por açúcares.', img: 'img/mel.png' },
+      { q: 'Alimentos integrais são mais nutritivos que os refinados.', a: true, exp: 'Eles preservam mais fibras, vitaminas e minerais.', img: 'img/integrais.png' },
+      { q: 'Cereal matinal açucarado é um café da manhã saudável.', a: false, exp: 'Muitos cereais matinais contêm alto teor de açúcar.', img: 'img/cerealmatinal.png' },
+      { q: 'Alimentos orgânicos são cultivados sem agrotóxicos sintéticos.', a: true, exp: 'A produção orgânica evita pesticidas e fertilizantes químicos.', img: 'img/organicos.png' },
+      { q: 'Folhas verdes escuras são ricas em ferro.', a: true, exp: 'Espinafre, couve e brócolis são boas fontes de ferro vegetal.', img: 'img/folhasverdes.png' },
+      { q: 'Vitamina C ajuda na absorção de ferro.', a: true, exp: 'Consumir frutas cítricas com alimentos ricos em ferro melhora a absorção.', img: 'img/vitaminac.png' },
+      { q: 'Tomar muita água durante as refeições atrapalha a digestão.', a: false, exp: 'A água em quantidade moderada não prejudica a digestão.', img: 'img/aguarefeicao.png' },
+      { q: 'Ovo é uma boa fonte de proteína.', a: true, exp: 'O ovo contém proteínas de alta qualidade e outros nutrientes.', img: 'img/ovo.png' },
+      { q: 'Embutidos como salsicha e presunto são alimentos saudáveis.', a: false, exp: 'Eles são ultraprocessados e ricos em sódio e conservantes.', img: 'img/embutidos.png' },
+      { q: 'Temperos naturais como alho e cebola podem substituir o excesso de sal.', a: true, exp: 'Eles dão sabor sem aumentar o sódio da comida.', img: 'img/temperosnaturais.png' },
+      { q: 'Comer devagar ajuda a sentir saciedade.', a: true, exp: 'O cérebro leva cerca de 20 minutos para registrar que o estômago está cheio.', img: 'img/comerdevagar.png' },
+      { q: 'Alimentos congelados perdem todos os nutrientes.', a: false, exp: 'O congelamento preserva a maioria dos nutrientes dos alimentos.', img: 'img/congelados.png' },
+      { q: 'Banana é uma boa fonte de potássio.', a: true, exp: 'O potássio ajuda no funcionamento dos músculos e do coração.', img: 'img/banana.png' },
+      { q: 'Margarina é mais saudável que manteiga em todos os casos.', a: false, exp: 'Depende do tipo: algumas margarinas contêm gordura trans.', img: 'img/margarina.png' },
+      { q: 'Comer de 3 em 3 horas é obrigatório para todos.', a: false, exp: 'O intervalo ideal varia de pessoa para pessoa.', img: 'img/refeicaoregular.png' },
+      { q: 'Iogurte natural é uma boa fonte de probióticos.', a: true, exp: 'Os probióticos ajudam na saúde intestinal.', img: 'img/iogurte.png' },
+      { q: 'Alimentos ricos em fibras ajudam a controlar o açúcar no sangue.', a: true, exp: 'As fibras retardam a absorção de glicose.', img: 'img/fibraglicose.png' },
+      { q: 'Sopa de legumes é uma refeição nutritiva.', a: true, exp: 'Ela combina vitaminas, minerais e hidratação.', img: 'img/sopadelegumes.png' },
+      { q: 'Todos os tipos de chá são saudáveis e sem contraindicações.', a: false, exp: 'Alguns chás podem ter efeitos indesejados dependendo da quantidade e do tipo.', img: 'img/cha.png' },
+      { q: 'Mastigar bem os alimentos facilita a digestão.', a: true, exp: 'A mastigação adequada ajuda o estômago a processar melhor os alimentos.', img: 'img/mastigar.png' },
+      { q: 'Batata doce é uma boa fonte de energia.', a: true, exp: 'Ela fornece carboidratos complexos e vitaminas.', img: 'img/batatadoce.png' }
+    ];
 
-    <p id="mensagemFinal"></p>
+    let perguntas = [];
+    let atual = 0;
+    let score = 0;
+    let respondido = false;
 
-    <div class="botoes-finais">
-      <button class="btn-reiniciar" onclick="voltarIntroducao()">🔁 Jogar novamente</button>
-      <button class="btn-sair" onclick="fecharJogo()">🚪 Sair do jogo</button>
-    </div>
-  </div>
+    function mostrar() {
+      const p = perguntas[atual];
+      document.getElementById('pergunta').innerText = p.q;
+      document.getElementById('imagemPergunta').src = p.img;
 
-</div>
+      const r = document.getElementById('resultado');
+      r.innerHTML = '';
+      r.style.border = '3px solid transparent';
 
-<script>
-const bancoPerguntas = [
-  { q:'Frutas e legumes são ricos em vitaminas.', a:true, exp:'Eles fornecem vitaminas, minerais e fibras essenciais.', img:'img/frutaslegumes.png' },
-  { q:'Refrigerante ajuda a hidratar o corpo.', a:false, exp:'Ele contém muito açúcar e não substitui a água.', img:'img/refrigerante.png' },
-  { q:'Comer muito açúcar pode prejudicar a saúde.', a:true, exp:'O excesso pode causar cáries e outros problemas.', img:'img/acucar.png' },
-  { q:'Ultraprocessados são sempre a melhor escolha.', a:false, exp:'Eles devem ser consumidos com moderação.', img:'img/ultraprocessados.png' },
-  { q:'Beber água diariamente é importante para o corpo.', a:true, exp:'A água é essencial para o funcionamento do organismo.', img:'img/copoagua.png' },
-  { q:'Pular refeições é uma boa prática.', a:false, exp:'O ideal é manter refeições equilibradas.', img:'img/pularefeicao.png' },
-  { q:'Arroz e feijão juntos formam uma boa combinação nutricional.', a:true, exp:'Juntos fornecem proteínas e energia.', img:'img/arrozfeijao.png' },
-  { q:'Vegetais só fazem bem se forem cozidos.', a:false, exp:'Eles também são saudáveis crus.', img:'img/vegetaiscozidos.png' },
-  { q:'Comer frutas no lugar de doces é mais saudável.', a:true, exp:'As frutas têm fibras e menos açúcar.', img:'img/frutasdoces.png' },
-  { q:'Todo tipo de gordura faz mal à saúde.', a:false, exp:'Existem gorduras boas, como as das castanhas.', img:'img/gordura.png' },
-  { q:'Café da manhã é uma refeição importante.', a:true, exp:'Ajuda a dar energia para o dia.', img:'img/cafedamanha.png' },
-  { q:'Alimentos industrializados sempre são naturais.', a:false, exp:'Eles passam por muitos processos industriais.', img:'img/industrializados.png' },
-  { q:'Ler rótulos ajuda a escolher melhor os alimentos.', a:true, exp:'Os rótulos informam ingredientes e nutrientes.', img:'img/rotulo.png' },
-  { q:'Beber suco é sempre igual a comer a fruta.', a:false, exp:'A fruta inteira tem mais fibras.', img:'img/sucodelaranja.png' },
-  { q:'Uma alimentação variada é importante.', a:true, exp:'Ela garante diferentes nutrientes ao corpo.', img:'img/variada.png' },
-  { q:'Água com gás substitui a água natural em todos os casos.', a:false, exp:'Ela pode ser consumida, mas não substitui totalmente a água natural.', img:'img/aguacomgas.png' },
-  { q:'Comer muitos alimentos coloridos deixa a alimentação mais saudável.', a:true, exp:'Cores diferentes indicam nutrientes variados.', img:'img/pratocolorido.png' },
-  { q:'Todo suco industrializado é tão saudável quanto a fruta.', a:false, exp:'Sucos industrializados costumam ter açúcar e menos fibras.', img:'img/sucoindustrializado.png' },
-  { q:'Leite e derivados são fontes de cálcio.', a:true, exp:'O cálcio ajuda na saúde dos ossos e dentes.', img:'img/leite.png' },
-  { q:'Comer assistindo TV ajuda a controlar melhor a quantidade de comida.', a:false, exp:'A distração pode fazer comer além do necessário.', img:'img/comertelevisao.png' },
-  { q:'Peixes são fontes de gorduras boas para o coração.', a:true, exp:'Eles contêm gorduras que fazem bem à saúde.', img:'img/peixe.png' },
-  { q:'Trocar refrigerante por água ou suco natural é uma escolha mais saudável.', a:true, exp:'Reduz o consumo de açúcar e ajuda na hidratação.', img:'img/trocarefrigerante.png' },
-  { q:'Comer só um tipo de alimento já garante todos os nutrientes.', a:false, exp:'O corpo precisa de variedade de alimentos.', img:'img/monotoniaalimentar.png' },
-  { q:'Castanhas e nozes devem ser consumidas com moderação.', a:true, exp:'São saudáveis, mas calóricas.', img:'img/castanhas.png' },
-  { q:'Fibras ajudam o funcionamento do intestino.', a:true, exp:'Elas auxiliam a digestão e a saciedade.', img:'img/fibras.png' },
-  { q:'Comer frutas de sobremesa é uma opção mais saudável que doces.', a:true, exp:'Frutas têm fibras e vitaminas.', img:'img/frutasobremesa.png' },
-  { q:'Planejar as refeições ajuda a comer melhor.', a:true, exp:'Ajuda a evitar escolhas pouco saudáveis.', img:'img/planejarrefeicoes.png' },
-  { q:'Todo alimento light é automaticamente saudável.', a:false, exp:'Mesmo light, pode conter açúcar, gordura ou sódio.', img:'img/light.png' },
-  { q:'Lavar frutas e verduras antes de comer é importante.', a:true, exp:'Ajuda a remover sujeiras e resíduos.', img:'img/lavarfrutas.png' },
-  { q:'Mel é um alimento sem açúcar.', a:false, exp:'Apesar de natural, o mel também é composto principalmente por açúcares.', img:'img/mel.png' }
-];
+      document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${perguntas.length}`;
 
-let perguntas = [];
-let atual = 0;
-let score = 0;
+      respondido = false;
+      document.querySelectorAll('.botoes button').forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+    }
 
-function mostrar(){
-  const p = perguntas[atual];
-  document.getElementById('pergunta').innerText = p.q;
-  document.getElementById('imagemPergunta').src = p.img;
-  
-  const r = document.getElementById('resultado');
-  r.innerHTML = '';
-  r.style.border = '3px solid transparent';
+    function responder(valor) {
+      if (respondido) return;
+      respondido = true;
+      document.querySelectorAll('.botoes button').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
 
-  document.getElementById('progresso').innerText = `Pergunta ${atual+1} de ${perguntas.length}`;
-}
+      const p = perguntas[atual];
+      const r = document.getElementById('resultado');
 
-function responder(valor){
-  const p = perguntas[atual];
-  const r = document.getElementById('resultado');
-  
-  r.style.padding = '1.5vh 3vw'; 
-  
-  if(valor === p.a){
-    r.innerHTML = '✔ Correto! ' + p.exp;
-    r.style.color = '#1e8449';
-    r.style.border = '3px solid #2ecc71';
-    score++;
-  } else {
-    r.innerHTML = '✘ Incorreto. ' + p.exp;
-    r.style.color = '#922b21';
-    r.style.border = '3px solid #e74c3c';
-  }
-  document.getElementById('score').innerText = 'Pontuação: ' + score;
-  atual++;
-  if(atual < perguntas.length){
-    setTimeout(mostrar, 5000); 
-  } else {
-    setTimeout(fim, 5000);
-  }
-}
+      r.style.padding = '1.5vh 3vw';
 
-function fim(){
-  document.getElementById('container').style.display = 'none';
-  document.querySelector('h1').style.display = 'none'; 
+      if (valor === p.a) {
+        r.innerHTML = '✔ Correto! ' + p.exp;
+        r.style.color = '#1e8449';
+        r.style.border = '3px solid #2ecc71';
+        score++;
+      } else {
+        r.innerHTML = '✘ Incorreto. ' + p.exp;
+        r.style.color = '#922b21';
+        r.style.border = '3px solid #e74c3c';
+      }
+      document.getElementById('score').innerText = 'Pontuação: ' + score;
+      atual++;
+      if (atual < perguntas.length) {
+        setTimeout(mostrar, 5000);
+      } else {
+        setTimeout(fim, 5000);
+      }
+    }
 
-  const erros = perguntas.length - score;
+    function fim() {
+      document.getElementById('container').style.display = 'none';
+      document.querySelector('h1').style.display = 'none';
 
-  document.getElementById('painelFinal').style.display = 'block';
-  document.getElementById('totalAcertos').innerText = score;
-  document.getElementById('totalErros').innerText = erros;
-  document.getElementById('resumo').innerText = `Você respondeu todas as perguntas.`;
+      const erros = perguntas.length - score;
 
-  let mensagem = '';
-  if(score === perguntas.length){
-    mensagem = '🌟 Parabéns! Você acertou tudo! Excelente conhecimento!';
-  } else if(score >= perguntas.length * 0.7){
-    mensagem = '👏 Muito bem! Você tem um ótimo entendimento.';
-  } else {
-    mensagem = '💡 Continue praticando! A alimentação é importante.';
-  }
+      document.getElementById('painelFinal').style.display = 'block';
+      document.getElementById('totalAcertos').innerText = score;
+      document.getElementById('totalErros').innerText = erros;
+      document.getElementById('resumo').innerText = `Você respondeu todas as perguntas.`;
 
-  document.getElementById('mensagemFinal').innerText = mensagem;
-}
+      let mensagem = '';
+      if (score === perguntas.length) {
+        mensagem = '🌟 Parabéns! Você acertou tudo! Excelente conhecimento!';
+      } else if (score >= perguntas.length * 0.7) {
+        mensagem = '👏 Muito bem! Você tem um ótimo entendimento.';
+      } else {
+        mensagem = '💡 Continue praticando! A alimentação é importante.';
+      }
 
-function iniciarJogo(){
-  document.getElementById('intro').style.display = 'none';
-  document.getElementById('painelFinal').style.display = 'none';
-  
-  const container = document.getElementById('container');
-  container.style.display = 'flex'; 
+      document.getElementById('mensagemFinal').innerText = mensagem;
+    }
 
-  document.querySelector('h1').style.display = 'block';
+    function iniciarJogo() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('painelFinal').style.display = 'none';
 
-  atual = 0;
-  score = 0;
+      const container = document.getElementById('container');
+      container.style.display = 'flex';
 
-  perguntas = [...bancoPerguntas]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 10);
+      document.querySelector('h1').style.display = 'block';
 
-  document.getElementById('score').innerText = 'Pontuação: 0';
-  document.querySelector('.botoes').style.display = 'flex';
-  
-  const r = document.getElementById('resultado');
-  r.innerHTML = '';
-  r.style.padding = '0';
-  r.style.border = 'none';
+      atual = 0;
+      score = 0;
 
-  mostrar();
-}
+      perguntas = [...bancoPerguntas]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 10);
 
-function voltarIntroducao(){
-  document.getElementById('painelFinal').style.display = 'none';
-  document.getElementById('container').style.display = 'none';
-  document.querySelector('h1').style.display = 'none';
-  document.getElementById('intro').style.display = 'flex';
-  atual = 0;
-  score = 0;
-}
+      document.getElementById('score').innerText = 'Pontuação: 0';
+      document.querySelector('.botoes').style.display = 'flex';
 
-function fecharJogo(){
-  window.close();
-}
-</script>
+      const r = document.getElementById('resultado');
+      r.innerHTML = '';
+      r.style.padding = '0';
+      r.style.border = 'none';
+
+      mostrar();
+    }
+
+    function voltarIntroducao() {
+      document.getElementById('painelFinal').style.display = 'none';
+      document.getElementById('container').style.display = 'none';
+      document.querySelector('h1').style.display = 'none';
+      document.getElementById('intro').style.display = 'flex';
+      atual = 0;
+      score = 0;
+    }
+
+    function fecharJogo() {
+      window.close();
+    }
+  </script>
 </body>
+
 </html>
