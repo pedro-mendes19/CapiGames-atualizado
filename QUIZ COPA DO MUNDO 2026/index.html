@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copa 2026 - O Guia Interativo</title>
+
+    <!-- Google Fonts: Outfit (Headings) & Poppins (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Poppins:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="background-animation"></div>
+
+    <div id="tela-inicio" class="game-container fade-in">
+        <header class="hero-header">
+            <div class="hosts-badge">
+                <span>🇺🇸</span><span>🇲🇽</span><span>🇨🇦</span>
+            </div>
+            <h1>WORLD CUP <span class="highlight">2026</span></h1>
+            <p class="subtitle">O GUIA INTERATIVO DO MUNDIAL</p>
+        </header>
+
+        <div class="menu-inicial">
+            <button class="btn-menu primary" onclick="mostrarTela('quiz')">
+                <span class="icon">⚽</span> JOGAR QUIZ
+            </button>
+            <button class="btn-menu secondary" onclick="mostrarTela('grupos')">
+                <span class="icon">📋</span> VER GRUPOS
+            </button>
+        </div>
+    </div>
+
+    <div id="tela-quiz" class="game-container hidden">
+        <header class="quiz-header">
+            <button class="btn-voltar" onclick="mostrarTela('inicio')">❮ MENU</button>
+            <div class="placar-badge">
+                <span class="label">GOLS</span>
+                <span id="gols" class="score">0</span>
+            </div>
+        </header>
+
+        <div class="progress-wrapper">
+            <div class="progress-info">
+                <span id="fase-label">Pergunta 1 de 15</span>
+                <span id="timer-icon">⏱️</span>
+            </div>
+            <div class="progress-track">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+
+        <main id="quiz-area">
+            <h2 id="pergunta">Preparando o campo...</h2>
+            <div id="opcoes" class="options-grid"></div>
+        </main>
+    </div>
+
+    <div id="tela-grupos" class="game-container hidden">
+        <header class="groups-header">
+            <button class="btn-voltar" onclick="mostrarTela('inicio')">❮ MENU</button>
+            <h2>GRUPOS DA COPA</h2>
+        </header>
+        <div class="grupos-grid">
+            <!-- Cards will be styled via CSS, keeping structure consistent but adding classes if needed -->
+            <div class="grupo-card">
+                <div class="card-header">Grupo A</div>
+                <ul>
+                    <li>🇲🇽 México</li>
+                    <li>🇿🇦 África do Sul</li>
+                    <li>🇰🇷 Coreia do Sul</li>
+                    <li>❓ A definir</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo B</div>
+                <ul>
+                    <li>🇨🇦 Canadá</li>
+                    <li>❓ A definir</li>
+                    <li>🇶🇦 Catar</li>
+                    <li>🇨🇭 Suíça</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo C</div>
+                <ul>
+                    <li>🇧🇷 Brasil</li>
+                    <li>🇲🇦 Marrocos</li>
+                    <li>🇭🇹 Haiti</li>
+                    <li>🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo D</div>
+                <ul>
+                    <li>🇺🇸 EUA</li>
+                    <li>🇦🇺 Austrália</li>
+                    <li>🇵🇾 Paraguai</li>
+                    <li>❓ A definir</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo E</div>
+                <ul>
+                    <li>🇩🇪 Alemanha</li>
+                    <li>🇨🇮 C. do Marfim</li>
+                    <li>🇨🇼 Curaçao</li>
+                    <li>🇪🇨 Equador</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo F</div>
+                <ul>
+                    <li>🇳🇱 Holanda</li>
+                    <li>🇯🇵 Japão</li>
+                    <li>❓ A definir</li>
+                    <li>🇹🇳 Tunísia</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo G</div>
+                <ul>
+                    <li>🇧🇪 Bélgica</li>
+                    <li>🇮🇷 Irã</li>
+                    <li>🇪🇬 Egito</li>
+                    <li>🇳🇿 N. Zelândia</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo H</div>
+                <ul>
+                    <li>🇪🇸 Espanha</li>
+                    <li>🇨🇻 Cabo Verde</li>
+                    <li>🇺🇾 Uruguai</li>
+                    <li>🇸🇦 A. Saudita</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo I</div>
+                <ul>
+                    <li>🇫🇷 França</li>
+                    <li>🇸🇳 Senegal</li>
+                    <li>❓ A definir</li>
+                    <li>🇳🇴 Noruega</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo J</div>
+                <ul>
+                    <li>🇦🇷 Argentina</li>
+                    <li>🇩🇿 Argélia</li>
+                    <li>🇦🇹 Áustria</li>
+                    <li>🇯🇴 Jordânia</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo K</div>
+                <ul>
+                    <li>🇵🇹 Portugal</li>
+                    <li>❓ A definir</li>
+                    <li>🇺🇿 Uzbequistão</li>
+                    <li>🇨🇴 Colômbia</li>
+                </ul>
+            </div>
+            <div class="grupo-card">
+                <div class="card-header">Grupo L</div>
+                <ul>
+                    <li>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra</li>
+                    <li>🇭🇷 Croácia</li>
+                    <li>🇬🇭 Gana</li>
+                    <li>🇵🇦 Panamá</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-fim" class="modal hidden">
+        <div class="modal-content glass-effect">
+            <div class="trophy-animation">🏆</div>
+            <h2 id="titulo-modal">FIM DE JOGO!</h2>
+            <p id="texto-modal">Você mostrou garra em campo!</p>
+
+            <div class="final-score">
+                <span>GOLS MARCADOS</span>
+                <span id="resultado-gols">0</span>
+            </div>
+
+            <button class="btn-menu primary" onclick="mostrarTela('inicio')">VOLTAR AO INÍCIO</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
