@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUZADINHA DOS ANIMAIS</title>  
-    <link rel="icon" href="img/unnamed.jpg    ">
-  <style>
+    <title>CRUZADINHA DOS ANIMAIS</title>
+    <link rel="icon" href="img/LOGO.png">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
         :root {
-            --primary: #FF8A80; /* Vermelho suave */
-            --secondary: #4DB6AC; /* Verde água calmo */
-            --accent: #FFD54F; /* Amarelo manteiga */
+            --primary: #FF8A80;
+            /* Vermelho suave */
+            --secondary: #4DB6AC;
+            /* Verde água calmo */
+            --accent: #FFD54F;
+            /* Amarelo manteiga */
             --text: #030303;
-            --bg-color: #FFFDE7; /* Fundo creme bem limpo */
-            --cell-size: 35px; /* Reduzido para caber na tela sem cortar */
+            --bg-color: #FFFDE7;
+            /* Fundo creme bem limpo */
+            --cell-size: 35px;
+            /* Reduzido para caber na tela sem cortar */
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
             padding: 0;
             font-family: 'Fredoka', sans-serif;
-            background-color: var(--bg-color); /* Cor sólida, sem bolinhas */
+            background-color: var(--bg-color);
+            /* Cor sólida, sem bolinhas */
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -34,8 +44,8 @@
             background: #FFFFFF;
             border-radius: 20px;
             /* Borda mais fina e sombra mais leve */
-            border: 4px solid var(--primary); 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border: 4px solid var(--primary);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             display: flex;
             padding: 15px;
             gap: 15px;
@@ -43,15 +53,18 @@
 
         /* Área do Tabuleiro */
         .board-section {
-            flex: 3; /* Dá mais espaço para o tabuleiro */
-            background-color: #F1F8E9; /* Verde muito pálido */
+            flex: 3;
+            /* Dá mais espaço para o tabuleiro */
+            background-color: #F1F8E9;
+            /* Verde muito pálido */
             border-radius: 15px;
             border: 2px dashed #AED581;
             display: flex;
             /* Mudança importante para não cortar a esquerda: */
-            justify-content: center; 
+            justify-content: center;
             align-items: center;
-            overflow: auto; /* Permite rolar se a tela for muito pequena */
+            overflow: auto;
+            /* Permite rolar se a tela for muito pequena */
             position: relative;
         }
 
@@ -60,8 +73,10 @@
             grid-template-columns: repeat(20, var(--cell-size));
             grid-template-rows: repeat(15, var(--cell-size));
             gap: 3px;
-            padding: 40px; /* Margem interna para garantir que nada encoste na borda */
-            margin: auto; /* Centraliza automaticamente sem cortar */
+            padding: 40px;
+            /* Margem interna para garantir que nada encoste na borda */
+            margin: auto;
+            /* Centraliza automaticamente sem cortar */
         }
 
         .cell {
@@ -70,7 +85,9 @@
             position: relative;
         }
 
-        .cell.empty { pointer-events: none; }
+        .cell.empty {
+            pointer-events: none;
+        }
 
         .cell input {
             width: 100%;
@@ -80,7 +97,8 @@
             text-align: center;
             font-family: 'Fredoka', sans-serif;
             font-weight: 600;
-            font-size: 18px; /* Fonte ajustada */
+            font-size: 18px;
+            /* Fonte ajustada */
             color: var(--text);
             background: white;
             text-transform: uppercase;
@@ -98,16 +116,29 @@
             z-index: 10;
         }
 
-        /* Numeração mais discreta */
+        /* Numeração formatada */
         .cell-number {
             position: absolute;
-            top: -4px;
-            left: -2px;
             color: var(--secondary);
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             z-index: 5;
             pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cell-number.horiz {
+            left: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cell-number.vert {
+            top: 1px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .cell input.correct {
@@ -129,7 +160,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            min-width: 260px; /* Reduzido para não espremer o tabuleiro */
+            min-width: 260px;
+            /* Reduzido para não espremer o tabuleiro */
             max-width: 320px;
         }
 
@@ -140,9 +172,17 @@
             border-radius: 12px;
             text-align: center;
         }
-        
-        .header h1 { font-size: 1.5rem; margin: 0; }
-        .header p { margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.9; }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
 
         .clues-container {
             flex: 1;
@@ -174,11 +214,22 @@
             border: 1px solid #EEE;
             cursor: pointer;
         }
-        
-        .clue-item:hover { background-color: #E0F2F1; border-color: var(--secondary); }
-        .clue-item span { color: var(--secondary); font-weight: bold; margin-right: 4px; }
 
-        .controls { display: flex; gap: 8px; }
+        .clue-item:hover {
+            background-color: #E0F2F1;
+            border-color: var(--secondary);
+        }
+
+        .clue-item span {
+            color: var(--secondary);
+            font-weight: bold;
+            margin-right: 4px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+        }
 
         button {
             flex: 1;
@@ -193,17 +244,30 @@
             transition: opacity 0.2s;
         }
 
-        .btn-check { background-color: var(--secondary); }
-        .btn-reset { background-color: #E57373; }
-        
-        button:hover { opacity: 0.9; }
-        button:active { transform: scale(0.98); }
+        .btn-check {
+            background-color: var(--secondary);
+        }
+
+        .btn-reset {
+            background-color: #E57373;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
 
         /* Modal Vitória */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -212,8 +276,12 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        .modal-overlay.show { visibility: visible; opacity: 1; }
-        
+
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
         .modal {
             background: white;
             padding: 30px;
@@ -223,26 +291,54 @@
             border: 4px solid var(--secondary);
             animation: popIn 0.4s;
         }
-        .modal h2 { color: var(--primary); margin-top: 0; }
-        .modal button { margin-top: 20px; width: 100%; background: var(--secondary); }
+
+        .modal h2 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .modal button {
+            margin-top: 20px;
+            width: 100%;
+            background: var(--secondary);
+        }
 
         @keyframes popIn {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
+
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-4px);
+            }
+
+            75% {
+                transform: translateX(4px);
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="game-wrapper">
         <div class="board-section">
             <div class="crossword-grid" id="grid">
-                </div>
+            </div>
         </div>
 
         <div class="sidebar">
@@ -253,20 +349,17 @@
 
             <div class="clues-container">
                 <div class="clue-group">
-                    <h3>Horizontais ➡</h3>
+                    <h3>Dicas</h3>
                     <div class="clue-item"><span>1.</span>Rei da selva </div>
-                    <div class="clue-item"><span>3.</span>Usado para montaria </div>
-                    <div class="clue-item"><span>6.</span>Réptil gigante extinto </div>
-                    <div class="clue-item"><span>7.</span>Felino doméstico </div>
-                    <div class="clue-item"><span>8.</span>Dá leite na fazenda </div>
-                    <div class="clue-item"><span>9.</span>Pula de galho em galho </div>
-                </div>
-                <div class="clue-group">
-                    <h3>Verticais ⬇</h3>
                     <div class="clue-item"><span>2.</span>Tem tromba </div>
-                    <div class="clue-item"><span>3.</span>Melhor amigo do homem </div>
-                    <div class="clue-item"><span>4.</span>Pescoço comprido </div>
-                    <div class="clue-item"><span>5.</span>Ave que vive no gelo </div>
+                    <div class="clue-item"><span>3.</span>Usado para montaria </div>
+                    <div class="clue-item"><span>4.</span>Melhor amigo do homem </div>
+                    <div class="clue-item"><span>5.</span>Pescoço comprido </div>
+                    <div class="clue-item"><span>6.</span>Ave que vive no gelo </div>
+                    <div class="clue-item"><span>7.</span>Réptil gigante extinto </div>
+                    <div class="clue-item"><span>8.</span>Felino doméstico </div>
+                    <div class="clue-item"><span>9.</span>Dá leite na fazenda </div>
+                    <div class="clue-item"><span>10.</span>Pula de galho em galho </div>
                 </div>
             </div>
 
@@ -286,43 +379,43 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO TABULEIRO
+        // CONFIGURAÇÃO DO TABULEIRO (nh = nro horizontal, nv = nro vertical)
         const layout = [
             // 1. LEAO (Horizontal)
-            {r:8, c:14, l:'L', n:1}, {r:8, c:15, l:'E'}, {r:8, c:16, l:'A'}, {r:8, c:17, l:'O'},
+            { r: 8, c: 14, l: 'L', nh: 1 }, { r: 8, c: 15, l: 'E' }, { r: 8, c: 16, l: 'A' }, { r: 8, c: 17, l: 'O' },
 
             // 2. ELEFANTE (Vertical)
-            {r:4, c:16, l:'E', n:2}, {r:5, c:16, l:'L'}, {r:6, c:16, l:'E'}, 
-            {r:7, c:16, l:'F'}, {r:8, c:16, l:'A'}, {r:9, c:16, l:'N'}, 
-            {r:10, c:16, l:'T'}, {r:11, c:16, l:'E'},
+            { r: 4, c: 16, l: 'E', nv: 2 }, { r: 5, c: 16, l: 'L' }, { r: 6, c: 16, l: 'E' },
+            { r: 7, c: 16, l: 'F' }, { r: 8, c: 16, l: 'A' }, { r: 9, c: 16, l: 'N' },
+            { r: 10, c: 16, l: 'T' }, { r: 11, c: 16, l: 'E' },
 
             // 3. CAVALO (Horizontal)
-            {r:5, c:12, l:'C', n:3}, {r:5, c:13, l:'A'}, {r:5, c:14, l:'V'}, {r:5, c:15, l:'A'}, {r:5, c:17, l:'O'},
+            { r: 5, c: 12, l: 'C', nh: 3 }, { r: 5, c: 13, l: 'A' }, { r: 5, c: 14, l: 'V' }, { r: 5, c: 15, l: 'A' }, { r: 5, c: 17, l: 'O' },
 
-            // 3. CACHORRO (Vertical)
-            {r:6, c:12, l:'A'}, {r:7, c:12, l:'C'}, {r:8, c:12, l:'H'}, {r:9, c:12, l:'O'}, {r:10, c:12, l:'R'}, {r:11, c:12, l:'R'}, {r:12, c:12, l:'O'},
+            // 4. CACHORRO (Vertical)
+            { r: 5, c: 12, l: 'C', nv: 4 }, { r: 6, c: 12, l: 'A' }, { r: 7, c: 12, l: 'C' }, { r: 8, c: 12, l: 'H' }, { r: 9, c: 12, l: 'O' }, { r: 10, c: 12, l: 'R' }, { r: 11, c: 12, l: 'R' }, { r: 12, c: 12, l: 'O' },
 
-            // 4. GIRAFA (Vertical)
-            {r:6, c:9, l:'G', n:4}, {r:7, c:9, l:'I'}, {r:8, c:9, l:'R'}, {r:9, c:9, l:'A'}, {r:10, c:9, l:'F'}, {r:11, c:9, l:'A'},
+            // 5. GIRAFA (Vertical)
+            { r: 6, c: 9, l: 'G', nv: 5 }, { r: 7, c: 9, l: 'I' }, { r: 8, c: 9, l: 'R' }, { r: 9, c: 9, l: 'A' }, { r: 10, c: 9, l: 'F' }, { r: 11, c: 9, l: 'A' },
 
-            // 5. PINGUIM (Vertical)
-            {r:8, c:4, l:'P', n:5}, {r:9, c:4, l:'I'}, {r:10, c:4, l:'N'}, {r:11, c:4, l:'G'}, {r:12, c:4, l:'U'}, {r:13, c:4, l:'I'}, {r:14, c:4, l:'M', n:9},
+            // 6. PINGUIM (Vertical)
+            { r: 8, c: 4, l: 'P', nv: 6 }, { r: 9, c: 4, l: 'I' }, { r: 10, c: 4, l: 'N' }, { r: 11, c: 4, l: 'G' }, { r: 12, c: 4, l: 'U' }, { r: 13, c: 4, l: 'I' }, { r: 14, c: 4, l: 'M' },
 
-            // 6. DINOSSAURO (Horizontal)
-            {r:9, c:3, l:'D', n:6}, {r:9, c:5, l:'N'}, {r:9, c:6, l:'O'}, {r:9, c:7, l:'S'}, {r:9, c:8, l:'S'}, {r:9, c:10, l:'U'}, {r:9, c:11, l:'R'}, 
+            // 7. DINOSSAURO (Horizontal)
+            { r: 9, c: 3, l: 'D', nh: 7 }, { r: 9, c: 4, l: 'I' }, { r: 9, c: 5, l: 'N' }, { r: 9, c: 6, l: 'O' }, { r: 9, c: 7, l: 'S' }, { r: 9, c: 8, l: 'S' }, { r: 9, c: 9, l: 'A' }, { r: 9, c: 10, l: 'U' }, { r: 9, c: 11, l: 'R' }, { r: 9, c: 12, l: 'O' },
 
-            // 7. GATO (Horizontal)
-            {r:10, c:14, l:'G', n:7}, {r:10, c:15, l:'A'}, {r:10, c:17, l:'O'}, 
+            // 8. GATO (Horizontal)
+            { r: 10, c: 14, l: 'G', nh: 8 }, { r: 10, c: 15, l: 'A' }, { r: 10, c: 16, l: 'T' }, { r: 10, c: 17, l: 'O' },
 
-            // 8. VACA (Horizontal)
-            {r:11, c:6, l:'V', n:8}, {r:11, c:7, l:'A'}, {r:11, c:8, l:'C'}, 
+            // 9. VACA (Horizontal)
+            { r: 11, c: 6, l: 'V', nh: 9 }, { r: 11, c: 7, l: 'A' }, { r: 11, c: 8, l: 'C' }, { r: 11, c: 9, l: 'A' },
 
-            // 9. MACACO (Horizontal)
-            {r:14, c:5, l:'A'}, {r:14, c:6, l:'C'}, {r:14, c:7, l:'A'}, {r:14, c:8, l:'C'}, {r:14, c:9, l:'O'}
+            // 10. MACACO (Horizontal)
+            { r: 14, c: 4, l: 'M', nh: 10 }, { r: 14, c: 5, l: 'A' }, { r: 14, c: 6, l: 'C' }, { r: 14, c: 7, l: 'A' }, { r: 14, c: 8, l: 'C' }, { r: 14, c: 9, l: 'O' }
         ];
 
         const gridElement = document.getElementById('grid');
-        
+
         // VARIÁVEIS DE CONTROLE DE DIREÇÃO
         let currentDirection = 'horizontal'; // Padrão
         let lastFocusedRow = null;
@@ -330,7 +423,7 @@
 
         function initGame() {
             gridElement.innerHTML = '';
-            
+
             // Criar Grid
             for (let r = 1; r <= 15; r++) {
                 for (let c = 1; c <= 20; c++) {
@@ -348,86 +441,71 @@
                 const cellDiv = document.getElementById(`cell-${item.r}-${item.c}`);
                 if (cellDiv) {
                     cellDiv.classList.remove('empty');
-                    
+
                     let input = cellDiv.querySelector('input');
                     if (!input) {
                         input = document.createElement('input');
                         input.maxLength = 1;
                         input.dataset.letter = item.l;
-                        input.dataset.row = item.r; // Guardar dados no input para acesso rápido
+                        input.dataset.row = item.r;
                         input.dataset.col = item.c;
-                        
-                        // Eventos
+                        input.id = `input-${item.r}-${item.c}`;
+
                         input.addEventListener('keyup', (e) => handleInput(e, item.r, item.c));
-                        
-                        // NOVO: Detectar direção ao focar
                         input.addEventListener('focus', () => handleFocus(item.r, item.c));
 
                         cellDiv.appendChild(input);
                     }
-                    
-                    if (item.n && !cellDiv.querySelector('.cell-number')) {
+
+                    if (item.nh) {
                         const numSpan = document.createElement('span');
-                        numSpan.className = 'cell-number';
-                        numSpan.innerText = item.n;
+                        numSpan.className = 'cell-number horiz';
+                        numSpan.innerText = item.nh;
+                        cellDiv.appendChild(numSpan);
+                    }
+                    if (item.nv) {
+                        const numSpan = document.createElement('span');
+                        numSpan.className = 'cell-number vert';
+                        numSpan.innerText = item.nv;
                         cellDiv.appendChild(numSpan);
                     }
                 }
             });
         }
 
-        // NOVA FUNÇÃO: Decide a direção baseada no movimento ou contexto
         function handleFocus(r, c) {
-            // Se viemos da célula logo acima (mesma coluna), é vertical
             if (lastFocusedRow === r - 1 && lastFocusedCol === c) {
                 currentDirection = 'vertical';
-            } 
-            // Se viemos da célula logo à esquerda (mesma linha), é horizontal
+            }
             else if (lastFocusedRow === r && lastFocusedCol === c - 1) {
                 currentDirection = 'horizontal';
             }
-            // Se clicou aleatoriamente (não veio de vizinho imediato), tenta adivinhar pelo contexto
             else {
-                const hasDown = document.getElementById(`cell-${r+1}-${c}`)?.querySelector('input');
-                const hasUp = document.getElementById(`cell-${r-1}-${c}`)?.querySelector('input');
-                const hasRight = document.getElementById(`cell-${r}-${c+1}`)?.querySelector('input');
-                const hasLeft = document.getElementById(`cell-${r}-${c-1}`)?.querySelector('input');
+                // Tenta adivinhar baseado nos vizinhos do layout
+                const hasDown = layout.some(i => i.r === r + 1 && i.c === c);
+                const hasUp = layout.some(i => i.r === r - 1 && i.c === c);
+                const hasRight = layout.some(i => i.r === r && i.c === c + 1);
+                const hasLeft = layout.some(i => i.r === r && i.c === c - 1);
 
-                // Se tem vizinho vertical mas NÃO tem horizontal, força vertical
-                if ((hasDown || hasUp) && (!hasRight && !hasLeft)) {
-                    currentDirection = 'vertical';
-                }
-                // Senão, padrão horizontal (ou mantém o que estava antes se for intersecção)
-                else if ((hasRight || hasLeft) && (!hasDown && !hasUp)) {
-                    currentDirection = 'horizontal';
-                }
+                if ((hasDown || hasUp) && (!hasRight && !hasLeft)) currentDirection = 'vertical';
+                else if ((hasRight || hasLeft) && (!hasDown && !hasUp)) currentDirection = 'horizontal';
             }
-
-            // Atualiza memória para o próximo movimento
             lastFocusedRow = r;
             lastFocusedCol = c;
         }
 
         function handleInput(e, row, col) {
             const input = e.target;
-            input.value = input.value.replace(/[^a-zA-Z]/g, '');
+            input.value = input.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
 
-            // Ao digitar uma letra
             if (input.value.length === 1) {
                 if (currentDirection === 'vertical') {
-                    // Prioridade: Baixo. Se não der, tenta Direita.
-                    if (!moveFocus(row + 1, col)) {
-                        moveFocus(row, col + 1);
-                    }
+                    if (!moveFocus(row + 1, col)) moveFocus(row, col + 1);
                 } else {
-                    // Prioridade: Direita (Horizontal). Se não der, tenta Baixo.
-                    if (!moveFocus(row, col + 1)) {
-                        moveFocus(row + 1, col);
-                    }
+                    if (!moveFocus(row, col + 1)) moveFocus(row + 1, col);
                 }
             }
-            
-            // Backspace (Apagar e voltar)
+
             if (e.key === 'Backspace' && input.value === '') {
                 if (currentDirection === 'vertical') {
                     moveFocus(row - 1, col) || moveFocus(row, col - 1);
@@ -435,22 +513,18 @@
                     moveFocus(row, col - 1) || moveFocus(row - 1, col);
                 }
             }
-            
-            // Setas manuais (Atualizam a direção automaticamente)
+
             if (e.key === 'ArrowRight') { currentDirection = 'horizontal'; moveFocus(row, col + 1); }
-            if (e.key === 'ArrowLeft')  { currentDirection = 'horizontal'; moveFocus(row, col - 1); }
-            if (e.key === 'ArrowDown')  { currentDirection = 'vertical'; moveFocus(row + 1, col); }
-            if (e.key === 'ArrowUp')    { currentDirection = 'vertical'; moveFocus(row - 1, col); }
+            if (e.key === 'ArrowLeft') { currentDirection = 'horizontal'; moveFocus(row, col - 1); }
+            if (e.key === 'ArrowDown') { currentDirection = 'vertical'; moveFocus(row + 1, col); }
+            if (e.key === 'ArrowUp') { currentDirection = 'vertical'; moveFocus(row - 1, col); }
         }
 
         function moveFocus(r, c) {
-            const nextCell = document.getElementById(`cell-${r}-${c}`);
-            if (nextCell && !nextCell.classList.contains('empty')) {
-                const nextInput = nextCell.querySelector('input');
-                if (nextInput) {
-                    nextInput.focus();
-                    return true;
-                }
+            const nextInput = document.getElementById(`input-${r}-${c}`);
+            if (nextInput) {
+                nextInput.focus();
+                return true;
             }
             return false;
         }
@@ -459,14 +533,14 @@
             let allCorrect = true;
             let inputs = document.querySelectorAll('.cell input');
             let filledCount = 0;
-            
+
             inputs.forEach(input => {
-                if(input.value) filledCount++;
+                if (input.value) filledCount++;
                 const correctLetter = input.dataset.letter;
                 const userLetter = input.value.toUpperCase();
-                
+
                 input.classList.remove('correct', 'wrong');
-                
+
                 if (userLetter === correctLetter) {
                     input.classList.add('correct');
                 } else {
@@ -475,7 +549,6 @@
                 }
             });
 
-            // Só mostra vitória se tudo estiver correto e preenchido
             if (allCorrect && filledCount === inputs.length) {
                 document.getElementById('winModal').classList.add('show');
             }
@@ -488,7 +561,7 @@
                 input.classList.remove('correct', 'wrong');
             });
             document.querySelector('.modal-overlay').classList.remove('show');
-            currentDirection = 'horizontal'; // Reseta direção
+            currentDirection = 'horizontal';
         }
 
         function closeModal() {
@@ -498,4 +571,5 @@
         initGame();
     </script>
 </body>
+
 </html>

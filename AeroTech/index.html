@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>AeroTech</title>
+
+<style>
+
+body{
+margin:0;
+font-family:"Segoe UI",Arial,sans-serif;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(180deg,#6ecbff,#b6f0c1);
+overflow:hidden;
+}
+
+/* bolhas */
+
+.bubbles{
+position:absolute;
+width:100%;
+height:100%;
+top:0;
+left:0;
+overflow:hidden;
+z-index:0;
+}
+
+.bubbles span{
+position:absolute;
+bottom:-150px;
+width:40px;
+height:40px;
+background:rgba(255,255,255,0.4);
+border-radius:50%;
+animation:rise 20s infinite;
+box-shadow:0 0 10px rgba(255,255,255,0.8);
+}
+
+.bubbles span:nth-child(1){left:10%;animation-duration:18s;}
+.bubbles span:nth-child(2){left:25%;animation-duration:24s;width:60px;height:60px;}
+.bubbles span:nth-child(3){left:40%;animation-duration:20s;}
+.bubbles span:nth-child(4){left:55%;animation-duration:22s;width:50px;height:50px;}
+.bubbles span:nth-child(5){left:70%;animation-duration:19s;}
+.bubbles span:nth-child(6){left:85%;animation-duration:26s;width:70px;height:70px;}
+
+@keyframes rise{
+0%{transform:translateY(0);}
+100%{transform:translateY(-110vh);}
+}
+
+/* app */
+
+.app{
+text-align:center;
+color:white;
+z-index:1;
+position:relative;
+}
+
+h1{
+font-size:3rem;
+text-shadow:0 0 10px rgba(255,255,255,0.8);
+margin-bottom:5px;
+}
+
+.subtitle{
+opacity:0.9;
+margin-bottom:10px;
+}
+
+/* progresso */
+
+.progress-text{
+margin-bottom:10px;
+font-weight:bold;
+}
+
+.progress-bar{
+width:100%;
+height:10px;
+background:rgba(255,255,255,0.3);
+border-radius:10px;
+margin-bottom:20px;
+overflow:hidden;
+}
+
+.progress{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00e5ff,#00ff9d);
+transition:0.3s;
+}
+
+/* card */
+
+.card{
+width:360px;
+padding:25px;
+border-radius:20px;
+background:rgba(255,255,255,0.25);
+backdrop-filter:blur(10px);
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+color:#003344;
+}
+
+#question{
+font-size:18px;
+margin-bottom:20px;
+}
+
+.buttons{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:999px;
+cursor:pointer;
+font-weight:bold;
+background:linear-gradient(180deg,#ffffff,#ccefff);
+transition:0.2s;
+}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:0 6px 15px rgba(0,0,0,0.2);
+}
+
+#feedback{
+margin-top:15px;
+font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bubbles">
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</div>
+
+<div class="app">
+
+<h1>💻 Tech Quiz</h1>
+<p class="subtitle">Tecnologia dos Computadores (2005–2013)</p>
+
+<div class="card">
+
+<div class="progress-text" id="progressText"></div>
+
+<div class="progress-bar">
+<div class="progress" id="progressBar"></div>
+</div>
+
+<p id="question"></p>
+
+<div class="buttons">
+<button onclick="checkAnswer(0)" id="btn0"></button>
+<button onclick="checkAnswer(1)" id="btn1"></button>
+<button onclick="checkAnswer(2)" id="btn2"></button>
+<button onclick="checkAnswer(3)" id="btn3"></button>
+</div>
+
+<p id="feedback"></p>
+
+</div>
+</div>
+
+<script>
+
+const questions = [
+
+{
+question:"Qual sistema operacional foi lançado em 2009?",
+options:["Windows XP","Windows Vista","Windows 7","Windows 8"],
+correct:2
+},
+
+{
+question:"Qual navegador ficou muito popular entre 2008 e 2013?",
+options:["Internet Explorer","Google Chrome","Netscape","Opera Mini"],
+correct:1
+},
+
+{
+question:"Qual empresa criou o Android?",
+options:["Microsoft","Apple","Google","Intel"],
+correct:2
+},
+
+{
+question:"Qual console foi lançado em 2006?",
+options:["Nintendo Wii","GameCube","Nintendo Switch","Wii U"],
+correct:0
+},
+
+{
+question:"Qual armazenamento começou a substituir HDs nesse período?",
+options:["DVD","SSD","Disquete","CD"],
+correct:1
+},
+
+{
+question:"Qual linguagem cria páginas web?",
+options:["HTML","Python","C++","Java"],
+correct:0
+},
+
+{
+question:"Qual empresa lançou o iPhone em 2007?",
+options:["Samsung","Nokia","Apple","Sony"],
+correct:2
+},
+
+{
+question:"Qual rede social era muito popular em 2010?",
+options:["TikTok","Instagram","Facebook","Threads"],
+correct:2
+},
+
+{
+question:"Qual tecnologia permite internet sem fio?",
+options:["Bluetooth","Wi-Fi","HDMI","USB"],
+correct:1
+},
+
+{
+question:"Qual dispositivo ficou popular entre 2010 e 2013?",
+options:["Tablet","Pager","Walkman","Disquete"],
+correct:0
+}
+
+];
+
+let current=0;
+let score=0;
+
+function loadQuestion(){
+
+document.getElementById("question").textContent=
+questions[current].question;
+
+for(let i=0;i<4;i++){
+document.getElementById("btn"+i).textContent=
+questions[current].options[i];
+}
+
+document.getElementById("progressText").textContent=
+"Pergunta "+(current+1)+" de "+questions.length;
+
+let progressPercent=((current)/questions.length)*100;
+
+document.getElementById("progressBar").style.width=
+progressPercent+"%";
+
+}
+
+function checkAnswer(choice){
+
+const feedback=document.getElementById("feedback");
+
+if(choice===questions[current].correct){
+feedback.textContent="✅ Resposta correta!";
+score++;
+}else{
+feedback.textContent="❌ Resposta errada!";
+}
+
+current++;
+
+if(current<questions.length){
+
+setTimeout(()=>{
+loadQuestion();
+feedback.textContent="";
+},900);
+
+}else{
+
+setTimeout(()=>{
+
+document.getElementById("progressBar").style.width="100%";
+
+document.querySelector(".card").innerHTML=`
+<h2>🏁 Quiz finalizado!</h2>
+<p>Você acertou <strong>${score}</strong> de 10 perguntas.</p>
+<button onclick="location.reload()">Jogar novamente</button>
+`;
+
+},1200);
+
+}
+
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>

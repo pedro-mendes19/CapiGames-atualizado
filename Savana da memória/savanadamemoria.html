@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -20,7 +19,7 @@
 
     body {
       font-family: 'Fredoka', sans-serif;
-      text-transform: uppercase; /* ADICIONE ESTA LINHA */
+      text-transform: uppercase;
       background-image: url('img/fundojogo.png');
       background-size: 100% 100%;
       background-position: center;
@@ -34,16 +33,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      
+
       height: 100vh;
       max-height: 100vh;
       user-select: none;
       overflow: hidden;
     }
 
-    /* ========================================= */
-    /* ESTILOS ORIGINAIS PARA COMPUTADOR (PC)    */
-    /* ========================================= */
     header {
       text-align: center;
       margin: 15px 0;
@@ -107,10 +103,33 @@
       pointer-events: none;
     }
 
-    .info-item { display: flex; align-items: center; gap: 10px; z-index: 5; }
-    .botoes-controle { display: flex; gap: 15px; z-index: 5; }
-    .btn-icon { border: none; background: none; cursor: pointer; font-size: 1.3rem; color: #fff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); transition: transform 0.2s; }
-    .btn-icon:hover { transform: scale(1.2); color: #6c5ce7; }
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 5;
+    }
+
+    .botoes-controle {
+      display: flex;
+      gap: 15px;
+      z-index: 5;
+    }
+
+    .btn-icon {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .btn-icon:hover {
+      transform: scale(1.2);
+      color: #6c5ce7;
+    }
 
     .game-area {
       flex-grow: 1;
@@ -139,127 +158,183 @@
       transition: transform 0.1s;
     }
 
-    .card:active { transform: scale(0.95); }
+    .card:active {
+      transform: scale(0.95);
+    }
 
     .card-inner {
-      width: 100%; height: 100%; position: absolute;
-      transition: transform 0.6s; transform-style: preserve-3d;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
     }
 
-    .card.flipped .card-inner { transform: rotateY(180deg); }
-    .card.correto .card-inner { animation: pulo 0.5s ease-in-out; }
-    .card.correto .card-back { background-color: var(--card-success); border-color: #72c772; }
-    .card.erro .card-inner { animation: tremer 0.4s ease-in-out; }
-    .card.erro .card-back { background-color: var(--card-error); }
-
-    .card-front, .card-back {
-      position: absolute; width: 100%; height: 100%;
-      backface-visibility: hidden; border-radius: 15px;
-      display: flex; justify-content: center; align-items: center;
-      border: 4px solid white; box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1); box-sizing: border-box;
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
     }
 
-    .card-front { background-color: var(--card-back); color: white; font-size: calc(var(--tamanho-carta) / 2.5); }
-    .card-back { background-color: #fff; transform: rotateY(180deg); }
-    .card-back img { width: 80%; height: 80%; object-fit: contain; }
+    .card.correto .card-inner {
+      animation: pulo 0.5s ease-in-out;
+    }
+
+    .card.correto .card-back {
+      background-color: var(--card-success);
+      border-color: #72c772;
+    }
+
+    .card.erro .card-inner {
+      animation: tremer 0.4s ease-in-out;
+    }
+
+    .card.erro .card-back {
+      background-color: var(--card-error);
+      border-color: #e05c4b;
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 4px solid white;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+    }
+
+    .card-front {
+      background-color: var(--card-back);
+      color: white;
+      font-size: calc(var(--tamanho-carta) / 2.5);
+    }
+
+    .card-back {
+      background-color: #fff;
+      transform: rotateY(180deg);
+    }
+
+    .card-back img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
 
     @keyframes pulo {
-      0%, 100% { transform: rotateY(180deg) scale(1) }
-      50% { transform: rotateY(180deg) scale(1.15) }
+
+      0%,
+      100% {
+        transform: rotateY(180deg) scale(1)
+      }
+
+      50% {
+        transform: rotateY(180deg) scale(1.15)
+      }
     }
+
     @keyframes tremer {
-      0%, 100% { transform: rotateY(180deg) translateX(0) }
-      25% { transform: rotateY(180deg) translateX(-5px) }
-      75% { transform: rotateY(180deg) translateX(5px) }
+
+      0%,
+      100% {
+        transform: rotateY(180deg) translateX(0)
+      }
+
+      25% {
+        transform: rotateY(180deg) translateX(-5px)
+      }
+
+      75% {
+        transform: rotateY(180deg) translateX(5px)
+      }
     }
 
     #overlay-inicio {
-      position: fixed; inset: 0; background-image: url('img/capajogo.png');
-      background-position: center; background-size: cover; background-color: #000;
-      z-index: 200; display: flex; justify-content: center; align-items: center;
+      position: fixed;
+      inset: 0;
+      background-image: url('img/capajogo.png');
+      background-position: center;
+      background-size: cover;
+      background-color: #000;
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* Estilo principal do botão JOGAR - NOVO TEMA LARANJA */
     .btn-start {
-      /* NOVA COR DE FUNDO: Degradê laranja (combina com o pôr do sol) */
-      background: linear-gradient(180deg, #f5b358 0%, #FF8C00 100%); 
-      
-      /* NOVA COR DO TEXTO: Branco para bom contraste */
-      color: white; 
-      
-      cursor: pointer; 
+      background: linear-gradient(180deg, #f5b358 0%, #FF8C00 100%);
+      color: white;
+      cursor: pointer;
       font-family: 'Fredoka', sans-serif;
-      font-weight: bold; 
-      border-radius: 50px; 
-      white-space: nowrap; 
+      font-weight: bold;
+      border-radius: 50px;
+      white-space: nowrap;
       text-transform: uppercase;
-      
-      /* NOVA SOMBRA NO TEXTO: Laranja escuro para destaque */
-      text-shadow: 2px 2px 0px #cc6a00; 
-      
-      font-size: clamp(20px, 5vmin, 45px); /* Letra um pouco maior */
+      text-shadow: 2px 2px 0px #cc6a00;
+      font-size: clamp(20px, 5vmin, 45px);
       padding: clamp(15px, 3vmin, 25px) clamp(35px, 8vmin, 80px);
-      
-      /* Bordinha branca (manteve) */
-      border: 4px solid #fff; 
-      
-      /* NOVA SOMBRA 3D: Laranja avermelhado escuro sólido + sombra esfumaçada preta */
+      border: 4px solid #fff;
       box-shadow: 0 8px 0 #a04000, 0 15px 20px rgba(0, 0, 0, 0.4);
-      
-      margin-top: 60vh; 
+      margin-top: 60vh;
       margin-left: 2vh;
-      
-      /* Transição suave para o hover e clique */
       transition: all 0.2s ease-in-out;
-      animation: pulseStart 2s infinite; 
+      animation: pulseStart 2s infinite;
     }
 
-    /* Efeito ao passar o mouse (Hover): Ele "acende" */
-    .btn-start:hover { 
-      /* NOVA COR DE HOVER: Um laranja mais claro e brilhante */
+    .btn-start:hover {
       background: linear-gradient(180deg, #ffd394 0%, #ffa02e 100%);
       transform: translateY(-3px) scale(1.05);
-      
-      /* Sombra 3D de hover manteve o laranja avermelhado escuro sólido */
       box-shadow: 0 11px 0 #a04000, 0 20px 25px rgba(0, 0, 0, 0.5);
     }
 
-    /* Efeito ao clicar (Active): O botão "afunda" - SEM ALTERAÇÃO NA LÓGICA, APENAS NA COR DA SOMBRA */
     .btn-start:active {
       transform: translateY(4px) scale(1);
       box-shadow: 0 4px 0 #a04000, 0 5px 10px rgba(0, 0, 0, 0.4);
-      animation: none; /* Para de pulsar enquanto está apertado */
+      animation: none;
     }
 
-    /* Animação de pulso (não quebra o 3D) */
-    @keyframes pulseStart { 
-      0% { transform: scale(1); } 
-      50% { transform: scale(1.03); } 
-      100% { transform: scale(1); } 
+    @keyframes pulseStart {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.03);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
-    /* ========================================= */
-    /* MODAL DE VITÓRIA                          */
-    /* ========================================= */
     #modal-nivel {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 100;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
     }
 
     .modal-content {
       padding: 45px 55px;
-      border-radius: 22px; /* Arredondamento igual ao painel */
+      border-radius: 22px;
       text-align: center;
       animation: modalUp 0.3s ease-out;
       position: relative;
-      
-      /* Cores e bordas importadas da classe .painel */
       background: linear-gradient(180deg, #e4b06a 0%, #e7b873 40%, #dca45a 100%);
       border: 4px solid #a06a2e;
       box-shadow: 0 6px 0 #7a4d1f, 0 0 25px rgba(0, 0, 0, 0.4);
     }
 
-    /* Listras sutis de fundo (igual ao painel) */
     .modal-content::before {
       content: "";
       position: absolute;
@@ -272,7 +347,6 @@
       border-radius: 18px;
     }
 
-    /* Sombreamento interno (igual ao painel) */
     .modal-content::after {
       content: "";
       position: absolute;
@@ -283,77 +357,280 @@
       pointer-events: none;
     }
 
-    @keyframes modalUp { from { transform: scale(0.5); } to { transform: scale(1); } }
+    @keyframes modalUp {
+      from {
+        transform: scale(0.5);
+      }
 
-    /* Ajuste de cor e contorno das fontes para combinar com o fundo */
-    .icone-vitoria { margin: 0; font-size: 4rem; position: relative; z-index: 5; }
-    .titulo-vitoria { font-family: 'Comic Sans MS', cursive, sans-serif; color: #fff; text-shadow: 2px 2px 0px #a06a2e; margin: 10px 0; font-size: 2rem; position: relative; z-index: 5; }
-    .texto-vitoria { font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 1.2rem; color: #fff; text-shadow: 1px 1px 0px #a06a2e; margin-bottom: 20px; font-weight: bold; position: relative; z-index: 5;}
+      to {
+        transform: scale(1);
+      }
+    }
+
+    .icone-vitoria {
+      margin: 0;
+      font-size: 4rem;
+      position: relative;
+      z-index: 5;
+    }
+
+    .titulo-vitoria {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: #fff;
+      text-shadow: 2px 2px 0px #a06a2e;
+      margin: 10px 0;
+      font-size: 2rem;
+      position: relative;
+      z-index: 5;
+    }
+
+    .texto-vitoria {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 1.2rem;
+      color: #fff;
+      text-shadow: 1px 1px 0px #a06a2e;
+      margin-bottom: 20px;
+      font-weight: bold;
+      position: relative;
+      z-index: 5;
+    }
+
+    .botoes-modal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 15px;
+    }
 
     .btn-proximo {
-      background: #985e29; color: white; border: none; padding: 15px 40px;
-      font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 1.5rem; border-radius: 50px; 
-      cursor: pointer; margin-top: 15px; font-weight: bold; box-shadow: 0 5px 0 #693600; 
-      transition: transform 0.1s; position: relative; z-index: 5;
+      margin-top: 0;
+    }
+
+    .btn-sair {
+      background: #5e3b1f;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 1.2rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 0 #3a220f;
+      transition: transform 0.1s;
+      position: relative;
+      z-index: 5;
+      display: none;
+    }
+
+    .btn-sair:hover {
+      background: #7a4d29;
+    }
+
+    .btn-sair:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #3a220f;
+    }
+
+    .btn-proximo {
+      background: #985e29;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-weight: bold;
+      box-shadow: 0 5px 0 #693600;
+      transition: transform 0.1s;
+      position: relative;
+      z-index: 5;
     }
 
     .btn-proximo:hover {
       background: #b57336;
     }
 
-    /* ========================================= */
-    /* AJUSTES PARA CHROMEBOOKS E NOTEBOOKS      */
-    /* ========================================= */
     @media screen and (max-width: 1024px), screen and (max-height: 800px) {
-      header { margin: 8px 0; }
-      .painel { padding: 8px 20px; font-size: 1.1rem; }
-      .nivel-badge { padding: 4px 25px; font-size: 1.1em; margin-bottom: 8px; }
-      .btn-icon { font-size: 1.1rem; }
-      .btn-start { border-width: 3px; box-shadow: 0 6px 0 #a04000, 0 12px 18px rgba(0, 0, 0, 0.4);}
-      .btn-start:hover { box-shadow: 0 8px 0 #a04000, 0 16px 22px rgba(0, 0, 0, 0.5);}
-      .btn-start:active { transform: translateY(2px) scale(1); box-shadow: 0 3px 0 #a04000, 0 4px 8px rgba(0, 0, 0, 0.4);}
-      .modal-content { padding: 30px 40px; border-width: 4px; }
-      .icone-vitoria { font-size: 3rem; }
-      .titulo-vitoria { font-size: 1.6rem; }
-      .btn-proximo { padding: 8px 20px; font-size: 1rem; margin-top: 5px; box-shadow: 0 4px 0 #693600;}
+      header {
+        margin: 8px 0;
+      }
+
+      .painel {
+        padding: 8px 20px;
+        font-size: 1.1rem;
+      }
+
+      .nivel-badge {
+        padding: 4px 25px;
+        font-size: 1.1em;
+        margin-bottom: 8px;
+      }
+
+      .btn-icon {
+        font-size: 1.1rem;
+      }
+
+      .btn-start {
+        border-width: 3px;
+        box-shadow: 0 6px 0 #a04000, 0 12px 18px rgba(0, 0, 0, 0.4);
+      }
+
+      .btn-start:hover {
+        box-shadow: 0 8px 0 #a04000, 0 16px 22px rgba(0, 0, 0, 0.5);
+      }
+
+      .btn-start:active {
+        transform: translateY(2px) scale(1);
+        box-shadow: 0 3px 0 #a04000, 0 4px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        padding: 30px 40px;
+        border-width: 4px;
+      }
+
+      .icone-vitoria {
+        font-size: 3rem;
+      }
+
+      .titulo-vitoria {
+        font-size: 1.6rem;
+      }
+
+      .btn-proximo {
+        padding: 8px 20px;
+        font-size: 1rem;
+        margin-top: 5px;
+        box-shadow: 0 4px 0 #693600;
+      }
+
+      .btn-sair {
+        padding: 8px 20px;
+        font-size: 1rem;
+        box-shadow: 0 4px 0 #3a220f;
+      }
     }
 
-    /* ========================================= */
-    /* AJUSTES PARA CELULARES NA HORIZONTAL      */
-    /* ========================================= */
     @media screen and (max-height: 500px) {
-      body { padding: 10vh 6vw 3vh 6vw; }
-      header { margin: 5px 0; width: 98%; }
-      .painel { padding: 5px 15px; font-size: 0.95rem; border-width: 3px; box-shadow: 0 4px 0 #7a4d1f; }
-      .btn-icon { font-size: 1rem; }
-      .nivel-badge { padding: 3px 20px; font-size: 1em; margin-bottom: 5px; border-width: 2px;}
-      .info-item { gap: 5px; }
-      .game-container { gap: 6px; }
-      .game-area { margin-top: -13px;}
-      .btn-start { border-width: 2px; box-shadow: 0 5px 0 #a04000, 0 10px 15px rgba(0, 0, 0, 0.4);}
-      .btn-start:hover { box-shadow: 0 7px 0 #a04000, 0 15px 20px rgba(0, 0, 0, 0.5);}
-      .btn-start:active { transform: translateY(2px) scale(1); box-shadow: 0 3px 0 #a04000, 0 4px 8px rgba(0, 0, 0, 0.4);}
+      body {
+        padding: 10vh 6vw 3vh 6vw;
+      }
 
-      /* Reduzindo o modal BASTANTE para caber no celular deitado */
-      .modal-content { padding: 15px 25px; border-width: 3px; border-radius: 12px; box-shadow: 0 6px 0 #8a5a2f; }
-      .icone-vitoria { font-size: 2.2rem; }
-      .titulo-vitoria { font-size: 1.3rem; margin: 5px 0; }
-      .texto-vitoria { font-size: 0.95rem; margin-bottom: 10px; }
-      .btn-proximo { padding: 8px 20px; font-size: 1rem; margin-top: 5px; box-shadow: 0 4px 0 #693600;}
-      
-     /* Ajusta as listras e sombras para o tamanho mobile */
-      .modal-content::before, .modal-content::after { transform: none; inset: 0; border-radius: 8px; }
+      header {
+        margin: 5px 0;
+        width: 98%;
+      }
+
+      .painel {
+        padding: 5px 15px;
+        font-size: 0.95rem;
+        border-width: 3px;
+        box-shadow: 0 4px 0 #7a4d1f;
+      }
+
+      .btn-icon {
+        font-size: 1rem;
+      }
+
+      .nivel-badge {
+        padding: 3px 20px;
+        font-size: 1em;
+        margin-bottom: 5px;
+        border-width: 2px;
+      }
+
+      .info-item {
+        gap: 5px;
+      }
+
+      .game-container {
+        gap: 6px;
+      }
+
+      .game-area {
+        margin-top: -13px;
+      }
+
+      .btn-start {
+        border-width: 2px;
+        box-shadow: 0 5px 0 #a04000, 0 10px 15px rgba(0, 0, 0, 0.4);
+      }
+
+      .btn-start:hover {
+        box-shadow: 0 7px 0 #a04000, 0 15px 20px rgba(0, 0, 0, 0.5);
+      }
+
+      .btn-start:active {
+        transform: translateY(2px) scale(1);
+        box-shadow: 0 3px 0 #a04000, 0 4px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        padding: 15px 25px;
+        border-width: 3px;
+        border-radius: 12px;
+        box-shadow: 0 6px 0 #8a5a2f;
+      }
+
+      .icone-vitoria {
+        font-size: 2.2rem;
+      }
+
+      .titulo-vitoria {
+        font-size: 1.3rem;
+        margin: 5px 0;
+      }
+
+      .texto-vitoria {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+      }
+
+      .btn-proximo {
+        padding: 8px 20px;
+        font-size: 1rem;
+        margin-top: 5px;
+        box-shadow: 0 4px 0 #693600;
+      }
+
+      .modal-content::before,
+      .modal-content::after {
+        transform: none;
+        inset: 0;
+        border-radius: 8px;
+      }
+
+      .btn-sair {
+        padding: 8px 20px;
+        font-size: 1rem;
+        box-shadow: 0 4px 0 #3a220f;
+      }
     }
 
-    /* Trava Celular Vertical */
     @media screen and (max-width: 900px) and (orientation: portrait) {
       body::before {
         content: "🔄 Gire o celular para jogar na horizontal";
-        position: fixed; inset: 0; background: #000; color: #fff;
-        display: flex; justify-content: center; align-items: center;
-        text-align: center; font-size: 1.5rem; padding: 20px; z-index: 9999;
+        position: fixed;
+        inset: 0;
+        background: #f89646;
+        color: #fff;
+        display: flex;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        z-index: 9999;
       }
-      body>* { display: none; }
+
+      body>* {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -369,7 +646,8 @@
 
     <div class="painel">
       <div class="info-item" title="Jogadas"><i class="fas fa-hand-pointer"></i> <span id="jogadas">0</span></div>
-      <div class="info-item" title="Pares Encontrados"><i class="fas fa-check-double"></i> <span id="pares-encontrados">0/0</span></div>
+      <div class="info-item" title="Pares Encontrados"><i class="fas fa-check-double"></i> <span
+          id="pares-encontrados">0/0</span></div>
       <div class="info-item" title="Tempo"><i class="fas fa-stopwatch"></i> <span id="tempo">00:00</span></div>
 
       <div class="botoes-controle">
@@ -392,16 +670,20 @@
       <h1 class="icone-vitoria">🐾</h1>
       <h2 class="titulo-vitoria">Nível Concluído!</h2>
       <p id="msg-vitoria" class="texto-vitoria">Excelente memória!</p>
-      <button class="btn-proximo" onclick="proximoNivel()">PRÓXIMO NÍVEL <i class="fas fa-arrow-right"></i></button>
+
+      <div class="botoes-modal">
+        <button class="btn-proximo" onclick="proximoNivel()">PRÓXIMO NÍVEL <i class="fas fa-arrow-right"></i></button>
+        <button class="btn-sair" id="btn-sair" onclick="fecharJogo()">SAIR DO JOGO <i class="fas fa-times"></i></button>
+      </div>
     </div>
   </div>
 
   <audio id="musica-fundo" loop>
-    <source src="musicajogo.mp3" type="audio/mpeg">
+    <source src="som/musicajogo.mp3" type="audio/mpeg">
   </audio>
 
   <audio id="som-vitoria">
-    <source src="somvitoria-5segundos.mp3" type="audio/mpeg">
+    <source src="som/somvitoria.mp3" type="audio/mpeg">
   </audio>
 
   <script>
@@ -456,22 +738,27 @@
       const paddingVertical = parseFloat(estiloBody.paddingTop) + parseFloat(estiloBody.paddingBottom);
       const paddingHorizontal = parseFloat(estiloBody.paddingLeft) + parseFloat(estiloBody.paddingRight);
 
-      // AUMENTADO: Margem de respiro extra para as cartas não grudarem nas bordas (era 15, agora é 40)
-      const margemRespiro = 60; 
+      const margemRespiro = 60;
       const alturaDisponivel = window.innerHeight - headerHeight - paddingVertical - margemRespiro;
       const larguraDisponivel = window.innerWidth - paddingHorizontal - margemRespiro;
 
-      const gap = window.innerHeight <= 500 ? 12 : 10; // Gap menor no celular
+      const gap = window.innerHeight <= 500 ? 12 : 10;
 
       const maxAlturaPorCarta = (alturaDisponivel - (gap * (linhas - 1))) / linhas;
       const maxLarguraPorCarta = (larguraDisponivel - (gap * (colunas - 1))) / colunas;
 
       let tamanhoFinal = Math.min(maxAlturaPorCarta, maxLarguraPorCarta);
 
-      // NOVA TRAVA: Se for celular (tela pequena ou muito achatada), o tamanho máximo da carta é menor
-      const isMobile = window.innerWidth <= 900 || window.innerHeight <= 500;
-      const limiteMaximo = isMobile ? 60 : 130; // Celular = máx 85px | PC = máx 150px
-      
+      let limiteMobile = 75;
+
+      if (nivelAtual >= 2) {
+        limiteMobile = 95;
+      }
+
+      const isMobile = window.innerHeight <= 500;
+
+      const limiteMaximo = isMobile ? limiteMobile : 140;
+
       tamanhoFinal = Math.min(tamanhoFinal, limiteMaximo);
 
       document.documentElement.style.setProperty('--tamanho-carta', `${Math.floor(tamanhoFinal)}px`);
@@ -541,7 +828,7 @@
 
       modal.style.display = "none";
       container.style.gridTemplateColumns = `repeat(${config.colunas}, 1fr)`;
-      
+
       ajustarTamanhoCartas();
 
       let listaCartas = [];
@@ -639,36 +926,45 @@
 
       const msg = document.getElementById('msg-vitoria');
       const btn = document.querySelector('.btn-proximo');
+      const btnSair = document.getElementById('btn-sair');
+      const icone = document.querySelector('.icone-vitoria');
 
       if (nivelAtual < niveis.length - 1) {
         msg.innerText = `Nível ${nivelAtual + 1} completo em ${elTempo.innerText}!`;
         btn.innerHTML = `PRÓXIMO NÍVEL <i class="fas fa-arrow-right"></i>`;
         btn.onclick = proximoNivel;
+        btnSair.style.display = 'none';
       } else {
         const minutos = String(Math.floor(tempoTotal / 60)).padStart(2, '0');
         const segundosFinais = String(tempoTotal % 60).padStart(2, '0');
         const tempoFinalFormatado = `${minutos}:${segundosFinais}`;
 
-        // === NOVO CÓDIGO DO SOM DE VITÓRIA ===
         const audioVitoria = document.getElementById('som-vitoria');
-        if (musicaTocando) audioFundo.pause(); // Pausa a música de fundo para não misturar
-        audioVitoria.play(); // Toca o seu som de 5 segundos
-        // =====================================
+        if (musicaTocando) audioFundo.pause();
+        audioVitoria.play();
+
+        icone.innerText = "🏆";
 
         msg.innerHTML = `
           PARABÉNS! Você zerou todos os níveis! 🎉<br><br>
           <strong>Seu tempo total foi:</strong><br>
-          <span style="font-size: 2rem; color:#6c5ce7;">${tempoFinalFormatado}</span>
+          <span style="font-size: 2rem; color: #693600;">${tempoFinalFormatado}</span> 
         `;
-        btn.innerHTML = `Jogar Novamente <i class="fas fa-redo"></i>`;
+
+        btn.innerHTML = `JOGAR NOVAMENTE <i class="fas fa-redo"></i>`;
+        btnSair.style.display = 'block';
+
         btn.onclick = () => {
           nivelAtual = 0; tempoTotal = 0;
+
+          icone.innerText = "🐾";
+          btnSair.style.display = 'none';
+
           overlay.style.display = 'flex';
           setTimeout(() => overlay.style.opacity = '1', 10);
-          
-          // Para o som de vitória caso o jogador clique rápido em "Jogar Novamente"
+
           audioVitoria.pause();
-          audioVitoria.currentTime = 0; 
+          audioVitoria.currentTime = 0;
 
           musicaTocando = false; audioFundo.pause(); audioFundo.currentTime = 0;
           iniciarNivelLogica();
@@ -677,9 +973,15 @@
       modal.style.display = "flex";
     }
 
+    function fecharJogo() {
+      window.close();
+      window.location.href = "about:blank";
+    }
+
     function proximoNivel() { nivelAtual++; iniciarNivelLogica(); }
     function reiniciarNivel() { if (confirm("Reiniciar este nível?")) iniciarNivelLogica(); }
 
   </script>
 </body>
+
 </html>
