@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -297,11 +298,12 @@
 
     #resultado {
       margin: 0 auto;
-      height: 6vh;
+      height: auto; /* Permite que o balão cresça se o texto tiver duas linhas */
       min-height: 50px;
+      padding: 10px 15px; /* Dá um respiro interno para o texto não colar nas bordas */
       width: 95%;
       max-width: 600px;
-      font-size: clamp(16px, 2.5vh, 22px);
+      font-size: clamp(14px, 2.2vh, 20px); /* Ajuste leve para caber melhor no mobile */
       font-weight: 800;
       text-align: center;
       border-radius: 25px;
@@ -311,6 +313,7 @@
       margin-bottom: 1vh;
       opacity: 0;
       transition: opacity 0.2s;
+      box-sizing: border-box;
     }
 
     #score {
@@ -321,6 +324,7 @@
       padding: 0.8vh 2.5vw;
       border-radius: 50px;
       margin-top: 1vh;
+      /* Remova a linha margin-bottom que havíamos colocado aqui */
     }
 
     .countries-grid {
@@ -649,7 +653,7 @@
 
       .game-wrapper {
         padding-top: 10px;
-        padding-bottom: 40px;
+        padding-bottom: 80px; /* Aumentado para dar espaço à pontuação não ser cortada */
       }
     }
   </style>
@@ -659,14 +663,13 @@
 
   <div class="game-wrapper">
     <h1>CULINÁRIA MUNDIAL</h1>
-
     <div id="intro">
       <div class="intro-card">
         <h2>CULINÁRIA MUNDIAL</h2>
         <p>
           Você conhece a culinária dos países?<br>
-          Veja a comida e clique na bandeira do país correto.<br><br>
-          São 15 pratos para testar seu conhecimento.
+          Veja o prato típico e clique na bandeira do país correto.<br><br>
+          São 10 pratos para testar seu conhecimento.
         </p>
         <button class="btn-jogar" onclick="iniciarJogo()">▶ Jogar</button>
       </div>
@@ -874,9 +877,64 @@
           { nome: "TAILÂNDIA", img: "img/bandeiratailandia.png" },
           { nome: "COREIA DO SUL", img: "img/bandeiracoreiadosul.png" },
           { nome: "JAPÃO", img: "img/bandeirajapao.png" }]
+      },
+
+      {
+        img: "img/poutine.png", nome: "POUTINE", correta: "CANADÁ",
+        ingredientes: "Batatas fritas cobertas com queijo em grão e um molho de carne quente (gravy).",
+        opcoes: [
+          { nome: "CANADÁ", img: "img/bandeiracanada.png" },
+          { nome: "ESTADOS UNIDOS", img: "img/bandeiraestadosunidos.png" },
+          { nome: "FRANÇA", img: "img/bandeirafranca.png" }]
+      },
+
+      {
+        img: "img/tacos.png", nome: "TACOS", correta: "MÉXICO",
+        ingredientes: "Tortilha de milho recheada com carne, cebola, coentros e molho picante.",
+        opcoes: [
+          { nome: "ESPANHA", img: "img/bandeiraespanha.png" },
+          { nome: "MÉXICO", img: "img/bandeiramexico.png" },
+          { nome: "COLÔMBIA", img: "img/bandeiracolombia.png" }]
+      },
+
+      {
+        img: "img/ceviche.png", nome: "CEVICHE", correta: "PERU",
+        ingredientes: "Peixe branco cru marinado em sumo de limão ou lima, cebola roxa cortada fina, coentros e pimenta (ají).",
+        opcoes: [
+          { nome: "CHILE", img: "img/bandeirachile.png" },
+          { nome: "PERU", img: "img/bandeiraperu.png" },
+          { nome: "COLÔMBIA", img: "img/bandeiracolombia.png" }]
+      },
+
+      {
+        img: "img/fishandchips.png", nome: "FISH AND CHIPS", correta: "REINO UNIDO",
+        ingredientes: "Filetes de peixe branco fritos num polme crocante, acompanhados por batatas fritas grossas.",
+        opcoes: [
+          { nome: "REINO UNIDO", img: "img/bandeirareinounido.png" },
+          { nome: "ESTADOS UNIDOS", img: "img/bandeiraestadosunidos.png" },
+          { nome: "AUSTRÁLIA", img: "img/bandeiraaustralia.png" }]
+      },
+
+      {
+        img: "img/pretzel.png", nome: "PRETZEL", correta: "ALEMANHA",
+        ingredientes: "Massa de pão tradicional assada em forma de nó, com uma crosta dourada e salpicada com sal grosso.",
+        opcoes: [
+          { nome: "ÁUSTRIA", img: "img/bandeiraaustria.png" },
+          { nome: "POLÔNIA", img: "img/bandeirapolonia.png" },
+          { nome: "ALEMANHA", img: "img/bandeiraalemanha.png" }]
       }
     ];
 
+    // Função que embaralha os itens de uma lista aleatoriamente
+    function embaralhar(lista) {
+      for (let i = lista.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [lista[i], lista[j]] = [lista[j], lista[i]];
+      }
+      return lista;
+    }
+    let perguntasDaRodada = []; // Vai guardar as 10 perguntas sorteadas
+    const TOTAL_PERGUNTAS = 10; // Limite de questões por jogada
     let atual = 0;
     let score = 0;
     let respondido = false;
@@ -929,6 +987,10 @@
 
       mostrarAba('quiz');
 
+      // MUDANÇA: Sorteia 10 perguntas aleatórias do banco principal
+      let bancoEmbaralhado = embaralhar([...perguntas]); // Faz uma cópia e embaralha o banco total
+      perguntasDaRodada = bancoEmbaralhado.slice(0, TOTAL_PERGUNTAS); // Pega apenas as 10 primeiras
+
       atual = 0;
       score = 0;
       respondido = false;
@@ -938,9 +1000,9 @@
     }
 
     function mostrar() {
-      const p = perguntas[atual];
+      const p = perguntasDaRodada[atual];
 
-      document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${perguntas.length}`;
+      document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${perguntasDaRodada.length}`;
       document.getElementById('imagemPergunta').src = p.img;
       document.getElementById('nomeAlimento').innerText = p.nome;
 
@@ -951,7 +1013,10 @@
       const divOpcoes = document.getElementById('opcoes');
       divOpcoes.innerHTML = '';
 
-      p.opcoes.forEach(opcao => {
+      // MUDANÇA: Embaralha as alternativas antes de mostrá-las na tela
+      let opcoesSorteadas = embaralhar([...p.opcoes]);
+
+      opcoesSorteadas.forEach(opcao => {
         const btn = document.createElement('div');
         btn.className = 'opcao';
         btn.innerHTML = `<img src="${opcao.img}"><p>${opcao.nome}</p>`;
@@ -984,7 +1049,7 @@
       if (respondido) return;
       respondido = true;
 
-      const p = perguntas[atual];
+      const p = perguntasDaRodada[atual];
       const r = document.getElementById('resultado');
 
       r.style.opacity = '1';
@@ -1014,7 +1079,7 @@
 
       setTimeout(() => {
         atual++;
-        if (atual < perguntas.length) {
+        if (atual < perguntasDaRodada.length) {
           mostrar();
         } else {
           fim();
@@ -1029,14 +1094,15 @@
       const painel = document.getElementById('painelFinal');
       painel.style.display = 'block';
 
-      const erros = perguntas.length - score;
+      // MUDANÇA: Usa perguntasDaRodada no cálculo
+      const erros = perguntasDaRodada.length - score;
       document.getElementById('totalAcertos').innerText = score;
       document.getElementById('totalErros').innerText = erros;
-      document.getElementById('resumoFinal').innerText = `Você completou todas as ${perguntas.length} perguntas!`;
+      document.getElementById('resumoFinal').innerText = `Você completou as ${perguntasDaRodada.length} perguntas da rodada!`;
 
       let msg = '';
-      if (score === perguntas.length) msg = "🏆 UAU! Você é um Mestre da Culinária!";
-      else if (score > perguntas.length * 0.7) msg = "👏 Muito bem! Conhece muitos sabores.";
+      if (score === perguntasDaRodada.length) msg = "🏆 UAU! Você é um Mestre da Culinária!";
+      else if (score > perguntasDaRodada.length * 0.7) msg = "👏 Muito bem! Conhece muitos sabores.";
       else msg = "🍽 Continue explorando a cozinha mundial!";
 
       document.getElementById('mensagemFinal').innerText = msg;
@@ -1072,4 +1138,5 @@
 
   </script>
 </body>
+
 </html>
