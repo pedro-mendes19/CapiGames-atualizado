@@ -458,7 +458,7 @@
                 }
                 if (this.chute) {
                     let peX = this.x + (40 * this.dir), peY = this.y - 10, dPe = Math.sqrt((bola.x - peX) ** 2 + (bola.y - peY) ** 2);
-                    if (dPe < 75) { bola.vx = 28 * this.dir; bola.vy = -18; criarConfetes(bola.x, bola.y, 5); }
+                    if (dPe < 45) { bola.vx = 28 * this.dir; bola.vy = -18; criarConfetes(bola.x, bola.y, 5); }
                 }
             }
             desenhar() {

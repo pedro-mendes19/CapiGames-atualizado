@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Culinária Mundial</title>
+</head>
   <style>
     * {
       box-sizing: border-box;
@@ -94,7 +94,7 @@
     }
 
     .intro-card p {
-      font-size: clamp(16px, 2.5vh, 24px);
+      font-size: clamp(16px, 2.2vh, 24px);
       line-height: 1.5;
       color: #5D4037;
       font-weight: 700;
@@ -128,7 +128,6 @@
       box-shadow: 0 0.4vh 0 #E65100;
     }
 
-
     #container {
       width: 100%;
       max-width: 900px;
@@ -136,10 +135,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: auto;
+      margin-top: 1vh;
       margin-bottom: auto;
       gap: 1.5vh;
-      padding-bottom: 20px;
+      padding-bottom: 10px;
     }
 
     .tab-navigation {
@@ -298,12 +297,12 @@
 
     #resultado {
       margin: 0 auto;
-      height: auto; /* Permite que o balão cresça se o texto tiver duas linhas */
+      height: auto;
       min-height: 50px;
-      padding: 10px 15px; /* Dá um respiro interno para o texto não colar nas bordas */
+      padding: 10px 15px;
       width: 95%;
       max-width: 600px;
-      font-size: clamp(14px, 2.2vh, 20px); /* Ajuste leve para caber melhor no mobile */
+      font-size: clamp(14px, 2.2vh, 20px);
       font-weight: 800;
       text-align: center;
       border-radius: 25px;
@@ -324,7 +323,6 @@
       padding: 0.8vh 2.5vw;
       border-radius: 50px;
       margin-top: 1vh;
-      /* Remova a linha margin-bottom que havíamos colocado aqui */
     }
 
     .countries-grid {
@@ -353,8 +351,8 @@
     }
 
     .country-card:hover {
-      transform: translateY(-10px) scale(1.05) rotate(1deg);
-      box-shadow: 0 15px 30px rgba(230, 81, 0, 0.2);
+      transform: scale(1.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
       border-color: #FF9800;
       background: #FFF8E1;
     }
@@ -636,29 +634,59 @@
     }
 
     @media (max-width: 600px) {
+      h1 {
+        font-size: 24px; 
+        padding: 5px 15px; 
+        border-width: 3px; 
+        margin: 1vh auto; 
+      }
+
+      .bloco-imagem {
+        padding: 1.2vh;
+        margin-bottom: 1.5vh;
+      }
+
+      #imagemPergunta {
+        max-height: 18vh; 
+      }
+
+      #nomeAlimento {
+        font-size: 20px; 
+      }
+
+      #pergunta {
+        font-size: 15px; 
+        padding: 1vh 3vw;
+      }
+
       .opcao {
-        width: 45%;
+        width: 45%; 
+        padding: 1vh; 
       }
 
-      .botoes-finais {
-        flex-direction: column;
-        align-items: center;
-        gap: 1.5vh;
+      .opcao img {
+        width: 30px; 
       }
 
-      .btn-reiniciar,
-      .btn-sair {
-        width: 80%;
+      .opcao p {
+        font-size: 12px; 
       }
 
+      #score {
+        font-size: 15px; 
+        margin-top: 1.5vh;
+      }
+
+      #quizCulinaria {
+        gap: 2vh; 
+      }
+      
       .game-wrapper {
         padding-top: 10px;
-        padding-bottom: 80px; /* Aumentado para dar espaço à pontuação não ser cortada */
+        padding-bottom: 10px;
       }
     }
   </style>
-</head>
-
 <body>
 
   <div class="game-wrapper">
@@ -763,19 +791,10 @@
       },
 
       {
-        img: "img/choripan.png", nome: "CHORIPAN", correta: "ARGENTINA",
-        ingredientes: "Pão baguete ou francês, linguiça chouriço assada e molho chimichurri.",
-        opcoes: [
-          { nome: "ARGENTINA", img: "img/bandeiraargentina.png" },
-          { nome: "BRASIL", img: "img/bandeirabrasil.png" },
-          { nome: "CHILE", img: "img/bandeirachile.png" }]
-      },
-
-      {
         img: "img/churros.png", nome: "CHURROS", correta: "ESPANHA",
         ingredientes: "Farinha de trigo, água, açúcar e sal. Fritos e passados na canela com açúcar.",
         opcoes: [
-          { nome: "PORTUGAL", img: "img/bandeiraportugal.png" },
+          { nome: "ITÁLIA", img: "img/bandeiraitalia.png" },
           { nome: "ESPANHA", img: "img/bandeiraespanha.png" },
           { nome: "MÉXICO", img: "img/bandeiramexico.png" }]
       },
@@ -786,7 +805,7 @@
         opcoes: [
           { nome: "FRANÇA", img: "img/bandeirafranca.png" },
           { nome: "ITÁLIA", img: "img/bandeiraitalia.png" },
-          { nome: "PORTUGAL", img: "img/bandeiraportugal.png" }]
+          { nome: "ALEMANHA", img: "img/bandeiraalemanha.png" }]
       },
 
       {
@@ -811,16 +830,16 @@
         img: "img/feijoada.png", nome: "FEIJOADA", correta: "BRASIL",
         ingredientes: "Feijão preto cozido com diversas partes de carne de porco (costela, linguiça, lombo).",
         opcoes: [
-          { nome: "PORTUGAL", img: "img/bandeiraportugal.png" },
+          { nome: "ANGOLA", img: "img/bandeiraangola.png" },
           { nome: "BRASIL", img: "img/bandeirabrasil.png" },
-          { nome: "ARGENTINA", img: "img/bandeiraargentina.png" }]
+          { nome: "COLÔMBIA", img: "img/bandeiracolombia.png" }]
       },
 
       {
         img: "img/lamington.png", nome: "LAMINGTON", correta: "AUSTRÁLIA",
         ingredientes: "Bolo esponja de baunilha cortado em cubos, mergulhado em calda de chocolate e coberto com coco ralado.",
         opcoes: [
-          { nome: "REINO UNIDO", img: "img/bandeirareinounido.png" },
+          { nome: "ESTADOS UNIDOS", img: "img/bandeiraestadosunidos.png" },
           { nome: "AUSTRÁLIA", img: "img/bandeiraaustralia.png" },
           { nome: "NOVA ZELÂNDIA", img: "img/bandeiranovazelandia.png" }]
       },
@@ -831,7 +850,7 @@
         opcoes: [
           { nome: "ITÁLIA", img: "img/bandeiraitalia.png" },
           { nome: "GRÉCIA", img: "img/bandeiragrecia.png" },
-          { nome: "JAPÃO", img: "img/bandeirajapao.png" }]
+          { nome: "ESPANHA", img: "img/bandeiraespanha.png" }]
       },
 
       {
@@ -841,15 +860,6 @@
           { nome: "ÍNDIA", img: "img/bandeiraindia.png" },
           { nome: "CHINA", img: "img/bandeirachina.png" },
           { nome: "INDONÉSIA", img: "img/bandeiraindonesia.png" }]
-      },
-
-      {
-        img: "img/pasteldenata.png", nome: "PASTEL DE NATA", correta: "PORTUGAL",
-        ingredientes: "Massa folhada crocante recheada com um creme à base de ovos, açúcar e leite.",
-        opcoes: [
-          { nome: "PORTUGAL", img: "img/bandeiraportugal.png" },
-          { nome: "ESPANHA", img: "img/bandeiraespanha.png" },
-          { nome: "FRANÇA", img: "img/bandeirafranca.png" }]
       },
 
       {
@@ -907,25 +917,87 @@
       },
 
       {
-        img: "img/fishandchips.png", nome: "FISH AND CHIPS", correta: "REINO UNIDO",
-        ingredientes: "Filetes de peixe branco fritos num polme crocante, acompanhados por batatas fritas grossas.",
-        opcoes: [
-          { nome: "REINO UNIDO", img: "img/bandeirareinounido.png" },
-          { nome: "ESTADOS UNIDOS", img: "img/bandeiraestadosunidos.png" },
-          { nome: "AUSTRÁLIA", img: "img/bandeiraaustralia.png" }]
-      },
-
-      {
         img: "img/pretzel.png", nome: "PRETZEL", correta: "ALEMANHA",
         ingredientes: "Massa de pão tradicional assada em forma de nó, com uma crosta dourada e salpicada com sal grosso.",
         opcoes: [
           { nome: "ÁUSTRIA", img: "img/bandeiraaustria.png" },
           { nome: "POLÔNIA", img: "img/bandeirapolonia.png" },
           { nome: "ALEMANHA", img: "img/bandeiraalemanha.png" }]
+      },
+
+      {
+        img: "img/padthai.png", nome: "PAD THAI", correta: "TAILÂNDIA",
+        ingredientes: "Macarrão de arroz salteado com ovos, amendoim, broto de feijão, camarão ou frango e molho de tamarindo.",
+        opcoes: [
+          { nome: "TAILÂNDIA", img: "img/bandeiratailandia.png" },
+          { nome: "VIETNÃ", img: "img/bandeiravietna.png" },
+          { nome: "INDONÉSIA", img: "img/bandeiraindonesia.png" }]
+      },
+
+      {
+        img: "img/bobotie.png", nome: "BOBOTIE", correta: "ÁFRICA DO SUL",
+        ingredientes: "Carne moída temperada com curry e especiarias, assada com uma cobertura cremosa à base de ovos e leite.",
+        opcoes: [
+          { nome: "ÁFRICA DO SUL", img: "img/bandeiraafricadosul.png" },
+          { nome: "QUÊNIA", img: "img/bandeiraquenia.png" },
+          { nome: "ANGOLA", img: "img/bandeiraangola.png" }]
+      },
+
+      {
+        img: "img/arrozjollof.png", nome: "ARROZ JOLLOF", correta: "NIGÉRIA",
+        ingredientes: "Arroz cozido em um rico caldo de tomate, cebola, pimentão e especiarias locais.",
+        opcoes: [
+          { nome: "NIGÉRIA", img: "img/bandeiranigeria.png" },
+          { nome: "GANA", img: "img/bandeiragana.png" },
+          { nome: "SENEGAL", img: "img/bandeirasenegal.png" }]
+      },
+
+      {
+        img: "img/pavlova.png", nome: "PAVLOVA", correta: "NOVA ZELÂNDIA",
+        ingredientes: "Sobremesa em formato de bolo feita de merengue crocante por fora e macio por dentro, coberta com chantilly e frutas frescas.",
+        opcoes: [
+          { nome: "NOVA ZELÂNDIA", img: "img/bandeiranovazelandia.png" },
+          { nome: "AUSTRÁLIA", img: "img/bandeiraaustralia.png" },
+          { nome: "CANADÁ", img: "img/bandeiracanada.png" }]
+      },
+
+      {
+        img: "img/kokoda.png", nome: "KOKODA", correta: "FIJI",
+        ingredientes: "Peixe cru marinado em suco de limão ou lima, misturado com creme de coco fresco, cebola, tomate e pimentão.",
+        opcoes: [
+          { nome: "FIJI", img: "img/bandeirafiji.png" },
+          { nome: "SAMOA", img: "img/bandeirasamoa.png" },
+          { nome: "VANUATU", img: "img/bandeiravanuatu.png" }]
+      },
+
+      {
+        img: "img/dorowat.png", nome: "DORO WAT", correta: "ETIÓPIA",
+        ingredientes: "Ensopado picante de frango cozido lentamente com muita cebola, mistura de especiarias (berbere) e ovos cozidos. Servido sobre o pão injera.",
+        opcoes: [
+          { nome: "ETIÓPIA", img: "img/bandeiraetiopia.png" },
+          { nome: "SENEGAL", img: "img/bandeirasenegal.png" },
+          { nome: "QUÊNIA", img: "img/bandeiraquenia.png" }]
+      },
+
+      {
+        img: "img/palusami.png", nome: "PALUSAMI", correta: "SAMOA",
+        ingredientes: "Prato tradicional feito com folhas de taro macias recheadas com um creme de coco espesso e cebola, assado no forno de terra.",
+        opcoes: [
+          { nome: "VANUATU", img: "img/bandeiravanuatu.png" },
+          { nome: "SAMOA", img: "img/bandeirasamoa.png" },
+          { nome: "FIJI", img: "img/bandeirafiji.png" }]
+      },
+
+      {
+        img: "img/mumu.png", nome: "MUMU", correta: "PAPUA-NOVA GUINÉ",
+        ingredientes: "Refeição festiva de carne de porco, batata-doce, vegetais e frutas, cozidos lentamente em um buraco na terra coberto com pedras quentes.",
+        opcoes: [
+          { nome: "PAPUA-NOVA GUINÉ", img: "img/bandeirapapuanovaguine.png" },
+          { nome: "AUSTRÁLIA", img: "img/bandeiraaustralia.png" },
+          { nome: "NOVA ZELÂNDIA", img: "img/bandeiranovazelandia.png" }]
       }
     ];
 
-    // Função que embaralha os itens de uma lista aleatoriamente
     function embaralhar(lista) {
       for (let i = lista.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -933,8 +1005,9 @@
       }
       return lista;
     }
-    let perguntasDaRodada = []; // Vai guardar as 10 perguntas sorteadas
-    const TOTAL_PERGUNTAS = 10; // Limite de questões por jogada
+    
+    let perguntasDaRodada = []; 
+    const TOTAL_PERGUNTAS = 10; 
     let atual = 0;
     let score = 0;
     let respondido = false;
@@ -943,28 +1016,31 @@
       const grid = document.getElementById('gridCuriosidades');
       grid.innerHTML = '';
 
-      perguntas.forEach((item, index) => {
+      const perguntasOrdenadas = [...perguntas].sort((a, b) =>
+        a.nome.localeCompare(b.nome)
+      );
+
+      perguntasOrdenadas.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'country-card';
 
-        card.onclick = () => abrirModal(index);
+        card.onclick = () => abrirModal(item);
 
         card.innerHTML = `
-      <div class="clothing-preview">
-        <img src="${item.img}" alt="${item.nome}">
-      </div>
-      <div class="country-description">
-        <b style="font-size: 14px; color: #E65100;">${item.nome}</b><br>
-        <div class="ver-ingredientes">VEJA</div>
-      </div>
-    `;
+          <div class="clothing-preview">
+            <img src="${item.img}" alt="${item.nome}">
+          </div>
+          <div class="country-description">
+            <b style="font-size: 14px; color: #E65100;">${item.nome}</b><br>
+            <div class="ver-ingredientes">VEJA</div>
+          </div>
+        `;
 
         grid.appendChild(card);
       });
     }
 
-    function abrirModal(index) {
-      const item = perguntas[index];
+    function abrirModal(item) {
       document.getElementById('modalImg').src = item.img;
       document.getElementById('modalTitulo').innerText = item.nome;
       document.getElementById('modalIngredientes').innerText = item.ingredientes;
@@ -987,9 +1063,8 @@
 
       mostrarAba('quiz');
 
-      // MUDANÇA: Sorteia 10 perguntas aleatórias do banco principal
-      let bancoEmbaralhado = embaralhar([...perguntas]); // Faz uma cópia e embaralha o banco total
-      perguntasDaRodada = bancoEmbaralhado.slice(0, TOTAL_PERGUNTAS); // Pega apenas as 10 primeiras
+      let bancoEmbaralhado = embaralhar([...perguntas]); 
+      perguntasDaRodada = bancoEmbaralhado.slice(0, TOTAL_PERGUNTAS); 
 
       atual = 0;
       score = 0;
@@ -1013,7 +1088,6 @@
       const divOpcoes = document.getElementById('opcoes');
       divOpcoes.innerHTML = '';
 
-      // MUDANÇA: Embaralha as alternativas antes de mostrá-las na tela
       let opcoesSorteadas = embaralhar([...p.opcoes]);
 
       opcoesSorteadas.forEach(opcao => {
@@ -1094,7 +1168,6 @@
       const painel = document.getElementById('painelFinal');
       painel.style.display = 'block';
 
-      // MUDANÇA: Usa perguntasDaRodada no cálculo
       const erros = perguntasDaRodada.length - score;
       document.getElementById('totalAcertos').innerText = score;
       document.getElementById('totalErros').innerText = erros;
@@ -1138,5 +1211,4 @@
 
   </script>
 </body>
-
 </html>
