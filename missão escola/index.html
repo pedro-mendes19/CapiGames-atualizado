@@ -315,15 +315,15 @@
         <div id="end-screen" class="end-screen">
             <h1>🏆 Fim da Jornada!</h1>
             <p style="font-size: 1.5em;">Você completou todas as missões.</p>
-            <span class="big-score"><span id="final-score">0</span>/30</span>
+            <span class="big-score"><span id="final-score">0</span>/<span id="final-total">30</span></span>
             <p id="final-message">...</p>
             <button class="continue-btn" onclick="initGame()">Jogar Novamente ↺</button>
         </div>
     </div>
 
     <script>
-        // --- BANCO DE DADOS ---
-        const missions = [
+        // --- BANCO DE DADOS COMPLETO (20 perguntas por componente) ---
+        const allMissions = [
             {
                 subject: "Ciências 🧬",
                 themeClass: "theme-ciencias",
@@ -332,7 +332,22 @@
                     { q: "Qual é a principal função dos glóbulos brancos presentes no nosso sangue?", opts: ["Transportar oxigênio", "Defender o organismo", "Coagular o sangue", "Nutrir as células"], a: 1 },
                     { q: "Qual é a função da camada de ozônio na atmosfera terrestre?", opts: ["Filtrar a luz solar", "Aquecer a Terra", "Produzir oxigênio", "Absorver raios UV"], a: 3 },
                     { q: "Qual é o processo pelo qual as plantas produzem seu próprio alimento utilizando luz solar, água e dióxido de carbono?", opts: ["Respiração", "Fotossíntese", "Digestão", "Transpiração"], a: 1 },
-                    { q: "Qual é o principal componente da atmosfera terrestre?", opts: ["Oxigênio", "Dióxido de Carbono", "Nitrogênio", "Argônio"], a: 2 }
+                    { q: "Qual é o principal componente da atmosfera terrestre?", opts: ["Oxigênio", "Dióxido de Carbono", "Nitrogênio", "Argônio"], a: 2 },
+                    { q: "Qual é a menor unidade viva do corpo humano?", opts: ["Átomo", "Célula", "Molécula", "Tecido"], a: 1 },
+                    { q: "Qual órgão é responsável por bombear o sangue para todo o corpo?", opts: ["Pulmão", "Fígado", "Coração", "Rim"], a: 2 },
+                    { q: "O que os pulmões fazem no processo de respiração?", opts: ["Digerem alimentos", "Trocam gases", "Filtram o sangue", "Produzem hormônios"], a: 1 },
+                    { q: "Qual planeta do Sistema Solar é conhecido como 'Planeta Vermelho'?", opts: ["Júpiter", "Saturno", "Marte", "Vênus"], a: 2 },
+                    { q: "Como se chama o fenômeno de mudança de estado da água líquida para vapor?", opts: ["Fusão", "Condensação", "Solidificação", "Evaporação"], a: 3 },
+                    { q: "Qual vitamina é produzida pela pele quando exposta ao sol?", opts: ["Vitamina A", "Vitamina B", "Vitamina C", "Vitamina D"], a: 3 },
+                    { q: "Qual é o gás que as plantas absorvem durante a fotossíntese?", opts: ["Oxigênio", "Nitrogênio", "Gás Carbônico", "Hidrogênio"], a: 2 },
+                    { q: "Qual parte da planta é responsável pela absorção de água e nutrientes do solo?", opts: ["Folha", "Caule", "Raiz", "Flor"], a: 2 },
+                    { q: "Qual tipo de animal é classificado como mamífero?", opts: ["Sapo", "Cobra", "Cachorro", "Peixe"], a: 2 },
+                    { q: "O que acontece com a água quando ela é resfriada a 0°C?", opts: ["Evapora", "Condensa", "Solidifica", "Ferve"], a: 2 },
+                    { q: "Qual é o maior órgão do corpo humano?", opts: ["Fígado", "Cérebro", "Pele", "Intestino"], a: 2 },
+                    { q: "Como se chama o processo de transformação de larva em borboleta?", opts: ["Mitose", "Metamorfose", "Fotossíntese", "Meiose"], a: 1 },
+                    { q: "Quantos ossos tem o corpo humano adulto, aproximadamente?", opts: ["106", "156", "206", "306"], a: 2 },
+                    { q: "Qual é o nome da estrela mais próxima da Terra?", opts: ["Sirius", "Alpha Centauri", "Sol", "Polaris"], a: 2 },
+                    { q: "Qual parte do olho é responsável por dar cor aos olhos?", opts: ["Retina", "Córnea", "Íris", "Pupila"], a: 2 }
                 ]
             },
             {
@@ -343,7 +358,22 @@
                     { q: "Qual o dobro de 55?", opts: ["100", "101", "110", "155"], a: 2 },
                     { q: "Tenho 10 maçãs e 4 amigos, eu dou para cada amigo 2 maçãs, quantas maçãs sobram?", opts: ["4", "5", "8", "2"], a: 3 },
                     { q: "Qual forma parece uma bola?", opts: ["Quadrado", "Cubo", "Esfera", "Pirâmide"], a: 2 },
-                    { q: "10 dividido por 2 é igual a?", opts: ["2", "5", "10", "20"], a: 1 }
+                    { q: "10 dividido por 2 é igual a?", opts: ["2", "5", "10", "20"], a: 1 },
+                    { q: "Quanto é 7 × 8?", opts: ["54", "56", "58", "64"], a: 1 },
+                    { q: "Qual é o resultado de 100 − 37?", opts: ["53", "63", "73", "67"], a: 1 },
+                    { q: "Quanto é meia dúzia?", opts: ["3", "6", "8", "12"], a: 1 },
+                    { q: "Se um triângulo tem 3 lados, quantos lados tem um hexágono?", opts: ["4", "5", "6", "8"], a: 2 },
+                    { q: "Qual é o antecessor do número 1000?", opts: ["1001", "999", "998", "100"], a: 1 },
+                    { q: "Quanto é 25% de 200?", opts: ["25", "50", "75", "100"], a: 1 },
+                    { q: "Qual é o resultado de 3² (três ao quadrado)?", opts: ["6", "9", "12", "27"], a: 1 },
+                    { q: "Quantos minutos tem uma hora?", opts: ["30", "45", "60", "100"], a: 2 },
+                    { q: "Se eu tenho R$50 e gasto R$23, quanto me sobra?", opts: ["R$17", "R$27", "R$33", "R$37"], a: 1 },
+                    { q: "Qual é a fração que representa a metade?", opts: ["1/3", "1/2", "1/4", "2/3"], a: 1 },
+                    { q: "Quantos centímetros tem 1 metro?", opts: ["10", "50", "100", "1000"], a: 2 },
+                    { q: "Qual o triplo de 15?", opts: ["30", "35", "40", "45"], a: 3 },
+                    { q: "Se cada caixa tem 8 lápis, quantos lápis há em 5 caixas?", opts: ["35", "40", "45", "48"], a: 1 },
+                    { q: "Qual número é par?", opts: ["13", "27", "44", "51"], a: 2 },
+                    { q: "Quanto é 1.000 ÷ 10?", opts: ["10", "100", "1.000", "10.000"], a: 1 }
                 ]
             },
             {
@@ -354,7 +384,22 @@
                     { q: "Como se chama o movimento que a Terra realiza em torno do seu próprio eixo, resultando na sucessão dos dias e das noites?", opts: ["Eclipse", "Translação", "Inclinação", "Rotação"], a: 3 },
                     { q: "Qual é a principal fonte de energia utilizada no Brasil para a produção de eletricidade?", opts: ["Petróleo", "Carvão Mineral", "Energia Hidrelétrica", "Gás Natural"], a: 2 },
                     { q: "Como é chamado o processo de deslocamento de pessoas, de um lugar para outro, dentro do país?", opts: ["Emigração", "Imigração", "Urbanização", "Migração"], a: 3 },
-                    { q: "O Brasil está dividido em quantas Grandes Regiões?", opts: ["3", "4", "5", "6"], a: 2 }
+                    { q: "O Brasil está dividido em quantas Grandes Regiões?", opts: ["3", "4", "5", "6"], a: 2 },
+                    { q: "Qual é o maior bioma brasileiro?", opts: ["Cerrado", "Amazônia", "Mata Atlântica", "Caatinga"], a: 1 },
+                    { q: "Qual é o maior oceano do mundo?", opts: ["Atlântico", "Índico", "Pacífico", "Ártico"], a: 2 },
+                    { q: "Em qual continente fica o Brasil?", opts: ["Europa", "Ásia", "América do Sul", "África"], a: 2 },
+                    { q: "Qual é o rio mais extenso do mundo?", opts: ["Rio Nilo", "Rio Amazonas", "Rio Mississipi", "Rio Yangtzé"], a: 1 },
+                    { q: "Qual é a capital do Brasil?", opts: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador"], a: 2 },
+                    { q: "Qual camada da Terra é composta por rochas e solo onde vivemos?", opts: ["Manto", "Núcleo", "Crosta", "Atmosfera"], a: 2 },
+                    { q: "O que é o êxodo rural?", opts: ["Mudança do campo para a cidade", "Mudança da cidade para o campo", "Viagem internacional", "Migração entre estados"], a: 0 },
+                    { q: "Qual bioma é caracterizado por vegetação seca e espinhosa, típico do Nordeste?", opts: ["Cerrado", "Pantanal", "Caatinga", "Pampa"], a: 2 },
+                    { q: "Como se chama o movimento que a Terra faz ao redor do Sol, durando cerca de 365 dias?", opts: ["Rotação", "Translação", "Precessão", "Revolução Lunar"], a: 1 },
+                    { q: "Qual o estado brasileiro com maior extensão territorial?", opts: ["Minas Gerais", "Pará", "Amazonas", "Mato Grosso"], a: 2 },
+                    { q: "O que são coordenadas geográficas?", opts: ["Nomes dos continentes", "Latitude e longitude", "Tipos de relevo", "Tipos de clima"], a: 1 },
+                    { q: "Qual é o menor país do mundo em extensão territorial?", opts: ["Mônaco", "Vaticano", "Malta", "Liechtenstein"], a: 1 },
+                    { q: "Qual tipo de clima predomina na região Norte do Brasil?", opts: ["Subtropical", "Semiárido", "Equatorial", "Temperado"], a: 2 },
+                    { q: "A Rosa dos Ventos indica quantos pontos cardeais?", opts: ["2", "4", "6", "8"], a: 1 },
+                    { q: "Qual fenômeno natural é medido pela Escala Richter?", opts: ["Furacões", "Tsunamis", "Terremotos", "Vulcões"], a: 2 }
                 ]
             },
             {
@@ -365,7 +410,22 @@
                     { q: "Na Grécia Antiga, a cidade-estado de Atenas ficou famosa por criar qual sistema político?", opts: ["Monarquia", "Oligarquia", "Democracia", "Tiradentes"], a: 2 },
                     { q: "O sistema socioeconômico que predominou na Europa durante a Idade Média chamava-se:", opts: ["Feudalismo", "Capitalismo", "Socialismo", "Comunismo"], a: 0 },
                     { q: "Quem foi o principal líder do Quilombo dos Palmares e símbolo da resistência negra no Brasil?", opts: ["Zumbi dos Palmares", "Tiradentes", "Dom Pedro I", "Padre Cícero"], a: 0 },
-                    { q: "Qual era o principal objetivo das Grandes Navegações europeias no século XV?", opts: ["Buscar especiarias e novas rotas comerciais", "Conquistar a China", "Escravizar os Vikings", "Encontrar a América"], a: 0 }
+                    { q: "Qual era o principal objetivo das Grandes Navegações europeias no século XV?", opts: ["Buscar especiarias e novas rotas comerciais", "Conquistar a China", "Escravizar os Vikings", "Encontrar a América"], a: 0 },
+                    { q: "Quem proclamou a Independência do Brasil em 1822?", opts: ["Tiradentes", "Getúlio Vargas", "Dom Pedro I", "Marechal Deodoro"], a: 2 },
+                    { q: "Como era chamada a mão de obra forçada utilizada no Brasil Colônia trazida da África?", opts: ["Servidão", "Trabalho assalariado", "Escravidão", "Vassalagem"], a: 2 },
+                    { q: "Qual civilização construiu as pirâmides de Gizé?", opts: ["Romana", "Grega", "Egípcia", "Mesopotâmica"], a: 2 },
+                    { q: "Em que ano foi proclamada a República no Brasil?", opts: ["1822", "1889", "1900", "1930"], a: 1 },
+                    { q: "Quem foi o primeiro presidente do Brasil?", opts: ["Getúlio Vargas", "Dom Pedro II", "Marechal Deodoro da Fonseca", "Juscelino Kubitschek"], a: 2 },
+                    { q: "Qual povo antigo inventou a escrita cuneiforme?", opts: ["Egípcios", "Gregos", "Sumérios", "Romanos"], a: 2 },
+                    { q: "A Revolução Francesa aconteceu em qual ano?", opts: ["1776", "1789", "1815", "1848"], a: 1 },
+                    { q: "Qual tratado dividiu as terras descobertas entre Portugal e Espanha?", opts: ["Tratado de Madri", "Tratado de Tordesilhas", "Tratado de Versalhes", "Tratado de Utrecht"], a: 1 },
+                    { q: "O que foi a Inconfidência Mineira?", opts: ["Uma revolta contra a escravidão", "Um movimento pela independência de Minas", "Um protesto contra a cobrança de impostos por Portugal", "Uma guerra entre estados"], a: 2 },
+                    { q: "Quem liderou a Inconfidência Mineira?", opts: ["Zumbi dos Palmares", "Tiradentes", "Dom Pedro I", "Padre Cícero"], a: 1 },
+                    { q: "Qual era o nome dado aos grandes proprietários de terra no Brasil Colônia?", opts: ["Senhores de Engenho", "Barões", "Imperadores", "Governadores"], a: 0 },
+                    { q: "A Segunda Guerra Mundial terminou em que ano?", opts: ["1939", "1942", "1945", "1950"], a: 2 },
+                    { q: "Qual era o principal produto exportado pelo Brasil no período colonial?", opts: ["Café", "Açúcar", "Ouro", "Algodão"], a: 1 },
+                    { q: "Quem chegou ao Brasil em 1500 liderando a esquadra portuguesa?", opts: ["Cristóvão Colombo", "Vasco da Gama", "Pedro Álvares Cabral", "Fernão de Magalhães"], a: 2 },
+                    { q: "Qual povo construiu estradas, aquedutos e o Coliseu?", opts: ["Gregos", "Egípcios", "Romanos", "Fenícios"], a: 2 }
                 ]
             },
             {
@@ -376,7 +436,22 @@
                     { q: "Qual é o feminino de 'Cavalo'?", opts: ["Cavala", "Égua", "Mula", "Cabra"], a: 1 },
                     { q: "A palavra 'Feliz' é um...", opts: ["Verbo", "Adjetivo", "Substantivo", "Pronome"], a: 1 },
                     { q: "Qual sinal usamos para fazer uma pergunta?", opts: ["!", ".", "?", ","], a: 2 },
-                    { q: "O que rima com 'Japão'?", opts: ["Mesa", "Pão", "Carro", "Céu"], a: 1 }
+                    { q: "O que rima com 'Japão'?", opts: ["Mesa", "Pão", "Carro", "Céu"], a: 1 },
+                    { q: "Qual é o plural de 'Anel'?", opts: ["Anéis", "Aneis", "Anels", "Anéles"], a: 0 },
+                    { q: "Na frase 'O gato dormiu.', qual é o sujeito?", opts: ["dormiu", "O", "gato", "O gato"], a: 3 },
+                    { q: "A palavra 'CASA' é classificada como:", opts: ["Verbo", "Adjetivo", "Substantivo", "Advérbio"], a: 2 },
+                    { q: "Qual é o sinônimo de 'BONITO'?", opts: ["Feio", "Triste", "Belo", "Magro"], a: 2 },
+                    { q: "Qual é o antônimo de 'ALTO'?", opts: ["Grande", "Baixo", "Largo", "Gordo"], a: 1 },
+                    { q: "Na palavra 'ESCOLA', quantas vogais existem?", opts: ["2", "3", "4", "5"], a: 1 },
+                    { q: "Qual das palavras é um verbo?", opts: ["Mesa", "Bonito", "Correr", "Rápido"], a: 2 },
+                    { q: "Qual é o aumentativo de 'CASA'?", opts: ["Casinha", "Casarão", "Casita", "Casebre"], a: 1 },
+                    { q: "Qual é o diminutivo de 'FLOR'?", opts: ["Florona", "Florzinha", "Florão", "Florada"], a: 1 },
+                    { q: "A letra 'H' no início da palavra 'HOMEM' tem som?", opts: ["Sim, som forte", "Sim, som fraco", "Não, é muda", "Depende da frase"], a: 2 },
+                    { q: "Qual frase está escrita corretamente?", opts: ["Eu fui na escola.", "Eu foi na escola.", "Eu fui a escola.", "Eu ir na escola."], a: 0 },
+                    { q: "Qual tipo de texto conta uma história com personagens?", opts: ["Receita", "Notícia", "Narrativa", "Lista"], a: 2 },
+                    { q: "Na palavra 'PARALELEPÍPEDO', qual é a sílaba tônica?", opts: ["PA", "LE", "PÍ", "PE"], a: 2 },
+                    { q: "Qual palavra é uma preposição?", opts: ["De", "Gato", "Correr", "Bonito"], a: 0 },
+                    { q: "Qual é o coletivo de 'LOBOS'?", opts: ["Bando", "Alcateia", "Manada", "Rebanho"], a: 1 }
                 ]
             },
             {
@@ -387,18 +462,46 @@
                     { q: "Qual esporte usa raquete?", opts: ["Futebol", "Basquete", "Tênis", "Natação"], a: 2 },
                     { q: "Onde o nadador compete?", opts: ["No campo", "Na quadra", "Na piscina", "Na pista"], a: 2 },
                     { q: "Chutar a bola no gol é o objetivo de qual jogo?", opts: ["Basquete", "Vôlei", "Handebol", "Futebol"], a: 3 },
-                    { q: "O que significa 'sedentarismo'?", opts: ["Comer muito", "Fazer muito exercício", "Não fazer exercício", "Beber água"], a: 2 }
+                    { q: "O que significa 'sedentarismo'?", opts: ["Comer muito", "Fazer muito exercício", "Não fazer exercício", "Beber água"], a: 2 },
+                    { q: "Quantos jogadores tem um time de futebol em campo?", opts: ["9", "10", "11", "12"], a: 2 },
+                    { q: "Qual é o esporte mais praticado no mundo?", opts: ["Basquete", "Futebol", "Tênis", "Natação"], a: 1 },
+                    { q: "Alongar antes do exercício serve para:", opts: ["Ficar mais forte", "Prevenir lesões", "Emagrecer", "Aumentar o peso"], a: 1 },
+                    { q: "De quantos em quantos anos acontecem os Jogos Olímpicos?", opts: ["2", "3", "4", "5"], a: 2 },
+                    { q: "Qual esporte é praticado em uma piscina com bola?", opts: ["Nado sincronizado", "Polo aquático", "Surfe", "Mergulho"], a: 1 },
+                    { q: "No basquete, quantos pontos vale uma cesta de lance livre?", opts: ["1", "2", "3", "4"], a: 0 },
+                    { q: "Qual exercício ajuda a fortalecer o coração?", opts: ["Dormir", "Caminhada", "Ficar sentado", "Assistir TV"], a: 1 },
+                    { q: "A queimada é um jogo que usa qual equipamento principal?", opts: ["Raquete", "Taco", "Bola", "Rede"], a: 2 },
+                    { q: "Qual nutriente é importante para os músculos?", opts: ["Gordura", "Açúcar", "Proteína", "Sal"], a: 2 },
+                    { q: "Quantos sets são necessários para vencer um jogo de vôlei?", opts: ["2", "3", "4", "5"], a: 1 },
+                    { q: "Qual é a posição do goleiro no futebol?", opts: ["Atacante", "Lateral", "Defensor do gol", "Meio-campo"], a: 2 },
+                    { q: "Beber água durante o exercício é importante para:", opts: ["Ficar pesado", "Hidratar o corpo", "Ficar com fome", "Esfriar a bola"], a: 1 },
+                    { q: "Qual esporte olímpico envolve saltos no trampolim?", opts: ["Ginástica Artística", "Saltos Ornamentais", "Atletismo", "Halterofilismo"], a: 1 },
+                    { q: "Numa corrida de revezamento, o que os atletas passam uns aos outros?", opts: ["Bola", "Bastão", "Fita", "Corda"], a: 1 },
+                    { q: "Qual a duração de cada tempo em uma partida oficial de futebol?", opts: ["30 minutos", "40 minutos", "45 minutos", "60 minutos"], a: 2 }
                 ]
             }
         ];
 
-        // Variáveis
+        // --- QUANTIDADE DE PERGUNTAS POR MISSÃO EM CADA RODADA ---
+        const QUESTIONS_PER_ROUND = 5;
+
+        // --- FUNÇÃO DE EMBARALHAMENTO (Fisher-Yates) ---
+        function shuffleArray(arr) {
+            const shuffled = [...arr];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // --- VARIÁVEIS DE JOGO ---
+        let missions = [];
         let currentMissionIndex = 0;
         let currentQuestionIndex = 0;
         let totalScore = 0;
         let answered = false;
         let totalQuestions = 0;
-        missions.forEach(m => totalQuestions += m.questions.length);
 
         // Elementos UI
         const ui = {
@@ -409,8 +512,8 @@
             modalDesc: document.getElementById('modal-desc'),
             nextMissionName: document.getElementById('next-mission-name'),
             
-            phaseBadge: document.getElementById('phase-badge'), // Badge agora é Fase
-            missionTitle: document.getElementById('mission-title'), // Novo H1
+            phaseBadge: document.getElementById('phase-badge'),
+            missionTitle: document.getElementById('mission-title'),
             questionCounter: document.getElementById('question-counter'),
             
             questionText: document.getElementById('question-text'),
@@ -418,13 +521,23 @@
             nextBtn: document.getElementById('next-btn'),
             feedbackMsg: document.getElementById('feedback-msg'),
             finalScore: document.getElementById('final-score'),
+            finalTotal: document.getElementById('final-total'),
             finalMessage: document.getElementById('final-message')
         };
 
         function initGame() {
+            // Embaralha e seleciona perguntas aleatórias para cada missão
+            missions = allMissions.map(m => ({
+                subject: m.subject,
+                themeClass: m.themeClass,
+                questions: shuffleArray(m.questions).slice(0, QUESTIONS_PER_ROUND)
+            }));
+
             currentMissionIndex = 0;
             currentQuestionIndex = 0;
             totalScore = 0;
+            totalQuestions = missions.length * QUESTIONS_PER_ROUND;
+
             ui.endScreen.style.display = 'none';
             ui.gameScreen.style.display = 'block';
             
@@ -449,8 +562,8 @@
 
             // --- ATUALIZAÇÃO DO CABEÇALHO ---
             ui.phaseBadge.textContent = `Fase ${currentMissionIndex + 1}`;
-            ui.missionTitle.textContent = mission.subject; // Aqui vai o texto do H1
-            ui.missionTitle.style.color = "var(--secondary)"; // Garante contraste
+            ui.missionTitle.textContent = mission.subject;
+            ui.missionTitle.style.color = "var(--secondary)";
             ui.questionCounter.textContent = `Questão ${currentQuestionIndex + 1}/${mission.questions.length}`;
             
             // Pergunta
@@ -526,10 +639,11 @@
             document.body.className = ''; 
             
             ui.finalScore.textContent = totalScore;
+            ui.finalTotal.textContent = totalQuestions;
 
             if (totalScore === totalQuestions) {
                 ui.finalMessage.textContent = "🥇 LENDÁRIO! VOCÊ ACERTOU TUDO!";
-            } else if (totalScore > 20) {
+            } else if (totalScore > totalQuestions * 0.7) {
                 ui.finalMessage.textContent = "🥈 EXCELENTE TRABALHO!";
             } else {
                 ui.finalMessage.textContent = "📚 BOM TREINO! CONTINUE ESTUDANDO.";

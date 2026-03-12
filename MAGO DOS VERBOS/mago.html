@@ -141,6 +141,9 @@
 
         .tag-verb { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
         .tag-time { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .tag-time.tag-imperf { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .tag-time.tag-pluper { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+        .tag-time.tag-cond { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
 
         .sentence {
             font-size: 1.5rem;
@@ -283,7 +286,7 @@
     <script>
         // --- LÓGICA DO JOGO ---
         const masterList = [
-            // PRESENTE
+            // ===================== PRESENTE =====================
             { v: "Amar", t: "Presente", s: "Eu ______ muito meus pais.", c: "amo", o: ["amei", "amo", "amarei"] },
             { v: "Beber", t: "Presente", s: "Você ______ água?", c: "bebe", o: ["bebeu", "bebe", "beberá"] },
             { v: "Abrir", t: "Presente", s: "Nós ______ a porta.", c: "abrimos", o: ["abrimos", "abriram", "abriremos"] },
@@ -296,20 +299,56 @@
             { v: "Ir", t: "Presente", s: "Eu ______ ao mercado.", c: "vou", o: ["fui", "vou", "irei"] },
             { v: "Ter", t: "Presente", s: "Eles ______ uma casa azul.", c: "têm", o: ["têm", "tem", "terão"] },
             { v: "Ser", t: "Presente", s: "Nós ______ amigos.", c: "somos", o: ["fomos", "somos", "seremos"] },
-            
-            // PASSADO (PRETÉRITO)
-            { v: "Comer", t: "Pretérito", s: "Eu ______ bolo de chocolate.", c: "comi", o: ["comi", "como", "comerei"] },
-            { v: "Cair", t: "Pretérito", s: "O menino ______ da bike.", c: "caiu", o: ["cai", "caiu", "cairá"] },
-            { v: "Estudar", t: "Pretérito", s: "Elas ______ para a prova.", c: "estudaram", o: ["estudam", "estudarão", "estudaram"] },
-            { v: "Fazer", t: "Pretérito", s: "Nós ______ o dever.", c: "fizemos", o: ["fazemos", "fizemos", "faremos"] },
-            { v: "Dizer", t: "Pretérito", s: "Ele ______ a verdade.", c: "disse", o: ["diz", "disse", "dirá"] },
-            { v: "Chegar", t: "Pretérito", s: "Você ______ tarde.", c: "chegou", o: ["chega", "chegou", "chegará"] },
-            { v: "Brincar", t: "Pretérito", s: "Eles ______ na areia.", c: "brincaram", o: ["brincam", "brincarão", "brincaram"] },
-            { v: "Poder", t: "Pretérito", s: "Ela não ______ vir.", c: "pôde", o: ["pode", "pôde", "poderá"] },
-            { v: "Dar", t: "Pretérito", s: "Ele me ______ um presente.", c: "deu", o: ["dá", "deu", "dará"] },
-            { v: "Ir", t: "Pretérito", s: "Nós ______ ao cinema.", c: "fomos", o: ["vamos", "fomos", "iremos"] },
-            
-            // FUTURO
+
+            // ============== PRETÉRITO PERFEITO ==================
+            { v: "Comer", t: "Pretérito Perfeito", s: "Eu ______ bolo de chocolate.", c: "comi", o: ["comi", "como", "comerei"] },
+            { v: "Cair", t: "Pretérito Perfeito", s: "O menino ______ da bike.", c: "caiu", o: ["cai", "caiu", "cairá"] },
+            { v: "Estudar", t: "Pretérito Perfeito", s: "Elas ______ para a prova.", c: "estudaram", o: ["estudam", "estudarão", "estudaram"] },
+            { v: "Fazer", t: "Pretérito Perfeito", s: "Nós ______ o dever.", c: "fizemos", o: ["fazemos", "fizemos", "faremos"] },
+            { v: "Dizer", t: "Pretérito Perfeito", s: "Ele ______ a verdade.", c: "disse", o: ["diz", "disse", "dirá"] },
+            { v: "Chegar", t: "Pretérito Perfeito", s: "Você ______ tarde.", c: "chegou", o: ["chega", "chegou", "chegará"] },
+            { v: "Brincar", t: "Pretérito Perfeito", s: "Eles ______ na areia.", c: "brincaram", o: ["brincam", "brincarão", "brincaram"] },
+            { v: "Poder", t: "Pretérito Perfeito", s: "Ela não ______ vir.", c: "pôde", o: ["pode", "pôde", "poderá"] },
+            { v: "Dar", t: "Pretérito Perfeito", s: "Ele me ______ um presente.", c: "deu", o: ["dá", "deu", "dará"] },
+            { v: "Ir", t: "Pretérito Perfeito", s: "Nós ______ ao cinema.", c: "fomos", o: ["vamos", "fomos", "iremos"] },
+
+            // ============== PRETÉRITO IMPERFEITO ================
+            { v: "Amar", t: "Pretérito Imperfeito", s: "Eu ______ brincar na rua quando era criança.", c: "amava", o: ["amei", "amava", "amarei"] },
+            { v: "Comer", t: "Pretérito Imperfeito", s: "Nós ______ pizza toda sexta-feira.", c: "comíamos", o: ["comemos", "comíamos", "comeremos"] },
+            { v: "Estudar", t: "Pretérito Imperfeito", s: "Ela ______ todos os dias à tarde.", c: "estudava", o: ["estudou", "estudava", "estudará"] },
+            { v: "Fazer", t: "Pretérito Imperfeito", s: "Nós ______ lição juntos.", c: "fazíamos", o: ["fizemos", "fazíamos", "faremos"] },
+            { v: "Dormir", t: "Pretérito Imperfeito", s: "O bebê ______ cedo todos os dias.", c: "dormia", o: ["dormiu", "dormia", "dormirá"] },
+            { v: "Correr", t: "Pretérito Imperfeito", s: "As crianças ______ no parque o tempo todo.", c: "corriam", o: ["correram", "corriam", "correrão"] },
+            { v: "Ler", t: "Pretérito Imperfeito", s: "Eu ______ gibis antes de dormir.", c: "lia", o: ["li", "lia", "lerei"] },
+            { v: "Ser", t: "Pretérito Imperfeito", s: "Ele ______ muito tímido quando pequeno.", c: "era", o: ["foi", "era", "será"] },
+            { v: "Ter", t: "Pretérito Imperfeito", s: "Nós ______ medo do escuro.", c: "tínhamos", o: ["tivemos", "tínhamos", "teremos"] },
+            { v: "Ir", t: "Pretérito Imperfeito", s: "Eles ______ à praia todos os verões.", c: "iam", o: ["foram", "iam", "irão"] },
+
+            // =========== PRETÉRITO MAIS-QUE-PERFEITO ===========
+            { v: "Comer", t: "Mais-que-perfeito", s: "Ele já ______ quando cheguei.", c: "comera", o: ["comeu", "comera", "comia"] },
+            { v: "Fazer", t: "Mais-que-perfeito", s: "Nós já ______ o trabalho antes da aula.", c: "fizéramos", o: ["fizemos", "fizéramos", "fazíamos"] },
+            { v: "Estudar", t: "Mais-que-perfeito", s: "Ela já ______ tudo antes da prova.", c: "estudara", o: ["estudou", "estudara", "estudava"] },
+            { v: "Sair", t: "Mais-que-perfeito", s: "Eles já ______ quando começou a chover.", c: "saíram", o: ["saíram", "saíam", "sairão"] },
+            { v: "Dizer", t: "Mais-que-perfeito", s: "O professor já ______ a resposta.", c: "dissera", o: ["disse", "dissera", "dizia"] },
+            { v: "Ver", t: "Mais-que-perfeito", s: "Nós já ______ aquele filme antes.", c: "víramos", o: ["vimos", "víramos", "víamos"] },
+            { v: "Escrever", t: "Mais-que-perfeito", s: "A aluna já ______ a redação.", c: "escrevera", o: ["escreveu", "escrevera", "escrevia"] },
+            { v: "Partir", t: "Mais-que-perfeito", s: "O ônibus já ______ quando chegamos.", c: "partira", o: ["partiu", "partira", "partia"] },
+            { v: "Ler", t: "Mais-que-perfeito", s: "Eu já ______ o livro inteiro.", c: "lera", o: ["li", "lera", "lia"] },
+            { v: "Dormir", t: "Mais-que-perfeito", s: "As crianças já ______ quando voltamos.", c: "dormiam", o: ["dormiram", "dormiam", "dormirão"] },
+
+            // ============= FUTURO DO PRETÉRITO =================
+            { v: "Comprar", t: "Futuro do Pretérito", s: "Eu ______ aquele livro se tivesse dinheiro.", c: "compraria", o: ["comprei", "compraria", "comprarei"] },
+            { v: "Fazer", t: "Futuro do Pretérito", s: "Nós ______ a viagem se pudéssemos.", c: "faríamos", o: ["fizemos", "faríamos", "faremos"] },
+            { v: "Gostar", t: "Futuro do Pretérito", s: "Ela ______ de ir ao cinema.", c: "gostaria", o: ["gostou", "gostaria", "gostará"] },
+            { v: "Poder", t: "Futuro do Pretérito", s: "Você ______ me ajudar, por favor?", c: "poderia", o: ["pôde", "poderia", "poderá"] },
+            { v: "Ser", t: "Futuro do Pretérito", s: "______ bom estudar mais.", c: "Seria", o: ["Foi", "Seria", "Será"] },
+            { v: "Viajar", t: "Futuro do Pretérito", s: "Eles ______ para o exterior se ganhassem na loteria.", c: "viajariam", o: ["viajaram", "viajariam", "viajarão"] },
+            { v: "Dizer", t: "Futuro do Pretérito", s: "Eu ______ a verdade se pudesse.", c: "diria", o: ["disse", "diria", "direi"] },
+            { v: "Ter", t: "Futuro do Pretérito", s: "Nós ______ mais tempo se não chovesse.", c: "teríamos", o: ["tivemos", "teríamos", "teremos"] },
+            { v: "Comer", t: "Futuro do Pretérito", s: "Eu ______ tudo se estivesse com fome.", c: "comeria", o: ["comi", "comeria", "comerei"] },
+            { v: "Ir", t: "Futuro do Pretérito", s: "Ela ______ à festa se fosse convidada.", c: "iria", o: ["foi", "iria", "irá"] },
+
+            // ============ FUTURO DO PRESENTE ===================
             { v: "Viajar", t: "Futuro", s: "Eles ______ para a praia.", c: "viajarão", o: ["viajaram", "viajam", "viajarão"] },
             { v: "Ser", t: "Futuro", s: "Eu ______ astronauta.", c: "serei", o: ["sou", "fui", "serei"] },
             { v: "Comprar", t: "Futuro", s: "Nós ______ o pão.", c: "compraremos", o: ["compramos", "compra", "compraremos"] },
@@ -380,6 +419,12 @@
 
             ui.tagVerb.innerText = q.v;
             ui.tagTime.innerText = q.t;
+
+            // Classe de cor dinâmica para o tag do tempo verbal
+            ui.tagTime.className = 'tag tag-time';
+            if (q.t === 'Pretérito Imperfeito') ui.tagTime.classList.add('tag-imperf');
+            else if (q.t === 'Mais-que-perfeito') ui.tagTime.classList.add('tag-pluper');
+            else if (q.t === 'Futuro do Pretérito') ui.tagTime.classList.add('tag-cond');
 
             const htmlText = q.s.replace('______', '<span class="gap">_______</span>');
             ui.sentence.innerHTML = htmlText;

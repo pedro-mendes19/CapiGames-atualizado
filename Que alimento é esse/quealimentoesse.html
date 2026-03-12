@@ -165,19 +165,46 @@
       box-sizing: border-box;
     }
 
-    .controles-som {
+    /* O novo cabeçalho que alinha tudo (Som - Contador - Mudo) */
+    .cabecalho-dica {
       display: flex;
-      justify-content: center;
-      gap: 15px; 
-      margin-bottom: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
     }
 
-    .btn-som {
+    /* Estilo do contador (sem margem embaixo porque o cabeçalho já resolve isso) */
+    .contador-perguntas {
+      font-size: 16px;
+      font-weight: 900;
+      color: #0288d1;
+      background: #e1f5fe;
+      border: 2px solid #4FC3F7;
+      border-radius: 20px;
+      padding: 5px 15px;
+      display: inline-block;
+      margin-bottom: 0; 
+      letter-spacing: 1px;
+    }
+
+    /* Voltamos a dica para o centro agora que os botões subiram */
+    #dica {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #5d4037;
+      line-height: 1.3;
+      margin-top: 0; 
+      text-align: center; 
+    }
+
+    /* O estilo dos botões continua o mesmo, apenas garantindo que não fiquem gigantes */
+    .btn-som, .btn-mudo {
       background: #ffe0b2;
       border: none;
       border-radius: 50px;
-      padding: 8px 25px;
-      font-size: 20px;
+      padding: 8px 15px;
+      font-size: 18px;
       font-weight: bold;
       color: #e65100;
       cursor: pointer;
@@ -185,37 +212,14 @@
       transition: all 0.1s;
     }
     
-    .btn-som:active {
-      transform: translateY(4px);
-      box-shadow: 0 0 0 #ffb74d;
-    }
-
-    .btn-mudo {
+    .btn-mudo { 
       background: #ffcdd2; 
-      border: none;
-      border-radius: 50px;
-      padding: 8px 25px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #c62828;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #ef9a9a;
-      transition: all 0.1s;
+      color: #c62828; 
+      box-shadow: 0 4px 0 #ef9a9a; 
     }
-
-    .btn-mudo:active {
-      transform: translateY(4px);
-      box-shadow: 0 0 0 #ef9a9a;
-    }
-
-    #dica {
-      font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
-      font-size: 24px;
-      font-weight: 800;
-      color: #5d4037;
-      margin-top: 18px;
-      line-height: 1.3;
-    }
+    
+    .btn-som:active { transform: translateY(4px); box-shadow: 0 0 0 #ffb74d; }
+    .btn-mudo:active { transform: translateY(4px); box-shadow: 0 0 0 #ef9a9a; }
 
     .opcoes {
       display: flex;
@@ -361,54 +365,88 @@
       gap: 3vh;
     }
 
+    /* 1. Estrutura e tamanho IGUAIS para os dois botões */
     .btn-reiniciar, .btn-sair {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 2vh 4vw;
-      font-size: clamp(18px, 2.5vh, 22px);
-      border-radius: 35px;
+      margin: 10px auto;
+      display: inline-block;
+      padding: 18px 22px; 
+      font-size: 18px; 
       border: none;
+      border-radius: 60px;
+      color: #fff;
+      font-weight: 900;
       cursor: pointer;
-      font-weight: 800;
-      color: white;
+      transition: all 0.1s;
       text-transform: uppercase;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-      text-decoration: none;
+      letter-spacing: 1px;
+      width: auto; 
+      min-width: 300px; 
+      box-sizing: border-box;
     }
 
-    .btn-reiniciar { 
-      background: linear-gradient(180deg, #4FC3F7, #039BE5); 
-      box-shadow: 0 0.8vh 0 #025a86; 
-    }
-    .btn-reiniciar:active { 
-      transform: translateY(0.4vh); 
-      box-shadow: 0 0.4vh 0 #025a86; 
+    /* 2. Cores exclusivas do botão REINICIAR */
+    .btn-reiniciar {
+      background: linear-gradient(to bottom, #4FC3F7, #039BE5);
+      box-shadow: 0 8px 0 #0280bf, 0 15px 20px rgba(0,0,0,0.2);
     }
 
-    .btn-sair { 
-      background: linear-gradient(180deg, #FFB74D, #F57C00); 
-      box-shadow: 0 0.8vh 0 #b85d01;
+    .btn-reiniciar:hover {
+      background: linear-gradient(to bottom, #29b6f6, #0288d1);
+      transform: translateY(-2px);
     }
-    .btn-sair:active { 
-      transform: translateY(0.4vh); 
-      box-shadow:0 0.4vh 0 #b85d01; 
+
+    .btn-reiniciar:active {
+      transform: translateY(8px);
+      box-shadow: 0 0 0 #0280bf;
+    }
+
+    /* 3. Cores exclusivas do botão SAIR */
+    .btn-sair {
+      background: linear-gradient(to bottom, #ffb74d, #f57c00);
+      box-shadow: 0 8px 0 #c76500, 0 15px 20px rgba(0,0,0,0.2);
+    }
+
+    .btn-sair:hover {
+      background: linear-gradient(to bottom, #ffa726, #ef6c00);
+      transform: translateY(-2px);
+    }
+
+    .btn-sair:active {
+      transform: translateY(8px);
+      box-shadow: 0 0 0 #c76500;
     }
 
     @media (max-width: 768px) {
+      /* --- Ajustes para Celulares --- */
+      .img-capa-frente {
+        max-width: 120%; 
+        max-height: 75vh; 
+        margin-bottom: 10px; 
+      }
+      
       .btn-jogar-capa { padding: 15px 50px; }
       .cartao-jogo { width: 95%; padding: 20px 15px; }
       .logo-game { max-height: 90px; }
-      #dica { font-size: 20px; }
-      .opcao { width: 130px; font-size: 18px; padding: 12px 10px; }
       #img-resposta { width: 130px; height: 130px; }
       #texto-resultado { font-size: 22px; }
+      .opcao { width: 130px; font-size: 18px; padding: 12px 10px; }
       .btn-proxima, .btn-reiniciar { padding: 15px 30px; font-size: 20px; width: 100%; box-sizing: border-box; }
       .resumo-item { font-size: 18px; padding: 12px 20px; }
+      
+      /* Ajustes do contador e som no celular */
+      .dica-e-som { flex-direction: column; text-align: center; }
+      #dica { text-align: center; font-size: 20px; }
+      .controles-som { flex-direction: row; margin-top: 15px; }
+      .contador-perguntas { font-size: 14px; margin-bottom: 10px; }
     }
 
     @media (max-height: 768px) {
+      /* --- Ajustes para Notebooks e Chromebooks --- */
+      .img-capa-frente {
+        max-height: 80vh; 
+        margin-bottom: 10px; 
+      }
+      
       .logo-game { max-height: 70px; margin-top: 10px; margin-bottom: 10px; }
       .cartao-jogo { padding: 15px; margin-bottom: 20px; }
       #dica { font-size: 20px; margin-top: 10px; }
@@ -437,11 +475,15 @@
 
     <div id="painel-quiz" class="cartao-jogo">
         <div class="dica-container">
-          <div class="controles-som">
+          
+          <div class="cabecalho-dica">
             <button class="btn-som" onclick="ativarSomManual()" title="Ouvir Dica">🔊</button>
+            <div id="contador-perguntas" class="contador-perguntas">PERGUNTA 1 DE 10</div>
             <button class="btn-mudo" onclick="pararSom()" title="Silenciar">🔇</button>
           </div>
+          
           <div id="dica">...</div>
+          
         </div>
 
         <div class="opcoes" id="opcoes"></div>
@@ -482,10 +524,12 @@
       "Manga": "img/manga.png", "Melão": "img/melao.png", "Laranja": "img/laranja.png",
       "Tangerina": "img/tangerina.png", "Alface": "img/alface.png", "Couve": "img/couve.png",
       "Brócolis": "img/brocolis.png", "Batata": "img/batata.png", "Mandioca": "img/mandioca.png",
-      "Cenoura": "img/cenoura.png"
+      "Cenoura": "img/cenoura.png", "Morango": "img/morango.png", "Tomate": "img/tomate.png", "Cebola": "img/cebola.png",
+      "Milho": "img/milho.png", "Caju": "img/caju.png", "Abacate": "img/abacate.png",
+      "Goiaba": "img/goiaba.png", "Abóbora": "img/abobora.png"
     };
 
-    const perguntas = [
+    const todasAsPerguntas = [
       { dica: "Uma fruta redonda, vermelha ou verde e muito usada em sucos.", correta: "Maçã", opcoes: ["Maçã", "Uva", "Pera"] },
       { dica: "Uma fruta verde por fora e azeda por dentro. Faz um suco refrescante.", correta: "Limão", opcoes: ["Banana", "Limão", "Abacaxi"] },
       { dica: "É pequena, roxa ou verde e cresce em cachos.", correta: "Uva", opcoes: ["Uva", "Ameixa", "Jabuticaba"] },
@@ -497,14 +541,32 @@
       { dica: "Tem casca colorida, polpa amarela bem doce e tem um caroço no meio.", correta: "Manga", opcoes: ["Jabuticaba", "Abacaxi", "Manga"] },
       { dica: "Tem casca amarela e dura, é doce, refrescante e as sementes ficam todas juntas no centro.", correta: "Melão", opcoes: ["Melão", "Mamão", "Abacaxi"] },
       { dica: "Tem folhas verdes e leves. É muito usada em sanduíches e saladas cruas.", correta: "Alface", opcoes: ["Alface", "Couve", "Brócolis"] },
-      { dica: "Nasce debaixo da terra e todo mundo adora quando viro purê ou fritas!", correta: "Batata", opcoes: ["Batata", "Mandioca", "Cenoura"] }
+      { dica: "Nasce debaixo da terra e todo mundo adora quando viro purê ou fritas!", correta: "Batata", opcoes: ["Batata", "Mandioca", "Cenoura"] },
+      { dica: "É pequeno, vermelho e tem as sementes do lado de fora. Faz uma sobremesa deliciosa.", correta: "Morango", opcoes: ["Uva", "Morango", "Maçã"] },
+      { dica: "Muitos acham que é legume, mas é uma fruta vermelha muito usada em saladas e molhos de pizza.", correta: "Tomate", opcoes: ["Tomate", "Cebola", "Maçã"] },
+      { dica: "Faz chorar quando é cortada, mas dá um sabor delicioso à comida.", correta: "Cebola", opcoes: ["Batata", "Cebola", "Cenoura"] },
+      { dica: "É amarelo, cresce em espigas e vira uma pipoca deliciosa na panela.", correta: "Milho", opcoes: ["Milho", "Batata", "Mandioca"] },
+      { dica: "Tem uma castanha na ponta e é uma fruta típica do Brasil. O seu suco é muito saboroso.", correta: "Caju", opcoes: ["Caju", "Goiaba", "Manga"] },
+      { dica: "Tem a casca verde, um caroço grande no meio e pode ser comido doce ou na salada.", correta: "Abacate", opcoes: ["Abacate", "Mamão", "Melão"] },
+      { dica: "Pode ser branca ou vermelha por dentro e é famosa por virar um doce.", correta: "Goiaba", opcoes: ["Goiaba", "Pera", "Maçã"] },
+      { dica: "É grande, tem a casca dura e o interior cor-de-laranja. Fica uma delícia numa sopa bem quentinha ou num doce tradicional!", correta: "Abóbora", opcoes: ["Abóbora", "Melão", "Batata"] }
     ];
 
+    let perguntasDaRodada = []; // Variável nova para guardar as 10 perguntas da vez
     let atual = 0;
     let respondeu = false;
     let acertos = 0;
     let erros = 0;
     let somLigado = true;
+
+    // Função auxiliar para embaralhar um array (Fisher-Yates)
+    function embaralhar(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
 
     function iniciarJogo() {
       document.getElementById('intro-screen').style.display = 'none';
@@ -516,6 +578,18 @@
       acertos = 0;
       erros = 0;
       somLigado = true;
+      
+      // 1. Clona a lista completa para não alterar a original
+      let perguntasCopiadas = [...todasAsPerguntas];
+      
+      // 2. Embaralha a lista copiada
+      perguntasCopiadas = embaralhar(perguntasCopiadas);
+      
+      // 3. Pega apenas as 10 primeiras perguntas embaralhadas (ou menos, se o total for menor que 10)
+      perguntasDaRodada = perguntasCopiadas.slice(0, 10);
+      
+      // 4. Se quiser embaralhar as opções de resposta também, pode descomentar a linha abaixo:
+      // perguntasDaRodada.forEach(p => p.opcoes = embaralhar(p.opcoes));
       
       mostrar();
     }
@@ -538,8 +612,8 @@
 
     function ativarSomManual() {
         somLigado = true;
-        if (atual < perguntas.length) {
-            falarTexto(perguntas[atual].dica, true);
+        if (atual < perguntasDaRodada.length) { // Mudou de perguntas para perguntasDaRodada
+            falarTexto(perguntasDaRodada[atual].dica, true);
         }
     }
 
@@ -547,8 +621,11 @@
       respondeu = false;
       const btnProxima = document.getElementById("btn-proxima");
       btnProxima.disabled = true;
+      // Atualiza o texto do contador dinamicamente
+      document.getElementById("contador-perguntas").innerText = "PERGUNTA " + (atual + 1) + " DE " + perguntasDaRodada.length;
 
-      const p = perguntas[atual];
+      // Mudou de perguntas para perguntasDaRodada
+      const p = perguntasDaRodada[atual]; 
       document.getElementById("dica").innerText = p.dica;
       
       falarTexto(p.dica);
@@ -571,7 +648,8 @@
     function responder(escolha) {
       if (respondeu) return;
       
-      const correta = perguntas[atual].correta;
+      // Mudou de perguntas para perguntasDaRodada
+      const correta = perguntasDaRodada[atual].correta;
       let mensagemVoz = "";
       const divResultado = document.getElementById("texto-resultado");
       const imgResultado = document.getElementById("img-resposta");
@@ -579,14 +657,14 @@
       const btnProxima = document.getElementById("btn-proxima");
 
       if (escolha === correta) {
-        divResultado.innerText = "✅ Muito bem! A resposta é " + correta;
+        divResultado.innerText = "✅ Muito bem! A resposta é " + correta + "!";
         divResultado.style.color = "#2e7d32";
-        mensagemVoz = "Muito bem! A resposta é " + correta;
+        mensagemVoz = "Muito bem! A resposta é " + correta + "!";
         acertos++; 
       } else {
-        divResultado.innerText = "❌ Ops! A resposta correta é " + correta;
+        divResultado.innerText = "❌ Ops! A resposta correta é " + correta + "!";
         divResultado.style.color = "#c62828";
-        mensagemVoz = "Ops! A resposta correta é " + correta;
+        mensagemVoz = "Ops! A resposta correta é " + correta + "!";
         erros++; 
       }
 
@@ -610,7 +688,8 @@
       if (!respondeu) return;
 
       atual++;
-      if (atual < perguntas.length) {
+      // Mudou de perguntas para perguntasDaRodada
+      if (atual < perguntasDaRodada.length) {
         mostrar();
       } else {
         document.getElementById("painel-quiz").style.display = "none"; 

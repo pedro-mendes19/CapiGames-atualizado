@@ -50,6 +50,63 @@
             border: 3px solid #FFD93D;
         }
 
+        /* Menu de Seleção de Modo */
+        #mode-selection {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--cor-fundo-gradiente);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            text-align: center;
+        }
+
+        .btn-mode {
+            margin: 10px;
+            padding: 20px 40px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8rem;
+            background-color: var(--cor-peca);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 var(--cor-peca-sombra);
+            transition: all 0.1s;
+            width: 250px;
+        }
+
+        .btn-mode:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        .btn-mode:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 var(--cor-peca-sombra);
+        }
+
+        .btn-back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-family: 'Fredoka One', cursive;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #333;
+        }
+
+        .btn-back:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #333;
+        }
+
         /* O Tabuleiro (Moldura) */
         .game-board {
             background-color: #FFD93D; /* Amarelo vivo */
@@ -60,11 +117,9 @@
             position: relative;
         }
 
-        /* A Grade Interna */
+        /* A Grade Interna (Agora dinâmica via JS) */
         .grid {
             display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
             gap: 10px;
             background-color: #D4B218;
             padding: 10px;
@@ -92,6 +147,14 @@
             top: 0;
         }
 
+        /* Classe para 4x4 (peças menores para caber) */
+        .grid-4 .tile {
+            width: 75px;
+            height: 75px;
+            font-size: 2.2rem;
+            border-radius: 10px;
+        }
+
         .tile:hover {
             filter: brightness(1.1); /* Fica mais brilhante */
             transform: translateY(-2px);
@@ -113,10 +176,10 @@
 
         /* Botão de Reiniciar */
         .btn-restart {
-            margin-top: 30px;
-            padding: 15px 40px;
+            margin-top: 20px;
+            padding: 12px 30px;
             font-family: 'Fredoka One', cursive;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             background-color: #4D96FF;
             color: white;
             border: none;
@@ -145,7 +208,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 100;
+            z-index: 300;
             color: white;
             text-align: center;
         }
@@ -170,6 +233,7 @@
             height: 15px;
             background-color: #f00;
             animation: fall linear forwards;
+            z-index: 301;
         }
 
         @keyframes fall {
@@ -177,16 +241,29 @@
         }
         
         /* Ajuste para celulares */
-        @media (max-width: 400px) {
-            .grid {
-                grid-template-columns: repeat(3, 80px);
-                grid-template-rows: repeat(3, 80px);
+        @media (max-width: 450px) {
+            h1 { font-size: 2rem; }
+            .grid { gap: 5px; padding: 5px; }
+            .tile { width: 70px; height: 70px; font-size: 2rem; }
+            
+            .grid-4 .tile {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
             }
-            .tile { width: 80px; height: 80px; font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
+
+    <div id="mode-selection">
+        <h1>Números<br>Mágicos!</h1>
+        <p style="font-size: 1.2rem; color: #555;">Escolha o tamanho do desafio:</p>
+        <button class="btn-mode" onclick="setMode(3)">3x3 (Fácil)</button>
+        <button class="btn-mode" onclick="setMode(4)">4x4 (Difícil)</button>
+    </div>
+
+    <button class="btn-back" onclick="showMenu()">⬅ Voltar</button>
 
     <h1>Números<br>Mágicos!</h1>
     
@@ -210,13 +287,33 @@
         const boardElement = document.getElementById('board');
         const movesElement = document.getElementById('moves');
         const winOverlay = document.getElementById('win-overlay');
+        const modeSelection = document.getElementById('mode-selection');
         
-        let tiles = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+        let gridSize = 3;
+        let tiles = [];
         let moveCount = 0;
-        let isGameActive = true;
+        let isGameActive = false;
 
-        // Sons simulados (opcionais, navegadores as vezes bloqueiam)
-        // Vamos focar no visual que é garantido
+        function setMode(size) {
+            gridSize = size;
+            modeSelection.style.display = 'none';
+            
+            // Ajusta o CSS da grade
+            boardElement.style.gridTemplateColumns = `repeat(${gridSize}, auto)`;
+            
+            if (gridSize === 4) {
+                boardElement.classList.add('grid-4');
+            } else {
+                boardElement.classList.remove('grid-4');
+            }
+            
+            startGame();
+        }
+
+        function showMenu() {
+            modeSelection.style.display = 'flex';
+            isGameActive = false;
+        }
 
         function renderBoard() {
             boardElement.innerHTML = '';
@@ -232,8 +329,7 @@
                     div.onclick = () => moveTile(index);
                     
                     // Cores variadas para ficar divertido
-                    const colors = ['#FF6B6B', '#4D96FF', '#6BCB77', '#FFD93D'];
-                    // Uma lógica simples para distribuir cores baseada no número
+                    const colors = ['#FF6B6B', '#4D96FF', '#6BCB77', '#FFD93D', '#A066CB', '#FF9F43'];
                     div.style.backgroundColor = colors[(tile - 1) % colors.length];
                     div.style.boxShadow = `0 8px 0 ${darkenColor(colors[(tile - 1) % colors.length])}`;
                 }
@@ -242,13 +338,14 @@
             });
         }
 
-        // Função auxiliar para escurecer a cor da sombra
         function darkenColor(color) {
             const map = {
-                '#FF6B6B': '#C44D4D', // Vermelho -> Escuro
-                '#4D96FF': '#285EAB', // Azul -> Escuro
-                '#6BCB77': '#3E8E46', // Verde -> Escuro
-                '#FFD93D': '#D4B218'  // Amarelo -> Escuro
+                '#FF6B6B': '#C44D4D',
+                '#4D96FF': '#285EAB',
+                '#6BCB77': '#3E8E46',
+                '#FFD93D': '#D4B218',
+                '#A066CB': '#7B4FAB',
+                '#FF9F43': '#D67E2F'
             };
             return map[color] || '#333';
         }
@@ -259,14 +356,12 @@
             const emptyIndex = tiles.indexOf(0);
             
             if (isAdjacent(index, emptyIndex)) {
-                // Troca
                 [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
                 moveCount++;
                 movesElement.innerText = moveCount;
                 renderBoard();
                 checkWin();
             } else {
-                // Feedback visual de "erro" (balançar)
                 const tileElement = boardElement.children[index];
                 tileElement.style.transform = 'translateX(5px)';
                 setTimeout(() => tileElement.style.transform = 'translateX(0)', 100);
@@ -274,14 +369,18 @@
         }
 
         function isAdjacent(index1, index2) {
-            const r1 = Math.floor(index1 / 3), c1 = index1 % 3;
-            const r2 = Math.floor(index2 / 3), c2 = index2 % 3;
+            const r1 = Math.floor(index1 / gridSize), c1 = index1 % gridSize;
+            const r2 = Math.floor(index2 / gridSize), c2 = index2 % gridSize;
             return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
         }
 
         function checkWin() {
-            const winState = JSON.stringify([1, 2, 3, 4, 5, 6, 7, 8, 0]);
-            if (JSON.stringify(tiles) === winState && moveCount > 0) {
+            // Cria o estado de vitória dinamicamente
+            const winState = [];
+            for (let i = 1; i < gridSize * gridSize; i++) winState.push(i);
+            winState.push(0);
+
+            if (JSON.stringify(tiles) === JSON.stringify(winState) && moveCount > 0) {
                 isGameActive = false;
                 showConfetti();
                 winOverlay.style.display = 'flex';
@@ -289,22 +388,26 @@
         }
 
         function startGame() {
-            // Reinicia
-            tiles = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+            // Inicializa tiles
+            tiles = [];
+            for (let i = 1; i < gridSize * gridSize; i++) tiles.push(i);
+            tiles.push(0);
+
             moveCount = 0;
             movesElement.innerText = '0';
             isGameActive = true;
             winOverlay.style.display = 'none';
 
-            // Embaralha (100 movimentos aleatórios válidos)
-            for (let i = 0; i < 150; i++) {
+            // Embaralha
+            const iterations = gridSize === 3 ? 150 : 300;
+            for (let i = 0; i < iterations; i++) {
                 const emptyIndex = tiles.indexOf(0);
                 const possibleMoves = [];
-                const offsets = [-1, 1, -3, 3]; // Esq, Dir, Cima, Baixo
+                const offsets = [-1, 1, -gridSize, gridSize];
                 
                 offsets.forEach(offset => {
                     const neighbor = emptyIndex + offset;
-                    if (neighbor >= 0 && neighbor < 9 && isAdjacent(emptyIndex, neighbor)) {
+                    if (neighbor >= 0 && neighbor < gridSize * gridSize && isAdjacent(emptyIndex, neighbor)) {
                         possibleMoves.push(neighbor);
                     }
                 });
@@ -320,7 +423,6 @@
             startGame();
         }
 
-        // --- EFEITO DE CONFETE ---
         function showConfetti() {
             const colors = ['#FF6B6B', '#4D96FF', '#6BCB77', '#FFD93D', '#FFF'];
             for (let i = 0; i < 100; i++) {
@@ -330,8 +432,6 @@
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
                 document.body.appendChild(confetti);
-                
-                // Limpa confetes depois de 5s
                 setTimeout(() => confetti.remove(), 5000);
             }
         }

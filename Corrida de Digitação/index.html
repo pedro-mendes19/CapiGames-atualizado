@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Corrida de Digitação - Nível Médio</title>
-    <link rel="icon" type="image/jpg" href="img/logo.png">
+    <link rel="icon" type="image/png" href="img/logo.png">
     <style>
         :root {
             --asphalt: #2d3436;
@@ -456,6 +456,22 @@
             updateCarPosition(playerCar, 0);
             updateCarPosition(aiCar, 0);
         }
+
+        // Global Keydown Listener for Enter and Spacebar
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                // If modal is open, close it (restarts game state)
+                if (modal.style.display === 'flex') {
+                    e.preventDefault();
+                    closeModal();
+                } 
+                // If game is not running and button is clickable, start
+                else if (!gameRunning && !startBtn.disabled) {
+                    e.preventDefault();
+                    startGame();
+                }
+            }
+        });
     </script>
 </body>
 </html>
