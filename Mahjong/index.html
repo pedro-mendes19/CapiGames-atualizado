@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahjong Solitaire</title>
+    <style>
+        body {
+            background: #cfae7b;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            margin: 0;
+        }
+
+        #board {
+            /* Posição relativa permite que as peças usem posição absoluta dentro dele */
+            position: relative; 
+            width: 800px;
+            height: 600px;
+        }
+
+        .tile {
+            position: absolute; 
+            width: 70px;
+            height: 90px;
+            background: white;
+            border-radius: 8px;
+            /* Efeito 3D para as peças empilhadas */
+            box-shadow: 4px 4px 6px rgba(0,0,0,0.3), inset -2px -2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #dcdcdc; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none; /* Evita selecionar o texto ao clicar rápido */
+        }
+
+        /* Efeito para quando a peça for clicada */
+        .tile.selected {
+            transform: translateY(-10px);
+            box-shadow: 4px 14px 10px rgba(0,0,0,0.3);
+            border: 2px solid #ff4757;
+        }
+
+        .tile img {
+            width: 80%;
+            pointer-events: none; /* O clique vai para a div .tile, não para a imagem */
+        }
+
+        /* Estilo do texto caso a imagem não exista */
+        .tile span {
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            position: absolute;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="board"></div>
+
+    <script>
+        // 1. O Layout (Coordenadas x, y, z)
+        // Um formato de tartaruga simplificado com 10 peças
+        const turtleLayout = [
+            // Base (z: 0)
+            {x: 2, y: 0, z: 0}, {x: 4, y: 0, z: 0}, // Topo
+            {x: 1, y: 2, z: 0}, {x: 3, y: 2, z: 0}, {x: 5, y: 2, z: 0}, // Meio
+            {x: 2, y: 4, z: 0}, {x: 4, y: 4, z: 0}, // Baixo
+            
+            // Primeiro andar (z: 1)
+            {x: 3, y: 2, z: 1}, 
+            {x: 2, y: 2, z: 1},
+            
+            // Segundo andar (z: 2) - o topo da carapaça
+            {x: 2.5, y: 2, z: 2} 
+        ];
+
+        // 2. Os Dados das Peças (Pares)
+        const tilesData = [
+            "bamboo1", "bamboo1",
+            "bamboo2", "bamboo2",
+            "circle1", "circle1",
+            "circle2", "circle2",
+            "red_dragon", "red_dragon"
+        ];
+
+        // 3. Embaralha as peças
+        const shuffledTiles = tilesData.sort(() => Math.random() - 0.5);
+
+        // 4. Configurações do Tabuleiro
+        const board = document.getElementById("board");
+        const tileWidth = 70;
+        const tileHeight = 90;
+        let selectedTile = null;
+
+        // 5. Geração das Peças no HTML
+        turtleLayout.forEach((pos, index) => {
+            let tileName = shuffledTiles[index];
+
+            let div = document.createElement("div");
+            div.className = "tile";
+            div.dataset.name = tileName; // Guarda o nome para validar os pares
+            div.dataset.index = index;   // Identificador único da peça
+            
+            // Cálculo do Posicionamento 3D
+            const leftPos = (pos.x * (tileWidth / 1.5)) - (pos.z * 5);
+            const topPos = (pos.y * (tileHeight / 1.5)) - (pos.z * 5);
+            
+            div.style.left = `${leftPos}px`;
+            div.style.top = `${topPos}px`;
+            div.style.zIndex = pos.z; 
+
+            // Tenta carregar a imagem
+            let img = document.createElement("img");
+            img.src = `assets/tiles/${tileName}.png`;
+            
+            // Se a imagem falhar (arquivo não encontrado), mostra o texto
+            img.onerror = function() {
+                this.style.display = 'none';
+                let textFallback = document.createElement("span");
+                textFallback.innerText = tileName.replace('_', '\n');
+                div.appendChild(textFallback);
+            };
+
+            div.appendChild(img);
+            board.appendChild(div);
+
+            // 6. Lógica Básica de Clique
+            div.addEventListener("click", () => {
+                // Desmarca se clicar na mesma peça
+                if (selectedTile === div) {
+                    div.classList.remove("selected");
+                    selectedTile = null;
+                    return;
+                }
+
+                div.classList.add("selected");
+
+                if (selectedTile) {
+                    // Verifica se os nomes são iguais (Formou par!)
+                    if (selectedTile.dataset.name === div.dataset.name) {
+                        setTimeout(() => {
+                            // Remove as peças do tabuleiro
+                            div.remove();
+                            selectedTile.remove();
+                            selectedTile = null;
+                        }, 300);
+                    } else {
+                        // Não formou par, apenas tira a seleção
+                        setTimeout(() => {
+                            div.classList.remove("selected");
+                            selectedTile.classList.remove("selected");
+                            selectedTile = null;
+                        }, 400);
+                    }
+                } else {
+                    // É a primeira peça selecionada
+                    selectedTile = div;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

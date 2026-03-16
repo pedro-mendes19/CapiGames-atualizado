@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mestre das Cores - Mistura Perfeita</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Mistura de Cores</h1>
+        <div class="level-info">
+            Tente fazer a cor de: <span id="target-name" style="color: #e74c3c;">Maçã</span>
+        </div>
+
+        <div class="display-area">
+            <div class="color-box-wrapper">
+                <label>Referência</label>
+                <div id="target-color" class="color-box"></div>
+            </div>
+            <div class="color-box-wrapper">
+                <label>Seu Papel</label>
+                <div id="paper" class="color-box"></div>
+            </div>
+        </div>
+
+        <p>Clique nas tintas para misturar no papel:</p>
+        <div class="palette" id="palette">
+            <button class="paint-btn" style="background-color: rgb(220, 20, 60);" onclick="addPaint(220, 20, 60)"></button>
+            
+            <button class="paint-btn" style="background-color: rgb(255, 230, 0);" onclick="addPaint(255, 230, 0)"></button>
+            
+            <button class="paint-btn" style="background-color: rgb(0, 120, 255);" onclick="addPaint(0, 120, 255)"></button>
+            
+            <button class="paint-btn" style="background-color: rgb(255, 255, 255);" onclick="addPaint(255, 255, 255)"></button>
+            
+            <button class="paint-btn" style="background-color: rgb(0, 0, 0);" onclick="addPaint(0, 0, 0)"></button>
+        </div>
+
+        <div class="controls">
+            <button id="btn-reset" class="action-btn" onclick="resetPaper()">Limpar Papel</button>
+            <button id="btn-ready" class="action-btn" onclick="evaluateColor()">Pronto!</button>
+            <button id="btn-next" class="action-btn" onclick="nextLevel()">Próxima Rodada</button>
+        </div>
+
+        <div id="result-area" class="result-area">
+            <h3>Precisão da Mistura</h3>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <p id="accuracy-text">0%</p>
+            <p id="feedback-text"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

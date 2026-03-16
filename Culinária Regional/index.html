@@ -619,7 +619,6 @@
 <body>
     <div class="game-wrapper">
         <h1>CULINÁRIA REGIONAL</h1>
-
         <div id="intro">
             <div class="intro-card">
                 <h2>CULINÁRIA REGIONAL</h2>
@@ -631,9 +630,7 @@
                 <button class="btn-jogar" onclick="iniciarJogo()">▶ Jogar</button>
             </div>
         </div>
-
         <div id="container" style="display:none;">
-
             <div class="tab-navigation">
                 <button id="btnQuiz" class="tab-btn active" onclick="mostrarAba('quiz')">
                     QUIZ
@@ -642,51 +639,40 @@
                     CURIOSIDADES
                 </button>
             </div>
-
             <div id="explorarCulinaria" style="display:none;">
-                <div style="text-align: center; color: #2E7D32; font-weight: bold; margin-bottom: 15px; margin-top: 30px;">
-                  🔎 Clique nos cards para ver os ingredientes! 🔍
+                <div style="text-align: center; color: #2E7D32; font-weight: bold; margin-bottom: 15px; margin-top: 25px;">
+                    🔎 Clique nos cards para ver os ingredientes de todas as regiões! 🔍
                 </div>
                 <div class="countries-grid" id="gridCuriosidades">
                     </div>
             </div>
-
             <div id="quizCulinaria" style="display:none; flex-direction: column; align-items: center; gap: 2vh; width: 100%;">
                 <div class="bloco-imagem">
                     <div id="progresso" class="label-progresso">Pergunta 1 de 10</div>
                     <img id="imagemPergunta" src="" alt="Imagem da comida">
                     <div id="nomeAlimento">NOME DO PRATO</div>
                 </div>
-
                 <div id="pergunta">DE QUAL ESTADO É ESTE PRATO?</div>
-
                 <div class="opcoes" id="opcoes">
                 </div>
-
                 <div id="resultado"></div>
                 <div id="score">Pontuação: 0</div>
             </div>
         </div>
-
         <div id="painelFinal">
             <h2>Fim de jogo!</h2>
             <p id="resumoFinal"></p>
-
             <div class="totais">
                 <span class="acertos">✔ Acertos: <b id="totalAcertos"></b></span>
                 <span class="erros">✘ Erros: <b id="totalErros"></b></span>
             </div>
-
             <p id="mensagemFinal"></p>
-
             <div class="botoes-finais">
                 <button class="btn-reiniciar" onclick="voltarIntroducao()">🔁 Jogar Novamente</button>
                 <button class="btn-sair" onclick="fecharJogo()">🚪 Sair do Jogo</button>
             </div>
         </div>
-
     </div>
-
     <div id="modalOverlay">
         <div class="modal-box">
             <img id="modalImg" src="" alt="Comida">
@@ -707,34 +693,6 @@
                     { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
                     { nome: "GOIÁS", img: "img/bandeirago.png" }]
             },
-
-            {
-                img: "img/acaraje.png", nome: "ACARAJÉ", correta: "BAHIA",
-                ingredientes: "Bolinho feito de feijão-fradinho, cebola e sal, frito em azeite de dendê. Recheado com vatapá e camarão.",
-                opcoes: [
-                    { nome: "BAHIA", img: "img/bandeiraba.png" },
-                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
-                    { nome: "CEARÁ", img: "img/bandeirace.png" }]
-            },
-
-            {
-                img: "img/arrozcarreteiro.png", nome: "ARROZ CARRETEIRO", correta: "RIO GRANDE DO SUL",
-                ingredientes: "Arroz cozido com charque (carne seca) picada, refogada em gordura com alho, cebola e cheiro-verde.",
-                opcoes: [
-                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" },
-                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" },
-                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" }]
-            },
-
-            {
-                img: "img/tacaca.png", nome: "TACACÁ", correta: "PARÁ",
-                ingredientes: "Caldo amarelado (tucupi), goma de tapioca, camarão seco e folhas de jambu (que causam dormência).",
-                opcoes: [
-                    { nome: "AMAZONAS", img: "img/bandeiraam.png" },
-                    { nome: "PARÁ", img: "img/bandeirapa.png" },
-                    { nome: "ACRE", img: "img/bandeiraac.png" }]
-            },
-
             {
                 img: "img/moquecacapixaba.png", nome: "MOQUECA CAPIXABA", correta: "ESPÍRITO SANTO",
                 ingredientes: "Peixe cozido em panela de barro com tomate, coentro, cebola e urucum. Não leva azeite de dendê nem leite de coco.",
@@ -743,16 +701,6 @@
                     { nome: "BAHIA", img: "img/bandeiraba.png" },
                     { nome: "ESPÍRITO SANTO", img: "img/bandeiraes.png" }]
             },
-
-            {
-                img: "img/boloderolo.png", nome: "BOLO DE ROLO", correta: "PERNAMBUCO",
-                ingredientes: "Massa finíssima de pão de ló enrolada com muitas camadas de goiabada derretida. Patrimônio cultural.",
-                opcoes: [
-                    { nome: "ALAGOAS", img: "img/bandeiraal.png" },
-                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
-                    { nome: "PARAÍBA", img: "img/bandeirapb.png" }]
-            },
-
             {
                 img: "img/bauru.png", nome: "BAURU", correta: "SÃO PAULO",
                 ingredientes: "Pão francês, rosbife, tomate, pepino em conserva e mistura de queijos derretidos.",
@@ -763,14 +711,38 @@
             },
 
             {
-                img: "img/pequi.png", nome: "ARROZ COM PEQUI", correta: "GOIÁS",
-                ingredientes: "Arroz cozido com pequi (fruto do cerrado de sabor marcante e cor amarela), alho e temperos.",
+                img: "img/acaraje.png", nome: "ACARAJÉ", correta: "BAHIA",
+                ingredientes: "Bolinho feito de feijão-fradinho, cebola e sal, frito em azeite de dendê. Recheado com vatapá e camarão.",
                 opcoes: [
-                    { nome: "TOCANTINS", img: "img/bandeirato.png" },
-                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" },
-                    { nome: "GOIÁS", img: "img/bandeirago.png" }]
+                    { nome: "BAHIA", img: "img/bandeiraba.png" },
+                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
+                    { nome: "CEARÁ", img: "img/bandeirace.png" }]
+            },
+            {
+                img: "img/boloderolo.png", nome: "BOLO DE ROLO", correta: "PERNAMBUCO",
+                ingredientes: "Massa finíssima de pão de ló enrolada com muitas camadas de goiabada derretida. Patrimônio cultural.",
+                opcoes: [
+                    { nome: "ALAGOAS", img: "img/bandeiraal.png" },
+                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
+                    { nome: "PARAÍBA", img: "img/bandeirapb.png" }]
+            },
+            {
+                img: "img/baiaodedois.png", nome: "BAIÃO DE DOIS", correta: "CEARÁ",
+                ingredientes: "Feijão de corda (ou verde) cozido junto com o arroz, queijo coalho, carne seca e manteiga de garrafa.",
+                opcoes: [
+                    { nome: "CEARÁ", img: "img/bandeirace.png" },
+                    { nome: "MARANHÃO", img: "img/bandeirama.png" },
+                    { nome: "PIAUÍ", img: "img/bandeirapi.png" }]
             },
 
+            {
+                img: "img/arrozcarreteiro.png", nome: "ARROZ CARRETEIRO", correta: "RIO GRANDE DO SUL",
+                ingredientes: "Arroz cozido com charque (carne seca) picada, refogada em gordura com alho, cebola e cheiro-verde.",
+                opcoes: [
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" },
+                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" },
+                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" }]
+            },
             {
                 img: "img/barreado.png", nome: "BARREADO", correta: "PARANÁ",
                 ingredientes: "Carne bovina cozida por muitas horas em panela de barro vedada (barreada) com farinha de mandioca.",
@@ -779,22 +751,80 @@
                     { nome: "PARANÁ", img: "img/bandeirapr.png" },
                     { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" }]
             },
+            { 
+                img: "img/churrasco.png", nome: "CHURRASCO", correta: "RIO GRANDE DO SUL",
+                ingredientes: "Carnes (principalmente a costela e a picanha) temperadas com sal grosso e assadas em espetos na brasa.",
+                opcoes: [
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.png" }]
+            },
 
             {
-                img: "img/baiaodedois.png", nome: "BAIÃO DE DOIS", correta: "CEARÁ",
-                ingredientes: "Feijão de corda (ou verde) cozido junto com o arroz, queijo coalho, carne seca e manteiga de garrafa.",
+                img: "img/tacaca.png", nome: "TACACÁ", correta: "PARÁ",
+                ingredientes: "Caldo amarelado (tucupi), goma de tapioca, camarão seco e folhas de jambu (que causam dormência).",
                 opcoes: [
-                    { nome: "CEARÁ", img: "img/bandeirace.png" },
-                    { nome: "MARANHÃO", img: "img/bandeirama.png" },
-                    { nome: "PIAUÍ", img: "img/bandeirapi.png" }]
+                    { nome: "AMAZONAS", img: "img/bandeiraam.png" },
+                    { nome: "PARÁ", img: "img/bandeirapa.png" },
+                    { nome: "ACRE", img: "img/bandeiraac.png" }]
+            },
+            { 
+                img: "img/manicoba.png", nome: "MANIÇOBA", correta: "PARÁ",
+                ingredientes: "Folha da mandioca brava moída e cozida por 7 dias, servida com carnes de porco e boi (lembra uma feijoada verde).",
+                opcoes: [
+                    { nome: "PARÁ", img: "img/bandeirapa.png" },
+                    { nome: "TOCANTINS", img: "img/bandeirato.png" },
+                    { nome: "RONDÔNIA", img: "img/bandeiraro.png" }]
+            },
+            { 
+                img: "img/xcaboquinho.png", nome: "X-CABOQUINHO", correta: "AMAZONAS",
+                ingredientes: "Sanduíche de pão francês recheado com lascas de tucumã (fruta amazônica), queijo coalho e banana pacovã frita.",
+                opcoes: [
+                    { nome: "RORAIMA", img: "img/bandeirarr.png" },
+                    { nome: "AMAZONAS", img: "img/bandeiraam.png" },
+                    { nome: "AMAPÁ", img: "img/bandeiraap.png" }]
+            },
+            {
+                img: "img/pequi.png", nome: "ARROZ COM PEQUI", correta: "GOIÁS",
+                ingredientes: "Arroz cozido com pequi (fruto do cerrado de sabor marcante e cor amarela), alho e temperos.",
+                opcoes: [
+                    { nome: "TOCANTINS", img: "img/bandeirato.png" },
+                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" },
+                    { nome: "GOIÁS", img: "img/bandeirago.png" }]
+            },
+            { 
+                img: "img/caldodepiranha.png", nome: "CALDO DE PIRANHA", correta: "MATO GROSSO",
+                ingredientes: "Caldo encorpado feito com carne de piranha cozida, tomate, pimentão, cebola e coentro. Considerado afrodisíaco.",
+                opcoes: [
+                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" },
+                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.png" },
+                    { nome: "GOIÁS", img: "img/bandeirago.png" }]
+            },
+            { 
+                img: "img/sopaparaguaya.png", nome: "SOPA PARAGUAIA", correta: "MATO GROSSO DO SUL",
+                ingredientes: "Apesar do nome, é um bolo salgado denso feito com farinha de milho, muito queijo meia cura, cebola e leite.",
+                opcoes: [
+                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.png" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" }]
             }
         ];
-
+        
+        let perguntasSorteadas = []; 
         let atual = 0;
         let score = 0;
         let respondido = false;
-
-        // --- FUNÇÕES DE EXPLORAÇÃO E MODAL ---
+        const totalPorPartida = 10; 
+        
+        function embaralhar(array) {
+            let arrayEmbaralhado = [...array];
+            for (let i = arrayEmbaralhado.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arrayEmbaralhado[i], arrayEmbaralhado[j]] = [arrayEmbaralhado[j], arrayEmbaralhado[i]];
+            }
+            return arrayEmbaralhado;
+        }
+        
         function gerarCardsCuriosidades() {
             const grid = document.getElementById('gridCuriosidades');
             grid.innerHTML = '';
@@ -854,8 +884,9 @@
 
             document.querySelector('h1').style.display = 'block';
 
-            // Por padrão, inicia no Quiz
             mostrarAba('quiz');
+
+            perguntasSorteadas = embaralhar(perguntas).slice(0, totalPorPartida);
 
             atual = 0;
             score = 0;
@@ -866,9 +897,9 @@
         }
 
         function mostrar() {
-            const p = perguntas[atual];
+            const p = perguntasSorteadas[atual];
 
-            document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${perguntas.length}`;
+            document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${totalPorPartida}`;
             document.getElementById('imagemPergunta').src = p.img;
             document.getElementById('nomeAlimento').innerText = p.nome;
 
@@ -896,7 +927,7 @@
             if (respondido) return;
             respondido = true;
 
-            const p = perguntas[atual];
+            const p = perguntasSorteadas[atual];
             const r = document.getElementById('resultado');
             r.style.opacity = '1';
 
@@ -925,7 +956,7 @@
 
             setTimeout(() => {
                 atual++;
-                if (atual < perguntas.length) {
+                if (atual < totalPorPartida) {
                     mostrar();
                 } else {
                     fim();
@@ -940,15 +971,15 @@
             const painel = document.getElementById('painelFinal');
             painel.style.display = 'block';
 
-            const erros = perguntas.length - score;
+            const erros = totalPorPartida - score;
             document.getElementById('totalAcertos').innerText = score;
             document.getElementById('totalErros').innerText = erros;
-            document.getElementById('resumoFinal').innerText = `Você completou todas as ${perguntas.length} perguntas!`;
+            document.getElementById('resumoFinal').innerText = `Você completou as ${totalPorPartida} perguntas desta rodada!`;
 
             let msg = '';
-            if (score === perguntas.length) msg = "🏆 INCRÍVEL! Você é um expert em comida brasileira!";
-            else if (score > perguntas.length * 0.7) msg = "👏 Mandou bem! Conhece muito do nosso Brasil.";
-            else msg = "🍽 Que tal viajar mais pelos sabores do Brasil?";
+            if (score === totalPorPartida) msg = "🏆 INCRÍVEL! Você gabaritou a rodada!";
+            else if (score > totalPorPartida * 0.7) msg = "👏 Mandou bem! Conhece muito do nosso Brasil.";
+            else msg = "🍽 Que tal explorar a aba Curiosidades e tentar de novo?";
 
             document.getElementById('mensagemFinal').innerText = msg;
         }
@@ -978,7 +1009,6 @@
   `;
         }
         
-        // Gera os cards ao carregar a página para estarem prontos quando clicar na aba
         gerarCardsCuriosidades();
     </script>
 </body>
