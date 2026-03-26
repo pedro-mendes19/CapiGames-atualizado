@@ -2,169 +2,573 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Mahjong Solitaire</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahjong Titans Deluxe</title>
+    
     <style>
-        body {
-            background: #cfae7b;
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            padding-top: 50px;
-            margin: 0;
+        :root {
+            --tile-w: 50px;
+            --tile-h: 70px;
+            --tile-depth: 8px;
         }
 
-        #board {
-            /* Posição relativa permite que as peças usem posição absoluta dentro dele */
-            position: relative; 
-            width: 800px;
-            height: 600px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1b5e20 0%, #002500 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ui-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+
+        .stats { display: flex; gap: 20px; }
+        .stat-box { font-size: 1.2rem; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+        .controls { display: flex; gap: 10px; }
+
+        .btn {
+            background: linear-gradient(to bottom, #f5f5f5, #dcdcdc);
+            border: 1px solid #999;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover { background: #fff; transform: translateY(-1px); }
+        .btn:active { transform: translateY(1px); box-shadow: none; }
+        .btn.primary { background: linear-gradient(to bottom, #4caf50, #2e7d32); color: white; border-color: #1b5e20; }
+
+        #game-board {
+            position: relative;
+            flex-grow: 1;
+            margin: 20px auto;
+            width: 900px;
         }
 
         .tile {
-            position: absolute; 
-            width: 70px;
-            height: 90px;
-            background: white;
-            border-radius: 8px;
-            /* Efeito 3D para as peças empilhadas */
-            box-shadow: 4px 4px 6px rgba(0,0,0,0.3), inset -2px -2px 5px rgba(0,0,0,0.1);
-            border: 1px solid #dcdcdc; 
+            position: absolute;
+            width: var(--tile-w);
+            height: var(--tile-h);
+            background: linear-gradient(135deg, #fffdf7, #e8e3d3);
+            border-radius: 6px;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            user-select: none; /* Evita selecionar o texto ao clicar rápido */
-        }
-
-        /* Efeito para quando a peça for clicada */
-        .tile.selected {
-            transform: translateY(-10px);
-            box-shadow: 4px 14px 10px rgba(0,0,0,0.3);
-            border: 2px solid #ff4757;
+            transition: transform 0.2s ease, filter 0.2s ease, opacity 0.3s ease;
+            
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 
+                -1px 1px 0 #d1cbb8,
+                -2px 2px 0 #c4bda8,
+                -3px 3px 0 #859178,
+                -4px 4px 0 #6e7a62,
+                -5px 5px 8px rgba(0,0,0,0.6);
+            
+            /* REMOVIDO o padding. ADICIONADO overflow para a imagem não sair dos cantos arredondados */
+            padding: 0;
+            overflow: hidden; 
         }
 
         .tile img {
-            width: 80%;
-            pointer-events: none; /* O clique vai para a div .tile, não para a imagem */
-        }
-
-        /* Estilo do texto caso a imagem não exista */
-        .tile span {
-            font-size: 11px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
-            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Faz a imagem cobrir toda a peça sem distorcer proporções */
+            
+            /* DICA: Aumente este número (ex: 1.3 ou 1.4) se quiser dar mais zoom no desenho da peça
+               e esconder ainda mais as bordas da imagem original. */
+            transform: scale(1.15); 
+            
             pointer-events: none;
         }
+
+        .tile:hover { filter: brightness(1.1); }
+
+        .tile.selected {
+            transform: translateY(-10px);
+            box-shadow: 
+                0 0 15px rgba(255, 215, 0, 0.8),
+                -1px 9px 0 #d1cbb8,
+                -2px 10px 0 #c4bda8,
+                -3px 11px 0 #859178,
+                -4px 12px 0 #6e7a62,
+                -5px 13px 15px rgba(0,0,0,0.7);
+            border-color: #ffd700;
+        }
+
+        .tile.hinted { animation: pulse-hint 1.5s infinite; }
+
+        .tile.matched {
+            opacity: 0;
+            transform: scale(1.3) translateY(-20px);
+            pointer-events: none;
+        }
+
+        @keyframes pulse-hint {
+            0% { filter: brightness(1) drop-shadow(0 0 0px #00e5ff); }
+            50% { filter: brightness(1.2) drop-shadow(0 0 10px #00e5ff); }
+            100% { filter: brightness(1) drop-shadow(0 0 0px #00e5ff); }
+        }
+
+        .tile.blocked { cursor: not-allowed; }
+
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.8);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal.hidden { display: none; }
+        .modal-content {
+            background: #fdf6e3; color: #333; padding: 40px;
+            border-radius: 12px; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+        .modal-content h1 { margin-bottom: 10px; font-size: 2.5rem; }
+        .modal-content p { margin-bottom: 25px; font-size: 1.2rem; }
     </style>
 </head>
 <body>
+    <div class="game-container">
+        <header class="ui-panel">
+            <div class="stats">
+                <div class="stat-box">⏱️ <span id="timer">00:00</span></div>
+                <div class="stat-box">🀄 Pares: <span id="pairs-left">72</span></div>
+                <div class="stat-box">🔄 Movimentos: <span id="moves-count">0</span></div>
+            </div>
+            <div class="controls">
+                <button id="btn-hint" class="btn">💡 Dica</button>
+                <button id="btn-shuffle" class="btn">🔀 Embaralhar</button>
+                <button id="btn-restart" class="btn">🔄 Reiniciar</button>
+            </div>
+        </header>
 
-    <div id="board"></div>
+        <main id="game-board"></main>
+
+        <div id="modal" class="modal hidden">
+            <div class="modal-content">
+                <h1 id="modal-title">Fim de Jogo</h1>
+                <p id="modal-message"></p>
+                <button id="btn-modal-restart" class="btn primary">Jogar Novamente</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // 1. O Layout (Coordenadas x, y, z)
-        // Um formato de tartaruga simplificado com 10 peças
-        const turtleLayout = [
-            // Base (z: 0)
-            {x: 2, y: 0, z: 0}, {x: 4, y: 0, z: 0}, // Topo
-            {x: 1, y: 2, z: 0}, {x: 3, y: 2, z: 0}, {x: 5, y: 2, z: 0}, // Meio
-            {x: 2, y: 4, z: 0}, {x: 4, y: 4, z: 0}, // Baixo
-            
-            // Primeiro andar (z: 1)
-            {x: 3, y: 2, z: 1}, 
-            {x: 2, y: 2, z: 1},
-            
-            // Segundo andar (z: 2) - o topo da carapaça
-            {x: 2.5, y: 2, z: 2} 
-        ];
+        const SUITS = {
+            bamboo: ['🀐','🀑','🀒','🀓','🀔','🀕','🀖','🀗','🀘'],
+            circle: ['🀙','🀚','🀛','🀜','🀝','🀞','🀟','🀠','🀡'],
+            character: ['🀇','🀈','🀉','🀊','🀋','🀌','🀍','🀎','🀏'],
+            wind: ['🀀','🀁','🀂','🀃'],
+            dragon: ['🀄','🀅','🀆'],
+            season: ['🀢','🀣','🀤','🀥'],
+            flower: ['🀦','🀧','🀨','🀩']
+        };
 
-        // 2. Os Dados das Peças (Pares)
-        const tilesData = [
-            "bamboo1", "bamboo1",
-            "bamboo2", "bamboo2",
-            "circle1", "circle1",
-            "circle2", "circle2",
-            "red_dragon", "red_dragon"
-        ];
-
-        // 3. Embaralha as peças
-        const shuffledTiles = tilesData.sort(() => Math.random() - 0.5);
-
-        // 4. Configurações do Tabuleiro
-        const board = document.getElementById("board");
-        const tileWidth = 70;
-        const tileHeight = 90;
+        let tiles = [];
         let selectedTile = null;
+        let moves = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
 
-        // 5. Geração das Peças no HTML
-        turtleLayout.forEach((pos, index) => {
-            let tileName = shuffledTiles[index];
+        const GRID_W = 25;
+        const GRID_H = 35;
+        const OFFSET_Z = -5;
 
-            let div = document.createElement("div");
-            div.className = "tile";
-            div.dataset.name = tileName; // Guarda o nome para validar os pares
-            div.dataset.index = index;   // Identificador único da peça
-            
-            // Cálculo do Posicionamento 3D
-            const leftPos = (pos.x * (tileWidth / 1.5)) - (pos.z * 5);
-            const topPos = (pos.y * (tileHeight / 1.5)) - (pos.z * 5);
-            
-            div.style.left = `${leftPos}px`;
-            div.style.top = `${topPos}px`;
-            div.style.zIndex = pos.z; 
+        // --- SISTEMA DE ÁUDIO MELHORADO (Estilo Windows 7) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
 
-            // Tenta carregar a imagem
-            let img = document.createElement("img");
-            img.src = `assets/tiles/${tileName}.png`;
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            if (type === 'click') {
+                // Som de Clique de Madeira (Peça Selecionada)
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.7, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+                
+            } else if (type === 'match') {
+                // Som Mágico/Cristalino (Par Encontrado)
+                const chords = [1046.50, 1318.51, 1567.98, 2093.00]; // Notas: C6, E6, G6, C7
+                chords.forEach((freq, index) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0, audioCtx.currentTime + (index * 0.04));
+                    gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + (index * 0.04) + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.start(audioCtx.currentTime + (index * 0.04));
+                    osc.stop(audioCtx.currentTime + 0.6);
+                });
+                
+            } else if (type === 'error') {
+                // Som Grave/Bloqueado (Erro)
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+            }
+        }
+
+        // --- MAPEAMENTO DAS IMAGENS ---
+        function getTileImagePath(suit, val) {
+            if (suit === 'bamboo') return `img/bambu${val}.png`;
+            if (suit === 'circle') return `img/dots${val}.png`;
+            if (suit === 'character') return `img/characters${val}.png`;
             
-            // Se a imagem falhar (arquivo não encontrado), mostra o texto
-            img.onerror = function() {
-                this.style.display = 'none';
-                let textFallback = document.createElement("span");
-                textFallback.innerText = tileName.replace('_', '\n');
-                div.appendChild(textFallback);
+            if (suit === 'wind') {
+                const winds = ['east', 'south', 'west', 'north'];
+                return `img/wind${winds[val]}.png`; 
+            }
+            
+            if (suit === 'dragon') {
+                if (val === 'vermelho') return 'img/dragonred.png';
+                if (val === 'verde') return 'img/dragongreen.png';
+                if (val === 'branco') return 'img/dragonblue.png';
+            }
+            
+            if (suit === 'flower') return `img/flower${val + 1}.png`;
+            
+            if (suit === 'season') {
+                const seasons = ['spring', 'summer', 'autumn', 'winter'];
+                return `img/${seasons[val]}.png`;
+            }
+            return '';
+        }
+
+        function createDeck() {
+            let deck = [];
+            ['bamboo', 'circle', 'character'].forEach(suit => {
+                SUITS[suit].forEach((char, i) => addCopies(deck, suit, char, i+1, 4));
+            });
+            SUITS['wind'].forEach((char, i) => addCopies(deck, 'wind', char, i, 4));
+            
+            const dragonNames = ['vermelho', 'verde', 'branco'];
+            SUITS['dragon'].forEach((char, i) => addCopies(deck, 'dragon', char, dragonNames[i], 4));
+            
+            SUITS['season'].forEach((char, i) => addCopies(deck, 'season', char, i, 1));
+            SUITS['flower'].forEach((char, i) => addCopies(deck, 'flower', char, i, 1));
+
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            return deck;
+        }
+
+        function addCopies(deck, suit, char, val, count) {
+            for (let i = 0; i < count; i++) {
+                deck.push({ suit, char, val });
+            }
+        }
+
+        function getTurtleLayout() {
+            const layout = [];
+            const add = (z, x, y) => layout.push({ z, x, y });
+
+            const rowLengths = [12, 8, 10, 12, 12, 10, 8, 12];
+            const xOffsets = [2, 6, 4, 2, 2, 4, 6, 2];
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < rowLengths[r]; c++) {
+                    add(0, xOffsets[r] + c * 2, r * 2);
+                }
+            }
+            add(0, 0, 7);
+            add(0, 26, 7);
+            add(0, 28, 7);
+
+            for (let r = 0; r < 6; r++)
+                for (let c = 0; c < 6; c++) add(1, 8 + c * 2, 2 + r * 2);
+
+            for (let r = 0; r < 4; r++)
+                for (let c = 0; c < 4; c++) add(2, 10 + c * 2, 4 + r * 2);
+
+            for (let r = 0; r < 2; r++)
+                for (let c = 0; c < 2; c++) add(3, 12 + c * 2, 6 + r * 2);
+
+            add(4, 13, 7);
+
+            return layout;
+        }
+
+        function initGame() {
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            tiles = [];
+            selectedTile = null;
+            moves = 0;
+            timerSeconds = 0;
+            updateUI();
+            document.getElementById('modal').classList.add('hidden');
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => { timerSeconds++; updateTimer(); }, 1000);
+
+            const deck = createDeck();
+            const layout = getTurtleLayout();
+
+            layout.forEach((pos, index) => {
+                const data = deck[index];
+                const tile = {
+                    id: index,
+                    ...pos,
+                    ...data,
+                    active: true,
+                    element: document.createElement('div')
+                };
+
+                const el = tile.element;
+                el.className = 'tile';
+                el.dataset.suit = tile.suit;
+                el.dataset.val = tile.val;
+                
+                // CRIA A IMAGEM
+                const img = document.createElement('img');
+                img.src = getTileImagePath(tile.suit, tile.val);
+                el.appendChild(img);
+
+                el.style.left = `${tile.x * GRID_W}px`;
+                el.style.top = `${tile.y * GRID_H}px`;
+                el.style.zIndex = tile.z;
+                el.style.transform = `translate(${tile.z * OFFSET_Z}px, ${tile.z * OFFSET_Z}px)`;
+
+                el.addEventListener('click', () => handleTileClick(tile));
+
+                tiles.push(tile);
+                board.appendChild(el);
+            });
+
+            updateClickability();
+        }
+
+        function isTileFree(tile) {
+            if (!tile.active) return false;
+
+            const intersect = (t1, t2) => {
+                return !(t2.x >= t1.x + 2 || t2.x + 2 <= t1.x || t2.y >= t1.y + 2 || t2.y + 2 <= t1.y);
             };
 
-            div.appendChild(img);
-            board.appendChild(div);
+            let blockedAbove = false;
+            let blockedLeft = false;
+            let blockedRight = false;
 
-            // 6. Lógica Básica de Clique
-            div.addEventListener("click", () => {
-                // Desmarca se clicar na mesma peça
-                if (selectedTile === div) {
-                    div.classList.remove("selected");
-                    selectedTile = null;
-                    return;
+            for (const other of tiles) {
+                if (!other.active || other.id === tile.id) continue;
+
+                if (other.z === tile.z + 1 && intersect(tile, other)) {
+                    blockedAbove = true;
+                    break;
                 }
 
-                div.classList.add("selected");
-
-                if (selectedTile) {
-                    // Verifica se os nomes são iguais (Formou par!)
-                    if (selectedTile.dataset.name === div.dataset.name) {
-                        setTimeout(() => {
-                            // Remove as peças do tabuleiro
-                            div.remove();
-                            selectedTile.remove();
-                            selectedTile = null;
-                        }, 300);
-                    } else {
-                        // Não formou par, apenas tira a seleção
-                        setTimeout(() => {
-                            div.classList.remove("selected");
-                            selectedTile.classList.remove("selected");
-                            selectedTile = null;
-                        }, 400);
+                if (other.z === tile.z) {
+                    if (!(other.y >= tile.y + 2 || other.y + 2 <= tile.y)) {
+                        if (other.x + 2 === tile.x) blockedLeft = true;
+                        if (other.x === tile.x + 2) blockedRight = true;
                     }
+                }
+            }
+
+            return !blockedAbove && !(blockedLeft && blockedRight);
+        }
+
+        function updateClickability() {
+            tiles.forEach(t => {
+                if (!t.active) return;
+                if (!isTileFree(t)) {
+                    t.element.classList.add('blocked');
                 } else {
-                    // É a primeira peça selecionada
-                    selectedTile = div;
+                    t.element.classList.remove('blocked');
                 }
             });
-        });
+        }
+
+        function isMatch(t1, t2) {
+            if (t1.suit === 'flower' && t2.suit === 'flower') return true;
+            if (t1.suit === 'season' && t2.suit === 'season') return true;
+            return t1.suit === t2.suit && t1.val === t2.val;
+        }
+
+        function handleTileClick(tile) {
+            if (!isTileFree(tile)) {
+                playSound('error');
+                return;
+            }
+
+            clearHints();
+
+            if (selectedTile) {
+                if (selectedTile.id === tile.id) {
+                    playSound('click'); // Toca som ao deselecionar também
+                    tile.element.classList.remove('selected');
+                    selectedTile = null;
+                } else if (isMatch(selectedTile, tile)) {
+                    playSound('match'); // SOM MÁGICO AQUI!
+                    tile.active = false;
+                    selectedTile.active = false;
+
+                    tile.element.classList.add('matched');
+                    selectedTile.element.classList.add('matched');
+                    selectedTile.element.classList.remove('selected');
+
+                    selectedTile = null;
+                    moves++;
+                    updateUI();
+                    updateClickability();
+                    checkGameEnd();
+                } else {
+                    playSound('error'); // SOM DE ERRO
+                    selectedTile.element.classList.remove('selected');
+                    tile.element.classList.add('selected');
+                    selectedTile = tile;
+                }
+            } else {
+                playSound('click'); // CLIQUE INICIAL
+                tile.element.classList.add('selected');
+                selectedTile = tile;
+            }
+        }
+
+        function clearHints() {
+            tiles.forEach(t => t.element.classList.remove('hinted'));
+        }
+
+        function showHint() {
+            clearHints();
+            const free = tiles.filter(t => isTileFree(t));
+            for (let i = 0; i < free.length; i++) {
+                for (let j = i + 1; j < free.length; j++) {
+                    if (isMatch(free[i], free[j])) {
+                        free[i].element.classList.add('hinted');
+                        free[j].element.classList.add('hinted');
+                        return;
+                    }
+                }
+            }
+        }
+
+        function shuffleBoard() {
+            const activeTiles = tiles.filter(t => t.active);
+            const data = activeTiles.map(t => ({ suit: t.suit, char: t.char, val: t.val }));
+            
+            for (let i = data.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [data[i], data[j]] = [data[j], data[i]];
+            }
+
+            activeTiles.forEach((t, i) => {
+                t.suit = data[i].suit;
+                t.char = data[i].char;
+                t.val = data[i].val;
+                
+                t.element.dataset.suit = t.suit;
+                t.element.dataset.val = t.val;
+                
+                const img = t.element.querySelector('img');
+                if (img) img.src = getTileImagePath(t.suit, t.val);
+                
+                t.element.classList.remove('selected', 'hinted');
+            });
+            selectedTile = null;
+            moves++;
+            updateUI();
+            checkGameEnd();
+        }
+
+        function checkGameEnd() {
+            const active = tiles.filter(t => t.active);
+            if (active.length === 0) {
+                showModal('Vitória!', `Você completou o tabuleiro em ${document.getElementById('timer').innerText} com ${moves} movimentos.`);
+                return;
+            }
+
+            const free = active.filter(t => isTileFree(t));
+            let hasMoves = false;
+            for (let i = 0; i < free.length; i++) {
+                for (let j = i + 1; j < free.length; j++) {
+                    if (isMatch(free[i], free[j])) hasMoves = true;
+                }
+            }
+
+            if (!hasMoves) {
+                showModal('Fim de Jogo', 'Não há mais movimentos possíveis. Tente embaralhar ou reiniciar o jogo.');
+            }
+        }
+
+        function updateUI() {
+            const activeCount = tiles.filter(t => t.active).length;
+            document.getElementById('pairs-left').innerText = activeCount / 2;
+            document.getElementById('moves-count').innerText = moves;
+        }
+
+        function updateTimer() {
+            const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+            const s = (timerSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${m}:${s}`;
+        }
+
+        function showModal(title, msg) {
+            clearInterval(timerInterval);
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = msg;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        document.getElementById('btn-hint').addEventListener('click', showHint);
+        document.getElementById('btn-shuffle').addEventListener('click', shuffleBoard);
+        document.getElementById('btn-restart').addEventListener('click', initGame);
+        document.getElementById('btn-modal-restart').addEventListener('click', initGame);
+
+        window.onload = initGame;
     </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Culinária Regional</title>
+    <title>Culinária Brasileira</title>
     <style>
         * {
             box-sizing: border-box;
@@ -618,12 +618,12 @@
 </head>
 <body>
     <div class="game-wrapper">
-        <h1>CULINÁRIA REGIONAL</h1>
+        <h1>CULINÁRIA BRASILEIRA</h1>
         <div id="intro">
             <div class="intro-card">
-                <h2>CULINÁRIA REGIONAL</h2>
+                <h2>CULINÁRIA BRASILEIRA</h2>
                 <p>
-                    Você conhece a culinária dos estados?<br>
+                    Você conhece a culinária brasileira?<br>
                     Veja o prato típico e clique na bandeira do estado correto.<br><br>
                     São 10 pratos para testar seu conhecimento.
                 </p>
@@ -734,14 +734,13 @@
                     { nome: "MARANHÃO", img: "img/bandeirama.png" },
                     { nome: "PIAUÍ", img: "img/bandeirapi.png" }]
             },
-
             {
-                img: "img/arrozcarreteiro.png", nome: "ARROZ CARRETEIRO", correta: "RIO GRANDE DO SUL",
-                ingredientes: "Arroz cozido com charque (carne seca) picada, refogada em gordura com alho, cebola e cheiro-verde.",
+                img: "img/chimarrao.png", nome: "CHIMARRÃO", correta: "RIO GRANDE DO SUL",
+                ingredientes: "Bebida feita com erva-mate e água quente, consumida em cuia com bomba.",
                 opcoes: [
                     { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" },
-                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" },
-                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" }]
+                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
+                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" }]
             },
             {
                 img: "img/barreado.png", nome: "BARREADO", correta: "PARANÁ",
@@ -759,7 +758,14 @@
                     { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" },
                     { nome: "PARANÁ", img: "img/bandeirapr.png" }]
             },
-
+            {
+                img: "img/sequenciadecamarao.png", nome: "SEQUÊNCIA DE CAMARÃO", correta: "SANTA CATARINA",
+                ingredientes: "Vários pratos com camarão, como frito, empanado, ao alho e óleo, servido com acompanhamentos.",
+                opcoes: [
+                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" }]
+            },
             {
                 img: "img/tacaca.png", nome: "TACACÁ", correta: "PARÁ",
                 ingredientes: "Caldo amarelado (tucupi), goma de tapioca, camarão seco e folhas de jambu (que causam dormência).",
@@ -783,6 +789,105 @@
                     { nome: "RORAIMA", img: "img/bandeirarr.png" },
                     { nome: "AMAZONAS", img: "img/bandeiraam.png" },
                     { nome: "AMAPÁ", img: "img/bandeiraap.png" }]
+            },
+            {
+                img: "img/paodequeijo.png",
+                nome: "PÃO DE QUEIJO",
+                correta: "MINAS GERAIS",
+                ingredientes: "Polvilho, queijo, ovos, leite e óleo.",
+                opcoes: [
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
+                    { nome: "GOIÁS", img: "img/bandeirago.png" },
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" }
+                ]
+            },
+            {
+                img: "img/patonotucupi.png",
+                nome: "PATO NO TUCUPI",
+                correta: "AMAZONAS",
+                ingredientes: "Pato cozido com tucupi e jambu.",
+                opcoes: [
+                    { nome: "AMAZONAS", img: "img/bandeiraam.png" },
+                    { nome: "PARÁ", img: "img/bandeirapa.png" },
+                    { nome: "ACRE", img: "img/bandeiraac.png" }
+                ]
+            },
+            {
+                img: "img/mungunza.png",
+                nome: "MUNGUNZÁ",
+                correta: "BAHIA",
+                ingredientes: "Milho branco cozido com leite de coco e açúcar.",
+                opcoes: [
+                    { nome: "BAHIA", img: "img/bandeiraba.png" },
+                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
+                    { nome: "ALAGOAS", img: "img/bandeiraal.png" }
+                ]
+            },
+            {
+                img: "img/soba.png",
+                nome: "SOBÁ",
+                correta: "MATO GROSSO DO SUL",
+                ingredientes: "Macarrão oriental com carne, omelete e caldo.",
+                opcoes: [
+                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.png" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" }
+                ]
+            },
+            {
+                img: "img/feijoada.png",
+                nome: "FEIJOADA",
+                correta: "RIO DE JANEIRO",
+                ingredientes: "Feijão preto cozido com carnes de porco, linguiça e temperos, servido com arroz, couve e laranja.",
+                opcoes: [
+                    { nome: "RIO DE JANEIRO", img: "img/bandeirarj.png" },
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" }
+                ]
+            },
+            {
+                img: "img/mariaisabel.png",
+                nome: "MARIA ISABEL",
+                correta: "PIAUÍ",
+                ingredientes: "Arroz com carne seca picada, temperado com alho, cebola e cheiro-verde.",
+                opcoes: [
+                    { nome: "PIAUÍ", img: "img/bandeirapi.png" },
+                    { nome: "CEARÁ", img: "img/bandeirace.png" },
+                    { nome: "MARANHÃO", img: "img/bandeirama.png" }
+                ]
+            },
+            {
+                img: "img/arrozdecuxa.png",
+                nome: "ARROZ DE CUXÁ",
+                correta: "MARANHÃO",
+                ingredientes: "Arroz com vinagreira, camarão seco, gergelim e temperos típicos.",
+                opcoes: [
+                    { nome: "MARANHÃO", img: "img/bandeirama.png" },
+                    { nome: "PARÁ", img: "img/bandeirapa.png" },
+                    { nome: "PIAUÍ", img: "img/bandeirapi.png" }
+                ]
+            },
+            {
+                img: "img/chambari.png",
+                nome: "CHAMBARI",
+                correta: "TOCANTINS",
+                ingredientes: "Carne com osso (mocotó) cozida com mandioca e temperos, muito tradicional na região.",
+                opcoes: [
+                    { nome: "TOCANTINS", img: "img/bandeirato.png" },
+                    { nome: "GOIÁS", img: "img/bandeirago.png" },
+                    { nome: "PARÁ", img: "img/bandeirapa.png" }
+                ]
+            },
+            {
+                img: "img/baixaria.png",
+                nome: "BAIXARIA",
+                correta: "ACRE",
+                ingredientes: "Prato com carne moída, ovo frito, cheiro-verde e acompanhado de arroz e farinha.",
+                opcoes: [
+                    { nome: "ACRE", img: "img/bandeiraac.png" },
+                    { nome: "RONDÔNIA", img: "img/bandeiraro.png" },
+                    { nome: "AMAZONAS", img: "img/bandeiraam.png" }
+                ]
             },
             {
                 img: "img/pequi.png", nome: "ARROZ COM PEQUI", correta: "GOIÁS",

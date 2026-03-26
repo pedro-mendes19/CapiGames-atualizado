@@ -2,11 +2,9 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balança Matemática: O Desafio Final</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Balança Matemática</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --primary: #3498db;
@@ -23,17 +21,59 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
             overflow: hidden;
             user-select: none;
+            touch-action: none;
         }
 
-        /* --- TELAS DE INTRODUÇÃO E FIM --- */
-        .overlay-screen {
+        #orientation-warning {
+            display: none;
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background-color: var(--primary);
+            color: white;
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #orientation-warning h2 {
+            font-size: 1.4rem;
+            margin-top: 20px;
+            padding: 0 15px;
+            line-height: 1.4;
+        }
+
+        #orientation-warning .icon {
+            font-size: 5rem;
+            animation: rotatePhone 2s infinite ease-in-out;
+        }
+
+        @keyframes rotatePhone {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-90deg); }
+            100% { transform: rotate(-90deg); }
+        }
+
+        @media screen and (max-width: 800px) and (orientation: portrait) {
+            #orientation-warning { display: flex; }
+            body > *:not(#orientation-warning) { display: none !important; }
+        }
+
+        .overlay-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #ffffff 0%, #d6eaf8 100%);
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -42,11 +82,18 @@
             transition: transform 0.5s ease-in-out, opacity 0.5s;
         }
 
-        .hidden-up { transform: translateY(-100%); opacity: 0; pointer-events: none; }
-        .hidden { display: none !important; }
+        .hidden-up {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
 
         .game-title {
-            font-size: 4rem;
+            font-size: 3.5rem;
             color: var(--accent);
             text-shadow: 2px 2px 0px #d35400;
             margin-bottom: 10px;
@@ -56,20 +103,38 @@
 
         .panel-box {
             background: white;
-            border: 3px solid var(--primary);
+            border: 3px solid var(--primary); 
             border-radius: 15px;
             padding: 30px;
-            max-width: 500px;
+            max-width: 600px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
-        .panel-box p { font-size: 1.3rem; color: #555; line-height: 1.6; margin: 10px 0;}
-        .highlight { color: var(--accent); font-weight: bold; font-size: 2rem; }
-        .time-display { font-size: 2rem; color: var(--primary); font-weight: bold; margin: 20px 0; background: #e8f4f8; padding: 10px; border-radius: 10px;}
+        #end-screen .panel-box {
+            border: 4px dotted var(--primary);
+            animation: soft-pulse 3s infinite ease-in-out; 
+        }
 
-        /* --- BOTÕES --- */
+        .panel-box p {
+            font-size: 1.5rem;
+            color: #555;
+            line-height: 1.5;
+            margin: 10px 0;
+            text-transform: uppercase;
+        }
+
+        .time-display {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin: 20px 0;
+            background: #e8f4f8;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
         .btn {
             font-family: 'Fredoka', sans-serif;
             font-size: 1.5rem;
@@ -83,99 +148,462 @@
         }
 
         .btn-start {
-            background-color: var(--primary); color: white;
-            box-shadow: 0 8px 0 #2980b9; font-size: 2rem; animation: pulse 1.5s infinite;
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 8px 0 #2980b9;
+            font-size: 2rem;
+            animation: pulse 1.5s infinite;
         }
-        .btn-start:active { transform: translateY(8px); box-shadow: none; }
-        .btn-start:hover { background-color: #2980b9; animation: none; }
 
-        .btn-play-again { background-color: var(--success); color: white; box-shadow: 0 6px 0 #27ae60; }
-        .btn-play-again:active { transform: translateY(6px); box-shadow: none; }
+        .btn-start:active {
+            transform: translateY(8px);
+            box-shadow: none;
+        }
 
-        .btn-exit { background-color: #e74c3c; color: white; box-shadow: 0 6px 0 #c0392b; }
-        .btn-exit:active { transform: translateY(6px); box-shadow: none; }
+        .btn-start:hover {
+            background-color: #2980b9;
+            animation: none;
+        }
 
-        /* Estilo Novo do Pular Conta */
+        .btn-play-again {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 6px 0 #2980b9;
+            animation: float-gentle 2.5s infinite ease-in-out;
+        }
+
+        .btn-play-again:active {
+            animation: none;
+            transform: translateY(6px);
+            box-shadow: none;
+        }
+
+        .btn-play-again:hover {
+            background-color: #2980b9;
+        }
+
         .btn-skip {
             background-color: var(--skip);
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: 1.2rem;
+            padding: 18px 35px;
+            font-size: 1.6rem;
             font-family: 'Fredoka', sans-serif;
             font-weight: bold;
+            text-transform: uppercase;
             border-radius: 30px;
             cursor: pointer;
             box-shadow: 0 5px 0 #8e44ad;
             margin-top: 25px;
             transition: all 0.1s ease;
         }
-        .btn-skip:hover { background-color: #a569bd; }
-        .btn-skip:active { transform: translateY(5px); box-shadow: none; }
 
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .btn-skip:hover:not(:disabled) {
+            background-color: #8e44ad;
+        }
 
-        /* --- O JOGO --- */
-        .top-bar { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .btn-skip:active:not(:disabled) {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        .btn-skip:disabled {
+            background-color: #bdc3c7;
+            box-shadow: 0 5px 0 #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes soft-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .top-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
 
         .level-badge {
-            background-color: #f1c40f; color: #d35400; padding: 5px 25px;
-            border-radius: 20px; font-size: 1.4rem; font-weight: bold;
-            box-shadow: 0 4px 0 #f39c12; transition: all 0.3s;
+            background-color: #f1c40f;
+            color: #d35400;
+            margin-top: 8px;
+            padding: 10px 35px;
+            border-radius: 30px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #f39c12;
+            transition: all 0.3s;
+            text-transform: uppercase;
         }
-        .level-max { background-color: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
+
+        .level-max {
+            background-color: #e74c3c;
+            color: white;
+            box-shadow: 0 4px 0 #c0392b;
+        }
 
         .hud {
-            display: flex; gap: 40px; font-size: 1.5rem; font-weight: bold; color: var(--text-color);
-            background: white; padding: 10px 30px; border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 25px;
+            display: flex;
+            gap: 60px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-color);
+            text-transform: uppercase;
+            background: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .balance-container { position: relative; width: 600px; height: 300px; margin-top: 20px; }
-        .stand { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 20px; height: 150px; background-color: #7f8c8d; border-radius: 10px 10px 0 0; }
-        .base { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 200px; height: 20px; background-color: var(--text-color); border-radius: 10px; }
-        .beam { position: absolute; top: 150px; left: 50px; width: 500px; height: 10px; background-color: var(--accent); border-radius: 5px; transform-origin: center; transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1); transform: rotate(0deg); }
-        .pan { position: absolute; top: 10px; width: 120px; height: 100px; background-image: linear-gradient(to bottom, #95a5a6 40px, transparent 40px); background-size: 2px 100%; background-repeat: no-repeat; background-position: 10px 0, 110px 0; }
-        .pan-left { left: 0; } .pan-right { right: 0; }
-        .plate { position: absolute; bottom: 0; width: 100%; height: 60px; background-color: #bdc3c7; border-bottom: 5px solid #7f8c8d; border-radius: 0 0 20px 20px; display: flex; justify-content: center; align-items: flex-end; flex-wrap: wrap-reverse; padding-bottom: 5px; transition: background 0.3s; }
-        .pan-right .plate { border: 2px dashed #95a5a6; background-color: white; }
-        .plate.drag-over { background-color: #a8e6cf; border-color: #2ecc71; transform: scale(1.05); }
+        .separator {
+            border-left: 2px solid #ddd;
+        }
 
-        .weight { width: 40px; height: 40px; background-color: var(--primary); color: white; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.2rem; cursor: grab; border: 2px solid #2980b9; box-shadow: 3px 3px 0px rgba(0,0,0,0.15); margin: 2px; }
+        .balance-container {
+            position: relative;
+            width: 800px;
+            height: 350px;
+            margin-top: 40px;
+        }
+
+        .stand {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 180px;
+            background-color: #7f8c8d;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .base {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 260px;
+            height: 24px;
+            background-color: var(--text-color);
+            border-radius: 12px;
+        }
+
+        .beam {
+            position: absolute;
+            top: 170px;
+            left: 60px;
+            width: 680px;
+            height: 14px;
+            background-color: var(--accent);
+            border-radius: 7px;
+            transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform: rotate(0deg);
+        }
+
+        .pan {
+            position: absolute;
+            top: 15px;
+            width: 180px;
+            height: 120px;
+            background-image: linear-gradient(to bottom, #95a5a6 50px, transparent 50px);
+            background-size: 3px 100%;
+            background-repeat: no-repeat;
+            background-position: 15px 0, 162px 0;
+        }
+
+        .pan-left { left: 0; }
+        .pan-right { right: 0; }
+
+        .plate {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background-color: #bdc3c7;
+            border-bottom: 8px solid #7f8c8d;
+            border-radius: 0 0 25px 25px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            flex-wrap: wrap-reverse;
+            padding-bottom: 5px;
+            transition: background 0.3s;
+        }
+
+        .pan-right .plate {
+            border: 3px dashed #95a5a6;
+            background-color: white;
+        }
+
+        .plate.drag-over {
+            background-color: #a8e6cf;
+            border-color: #2ecc71;
+            transform: scale(1.05);
+        }
+
+        .weight {
+            width: 55px;
+            height: 55px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.6rem;
+            cursor: grab;
+            border: 2px solid #2980b9;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.15);
+            margin: 3px;
+            touch-action: none;
+        }
+
         .weight:active { cursor: grabbing; }
-        .weight.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-        .target-weight { background-color: var(--accent); border-color: #d35400; width: 60px; height: 60px; font-size: 1.8rem; }
 
-        .status-msg { margin-top: 10px; font-size: 1.5rem; height: 30px; color: #27ae60; font-weight: bold; text-align: center; }
+        .weight.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
-        .shelf { margin-top: 20px; background-color: #d35400; padding: 15px; width: 80%; border-radius: 10px; display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; box-shadow: 0 8px 0 #a04000; min-height: 50px; }
-        
-        /* Oculta os botões quando o jogo termina de fato e vai pra tela de saída */
-        .goodbye-msg { font-size: 3rem; color: var(--primary); margin-top: 20px; font-weight: bold; text-align: center;}
+        .target-weight {
+            background-color: var(--accent);
+            border-color: #d35400;
+            width: 80px;
+            height: 80px;
+            font-size: 2.5rem;
+        }
+
+        .status-msg {
+            margin-top: 15px;
+            font-size: 2rem;
+            height: 40px;
+            color: #27ae60;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .shelf {
+            margin-top: 30px;
+            background-color: #d35400;
+            padding: 25px;
+            width: 85%;
+            max-width: 1000px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 10px 0 #a04000;
+            min-height: 80px;
+        }
+
+        .goodbye-msg {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @media (max-height: 800px) and (min-width: 651px) {
+            .game-title {
+                font-size: 2.2rem;
+                margin-bottom: 5px;
+            }
+
+            .panel-box {
+                padding: 15px;
+                max-width: 500px;
+                margin-bottom: 15px;
+            }
+
+            .panel-box p {
+                font-size: 1.1rem;
+                margin: 5px 0;
+            }
+
+            .time-display {
+                font-size: 1.4rem;
+                margin: 10px 0;
+                padding: 5px;
+            }
+
+            .btn {
+                font-size: 1.1rem;
+                padding: 10px 25px;
+                margin: 5px;
+            }
+
+            .top-bar {
+                flex-direction: row;
+                gap: 20px;
+                margin-top: 10px;
+            }
+            
+            .level-badge {
+                font-size: 1.2rem;
+                padding: 5px 20px;
+                margin-top: 0;
+            }
+
+            .hud {
+                margin-top: 0;
+                font-size: 1.2rem;
+                padding: 8px 20px;
+                gap: 30px;
+            }
+
+            .balance-container {
+                width: 600px;
+                height: 250px;
+                margin-top: 20px;
+            }
+            .stand { height: 130px; }
+            .base { width: 200px; }
+            .beam { top: 120px; left: 45px; width: 510px; }
+            .pan { width: 140px; height: 90px; background-position: 10px 0, 125px 0; }
+            .plate { height: 60px; }
+
+            .weight, .target-weight {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+
+            .status-msg {
+                font-size: 1.5rem;
+                margin-top: 5px;
+                height: 30px;
+            }
+
+            .shelf {
+                margin-top: 15px;
+                padding: 15px;
+                min-height: 60px;
+            }
+
+            .btn-skip {
+                margin-top: 15px;
+                padding: 12px 25px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-height: 500px) {
+            .game-title { font-size: 1.8rem; margin-top: 5px; margin-bottom: 5px; }
+            .panel-box { padding: 15px; width: 90%; max-width: 500px; margin-bottom: 10px; border-width: 3px;}
+            .panel-box p { font-size: 1rem; margin: 5px 0; }
+            .time-display { font-size: 1.2rem; margin: 8px 0; padding: 5px; }
+            .btn { font-size: 1rem; padding: 8px 15px; margin: 5px; }
+            .btn-start { font-size: 1.2rem; padding: 10px 20px; }
+            
+            .top-bar { margin-top: 5px; flex-direction: column; gap: 5px; } 
+            .level-badge { font-size: 1rem; padding: 5px 15px; margin-top: -5px; margin-bottom: 10px; box-shadow: 0 3px 0 #f39c12; }
+            .level-max { background-color: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
+            .hud { font-size: 1rem; padding: 5px 20px; gap: 20px; margin-top: 0; border-radius: 20px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+            
+            .balance-container { width: 340px; height: 140px; margin-top: 5px; }
+            .stand { width: 10px; height: 75px; }
+            .base { width: 110px; height: 10px; }
+            .beam { top: 70px; left: 10px; width: 320px; height: 6px; }
+            .pan { top: 5px; width: 70px; height: 50px; background-size: 2px 100%; background-position: 5px 0, 63px 0; background-image: linear-gradient(to bottom, #95a5a6 15px, transparent 15px); }
+            .plate { height: 35px; border-bottom-width: 3px; border-radius: 0 0 8px 8px; padding-bottom: 2px; }
+            
+            .weight { width: 25px; height: 25px; font-size: 0.9rem; border-width: 1px; box-shadow: 2px 2px 0px rgba(0,0,0,0.15); margin: 1px; border-radius: 4px; }
+            .target-weight { width: 30px; height: 30px; font-size: 1.1rem; }
+            
+            .status-msg { font-size: 1.1rem; margin-top: 2px; height: 18px; }
+            
+            .shelf { padding: 8px; width: 85%; gap: 6px; margin-top: 5px; box-shadow: 0 4px 0 #a04000; border-radius: 8px; min-height: 28px; }
+            
+            .btn-skip { 
+                padding: 6px 15px; 
+                font-size: 0.9rem; 
+                margin-top: 15px;
+                margin-bottom: 5px;
+                box-shadow: 0 3px 0 #8e44ad; 
+            }
+
+            #end-screen .panel-box {
+                padding: 10px 15px;
+                max-width: 380px;
+                margin-bottom: 18px;
+            }
+
+            #end-screen .panel-box .highlight {
+                font-size: 1.8rem !important; 
+                margin-bottom: 5px;
+            }
+
+            #end-screen .panel-box p {
+                font-size: 0.9rem;
+                line-height: 1.2;
+                margin: 5px 0;
+            }
+
+            #end-screen .time-display {
+                font-size: 1.1rem;
+                margin: 10px 0 5px 0;
+                padding: 5px;
+            }
+            
+            #end-screen .btn {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+                margin: 5px;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <div id="orientation-warning">
+        <div class="icon">📱</div>
+        <h2>VIRE O CELULAR NA HORIZONTAL PARA JOGAR!</h2>
+    </div>
+
     <div id="intro-screen" class="overlay-screen">
-        <div class="game-title">Desafio da Balança ⚖️</div>
+        <div class="game-title">BALANÇA MATEMÁTICA ⚖️</div>
         <div class="panel-box">
-            <p>Olá, matemático! 👋</p>
-            <p>Sua missão é <span class="highlight">arrastar os pesos azuis</span> para a direita até que os dois lados fiquem iguais.</p>
-            <p>São <b>10 níveis</b> de dificuldade. O cronômetro vai rolar, seja rápido e preciso!</p>
+            <p>Olá, matemático! 👋</p><br>
+            <p>Sua missão é <strong style="color: var(--primary);">arrastar os pesos azuis</strong> para a direita até
+                que os dois lados fiquem iguais.</p><br>
+            <p>Preste atenção nos números e seja rápido para conseguir o melhor tempo possível!</p> 
         </div>
         <button class="btn btn-start" onclick="iniciarJogo()">COMEÇAR!</button>
     </div>
 
     <div id="end-screen" class="overlay-screen hidden">
-        <div class="game-title" style="color: var(--success); text-shadow: 2px 2px 0px #27ae60;">Fim de Jogo! 🏆</div>
         <div class="panel-box" id="end-panel">
-            <p class="highlight">Parabéns!</p>
-            <p>Você demonstrou ser um verdadeiro mestre dos números e do cálculo mental.</p>
-            <div class="time-display" id="finalTimeDisplay">⏱️ Tempo: 00:00</div>
+            <p class="highlight" style="color: var(--success); font-weight: bold; font-size: 3.2rem;">✨ PARABÉNS! ✨</p>
+            <p>Você é incrível! Completou todos os níveis e provou que é mestre na matemática! 🤩</p>
+            <div class="time-display" id="finalTimeDisplay">⏱️ TEMPO TOTAL: 00:00</div>
         </div>
         <div>
-            <button class="btn btn-play-again" onclick="reiniciarJogo()">Jogar Novamente</button>
-            <button class="btn btn-exit" onclick="sairDoJogo()">Sair do Jogo</button>
+            <button class="btn btn-play-again" onclick="reiniciarJogo()">JOGAR NOVAMENTE</button>
         </div>
     </div>
 
@@ -183,7 +611,7 @@
         <div class="level-badge" id="levelDisplay">Nível 1</div>
         <div class="hud">
             <div>Meta: <span id="targetDisplay">0</span></div>
-            <div style="border-left: 2px solid #ddd; margin: 0 10px;"></div>
+            <div class="separator"></div>
             <div>Soma Atual: <span id="currentDisplay">0</span></div>
         </div>
     </div>
@@ -204,7 +632,7 @@
     <div class="status-msg" id="msg"></div>
     <div class="shelf" id="shelf"></div>
 
-    <button class="btn-skip" onclick="resetGame(true)">Pular Conta ⏭️</button>
+    <button class="btn-skip" id="btnSkip" onclick="resetGame(true)">Pular Conta ⏭️</button>
 
     <script>
         const introScreen = document.getElementById('intro-screen');
@@ -218,6 +646,7 @@
         const msg = document.getElementById('msg');
         const levelDisplay = document.getElementById('levelDisplay');
         const finalTimeDisplay = document.getElementById('finalTimeDisplay');
+        const btnSkip = document.getElementById('btnSkip');
 
         let targetValue = 0;
         let currentValue = 0;
@@ -225,19 +654,18 @@
         let draggedElement = null;
         let currentLevel = 1;
         let isTransitioning = false;
-        
-        // Variáveis de tempo
+
         let tempoInicio = 0;
 
         function iniciarJogo() {
             introScreen.classList.add('hidden-up');
-            tempoInicio = Date.now(); // Dispara o cronômetro
+            tempoInicio = Date.now();
             setTimeout(() => { resetGame(); }, 300);
         }
 
         function addDragEvents(element) {
             element.addEventListener('dragstart', (e) => {
-                if(isTransitioning) return e.preventDefault();
+                if (isTransitioning) return e.preventDefault();
                 draggedWeightValue = parseInt(e.target.dataset.value);
                 draggedElement = e.target;
                 setTimeout(() => e.target.style.opacity = '0.5', 0);
@@ -246,10 +674,56 @@
                 e.target.style.opacity = '1';
                 draggedElement = null;
             });
+
+            element.addEventListener('touchstart', (e) => {
+                if (isTransitioning) return;
+                draggedWeightValue = parseInt(e.target.dataset.value);
+                draggedElement = e.target;
+                e.target.style.opacity = '0.5';
+            });
+
+            element.addEventListener('touchend', (e) => {
+                if (!draggedElement || isTransitioning) return;
+                e.target.style.opacity = '1';
+                
+                let touch = e.changedTouches[0];
+                let elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if (elemBelow && (elemBelow.id === 'dropZone' || elemBelow.closest('#dropZone'))) {
+                    if (draggedElement.parentElement === shelf) {
+                        dropZone.appendChild(draggedElement);
+                        currentValue += draggedWeightValue;
+                        updateBalance();
+                    }
+                } 
+                else if (elemBelow && (elemBelow.id === 'shelf' || elemBelow.closest('#shelf'))) {
+                    if (draggedElement.parentElement === dropZone) {
+                        shelf.appendChild(draggedElement);
+                        currentValue -= draggedWeightValue;
+                        updateBalance();
+                    }
+                }
+                
+                draggedElement = null;
+                dropZone.classList.remove('drag-over');
+            });
+
+            element.addEventListener('touchmove', (e) => {
+                if (isTransitioning) return;
+                e.preventDefault();
+                let touch = e.touches[0];
+                let elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if (elemBelow && (elemBelow.id === 'dropZone' || elemBelow.closest('#dropZone'))) {
+                    dropZone.classList.add('drag-over');
+                } else {
+                    dropZone.classList.remove('drag-over');
+                }
+            });
         }
 
         dropZone.addEventListener('dragover', (e) => {
-            if(isTransitioning) return;
+            if (isTransitioning) return;
             e.preventDefault();
             dropZone.classList.add('drag-over');
         });
@@ -268,7 +742,7 @@
             }
         });
 
-        shelf.addEventListener('dragover', (e) => { if(!isTransitioning) e.preventDefault(); });
+        shelf.addEventListener('dragover', (e) => { if (!isTransitioning) e.preventDefault(); });
         shelf.addEventListener('drop', (e) => {
             e.preventDefault();
             if (isTransitioning) return;
@@ -284,25 +758,26 @@
             let rotation = 0;
 
             if (currentValue < targetValue) {
-                rotation = -20; 
-                msg.innerText = "Falta peso...";
+                rotation = -20;
+                msg.innerText = "FALTA PESO...";
                 msg.style.color = "#e67e22";
             } else if (currentValue > targetValue) {
                 rotation = 20;
-                msg.innerText = "Passou! Tire um pouco.";
+                msg.innerText = "PASSOU! TIRE UM POUCO.";
                 msg.style.color = "#e74c3c";
             } else {
                 rotation = 0;
                 msg.innerText = "✨ PERFEITO! ✨";
                 msg.style.color = "#2ecc71";
                 dropZone.style.backgroundColor = "#a8e6cf";
-                
+
                 isTransitioning = true;
                 travarPesos();
-                
-                setTimeout(() => { 
-                    dropZone.style.backgroundColor = "white"; 
-                    
+                btnSkip.disabled = true;
+
+                setTimeout(() => {
+                    dropZone.style.backgroundColor = "white";
+
                     if (currentLevel === 10) {
                         finalizarJogo();
                     } else {
@@ -316,20 +791,23 @@
 
         function travarPesos() {
             document.querySelectorAll('.weight').forEach(w => {
-                if(!w.classList.contains('target-weight')) w.classList.add('disabled');
+                if (!w.classList.contains('target-weight')) w.classList.add('disabled');
             });
         }
 
         function finalizarJogo() {
             let tempoFim = Date.now();
             let tempoTotalSegundos = Math.floor((tempoFim - tempoInicio) / 1000);
-            
+
             let minutos = Math.floor(tempoTotalSegundos / 60);
             let segundos = tempoTotalSegundos % 60;
+
+            let minFormatado = minutos < 10 ? '0' + minutos : minutos;
+            let segFormatado = segundos < 10 ? '0' + segundos : segundos;
+
+            let textoTempo = `${minFormatado}:${segFormatado}`;
             
-            // Formata para 00:00
-            let textoTempo = `${minutos} min e ${segundos < 10 ? '0' : ''}${segundos} seg`;
-            finalTimeDisplay.innerText = `⏱️ Tempo Total: ${textoTempo}`;
+            finalTimeDisplay.innerText = `⏱️ TEMPO TOTAL: ${textoTempo}`;
 
             endScreen.classList.remove('hidden');
             setTimeout(() => { endScreen.classList.remove('hidden-up'); }, 50);
@@ -337,19 +815,16 @@
 
         function reiniciarJogo() {
             currentLevel = 1;
+            resetGame();
+
+            introScreen.classList.remove('hidden');
+            introScreen.classList.remove('hidden-up'); 
+
             endScreen.classList.add('hidden-up');
+
             setTimeout(() => {
                 endScreen.classList.add('hidden');
-                tempoInicio = Date.now(); // Reseta o tempo
-                resetGame();
             }, 500);
-        }
-
-        function sairDoJogo() {
-            const painel = document.getElementById('end-panel');
-            painel.innerHTML = '<div class="goodbye-msg">Obrigado por jogar! 👋</div><p style="font-size: 1.5rem; margin-top:20px;">Você pode fechar esta aba agora.</p>';
-            document.querySelector('.btn-play-again').style.display = 'none';
-            document.querySelector('.btn-exit').style.display = 'none';
         }
 
         function resetGame(manualSkip = false) {
@@ -362,8 +837,9 @@
             msg.innerText = "Arraste os pesos!";
             msg.style.color = "#3498db";
             dropZone.style.backgroundColor = "white";
-            
-            // Cor e texto do Level
+
+            btnSkip.disabled = false;
+
             levelDisplay.innerText = `Nível ${currentLevel}`;
             if (currentLevel === 10) {
                 levelDisplay.classList.add('level-max');
@@ -372,8 +848,8 @@
             }
 
             let parts = [];
-            
-            switch(currentLevel) {
+
+            switch (currentLevel) {
                 case 1: targetValue = Math.floor(Math.random() * 3) + 3; gerarPedacos(targetValue, parts, 3); adicionarDistratores(parts, 1, 2); break;
                 case 2: targetValue = Math.floor(Math.random() * 5) + 6; gerarPedacos(targetValue, parts, 5); adicionarDistratores(parts, 2, 4); break;
                 case 3: targetValue = Math.floor(Math.random() * 5) + 11; gerarPedacos(targetValue, parts, 7); adicionarDistratores(parts, 2, 5); break;
@@ -407,7 +883,6 @@
             updateBalance();
         }
 
-        // --- Funções Auxiliares de Geração ---
         function gerarPedacos(alvo, array, maxPiece) {
             let remaining = alvo;
             while (remaining > 0) {
@@ -421,24 +896,23 @@
         function gerarPedacosMultiplos(alvo, array, multiplo) {
             let remaining = alvo;
             while (remaining > 0) {
-                let part = (Math.floor(Math.random() * 3) + 1) * multiplo; 
-                if(part > remaining) part = remaining;
+                let part = (Math.floor(Math.random() * 3) + 1) * multiplo;
+                if (part > remaining) part = remaining;
                 array.push(part);
                 remaining -= part;
             }
         }
 
         function adicionarDistratores(array, qtd, maxVal) {
-            for(let i=0; i<qtd; i++) array.push(Math.floor(Math.random() * maxVal) + 1);
+            for (let i = 0; i < qtd; i++) array.push(Math.floor(Math.random() * maxVal) + 1);
         }
 
         function adicionarDistratoresMultiplos(array, qtd, maxVal, multiplo) {
-            for(let i=0; i<qtd; i++) {
+            for (let i = 0; i < qtd; i++) {
                 let val = (Math.floor(Math.random() * (maxVal / multiplo)) + 1) * multiplo;
                 array.push(val);
             }
         }
-
     </script>
 </body>
 </html>

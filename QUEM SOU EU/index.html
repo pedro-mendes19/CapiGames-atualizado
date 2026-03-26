@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Quem Sou Eu? — Um divertido jogo de adivinhação de animais com pistas progressivas e fotografias incríveis.">
+  <title>Quem Sou Eu? — Jogo de Adivinhação de Animais</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ APP CONTAINER ============ -->
+  <main class="app-container" aria-label="Aplicativo Quem Sou Eu?">
+
+    <!-- CABEÇALHO -->
+    <header class="app-header">
+      <img src="img/logoog.png" alt="Logotipo Quem Sou Eu?" class="app-header__logo" id="app-logo">
+      <h1 class="app-header__title">Quem Sou Eu?</h1>
+      <p class="app-header__subtitle">Adivinhe o animal pelas pistas progressivas</p>
+    </header>
+
+    <!-- BARRA DE ESTATÍSTICAS -->
+    <section class="stats-bar" aria-label="Estatísticas do Jogador">
+      <div class="stat-card" aria-label="Pontuação Atual">
+        <div class="stat-card__label">Pontos</div>
+        <div class="stat-card__value" id="stat-score">0</div>
+      </div>
+      <div class="stat-card" aria-label="Rodada Atual">
+        <div class="stat-card__label">Rodada</div>
+        <div class="stat-card__value" id="stat-round">0</div>
+      </div>
+      <div class="stat-card" aria-label="Recorde Pessoal">
+        <div class="stat-card__label">Recorde</div>
+        <div class="stat-card__value" id="stat-high-score">0</div>
+      </div>
+      <div class="stat-card" aria-label="Total de Vitórias">
+        <div class="stat-card__label">Vitórias</div>
+        <div class="stat-card__value" id="stat-wins">0</div>
+      </div>
+    </section>
+
+    <!-- TELA DE BOAS-VINDAS -->
+    <section id="welcome-screen" class="game-card" aria-labelledby="welcome-title">
+      <h2 id="welcome-title" class="app-header__title" style="font-size: 1.5rem; margin-bottom: 1rem;">Bem-vindo ao Desafio!</h2>
+      <p style="text-align: center; margin-bottom: 2rem;">A cada rodada, você receberá pistas. Quanto menos pistas usar, mais pontos ganhará!</p>
+      <button id="btn-start-game" class="btn btn--primary" style="width: 100%;" aria-label="Iniciar novo jogo">
+        Começar a Jogar
+      </button>
+    </section>
+
+    <!-- TELA DE JOGO -->
+    <section id="game-screen" class="hidden" aria-label="Área de Jogo Ativa">
+      <div class="game-card">
+        <!-- Progresso das Pistas -->
+        <nav class="clue-progress" id="clue-dots" aria-label="Progresso das Pistas"></nav>
+
+        <!-- Área da Pista -->
+        <article class="clue-area" aria-live="polite">
+          <div class="clue-card">
+            <div class="clue-card__number" id="clue-number">Pista 1</div>
+            <p class="clue-card__text" id="clue-text">Carregando...</p>
+            <div class="clue-card__points">Vale <span id="clue-points-value">100</span> pontos</div>
+          </div>
+        </article>
+
+        <!-- Entrada de Palpite -->
+        <div class="input-group">
+          <label for="guess-input" class="sr-only">Seu palpite</label>
+          <input type="text" id="guess-input" class="guess-input" placeholder="Quem sou eu?..." aria-label="Campo para seu palpite">
+          <button id="btn-submit" class="btn btn--primary" aria-label="Enviar palpite">Adivinhar</button>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="action-row">
+          <button id="btn-next-clue" class="btn btn--secondary" aria-label="Pedir próxima pista">Próxima Pista</button>
+          <button id="btn-give-up" class="btn btn--danger" aria-label="Desistir da rodada">Desistir</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ MODAL DE RESULTADO ============ -->
+  <div id="result-overlay" class="result-overlay" role="dialog" aria-modal="true" aria-labelledby="result-name">
+    <div class="result-modal">
+      <div class="result-image-container" id="result-image-container">
+        <img src="" alt="Animal" id="result-image" class="result-image">
+      </div>
+      <div class="result-body">
+        <div id="result-verdict" class="result-verdict">Correct!</div>
+        <h2 id="result-name" class="result-name">Nome</h2>
+        <p id="result-sci" class="result-sci">Scientific name</p>
+        
+        <div class="result-fact">
+            <span class="result-fact-label">Você sabia?</span>
+            <p id="result-fact-text" class="result-fact-text"></p>
+        </div>
+
+        <div class="result-actions">
+          <button id="btn-next-animal" class="btn btn--primary" aria-label="Próximo Animal">Próximo</button>
+          <button id="btn-new-game" class="btn btn--secondary" aria-label="Reiniciar Jogo">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TOAST DE FEEDBACK ============ -->
+  <div id="feedback-toast" class="toast" aria-live="polite"></div>
+
+  <!-- SCRIPTS -->
+  <script src="animals.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
