@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerrado das Operações</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #8B4513; /* Cor de terra de fundo para a página */
+        }
+        canvas {
+            border: 4px solid #4CAF50;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
+</head>
+<body>
+
+    <script>
+        // Configuração base do Phaser
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    debug: false // Mude para true se quiser ver as caixas de colisão
+                }
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        const game = new Phaser.Game(config);
+
+        // Variáveis globais do jogo
+        let player;
+        let cursors;
+        let obstaculos;
+        let txtInstrucoes;
+        let blocoAtual = 0; // 0: Soma/Sub, 1: Mult, 2: Div
+
+        // Banco de 18 questões (3 blocos de 6) que podem ser recombinadas
+        const questoes = [
+            // Bloco 1: Soma e Subtração
+            [ {q: "5 + 3", r: 8}, {q: "10 - 4", r: 6}, {q: "7 + 2", r: 9}, {q: "8 - 5", r: 3}, {q: "6 + 6", r: 12}, {q: "9 - 2", r: 7} ],
+            // Bloco 2: Multiplicação
+            [ {q: "2 x 3", r: 6}, {q: "4 x 2", r: 8}, {q: "3 x 3", r: 9}, {q: "5 x 2", r: 10}, {q: "1 x 7", r: 7}, {q: "4 x 3", r: 12} ],
+            // Bloco 3: Divisão
+            [ {q: "8 ÷ 2", r: 4}, {q: "9 ÷ 3", r: 3}, {q: "10 ÷ 2", r: 5}, {q: "6 ÷ 2", r: 3}, {q: "12 ÷ 4", r: 3}, {q: "4 ÷ 2", r: 2} ]
+        ];
+
+        function preload() {
+            // Por enquanto, criaremos gráficos simples no código para testar a mecânica
+            let graphics = this.add.graphics();
+            
+            // Desenhando um "jogador" (quadrado azul)
+            graphics.fillStyle(0x0000ff, 1);
+            graphics.fillRect(0, 0, 32, 32);
+            graphics.generateTexture('jogador', 32, 32);
+            
+            // Desenhando um "obstáculo/árvore" (quadrado verde)
+            graphics.clear();
+            graphics.fillStyle(0x00ff00, 1);
+            graphics.fillRect(0, 0, 40, 40);
+            graphics.generateTexture('arvore', 40, 40);
+            graphics.destroy();
+        }
+
+        function create() {
+            // Cor de fundo imitando o Cerrado (Savana/Planícies)
+            this.cameras.main.setBackgroundColor('#DEB887');
+
+            // Consigna explicando o jogo e o objetivo
+            txtInstrucoes = this.add.text(16, 16, 'Objetivo: Resolva as operações.\nUse as setas para mover.\nNão esbarre nas árvores!', { 
+                fontSize: '18px', 
+                fill: '#000',
+                backgroundColor: '#fff',
+                padding: { x: 5, y: 5 }
+            });
+
+            // Criando o jogador
+            player = this.physics.add.sprite(100, 300, 'jogador');
+            player.setCollideWorldBounds(true); // Impede de sair da tela
+
+            // Criando grupo de obstáculos (árvores e pedras que impedem de seguir)
+            obstaculos = this.physics.add.staticGroup();
+            
+            // Espalhando algumas árvores pelo mapa para formar um labirinto/caminho
+            obstaculos.create(300, 200, 'arvore');
+            obstaculos.create(300, 400, 'arvore');
+            obstaculos.create(500, 300, 'arvore');
+            obstaculos.create(600, 150, 'arvore');
+            obstaculos.create(400, 500, 'arvore');
+
+            // Adicionando colisão entre o jogador e os obstáculos
+            this.physics.add.collider(player, obstaculos);
+
+            // Controles do teclado
+            cursors = this.input.keyboard.createCursorKeys();
+            
+            // Inicia o sorteio da primeira questão
+            fazerPergunta();
+        }
+
+        function update() {
+            // Resetar a velocidade para o jogador parar quando não estiver apertando nada
+            player.setVelocity(0);
+
+            // Lógica de movimentação
+            if (cursors.left.isDown) {
+                player.setVelocityX(-160);
+            } else if (cursors.right.isDown) {
+                player.setVelocityX(160);
+            }
+
+            if (cursors.up.isDown) {
+                player.setVelocityY(-160);
+            } else if (cursors.down.isDown) {
+                player.setVelocityY(160);
+            }
+        }
+
+        function fazerPergunta() {
+            // Sorteia uma questão do bloco atual
+            let questoesDoBloco = questoes[blocoAtual];
+            let questaoSorteada = questoesDoBloco[Math.floor(Math.random() * questoesDoBloco.length)];
+            
+            // Imprime no console do navegador (F12) para testes
+            console.log("Pergunta atual: Quanto é " + questaoSorteada.q + "?");
+            console.log("A resposta correta é: " + questaoSorteada.r);
+        }
+    </script>
+</body>
+</html>
