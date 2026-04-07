@@ -407,51 +407,35 @@
       margin-top: 0;
     }
 
-    .btn-sair {
-      background: #5e3b1f;
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      font-size: 1.2rem;
-      border-radius: 50px;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 4px 0 #3a220f;
-      transition: transform 0.1s;
-      position: relative;
-      z-index: 5;
-      display: none;
-    }
 
-    .btn-sair:hover {
-      background: #7a4d29;
-    }
-
-    .btn-sair:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 #3a220f;
-    }
 
     .btn-proximo {
       background: #985e29;
       color: white;
       border: none;
-      padding: 15px 40px;
+      padding: 12px 35px;
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       border-radius: 50px;
       cursor: pointer;
       margin-top: 15px;
       font-weight: bold;
-      box-shadow: 0 5px 0 #693600;
-      transition: transform 0.1s;
+      text-transform: uppercase;
+      box-shadow: 0 5px 0 #693600, 0 8px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s;
       position: relative;
       z-index: 5;
     }
 
     .btn-proximo:hover {
-      background: #b57336;
+      background: #693600;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 5px 0 #693600, 0 15px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-proximo:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow: 0 3px 0 #693600, 0 5px 10px rgba(0, 0, 0, 0.2);
     }
 
     @media screen and (max-width: 1024px), screen and (max-height: 800px) {
@@ -502,17 +486,14 @@
       }
 
       .btn-proximo {
-        padding: 8px 20px;
-        font-size: 1rem;
+        padding: 8px 25px;
+        font-size: 1.1rem;
+        border-width: 0;
         margin-top: 5px;
-        box-shadow: 0 4px 0 #693600;
+        box-shadow: 0 3px 0 #693600;
       }
 
-      .btn-sair {
-        padding: 8px 20px;
-        font-size: 1rem;
-        box-shadow: 0 4px 0 #3a220f;
-      }
+
     }
 
     @media screen and (max-height: 500px) {
@@ -591,10 +572,11 @@
       }
 
       .btn-proximo {
-        padding: 8px 20px;
+        padding: 6px 18px;
         font-size: 1rem;
-        margin-top: 5px;
-        box-shadow: 0 4px 0 #693600;
+        border-width: 0;
+        margin-top: 4px;
+        box-shadow: 0 2px 0 #693600;
       }
 
       .modal-content::before,
@@ -604,11 +586,7 @@
         border-radius: 8px;
       }
 
-      .btn-sair {
-        padding: 8px 20px;
-        font-size: 1rem;
-        box-shadow: 0 4px 0 #3a220f;
-      }
+
     }
 
     @media screen and (max-width: 900px) and (orientation: portrait) {
@@ -673,7 +651,6 @@
 
       <div class="botoes-modal">
         <button class="btn-proximo" onclick="proximoNivel()">PRÓXIMO NÍVEL <i class="fas fa-arrow-right"></i></button>
-        <button class="btn-sair" id="btn-sair" onclick="fecharJogo()">SAIR DO JOGO <i class="fas fa-times"></i></button>
       </div>
     </div>
   </div>
@@ -926,14 +903,12 @@
 
       const msg = document.getElementById('msg-vitoria');
       const btn = document.querySelector('.btn-proximo');
-      const btnSair = document.getElementById('btn-sair');
       const icone = document.querySelector('.icone-vitoria');
 
       if (nivelAtual < niveis.length - 1) {
         msg.innerText = `Nível ${nivelAtual + 1} completo em ${elTempo.innerText}!`;
         btn.innerHTML = `PRÓXIMO NÍVEL <i class="fas fa-arrow-right"></i>`;
         btn.onclick = proximoNivel;
-        btnSair.style.display = 'none';
       } else {
         const minutos = String(Math.floor(tempoTotal / 60)).padStart(2, '0');
         const segundosFinais = String(tempoTotal % 60).padStart(2, '0');
@@ -952,13 +927,11 @@
         `;
 
         btn.innerHTML = `JOGAR NOVAMENTE <i class="fas fa-redo"></i>`;
-        btnSair.style.display = 'block';
 
         btn.onclick = () => {
           nivelAtual = 0; tempoTotal = 0;
 
           icone.innerText = "🐾";
-          btnSair.style.display = 'none';
 
           overlay.style.display = 'flex';
           setTimeout(() => overlay.style.opacity = '1', 10);
@@ -973,10 +946,7 @@
       modal.style.display = "flex";
     }
 
-    function fecharJogo() {
-      window.close();
-      window.location.href = "about:blank";
-    }
+
 
     function proximoNivel() { nivelAtual++; iniciarNivelLogica(); }
     function reiniciarNivel() { if (confirm("Reiniciar este nível?")) iniciarNivelLogica(); }

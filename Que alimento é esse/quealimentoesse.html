@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Que Alimento é Esse?</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
@@ -12,6 +14,7 @@
       text-align: center;
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
       user-select: none;
       text-transform: uppercase;
@@ -20,6 +23,7 @@
     #intro-screen {
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       position: relative;
       background: #cfeec0;
       display: flex;
@@ -67,10 +71,10 @@
       margin-bottom: 20px;
       animation: flutuarImagem 3s infinite ease-in-out;
     }
-    
+
     @keyframes flutuarImagem {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     @keyframes pulsarBotao {
@@ -80,11 +84,12 @@
     }
 
     .btn-jogar-capa {
+      font-family: 'Fredoka', sans-serif;
       background: linear-gradient(to bottom, #76bd4e, #518639);
       color: white;
-      font-size: clamp(20px, 6vw, 30px);
+      font-size: clamp(20px, 10vw, 34px);
       font-weight: 960;
-      padding: 22px 80px;      
+      padding: 22px 80px;
       border: 4px solid #fff;
       border-radius: 50px;
       cursor: pointer;
@@ -100,56 +105,56 @@
     }
 
     #game-screen {
-      display: none; 
-      flex-direction: column; 
+      display: none;
+      flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       width: 100%;
       height: 100vh;
+      height: 100dvh;
       background: linear-gradient(180deg, #e0f7fa 0%, #a5d6a7 100%);
-      overflow-y: auto;
-      padding-top: 10px;
+      overflow: hidden;
+      padding-top: 5px;
     }
 
     .logo-game {
       display: block;
-      margin: 0 auto 20px auto;
-      margin-top: 15px;
+      margin: 5px auto 10px auto;
       max-width: 90%;
       height: auto;
-      max-height: 120px;
+      max-height: 11vh;
       object-fit: contain;
-      filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.2));
-      flex-shrink: 0; 
+      filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.2));
+      flex-shrink: 0;
     }
 
     .cartao-jogo {
       background-color: #ffffffb0;
       border-radius: 30px;
-      padding: 20px 15px; 
+      padding: 10px 15px;
       width: 90%;
       max-width: 800px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
-      border: 3px dashed #6398B6; 
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border: 3px dashed #6398B6;
       position: relative;
-      margin-bottom: 50px;
+      margin-bottom: 1vh;
       box-sizing: border-box;
     }
 
     #painel-quiz {
-        display: none;
-        flex-direction: column;
-        justify-content: center;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
     }
 
     #painel-final {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 300px; 
-        margin-top: 30px;
-        padding: 6vh 4vw;        
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      margin-top: 20px;
+      padding: 6vh 4vw;
     }
 
     .dica-container {
@@ -157,11 +162,11 @@
       width: 100%;
       margin: 0 auto;
       background: #f5fbff;
-      border: 3px solid #6398B6; 
+      border: 3px solid #6398B6;
       border-radius: 30px;
       padding: 20px;
       position: relative;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
     }
 
@@ -170,44 +175,38 @@
       justify-content: space-between;
       align-items: flex-start;
       width: 100%;
-      padding: 0 5px; 
-      margin-bottom: -15px; 
+      padding: 0 5px;
+      margin-bottom: -15px;
       box-sizing: border-box;
       z-index: 10;
       position: relative;
     }
 
-    .cabecalho-dica {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
     .contador-perguntas {
-      font-size: 14px;        
-      font-weight: 800;        
+      font-size: 14px;
+      font-weight: 800;
       color: #0288d1;
       background: #e1f5fe;
       border: 2px solid #4FC3F7;
       border-radius: 20px;
-      padding: 3px 10px;       
+      padding: 3px 10px;
       display: inline-block;
-      margin-bottom: 10px;     
+      margin-bottom: 10px;
       letter-spacing: 1px;
     }
 
     #dica {
       font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
-      font-size: 24px;
+      font-size: clamp(18px, 4vw, 24px);
       font-weight: 800;
       color: #5d4037;
       line-height: 1.3;
-      margin-top: 0; 
-      text-align: center; 
+      margin-top: 0;
+      text-align: center;
     }
 
-    .btn-som, .btn-mudo {
+    .btn-som,
+    .btn-mudo {
       background: #ffe0b2;
       border: none;
       border-radius: 50px;
@@ -219,22 +218,22 @@
       box-shadow: 0 4px 0 #ffb74d;
       transition: all 0.1s;
     }
-    
-    .btn-mudo { 
-      background: #ffcdd2; 
-      color: #c62828; 
-      box-shadow: 0 4px 0 #ef9a9a; 
+
+    .btn-mudo {
+      background: #ffcdd2;
+      color: #c62828;
+      box-shadow: 0 4px 0 #ef9a9a;
     }
-    
+
     .btn-som:active { transform: translateY(4px); box-shadow: 0 0 0 #ffb74d; }
     .btn-mudo:active { transform: translateY(4px); box-shadow: 0 0 0 #ef9a9a; }
 
     .opcoes {
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 1.5vh;
       flex-wrap: wrap;
-      margin-top: 30px;
+      margin-top: 2vh;
       padding: 0 10px;
     }
 
@@ -242,30 +241,23 @@
       background: #f5fff6;
       border: 3px solid #2e7d32;
       border-radius: 25px;
-      box-shadow: 0 5px 0 #2e7d32; 
-      padding: 15px 10px;
-      width: 150px;
+      box-shadow: 0 5px 0 #2e7d32;
+      padding: 1.5vh 10px;
+      width: clamp(120px, 35%, 150px);
       cursor: pointer;
-      font-size: 20px;
+      font-size: clamp(16px, 4vw, 20px);
       font-weight: 900;
       color: #2e7d32;
       transition: all 0.1s;
-      margin-bottom: 10px;
-    }
-    
-    .opcao:hover { 
-      background-color: #e8f5e9; 
-      transform: translateY(-2px);
-    }
-    
-    .opcao:active { 
-      transform: translateY(6px);
-      box-shadow: 0 0 0 #2e7d32; 
+      margin-bottom: 0.5vh;
     }
 
+    .opcao:hover { background-color: #e8f5e9; transform: translateY(-2px); }
+    .opcao:active { transform: translateY(6px); box-shadow: 0 0 0 #2e7d32; }
+
     #area-resultado {
-      margin-top: 20px;
-      min-height: 200px;
+      margin-top: 2vh;
+      min-height: 18vh;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -274,95 +266,89 @@
 
     #img-resposta {
       display: none;
-      width: 180px;
-      height: 180px;
+      height: 22vh;
+      width: auto;
+      max-width: 250px;
       object-fit: contain;
       border-radius: 20px;
       border: 5px solid #fff;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      margin-bottom: 15px;
+      margin-bottom: 1.5vh;
       background-color: white;
-      transform: scale(1); 
+      transform: scale(1);
     }
-    
-    @keyframes pop { 
-        0% { transform: scale(0); opacity: 0; } 
-        80% { transform: scale(1.1); opacity: 1; } 
-        100% { transform: scale(1); } 
+
+    @keyframes pop {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
     }
-    
+
     .animar-pop { animation: pop 0.4s ease-out; }
-    
-    #texto-resultado { 
-        font-size: 26px; 
-        font-weight: 900; 
-        text-shadow: 2px 2px 0 #fff;
-        padding: 0 20px;
+
+    #texto-resultado {
+      font-size: clamp(20px, 5vw, 26px);
+      font-weight: 900;
+      text-shadow: 2px 2px 0 #fff;
+      padding: 0 20px;
     }
 
     .btn-proxima {
-      margin: 20px auto;
+      font-family: 'Fredoka', sans-serif;
+      margin: 1.5vh auto;
       display: inline-block;
-      padding: 15px 60px;
-      font-size: 24px;
+      padding: 1.5vh 60px;
+      font-size: clamp(18px, 4vw, 24px);
       border: none;
       border-radius: 60px;
       background: linear-gradient(to bottom, #ff9c08, #ff860c);
       color: #fff;
       font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 8px 0 #e65100, 0 15px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 0.8vh 0 #e9700e, 0 15px 20px rgba(0, 0, 0, 0.2);
       transition: all 0.1s;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-    
-    .btn-proxima:hover { 
-        background: linear-gradient(to bottom, #ec9513, #f57c00); 
-        transform: translateY(-2px);
-    }
-    
-    .btn-proxima:active {
-        transform: translateY(8px);
-        box-shadow: 0 0 0 #e65100;
-    }
 
-    .btn-proxima:disabled {
-        background: #cccccc;
-        color: #777777;
-        box-shadow: none;
-        cursor: not-allowed;
-        transform: none;
-        pointer-events: none;
-    }
+    .btn-proxima:hover { background: #e9700e; transform: translateY(-2px); }
+    .btn-proxima:active { transform: translateY(0.8vh); box-shadow: 0 0 0 #e9700e; }
+    .btn-proxima:disabled { background: #cccccc; color: #777777; box-shadow: none; cursor: not-allowed; transform: none; pointer-events: none; }
 
     #mensagem-final {
-      font-size: 30px;
+      font-size: clamp(24px, 6vw, 30px);
       color: #2e7d32;
       font-weight: 900;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       padding: 0 10px;
     }
 
     .resumo-placar {
-      font-size: 24px;
-      color: #555;
-      margin-bottom: 40px;
-      font-weight: bold;
       display: flex;
+      flex-direction: row;
       justify-content: center;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 20px;
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto 20px auto;
+      gap: 25px;
+      box-sizing: border-box;
     }
 
     .resumo-item {
-      display: inline-block;
-      padding: 15px 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px 30px;
+      font-size: clamp(14px, 3.5vw, 20px);
+      font-weight: bold;
       border-radius: 20px;
       color: white;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+      white-space: nowrap;
     }
-    
+
     .bg-verde { background: #66bb6a; border: 2px solid #2e7d32; }
     .bg-vermelho { background: #ef5350; border: 2px solid #c62828; }
 
@@ -370,14 +356,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3vh;
+      width: 100%;
     }
 
-    .btn-reiniciar, .btn-sair {
+    .btn-reiniciar {
+      font-family: 'Fredoka', sans-serif;
       margin: 10px auto;
       display: inline-block;
-      padding: 18px 22px; 
-      font-size: 18px; 
+      padding: 17px 42px;
+      font-size: clamp(16px, 4vw, 22px);
       border: none;
       border-radius: 60px;
       color: #fff;
@@ -386,85 +373,133 @@
       transition: all 0.1s;
       text-transform: uppercase;
       letter-spacing: 1px;
-      width: auto; 
-      min-width: 300px; 
+      white-space: nowrap;
+      width: 90%;
+      max-width: 382px;
       box-sizing: border-box;
-    }
-
-    .btn-reiniciar {
       background: linear-gradient(to bottom, #4FC3F7, #039BE5);
-      box-shadow: 0 8px 0 #0280bf, 0 15px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 0.8vh 0 #0280bf, 0 15px 20px rgba(0, 0, 0, 0.2);
     }
 
     .btn-reiniciar:hover {
-      background: linear-gradient(to bottom, #29b6f6, #0288d1);
+      background: #0280bf;
       transform: translateY(-2px);
     }
 
     .btn-reiniciar:active {
-      transform: translateY(8px);
+      transform: translateY(0.8vh);
       box-shadow: 0 0 0 #0280bf;
     }
 
-    .btn-sair {
-      background: linear-gradient(to bottom, #ffb74d, #f57c00);
-      box-shadow: 0 8px 0 #c76500, 0 15px 20px rgba(0,0,0,0.2);
-    }
-
-    .btn-sair:hover {
-      background: linear-gradient(to bottom, #ffa726, #ef6c00);
-      transform: translateY(-2px);
-    }
-
-    .btn-sair:active {
-      transform: translateY(8px);
-      box-shadow: 0 0 0 #c76500;
-    }
-
     @media (max-width: 768px) {
+      .logo-game {
+        max-height: 10vh;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+
       .img-capa-frente {
-        max-width: 120%; 
-        max-height: 75vh; 
-        margin-bottom: 10px; 
+        max-width: 100%;
+        max-height: 65vh;
+        margin-bottom: 10px;
       }
+
+      .cartao-jogo {
+        width: 95%;
+        padding: 1vh 10px;
+        margin-bottom: 1vh;
+      }
+
+      .btn-jogar-capa {
+        padding: 14px 45px;
+        font-size: 22px;
+      }
+
+      .dica-container {
+        padding: 10px;
+      }
+
+      #dica {
+        font-size: 19px;
+      }
+
+      .opcao {
+        padding: 0.8vh 10px;
+        font-size: 17px;
+        width: 42%;
+      }
+
+      #area-resultado {
+        min-height: 18vh;
+        margin-top: 0.5vh;
+      }
+
+      #img-resposta {
+        height: 18vh;
+        max-width: 180px;
+      }
+
+      .btn-proxima {
+        padding: 1vh 30px;
+        width: 90%;
+        font-size: 19px;
+      }
+
       .linha-dos-botoes {
-        margin-bottom: -25px; 
-        padding: 0 15px; 
-        z-index: 10; 
-        position: relative;
+        margin-bottom: -15px;
+        padding: 0 15px;
       }
-      .btn-jogar-capa { padding: 15px 50px; }
-      .cartao-jogo { width: 95%; padding: 20px 15px; }
-      .logo-game { max-height: 90px; }
-      #img-resposta { width: 130px; height: 130px; }
-      #texto-resultado { font-size: 22px; }
-      .opcao { width: 130px; font-size: 18px; padding: 12px 10px; }
-      .btn-proxima, .btn-reiniciar { padding: 15px 30px; font-size: 20px; width: 100%; box-sizing: border-box; }
-      .resumo-item { font-size: 18px; padding: 12px 20px; }
-      .dica-e-som { flex-direction: column; text-align: center; }
-      #dica { text-align: center; font-size: 20px; }
-      .controles-som { flex-direction: row; margin-top: 15px; }
-      .contador-perguntas { font-size: 14px; margin-bottom: 10px; }
+
+      .resumo-placar {
+        gap: 12px;
+        margin-bottom: 20px;
+        justify-content: center;
+      }
+
+      .resumo-item {
+        padding: 15px 30px;
+        font-size: 17px;
+      }
+
+      .btn-reiniciar {
+        font-size: 18px;
+      }
     }
 
-    @media (max-height: 768px) {
-      .img-capa-frente {
-        max-height: 80vh; 
-        margin-bottom: 10px; 
+    @media (max-height: 667px) {
+      .logo-game {
+        max-height: 10vh;
+        margin-top: 5px;
+        margin-bottom: 5px;
       }
-      .linha-dos-botoes {
-        margin-bottom: -25px; 
-        padding: 0 15px; 
-        z-index: 10; 
-        position: relative;
+
+      .cartao-jogo {
+        padding: 15px 10px;
+        margin-bottom: 10px;
       }
-      .logo-game { max-height: 70px; margin-top: 10px; margin-bottom: 10px; }
-      .cartao-jogo { padding: 15px; margin-bottom: 20px; }
-      #dica { font-size: 20px; margin-top: 10px; }
-      .opcoes { margin-top: 15px; gap: 10px; }
-      .opcao { margin-bottom: 5px; }
-      #area-resultado { min-height: 160px; margin-top: 10px; }
-      .btn-proxima { margin: 10px auto; }
+
+      .dica-container {
+        padding: 10px;
+      }
+
+      #dica {
+        font-size: 18px;
+      }
+
+      .opcoes {
+        margin-top: 10px;
+        gap: 8px;
+      }
+
+      .opcao {
+        width: 40%;
+        font-size: 16px;
+        padding: 10px 5px;
+      }
+
+      #img-resposta {
+        height: 14vh;
+      }
     }
   </style>
 </head>
@@ -484,7 +519,7 @@
   <div id="game-screen">
     <img src="img/titulo.png" alt="Que Alimento é Esse?" class="logo-game">
 
-    <div id="painel-quiz" class="cartao-jogo"> 
+    <div id="painel-quiz" class="cartao-jogo">
       <div class="linha-dos-botoes">
         <button class="btn-som" onclick="ativarSomManual()" title="Ouvir Dica">🔊</button>
         <button class="btn-mudo" onclick="pararSom()" title="Silenciar">🔇</button>
@@ -506,21 +541,20 @@
     </div>
 
     <div id="painel-final" class="cartao-jogo">
-        <div id="mensagem-final">PARABÉNS!</div>
-        
-        <div class="resumo-placar">
-            <div class="resumo-item bg-verde">
-                ACERTOS: <span id="final-acertos">0</span>
-            </div>
-            <div class="resumo-item bg-vermelho">
-                ERROS: <span id="final-erros">0</span>
-            </div>
+      <div id="mensagem-final">PARABÉNS!</div>
+
+      <div class="resumo-placar">
+        <div class="resumo-item bg-verde">
+          ACERTOS: <span id="final-acertos">0</span>
         </div>
-        
-        <div class="botoes-finais">
-          <button class="btn-reiniciar" onclick="voltarParaIntro()">🔄 JOGAR NOVAMENTE</button>
-          <button class="btn-sair" onclick="sairDoJogo()">🚪 SAIR DO JOGO</button>
+        <div class="resumo-item bg-vermelho">
+          ERROS: <span id="final-erros">0</span>
         </div>
+      </div>
+
+      <div class="botoes-finais">
+        <button class="btn-reiniciar" onclick="voltarParaIntro()">🔄 JOGAR NOVAMENTE</button>
+      </div>
     </div>
 
   </div>
@@ -554,14 +588,14 @@
       { dica: "É pequeno e tem as sementes do lado de fora. Faz uma sobremesa deliciosa.", correta: "Morango", opcoes: ["Uva", "Morango", "Maçã"] },
       { dica: "Muitos acham que é legume, mas é uma fruta muito usada em saladas e molhos de pizza.", correta: "Tomate", opcoes: ["Tomate", "Cebola", "Maçã"] },
       { dica: "Faz chorar quando é cortada, mas dá um sabor delicioso à comida.", correta: "Cebola", opcoes: ["Batata", "Cebola", "Cenoura"] },
-      { dica: "É amarelo, cresce em espigas e vira uma pipoca deliciosa na panela.", correta: "Milho", opcoes: ["Milho", "Batata", "Mandioca"] },
+      { dica: "É amarelo, cresce em espigas e vira uma pipoca deliciosa.", correta: "Milho", opcoes: ["Milho", "Batata", "Mandioca"] },
       { dica: "Tem uma castanha na ponta e é uma fruta típica do Brasil. O seu suco é muito saboroso.", correta: "Caju", opcoes: ["Caju", "Goiaba", "Manga"] },
       { dica: "Tem a casca verde, um caroço grande no meio e pode ser comido doce ou na salada.", correta: "Abacate", opcoes: ["Abacate", "Mamão", "Melão"] },
       { dica: "Pode ser branca ou vermelha por dentro e é famosa por virar um doce.", correta: "Goiaba", opcoes: ["Goiaba", "Pera", "Maçã"] },
       { dica: "É grande, tem a casca dura. Fica uma delícia numa sopa bem quentinha ou num doce tradicional!", correta: "Abóbora", opcoes: ["Abóbora", "Melão", "Batata"] }
     ];
 
-    let perguntasDaRodada = []; 
+    let perguntasDaRodada = [];
     let atual = 0;
     let respondeu = false;
     let acertos = 0;
@@ -578,27 +612,24 @@
 
     function iniciarJogo() {
       document.getElementById('intro-screen').style.display = 'none';
-      document.getElementById('game-screen').style.display = 'flex'; 
+      document.getElementById('game-screen').style.display = 'flex';
       document.getElementById("painel-quiz").style.display = "flex";
       document.getElementById("painel-final").style.display = "none";
-      
+
       atual = 0;
       acertos = 0;
       erros = 0;
       somLigado = true;
-      
+
       let perguntasCopiadas = [...todasAsPerguntas];
-      
       perguntasCopiadas = embaralhar(perguntasCopiadas);
-      
       perguntasDaRodada = perguntasCopiadas.slice(0, 10);
-      
+
       mostrar();
     }
 
     function falarTexto(texto, forcar = false) {
       if (!somLigado && !forcar) return;
-
       window.speechSynthesis.cancel();
       const voz = new SpeechSynthesisUtterance();
       voz.text = texto;
@@ -608,15 +639,15 @@
     }
 
     function pararSom() {
-        window.speechSynthesis.cancel();
-        somLigado = false; 
+      window.speechSynthesis.cancel();
+      somLigado = false;
     }
 
     function ativarSomManual() {
-        somLigado = true;
-        if (atual < perguntasDaRodada.length) { 
-            falarTexto(perguntasDaRodada[atual].dica, true);
-        }
+      somLigado = true;
+      if (atual < perguntasDaRodada.length) {
+        falarTexto(perguntasDaRodada[atual].dica, true);
+      }
     }
 
     function mostrar() {
@@ -625,14 +656,16 @@
       btnProxima.disabled = true;
       document.getElementById("contador-perguntas").innerText = "DICA " + (atual + 1) + " DE " + perguntasDaRodada.length;
 
-      const p = perguntasDaRodada[atual]; 
+      const p = perguntasDaRodada[atual];
       document.getElementById("dica").innerText = p.dica;
-      
       falarTexto(p.dica);
 
       const area = document.getElementById("opcoes");
       area.innerHTML = "";
-      p.opcoes.forEach(opcao => {
+      
+      let opcoesEmbaralhadas = embaralhar([...p.opcoes]);
+      
+      opcoesEmbaralhadas.forEach(opcao => {
         const div = document.createElement("div");
         div.className = "opcao";
         div.innerText = opcao;
@@ -647,7 +680,7 @@
 
     function responder(escolha) {
       if (respondeu) return;
-      
+
       const correta = perguntasDaRodada[atual].correta;
       let mensagemVoz = "";
       const divResultado = document.getElementById("texto-resultado");
@@ -659,12 +692,12 @@
         divResultado.innerText = "✅ Muito bem! A resposta é " + correta + "!";
         divResultado.style.color = "#2e7d32";
         mensagemVoz = "Muito bem! A resposta é " + correta + "!";
-        acertos++; 
+        acertos++;
       } else {
         divResultado.innerText = "❌ Ops! A resposta correta é " + correta + "!";
         divResultado.style.color = "#c62828";
         mensagemVoz = "Ops! A resposta correta é " + correta + "!";
-        erros++; 
+        erros++;
       }
 
       const urlImagem = bancoImagens[correta] || "";
@@ -676,40 +709,37 @@
       areaResultado.classList.remove("animar-pop");
       void areaResultado.offsetWidth;
       areaResultado.classList.add("animar-pop");
-      
+
       respondeu = true;
       btnProxima.disabled = false;
-      
       falarTexto(mensagemVoz);
     }
 
     function proxima() {
       if (!respondeu) return;
-
       atual++;
       if (atual < perguntasDaRodada.length) {
         mostrar();
       } else {
-        document.getElementById("painel-quiz").style.display = "none"; 
-        document.getElementById("painel-final").style.display = "flex"; 
-        
+        document.getElementById("painel-quiz").style.display = "none";
+        document.getElementById("painel-final").style.display = "flex";
+
         document.getElementById("final-acertos").innerText = acertos;
         document.getElementById("final-erros").innerText = erros;
 
-        let msgVisual = ""; 
-        let msgFalada = ""; 
-        
+        let msgVisual = "";
+        let msgFalada = "";
         const total = acertos + erros;
 
         if (acertos === total) {
-            msgVisual = "🏆 UAU! VOCÊ ACERTOU TUDO! PARABÉNS!";
-            msgFalada = "Uau! Você acertou tudo! Parabéns!";
+          msgVisual = "🏆 UAU! VOCÊ ACERTOU TUDO! PARABÉNS!";
+          msgFalada = "Uau! Você acertou tudo! Parabéns!";
         } else if (acertos > erros) {
-            msgVisual = "🎉 MUITO BEM! VOCÊ FOI INCRÍVEL!";
-            msgFalada = "Muito bem! Você foi incrível!";
+          msgVisual = "🎉 MUITO BEM! VOCÊ FOI INCRÍVEL!";
+          msgFalada = "Muito bem! Você foi incrível!";
         } else {
-            msgVisual = "💪 BOM JOGO! VAMOS TENTAR DE NOVO?";
-            msgFalada = "Bom jogo! Vamos tentar de novo?";
+          msgVisual = "💪 BOM JOGO! VAMOS TENTAR DE NOVO?";
+          msgFalada = "Bom jogo! Vamos tentar de novo?";
         }
 
         document.getElementById("mensagem-final").innerText = msgVisual;
@@ -722,12 +752,7 @@
       document.getElementById('game-screen').style.display = 'none';
       document.getElementById('intro-screen').style.display = 'flex';
     }
-
-    function sairDoJogo() {
-      window.speechSynthesis.cancel();
-      window.close();
-      window.location.href = "about:blank";
-    }
   </script>
 </body>
+
 </html>

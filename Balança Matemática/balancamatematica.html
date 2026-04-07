@@ -32,7 +32,10 @@
         #orientation-warning {
             display: none;
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: var(--primary);
             color: white;
             z-index: 9999;
@@ -57,14 +60,25 @@
         }
 
         @keyframes rotatePhone {
-            0% { transform: rotate(0deg); }
-            50% { transform: rotate(-90deg); }
-            100% { transform: rotate(-90deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(-90deg);
+            }
+            100% {
+                transform: rotate(-90deg);
+            }
         }
 
         @media screen and (max-width: 800px) and (orientation: portrait) {
-            #orientation-warning { display: flex; }
-            body > *:not(#orientation-warning) { display: none !important; }
+            #orientation-warning {
+                display: flex;
+            }
+
+            body>*:not(#orientation-warning) {
+                display: none !important;
+            }
         }
 
         .overlay-screen {
@@ -103,7 +117,7 @@
 
         .panel-box {
             background: white;
-            border: 3px solid var(--primary); 
+            border: 3px solid var(--primary);
             border-radius: 15px;
             padding: 30px;
             max-width: 600px;
@@ -114,7 +128,7 @@
 
         #end-screen .panel-box {
             border: 4px dotted var(--primary);
-            animation: soft-pulse 3s infinite ease-in-out; 
+            animation: soft-pulse 3s infinite ease-in-out;
         }
 
         .panel-box p {
@@ -153,6 +167,7 @@
             box-shadow: 0 8px 0 #2980b9;
             font-size: 2rem;
             animation: pulse 1.5s infinite;
+            margin-top: 5px;
         }
 
         .btn-start:active {
@@ -168,13 +183,16 @@
         .btn-play-again {
             background-color: var(--primary);
             color: white;
-            box-shadow: 0 6px 0 #2980b9;
+            box-shadow: 0 8px 0 #2980b9; 
             animation: float-gentle 2.5s infinite ease-in-out;
+            font-size: 2.2rem; 
+            padding: 15px 50px; 
+            margin-top: 16px;
         }
 
         .btn-play-again:active {
             animation: none;
-            transform: translateY(6px);
+            transform: translateY(8px);
             box-shadow: none;
         }
 
@@ -194,7 +212,7 @@
             border-radius: 30px;
             cursor: pointer;
             box-shadow: 0 5px 0 #8e44ad;
-            margin-top: 25px;
+            margin-top: 15px;
             transition: all 0.1s ease;
         }
 
@@ -215,24 +233,42 @@
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         @keyframes soft-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
         }
 
         @keyframes float-gentle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
         }
 
         .top-bar {
@@ -262,7 +298,7 @@
         }
 
         .hud {
-            margin-top: 25px;
+            margin-top: 15px;
             display: flex;
             gap: 60px;
             font-size: 1.8rem;
@@ -283,7 +319,8 @@
             position: relative;
             width: 800px;
             height: 350px;
-            margin-top: 40px;
+            margin-top: 20px;
+            margin-bottom: 90px;
         }
 
         .stand {
@@ -332,8 +369,13 @@
             background-position: 15px 0, 162px 0;
         }
 
-        .pan-left { left: 0; }
-        .pan-right { right: 0; }
+        .pan-left {
+            left: 0;
+        }
+
+        .pan-right {
+            right: 0;
+        }
 
         .plate {
             position: absolute;
@@ -380,7 +422,9 @@
             touch-action: none;
         }
 
-        .weight:active { cursor: grabbing; }
+        .weight:active {
+            cursor: grabbing;
+        }
 
         .weight.disabled {
             opacity: 0.5;
@@ -397,7 +441,7 @@
         }
 
         .status-msg {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 2rem;
             height: 40px;
             color: #27ae60;
@@ -406,7 +450,7 @@
         }
 
         .shelf {
-            margin-top: 30px;
+            margin-top: 5px;
             background-color: #d35400;
             padding: 25px;
             width: 85%;
@@ -428,152 +472,293 @@
             text-align: center;
         }
 
+
         @media (max-height: 800px) and (min-width: 651px) {
             .game-title {
-                font-size: 2.2rem;
+                font-size: 2.2rem; 
                 margin-bottom: 5px;
             }
 
             .panel-box {
-                padding: 15px;
-                max-width: 500px;
+                padding: 20px; 
+                max-width: 500px; 
                 margin-bottom: 15px;
             }
 
             .panel-box p {
-                font-size: 1.1rem;
+                font-size: 1.2rem; 
                 margin: 5px 0;
             }
 
             .time-display {
                 font-size: 1.4rem;
                 margin: 10px 0;
-                padding: 5px;
+                padding: 8px;
             }
 
             .btn {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
                 padding: 10px 25px;
                 margin: 5px;
             }
 
-            .top-bar {
-                flex-direction: row;
-                gap: 20px;
+            .btn-start {
+                font-size: 1.6rem; 
+                padding: 10px 30px; 
+                margin-top: 10px; 
+            }
+
+            #end-screen .btn-play-again {
+                font-size: 1.4rem;
+                padding: 12px 30px;
                 margin-top: 10px;
             }
-            
+
+            .top-bar {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px; 
+                margin-top: 10px; 
+                margin-bottom: 10px; 
+            }
+
             .level-badge {
-                font-size: 1.2rem;
-                padding: 5px 20px;
+                font-size: 1.4rem; 
+                padding: 8px 25px; 
                 margin-top: 0;
             }
 
             .hud {
                 margin-top: 0;
-                font-size: 1.2rem;
-                padding: 8px 20px;
-                gap: 30px;
+                font-size: 1.4rem; 
+                padding: 10px 25px; 
+                gap: 30px; 
             }
+
 
             .balance-container {
-                width: 600px;
-                height: 250px;
-                margin-top: 20px;
+                width: 640px; 
+                height: 280px; 
+                margin-top: 10px;
+                margin-bottom: 60px;
             }
-            .stand { height: 130px; }
-            .base { width: 200px; }
-            .beam { top: 120px; left: 45px; width: 510px; }
-            .pan { width: 140px; height: 90px; background-position: 10px 0, 125px 0; }
-            .plate { height: 60px; }
 
-            .weight, .target-weight {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
+            .stand {
+                height: 144px;
+                width: 19px;
+            }
+
+            .base {
+                width: 208px;
+                height: 19px;
+            }
+
+            .beam {
+                top: 136px;
+                left: 48px;
+                width: 544px;
+                height: 11px;
+            }
+            
+            .pan { 
+                width: 144px; 
+                height: 96px; 
+                background-position: 12px 0, 130px 0; 
+                background-image: linear-gradient(to bottom, #95a5a6 40px, transparent 40px);
+            } 
+            .plate {
+                height: 64px;
+            }
+
+            .weight {
+                width: 44px;
+                height: 44px;
+                font-size: 1.3rem;
+            }
+
+            .target-weight {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
             }
 
             .status-msg {
-                font-size: 1.5rem;
+                font-size: 1.6rem; 
                 margin-top: 5px;
                 height: 30px;
             }
 
             .shelf {
-                margin-top: 15px;
-                padding: 15px;
-                min-height: 60px;
+                margin-top: 10px;
+                padding: 15px; 
+                min-height: 70px; 
+                width: 90%; 
+                gap: 15px;
             }
 
             .btn-skip {
-                margin-top: 15px;
-                padding: 12px 25px;
-                font-size: 1.2rem;
+                margin-top: 18px;
+                margin-bottom: 15px; 
+                padding: 12px 25px; 
+                font-size: 1.3rem; 
             }
         }
 
         @media (max-height: 500px) {
-            .game-title { font-size: 1.8rem; margin-top: 5px; margin-bottom: 5px; }
-            .panel-box { padding: 15px; width: 90%; max-width: 500px; margin-bottom: 10px; border-width: 3px;}
-            .panel-box p { font-size: 1rem; margin: 5px 0; }
-            .time-display { font-size: 1.2rem; margin: 8px 0; padding: 5px; }
-            .btn { font-size: 1rem; padding: 8px 15px; margin: 5px; }
-            .btn-start { font-size: 1.2rem; padding: 10px 20px; }
-            
-            .top-bar { margin-top: 5px; flex-direction: column; gap: 5px; } 
-            .level-badge { font-size: 1rem; padding: 5px 15px; margin-top: -5px; margin-bottom: 10px; box-shadow: 0 3px 0 #f39c12; }
-            .level-max { background-color: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
-            .hud { font-size: 1rem; padding: 5px 20px; gap: 20px; margin-top: 0; border-radius: 20px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
-            
-            .balance-container { width: 340px; height: 140px; margin-top: 5px; }
-            .stand { width: 10px; height: 75px; }
-            .base { width: 110px; height: 10px; }
-            .beam { top: 70px; left: 10px; width: 320px; height: 6px; }
-            .pan { top: 5px; width: 70px; height: 50px; background-size: 2px 100%; background-position: 5px 0, 63px 0; background-image: linear-gradient(to bottom, #95a5a6 15px, transparent 15px); }
-            .plate { height: 35px; border-bottom-width: 3px; border-radius: 0 0 8px 8px; padding-bottom: 2px; }
-            
-            .weight { width: 25px; height: 25px; font-size: 0.9rem; border-width: 1px; box-shadow: 2px 2px 0px rgba(0,0,0,0.15); margin: 1px; border-radius: 4px; }
-            .target-weight { width: 30px; height: 30px; font-size: 1.1rem; }
-            
-            .status-msg { font-size: 1.1rem; margin-top: 2px; height: 18px; }
-            
-            .shelf { padding: 8px; width: 85%; gap: 6px; margin-top: 5px; box-shadow: 0 4px 0 #a04000; border-radius: 8px; min-height: 28px; }
-            
-            .btn-skip { 
-                padding: 6px 15px; 
-                font-size: 0.9rem; 
-                margin-top: 15px;
+            .game-title {
+                font-size: 1.2rem; 
+                margin-top: 2px;
+                margin-bottom: 2px;
+
+                text-shadow: 1px 1px 0px #d35400; 
+            }
+
+            .panel-box {
+                padding: 10px; 
+                width: 92%;
+                max-width: 400px; 
                 margin-bottom: 5px;
-                box-shadow: 0 3px 0 #8e44ad; 
+                border-width: 2px;
             }
 
-            #end-screen .panel-box {
-                padding: 10px 15px;
-                max-width: 380px;
-                margin-bottom: 18px;
-            }
 
-            #end-screen .panel-box .highlight {
-                font-size: 1.8rem !important; 
-                margin-bottom: 5px;
-            }
-
-            #end-screen .panel-box p {
+            .panel-box h1, 
+            .panel-box h2 {
                 font-size: 0.9rem;
-                line-height: 1.2;
                 margin: 5px 0;
             }
 
-            #end-screen .time-display {
-                font-size: 1.1rem;
-                margin: 10px 0 5px 0;
-                padding: 5px;
+            .panel-box p {
+                font-size: 0.9rem;
+                margin: 3px 0;
+            }
+
+            .time-display {
+                font-size: 1rem;
+                margin: 5px 0;
+                padding: 4px;
+            }
+
+            .btn {
+                font-size: 0.85rem;
+                padding: 6px 15px;
+                margin: 3px;
+            }
+
+            .btn-start {
+                font-size: 1rem;
+                padding: 8px 20px;
+                margin-top: 10px;
+                box-shadow: 0 6px 0 #2980b9;
+            }
+
+
+            .top-bar {
+                margin-top: 2px; 
+                flex-direction: column; 
+                gap: 8px; 
+            }
+
+            .level-badge {
+                font-size: 0.9rem; 
+                padding: 4px 15px; 
+                margin-top: 0;
+            }
+
+            .hud {
+                font-size: 0.9rem; 
+                padding: 4px 15px; 
+                gap: 20px; 
+                margin-top: 0;
+            }
+
+            .highlight {
+                font-size: 1.5rem !important; 
+            }
+
+
+            .balance-container {
+                width: 280px; 
+                height: 120px; 
+                margin-top: 5px;
+                margin-bottom: 35px; 
+            }
+
+            .stand {
+                height: 60px;
+                width: 8px;
+            }
+
+            .base {
+                width: 90px;
+                height: 8px;
+            }
+
+            .beam {
+                top: 56px;
+                left: 20px;
+                width: 240px;
+                height: 5px;
             }
             
-            #end-screen .btn {
+            .pan { 
+                top: 5px;
+                width: 60px; 
+                height: 40px; 
+                background-size: 2px 100%;
+                background-position: 4px 0, 54px 0; 
+                background-image: linear-gradient(to bottom, #95a5a6 16px, transparent 16px);
+            } 
+            .plate { 
+                height: 26px; 
+                border-bottom-width: 3px;
+                border-radius: 0 0 8px 8px;
+                padding-bottom: 2px;
+            } 
+
+            .weight {
+                width: 20px; 
+                height: 20px; 
+                font-size: 0.75rem; 
+                border-width: 1px;
+                margin: 2px;
+                border-radius: 4px;
+            }
+
+            .target-weight {
+                width: 28px; 
+                height: 28px; 
+                font-size: 1rem; 
+            }
+
+            .status-msg {
+                font-size: 1rem; 
+                margin-top: 2px;
+                height: 25px;
+            }
+
+            .shelf {
+                margin-top: 0px; 
+                padding: 8px; 
+                min-height: 28px; 
+                width: 85%; 
+                gap: 8px;
+                border-radius: 8px;
+            }
+
+            .btn-skip {
+                margin-top: 14px;
+                margin-bottom: 8px; 
+                padding: 6px 16px; 
+                font-size: 0.85rem; 
+            }
+
+
+            #end-screen .btn-play-again {
                 font-size: 0.9rem;
-                padding: 8px 15px;
-                margin: 5px;
+                padding: 8px 20px;
+                margin-top: 10px;
+                box-shadow: 0 4px 0 #2980b9;
             }
         }
     </style>
@@ -591,7 +776,7 @@
             <p>Olá, matemático! 👋</p><br>
             <p>Sua missão é <strong style="color: var(--primary);">arrastar os pesos azuis</strong> para a direita até
                 que os dois lados fiquem iguais.</p><br>
-            <p>Preste atenção nos números e seja rápido para conseguir o melhor tempo possível!</p> 
+            <p>Preste atenção nos números e seja rápido para conseguir o melhor tempo possível!</p>
         </div>
         <button class="btn btn-start" onclick="iniciarJogo()">COMEÇAR!</button>
     </div>
@@ -685,17 +870,17 @@
             element.addEventListener('touchend', (e) => {
                 if (!draggedElement || isTransitioning) return;
                 e.target.style.opacity = '1';
-                
+
                 let touch = e.changedTouches[0];
                 let elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-                
+
                 if (elemBelow && (elemBelow.id === 'dropZone' || elemBelow.closest('#dropZone'))) {
                     if (draggedElement.parentElement === shelf) {
                         dropZone.appendChild(draggedElement);
                         currentValue += draggedWeightValue;
                         updateBalance();
                     }
-                } 
+                }
                 else if (elemBelow && (elemBelow.id === 'shelf' || elemBelow.closest('#shelf'))) {
                     if (draggedElement.parentElement === dropZone) {
                         shelf.appendChild(draggedElement);
@@ -703,7 +888,7 @@
                         updateBalance();
                     }
                 }
-                
+
                 draggedElement = null;
                 dropZone.classList.remove('drag-over');
             });
@@ -713,7 +898,7 @@
                 e.preventDefault();
                 let touch = e.touches[0];
                 let elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-                
+
                 if (elemBelow && (elemBelow.id === 'dropZone' || elemBelow.closest('#dropZone'))) {
                     dropZone.classList.add('drag-over');
                 } else {
@@ -806,7 +991,7 @@
             let segFormatado = segundos < 10 ? '0' + segundos : segundos;
 
             let textoTempo = `${minFormatado}:${segFormatado}`;
-            
+
             finalTimeDisplay.innerText = `⏱️ TEMPO TOTAL: ${textoTempo}`;
 
             endScreen.classList.remove('hidden');
@@ -818,7 +1003,7 @@
             resetGame();
 
             introScreen.classList.remove('hidden');
-            introScreen.classList.remove('hidden-up'); 
+            introScreen.classList.remove('hidden-up');
 
             endScreen.classList.add('hidden-up');
 
@@ -849,17 +1034,18 @@
 
             let parts = [];
 
+
             switch (currentLevel) {
-                case 1: targetValue = Math.floor(Math.random() * 3) + 3; gerarPedacos(targetValue, parts, 3); adicionarDistratores(parts, 1, 2); break;
-                case 2: targetValue = Math.floor(Math.random() * 5) + 6; gerarPedacos(targetValue, parts, 5); adicionarDistratores(parts, 2, 4); break;
-                case 3: targetValue = Math.floor(Math.random() * 5) + 11; gerarPedacos(targetValue, parts, 7); adicionarDistratores(parts, 2, 5); break;
-                case 4: targetValue = Math.floor(Math.random() * 5) + 16; gerarPedacos(targetValue, parts, 9); adicionarDistratores(parts, 3, 6); break;
-                case 5: targetValue = (Math.floor(Math.random() * 4) + 2) * 10; gerarPedacosMultiplos(targetValue, parts, 10); adicionarDistratoresMultiplos(parts, 2, 30, 10); break;
-                case 6: targetValue = Math.floor(Math.random() * 10) + 21; gerarPedacos(targetValue, parts, 10); adicionarDistratores(parts, 3, 8); break;
-                case 7: targetValue = (Math.floor(Math.random() * 5) + 5) * 10; gerarPedacosMultiplos(targetValue, parts, 10); adicionarDistratoresMultiplos(parts, 3, 50, 10); break;
-                case 8: targetValue = Math.floor(Math.random() * 20) + 31; gerarPedacos(targetValue, parts, 20); adicionarDistratores(parts, 4, 15); break;
-                case 9: targetValue = Math.floor(Math.random() * 25) + 51; gerarPedacos(targetValue, parts, 25); adicionarDistratores(parts, 4, 20); break;
-                case 10: targetValue = Math.floor(Math.random() * 25) + 76; gerarPedacos(targetValue, parts, 30); adicionarDistratores(parts, 5, 25); break;
+                case 1: targetValue = Math.floor(Math.random() * 3) + 3; gerarPedacos(targetValue, parts, 3); adicionarDistratores(parts, 1, 2, targetValue); break;
+                case 2: targetValue = Math.floor(Math.random() * 5) + 6; gerarPedacos(targetValue, parts, 5); adicionarDistratores(parts, 2, 4, targetValue); break;
+                case 3: targetValue = Math.floor(Math.random() * 5) + 11; gerarPedacos(targetValue, parts, 7); adicionarDistratores(parts, 2, 5, targetValue); break;
+                case 4: targetValue = Math.floor(Math.random() * 5) + 16; gerarPedacos(targetValue, parts, 9); adicionarDistratores(parts, 3, 6, targetValue); break;
+                case 5: targetValue = (Math.floor(Math.random() * 4) + 2) * 10; gerarPedacosMultiplos(targetValue, parts, 10); adicionarDistratoresMultiplos(parts, 2, 30, 10, targetValue); break;
+                case 6: targetValue = Math.floor(Math.random() * 10) + 21; gerarPedacos(targetValue, parts, 10); adicionarDistratores(parts, 3, 8, targetValue); break;
+                case 7: targetValue = (Math.floor(Math.random() * 5) + 5) * 10; gerarPedacosMultiplos(targetValue, parts, 10); adicionarDistratoresMultiplos(parts, 3, 50, 10, targetValue); break;
+                case 8: targetValue = Math.floor(Math.random() * 20) + 31; gerarPedacos(targetValue, parts, 20); adicionarDistratores(parts, 4, 15, targetValue); break;
+                case 9: targetValue = Math.floor(Math.random() * 25) + 51; gerarPedacos(targetValue, parts, 25); adicionarDistratores(parts, 4, 20, targetValue); break;
+                case 10: targetValue = Math.floor(Math.random() * 25) + 76; gerarPedacos(targetValue, parts, 50); adicionarDistratores(parts, 3, 40, targetValue); break;
             }
 
             targetDisplay.innerText = targetValue;
@@ -883,33 +1069,90 @@
             updateBalance();
         }
 
+
         function gerarPedacos(alvo, array, maxPiece) {
             let remaining = alvo;
             while (remaining > 0) {
-                let part = Math.floor(Math.random() * Math.min(remaining, maxPiece)) + 1;
-                if (remaining <= maxPiece / 2 || Math.random() > 0.8) part = remaining;
+
+                let currentMax = Math.min(remaining, maxPiece);
+                if (remaining === alvo && currentMax === alvo) {
+                    currentMax = alvo - 1;
+                }
+
+                let part = Math.floor(Math.random() * currentMax) + 1;
+
+
+                if (remaining <= maxPiece / 2 || Math.random() > 0.8) {
+                    if (remaining < alvo) {
+                        part = remaining;
+                    }
+                }
+
                 array.push(part);
                 remaining -= part;
             }
+
+
+            if (array.length === 1) {
+                let val = array.pop();
+                let half = Math.floor(val / 2);
+                array.push(half);
+                array.push(val - half);
+            }
         }
+
 
         function gerarPedacosMultiplos(alvo, array, multiplo) {
             let remaining = alvo;
             while (remaining > 0) {
-                let part = (Math.floor(Math.random() * 3) + 1) * multiplo;
+                let maxMults = Math.floor(remaining / multiplo);
+
+
+                if (remaining === alvo && maxMults > 1) {
+                    maxMults -= 1;
+                }
+
+                let multsToUse = Math.floor(Math.random() * Math.min(3, maxMults)) + 1;
+                let part = multsToUse * multiplo;
+
                 if (part > remaining) part = remaining;
+
+
+                if (part === alvo) {
+                    part -= multiplo;
+                }
+
+                if (part === 0) part = multiplo;
+
                 array.push(part);
                 remaining -= part;
             }
+
+
+            if (array.length === 1 && array[0] > multiplo) {
+                let val = array.pop();
+                array.push(val - multiplo);
+                array.push(multiplo);
+            }
         }
 
-        function adicionarDistratores(array, qtd, maxVal) {
-            for (let i = 0; i < qtd; i++) array.push(Math.floor(Math.random() * maxVal) + 1);
-        }
 
-        function adicionarDistratoresMultiplos(array, qtd, maxVal, multiplo) {
+        function adicionarDistratores(array, qtd, maxVal, alvo) {
             for (let i = 0; i < qtd; i++) {
-                let val = (Math.floor(Math.random() * (maxVal / multiplo)) + 1) * multiplo;
+                let val;
+                do {
+                    val = Math.floor(Math.random() * maxVal) + 1;
+                } while (val === alvo);
+                array.push(val);
+            }
+        }
+
+        function adicionarDistratoresMultiplos(array, qtd, maxVal, multiplo, alvo) {
+            for (let i = 0; i < qtd; i++) {
+                let val;
+                do {
+                    val = (Math.floor(Math.random() * (maxVal / multiplo)) + 1) * multiplo;
+                } while (val === alvo);
                 array.push(val);
             }
         }
