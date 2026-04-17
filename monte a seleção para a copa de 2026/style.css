@@ -13,7 +13,7 @@ body {
     color: var(--branco);
     font-family: 'Roboto', sans-serif;
     height: 100vh;
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     flex-direction: column;
 }
@@ -44,10 +44,12 @@ header {
     border-bottom: 4px solid var(--amarelo-cbf);
     display: flex;
     align-items: center;
-    height: 80px;
+    height: 65px;
+    min-height: 55px;
     position: sticky;
     top: 0;
     z-index: 1000;
+    flex-shrink: 0;
 }
 
 .header-content {
@@ -64,7 +66,7 @@ header {
 }
 
 .logo {
-    height: 55px;
+    height: 45px;
 }
 
 header h1 {
@@ -95,16 +97,16 @@ header h1 {
     line-height: 1;
 }
 
-/* --- LAYOUT PRINCIPAL (SEM SCROLL INTERNO) --- */
+/* --- LAYOUT PRINCIPAL --- */
 .container {
     display: grid;
     grid-template-columns: 1fr 380px;
-    padding: 20px 30px;
-    gap: 30px;
+    padding: 10px 20px;
+    gap: 20px;
     max-width: 1600px;
     margin: 0 auto;
     flex: 1;
-    overflow: hidden;
+    min-height: 0;
     width: 100%;
     box-sizing: border-box;
 }
@@ -113,15 +115,96 @@ header h1 {
 .area-jogo {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    overflow-y: auto;
-    padding-right: 10px;
+    gap: 0;
+    min-height: 0;
+    overflow: visible;
+}
+
+/* --- TABS --- */
+.tabs-area {
+    display: flex;
+    gap: 0;
+    background: #161b22;
+    border-radius: 14px 14px 0 0;
+    overflow: hidden;
+    border-bottom: 3px solid var(--amarelo-cbf);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 14px 20px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    background: #21262d;
+    color: #8b949e;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 1px;
+}
+
+.tab-btn:hover {
+    background: #30363d;
+    color: #c9d1d9;
+}
+
+.tab-btn.active {
+    background: var(--azul-cbf);
+    color: var(--amarelo-cbf);
+    font-weight: 700;
+    box-shadow: inset 0 -3px 0 var(--amarelo-cbf);
+}
+
+.contador-tab {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+.tab-btn.active .contador-tab {
+    background: rgba(247, 209, 22, 0.25);
+    color: var(--amarelo-cbf);
+}
+
+/* Pulso na aba quando reserva é adicionado */
+.tab-pulse {
+    animation: pulsarTab 0.5s ease 3 !important;
+    background: var(--amarelo-cbf) !important;
+    color: var(--azul-cbf) !important;
+}
+
+@keyframes pulsarTab {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(247, 209, 22, 0.6); }
+}
+
+/* --- TAB CONTENT --- */
+.tab-conteudo {
+    animation: fadeSlide 0.3s ease;
+}
+
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .campo-wrapper {
     background: #161b22;
-    padding: 30px;
-    border-radius: 20px;
+    padding: 15px;
+    border-radius: 0 0 20px 20px;
     display: flex;
     justify-content: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -130,7 +213,7 @@ header h1 {
 .campo {
     width: 100%;
     max-width: 500px;
-    height: 650px;
+    height: clamp(400px, 58vh, 650px);
     background: var(--verde-campo);
     border: 4px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
@@ -140,8 +223,8 @@ header h1 {
 /* POSICIONAMENTO CORRIGIDO (PARA NÃO SOBREPOR) */
 .slot {
     position: absolute;
-    width: 75px;
-    height: 75px;
+    width: clamp(55px, 6vw, 75px);
+    height: clamp(55px, 6vw, 75px);
     background: rgba(0, 0, 0, 0.6);
     border: 2px dashed var(--branco);
     border-radius: 50%;
@@ -150,6 +233,7 @@ header h1 {
     justify-content: center;
     z-index: 2;
     cursor: pointer;
+    font-size: clamp(10px, 1.2vw, 14px);
 }
 
 .slot img {
@@ -235,7 +319,7 @@ header h1 {
 .banco-reservas {
     background: #161b22;
     padding: 20px;
-    border-radius: 20px;
+    border-radius: 0 0 20px 20px;
 }
 
 .banco-reservas h3 {
@@ -258,14 +342,14 @@ header h1 {
     height: 65px;
 }
 
-/* --- MERCADO (SIDEBAR STICKY) --- */
+/* --- MERCADO (SIDEBAR) --- */
 .mercado {
     background: #161b22;
     border-radius: 20px;
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    min-height: 0;
     box-sizing: border-box;
     overflow: hidden;
 }
@@ -541,5 +625,67 @@ header h1 {
     to {
         transform: scale(1);
         opacity: 1;
+    }
+}
+
+/* --- RESPONSIVIDADE PARA ZOOM ALTO / TELAS MENORES --- */
+@media (max-height: 750px) {
+    header {
+        height: 50px;
+        padding: 0 15px;
+    }
+
+    .logo {
+        height: 35px;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+    }
+
+    .score-panel {
+        padding: 3px 12px;
+    }
+
+    #media-forca {
+        font-size: 1.4rem;
+    }
+
+    .container {
+        padding: 8px 12px;
+        gap: 12px;
+        grid-template-columns: 1fr 320px;
+    }
+
+    .campo {
+        height: clamp(320px, 50vh, 500px);
+    }
+
+    .campo-wrapper {
+        padding: 10px;
+    }
+
+    .slot {
+        width: clamp(45px, 5.5vw, 65px);
+        height: clamp(45px, 5.5vw, 65px);
+    }
+
+    .slot.reserva {
+        width: 55px;
+        height: 55px;
+    }
+
+    .tab-btn {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .banco-grid {
+        gap: 10px;
+    }
+
+    .nome-player-campo {
+        font-size: 9px;
+        bottom: -18px;
     }
 }

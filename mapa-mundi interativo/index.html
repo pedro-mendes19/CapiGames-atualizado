@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GeoQuiz — Jogo educativo de Mapa-Múndi Interativo. Teste seus conhecimentos de geografia!">
+  <title>GeoQuiz — Mapa-Múndi Interativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    :root {
+      --navy-900: #060e1f;
+      --navy-800: #0a1628;
+      --navy-700: #0f2035;
+      --navy-600: #162d4a;
+      --navy-500: #1e3a5f;
+      --navy-400: #2a4d7a;
+      --blue-400: #4a90d9;
+      --blue-300: #6bb3ff;
+      --gold-500: #d4a844;
+      --gold-400: #e8c36a;
+      --gold-300: #f0d78c;
+      --green-500: #2ecc71;
+      --green-400: #4ade80;
+      --red-500: #e74c3c;
+      --red-400: #f87171;
+      --gray-300: #b0bec5;
+      --gray-400: #8899aa;
+      --gray-500: #607080;
+      --white: #ffffff;
+      --glass-bg: rgba(10, 22, 40, 0.85);
+      --glass-border: rgba(106, 179, 255, 0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+      --shadow-glow-gold: 0 0 30px rgba(212, 168, 68, 0.3);
+      --shadow-glow-blue: 0 0 20px rgba(74, 144, 217, 0.25);
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-med: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--navy-900);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #app {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    #map-container {
+      width: 100%;
+      height: 100%;
+      background: var(--navy-900);
+      z-index: 1;
+    }
+
+    .leaflet-container {
+      background: var(--navy-900) !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+
+    .leaflet-control-zoom {
+      border: none !important;
+      box-shadow: var(--shadow-lg) !important;
+    }
+
+    .leaflet-control-zoom a {
+      background: var(--glass-bg) !important;
+      color: var(--white) !important;
+      border: 1px solid var(--glass-border) !important;
+      backdrop-filter: blur(12px);
+      width: 36px !important;
+      height: 36px !important;
+      line-height: 36px !important;
+      font-size: 18px !important;
+      transition: var(--transition-fast);
+    }
+
+    .leaflet-control-zoom a:hover {
+      background: var(--navy-600) !important;
+      color: var(--gold-400) !important;
+    }
+
+    .leaflet-control-attribution {
+      display: none !important;
+    }
+
+    /* ========== HUD ========== */
+    #hud {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      transform: translateY(-100%);
+      transition: transform var(--transition-slow);
+      gap: 16px;
+    }
+
+    #hud.visible {
+      transform: translateY(0);
+    }
+
+    .hud-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hud-left {
+      flex: 0 0 auto;
+    }
+
+    .hud-center {
+      flex: 1 1 auto;
+      justify-content: center;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .hud-right {
+      flex: 0 0 auto;
+      gap: 20px;
+    }
+
+    .level-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: linear-gradient(135deg, var(--navy-600), var(--navy-500));
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .level-badge .level-icon {
+      font-size: 16px;
+    }
+
+    .target-country-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .target-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--gray-400);
+      font-weight: 600;
+    }
+
+    #target-country {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--gold-400), var(--gold-300));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: opacity var(--transition-fast);
+      line-height: 1.2;
+    }
+
+    #target-country.fade-out {
+      opacity: 0;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-400);
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--white);
+    }
+
+    .stat-value.score {
+      color: var(--gold-400);
+    }
+
+    .stat-value.timer {
+      color: var(--blue-300);
+    }
+
+    /* ========== PROGRESS BAR ========== */
+    #progress-bar-container {
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: transform var(--transition-slow), opacity var(--transition-slow);
+    }
+
+    #progress-bar-container.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+      border-radius: 0 4px 4px 0;
+      transition: width var(--transition-med);
+      box-shadow: 0 0 12px rgba(212, 168, 68, 0.4);
+    }
+
+    /* ========== FEEDBACK OVERLAY ========== */
+    #feedback-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      z-index: 1100;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    #feedback-overlay.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .feedback-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      animation: feedbackPulse 0.6s ease-out;
+    }
+
+    .feedback-icon.correct {
+      background: radial-gradient(circle, rgba(46, 204, 113, 0.25), transparent);
+      box-shadow: 0 0 60px rgba(46, 204, 113, 0.4);
+    }
+
+    .feedback-icon.incorrect {
+      background: radial-gradient(circle, rgba(231, 76, 60, 0.25), transparent);
+      box-shadow: 0 0 60px rgba(231, 76, 60, 0.4);
+    }
+
+    @keyframes feedbackPulse {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ========== STREAK BADGE ========== */
+    #streak-badge {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+    }
+
+    #streak-badge.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #streak-badge .streak-fire {
+      font-size: 20px;
+    }
+
+    #streak-badge .streak-count {
+      color: var(--gold-400);
+    }
+
+    /* ========== COUNTRY TOOLTIP ========== */
+    #country-tooltip {
+      position: fixed;
+      z-index: 1050;
+      pointer-events: none;
+      padding: 6px 14px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      opacity: 0;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    #country-tooltip.visible {
+      opacity: 1;
+    }
+
+    /* ========== MODALS ========== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 14, 31, 0.92);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-med);
+      padding: 20px;
+    }
+
+    .modal-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 520px;
+      background: linear-gradient(170deg, var(--navy-700), var(--navy-800));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 48px 40px;
+      text-align: center;
+      transform: translateY(30px) scale(0.96);
+      transition: transform var(--transition-med);
+      box-shadow: var(--shadow-lg), var(--shadow-glow-blue);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.visible .modal-content {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-title {
+      font-size: 42px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold-400), var(--gold-300), var(--white));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+
+    .modal-subtitle {
+      font-size: 16px;
+      color: var(--gray-400);
+      margin-bottom: 36px;
+      font-weight: 500;
+    }
+
+    .modal-globe {
+      font-size: 72px;
+      margin-bottom: 20px;
+      display: block;
+      animation: globeSpin 4s ease-in-out infinite;
+    }
+
+    @keyframes globeSpin {
+      0%, 100% { transform: rotate(-5deg) scale(1); }
+      50% { transform: rotate(5deg) scale(1.05); }
+    }
+
+    .game-logo {
+      width: 100%;
+      height: auto;
+      max-width: 440px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--glass-border);
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      transition: transform var(--transition-med);
+    }
+
+    .game-logo:hover {
+      transform: scale(1.02);
+    }
+
+    /* ========== LEVEL CARDS ========== */
+    .level-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .level-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      text-align: left;
+      color: var(--white);
+      font-family: inherit;
+      font-size: inherit;
+      outline: none;
+    }
+
+    .level-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--gold-500);
+      transform: translateX(4px);
+      box-shadow: var(--shadow-glow-gold);
+    }
+
+    .level-card:active {
+      transform: translateX(2px) scale(0.99);
+    }
+
+    .level-card.selected {
+      background: rgba(212, 168, 68, 0.1);
+      border-color: var(--gold-500);
+      box-shadow: var(--shadow-glow-gold);
+    }
+
+    .level-card-icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+
+    .level-card-info {
+      flex: 1;
+    }
+
+    .level-card-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .level-card-desc {
+      font-size: 12px;
+      color: var(--gray-400);
+      font-weight: 500;
+    }
+
+    .level-card-difficulty {
+      display: flex;
+      gap: 3px;
+    }
+
+    .diff-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--navy-500);
+    }
+
+    .diff-dot.active {
+      background: var(--gold-400);
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 36px;
+      border: none;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      outline: none;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      color: var(--navy-900);
+      box-shadow: 0 4px 20px rgba(212, 168, 68, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(212, 168, 68, 0.45);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+      transform: translateY(-2px);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ========== RESULTS ========== */
+    .results-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .result-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 16px 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--glass-border);
+    }
+
+    .result-stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .result-stat-value.gold { color: var(--gold-400); }
+    .result-stat-value.green { color: var(--green-400); }
+    .result-stat-value.blue { color: var(--blue-300); }
+
+    .result-stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-400);
+      font-weight: 600;
+    }
+
+    .stars-container {
+      font-size: 40px;
+      margin: 8px 0 16px;
+      letter-spacing: 6px;
+    }
+
+    .star {
+      display: inline-block;
+      opacity: 0.2;
+      transition: opacity var(--transition-med), transform var(--transition-med);
+    }
+
+    .star.earned {
+      opacity: 1;
+      animation: starPop 0.5s ease-out backwards;
+    }
+
+    .star:nth-child(1) { animation-delay: 0.2s; }
+    .star:nth-child(2) { animation-delay: 0.4s; }
+    .star:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes starPop {
+      0% { transform: scale(0) rotate(-180deg); }
+      60% { transform: scale(1.3) rotate(10deg); }
+      100% { transform: scale(1) rotate(0); }
+    }
+
+    .result-message {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--gray-300);
+    }
+
+    /* ========== PARTICLES ========== */
+    .confetti-particle {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 3000;
+      animation: confettiFall 1.5s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translateY(200px) rotate(720deg) scale(0.3); }
+    }
+
+    /* ========== LOADING ========== */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--navy-900);
+      gap: 24px;
+      transition: opacity 0.5s;
+    }
+
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--navy-600);
+      border-top-color: var(--gold-400);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      font-size: 14px;
+      color: var(--gray-400);
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* ========== MISSED COUNTRIES LIST ========== */
+    .missed-list {
+      max-height: 120px;
+      overflow-y: auto;
+      margin: 0 0 20px;
+      padding: 12px;
+      background: rgba(231, 76, 60, 0.08);
+      border: 1px solid rgba(231, 76, 60, 0.2);
+      border-radius: var(--radius-sm);
+      text-align: left;
+    }
+
+    .missed-list-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--red-400);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .missed-list ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .missed-list li {
+      font-size: 12px;
+      padding: 3px 10px;
+      background: rgba(231, 76, 60, 0.12);
+      border-radius: 100px;
+      color: var(--red-400);
+      font-weight: 500;
+    }
+
+    /* ========== HINT BUTTON ========== */
+    #hint-btn {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 1000;
+      padding: 10px 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      color: var(--gray-300);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition-fast);
+    }
+
+    #hint-btn:hover {
+      background: rgba(30, 58, 95, 0.9);
+      border-color: var(--blue-400);
+      color: var(--white);
+    }
+
+    #hint-btn.visible {
+      display: flex;
+    }
+
+    /* ========== CORRECT COUNTRY INFO POPUP ========== */
+    #correct-info {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 1100;
+      padding: 12px 24px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(46, 204, 113, 0.3);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--green-400);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    #correct-info.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      #hud {
+        padding: 10px 14px;
+        gap: 8px;
+      }
+
+      .level-badge {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+
+      .level-badge .level-icon {
+        font-size: 14px;
+      }
+
+      #target-country {
+        font-size: 18px;
+      }
+
+      .target-label {
+        font-size: 10px;
+      }
+
+      .stat-value {
+        font-size: 16px;
+      }
+
+      .stat-label {
+        font-size: 9px;
+      }
+
+      .hud-right {
+        gap: 12px;
+      }
+
+      #progress-bar-container {
+        top: 58px;
+      }
+
+      .modal-content {
+        padding: 32px 24px;
+      }
+
+      .modal-title {
+        font-size: 30px;
+      }
+
+      .modal-globe {
+        font-size: 56px;
+      }
+
+      .modal-subtitle {
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .results-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .result-stat-value {
+        font-size: 22px;
+      }
+
+      .level-card {
+        padding: 12px 16px;
+        gap: 12px;
+      }
+
+      .level-card-icon {
+        font-size: 26px;
+      }
+
+      .level-card-name {
+        font-size: 14px;
+      }
+
+      .btn {
+        padding: 12px 28px;
+        font-size: 14px;
+      }
+
+      #streak-badge {
+        bottom: 16px;
+        right: 16px;
+        font-size: 12px;
+        padding: 6px 14px;
+      }
+
+      #hint-btn {
+        bottom: 16px;
+        left: 16px;
+        font-size: 12px;
+        padding: 8px 16px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .level-badge span:not(.level-icon) {
+        display: none;
+      }
+
+      .hud-right {
+        gap: 8px;
+      }
+
+      #target-country {
+        font-size: 16px;
+      }
+
+      .stat-value {
+        font-size: 14px;
+      }
+
+      .modal-title {
+        font-size: 26px;
+      }
+
+      .results-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .result-stat {
+        padding: 10px 4px;
+      }
+
+      .result-stat-value {
+        font-size: 18px;
+      }
+
+      .result-stat-label {
+        font-size: 9px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="loading-screen">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Carregando mapa do mundo...</div>
+    </div>
+
+    <div id="map-container"></div>
+
+    <div id="hud">
+      <div class="hud-section hud-left">
+        <div class="level-badge">
+          <span class="level-icon" id="level-icon">🌍</span>
+          <span id="level-name">Nível 1</span>
+        </div>
+      </div>
+      <div class="hud-section hud-center">
+        <div class="target-country-wrapper">
+          <div class="target-label">Encontre no mapa</div>
+          <div id="target-country">Brasil</div>
+        </div>
+      </div>
+      <div class="hud-section hud-right">
+        <div class="stat-item">
+          <span class="stat-label">Pontos</span>
+          <span class="stat-value score" id="score-display">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Tempo</span>
+          <span class="stat-value timer" id="timer-display">0:00</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="progress-bar-container">
+      <div id="progress-bar"></div>
+    </div>
+
+    <div id="feedback-overlay">
+      <div class="feedback-icon" id="feedback-icon"></div>
+    </div>
+
+    <div id="streak-badge">
+      <span class="streak-fire">🔥</span>
+      <span>Sequência: <span class="streak-count" id="streak-count">0</span></span>
+    </div>
+
+    <button id="hint-btn" onclick="useHint()">💡 Dica (<span id="hints-left">3</span>)</button>
+
+    <div id="correct-info"></div>
+
+    <div id="country-tooltip"></div>
+
+    <!-- WELCOME MODAL -->
+    <div class="modal-overlay visible" id="welcome-modal">
+      <div class="modal-content">
+        <img src="img/logo.png" alt="Mapa-Múndi Interativo" class="game-logo">
+        <h1 class="modal-title">GeoQuiz</h1>
+        <p class="modal-subtitle">Teste seus conhecimentos de geografia mundial!</p>
+        <div class="level-cards" id="level-cards"></div>
+        <button class="btn btn-primary" id="start-btn" onclick="startGame()">
+          ▶ Iniciar Jogo
+        </button>
+      </div>
+    </div>
+
+    <!-- RESULTS MODAL -->
+    <div class="modal-overlay" id="results-modal">
+      <div class="modal-content">
+        <h2 class="modal-title" id="results-title">Parabéns!</h2>
+        <div class="stars-container" id="stars-container">
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+        </div>
+        <p class="result-message" id="result-message">Excelente desempenho!</p>
+        <div class="results-stats">
+          <div class="result-stat">
+            <span class="result-stat-value gold" id="result-score">0</span>
+            <span class="result-stat-label">Pontos</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-stat-value green" id="result-accuracy">0%</span>
+            <span class="result-stat-label">Precisão</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-stat-value blue" id="result-time">0:00</span>
+            <span class="result-stat-label">Tempo</span>
+          </div>
+        </div>
+        <div id="missed-container"></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="showWelcome()">🏠 Menu</button>
+          <button class="btn btn-primary" id="next-level-btn" onclick="nextLevel()">Próximo Nível ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    /* ==============================
+       CONFIGURATION & DATA
+    ============================== */
+    const GEOJSON_URLS = [
+      'https://cdn.jsdelivr.net/gh/johan/world.geo.json/countries.geo.json',
+      'https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json'
+    ];
+
+    const COUNTRIES_PT = {
+      "Afghanistan": "Afeganistão", "Albania": "Albânia", "Algeria": "Argélia",
+      "Angola": "Angola", "Argentina": "Argentina", "Armenia": "Armênia",
+      "Australia": "Austrália", "Austria": "Áustria", "Azerbaijan": "Azerbaijão",
+      "Bangladesh": "Bangladesh", "Belarus": "Bielorrússia", "Belgium": "Bélgica",
+      "Belize": "Belize", "Benin": "Benim", "Bhutan": "Butão",
+      "Bolivia": "Bolívia", "Bosnia and Herzegovina": "Bósnia e Herzegovina",
+      "Botswana": "Botsuana", "Brazil": "Brasil", "Brunei": "Brunei",
+      "Bulgaria": "Bulgária", "Burkina Faso": "Burkina Faso", "Burundi": "Burundi",
+      "Cambodia": "Camboja", "Cameroon": "Camarões", "Canada": "Canadá",
+      "Central African Republic": "República Centro-Africana", "Chad": "Chade",
+      "Chile": "Chile", "China": "China", "Colombia": "Colômbia",
+      "Democratic Republic of the Congo": "Rep. Dem. do Congo",
+      "Republic of the Congo": "República do Congo",
+      "Costa Rica": "Costa Rica", "Croatia": "Croácia", "Cuba": "Cuba",
+      "Cyprus": "Chipre", "Czech Republic": "República Tcheca",
+      "Denmark": "Dinamarca", "Djibouti": "Djibuti",
+      "Dominican Republic": "República Dominicana", "Ecuador": "Equador",
+      "Egypt": "Egito", "El Salvador": "El Salvador",
+      "Equatorial Guinea": "Guiné Equatorial", "Eritrea": "Eritreia",
+      "Estonia": "Estônia", "Ethiopia": "Etiópia", "Fiji": "Fiji",
+      "Finland": "Finlândia", "France": "França", "Gabon": "Gabão",
+      "Gambia": "Gâmbia", "Georgia": "Geórgia", "Germany": "Alemanha",
+      "Ghana": "Gana", "Greece": "Grécia", "Greenland": "Groenlândia",
+      "Guatemala": "Guatemala", "Guinea": "Guiné", "Guinea Bissau": "Guiné-Bissau",
+      "Guyana": "Guiana", "Haiti": "Haiti", "Honduras": "Honduras",
+      "Hungary": "Hungria", "Iceland": "Islândia", "India": "Índia",
+      "Indonesia": "Indonésia", "Iran": "Irã", "Iraq": "Iraque",
+      "Ireland": "Irlanda", "Israel": "Israel", "Italy": "Itália",
+      "Ivory Coast": "Costa do Marfim", "Jamaica": "Jamaica", "Japan": "Japão",
+      "Jordan": "Jordânia", "Kazakhstan": "Cazaquistão", "Kenya": "Quênia",
+      "Kosovo": "Kosovo", "Kuwait": "Kuwait", "Kyrgyzstan": "Quirguistão",
+      "Laos": "Laos", "Latvia": "Letônia", "Lebanon": "Líbano",
+      "Lesotho": "Lesoto", "Liberia": "Libéria", "Libya": "Líbia",
+      "Lithuania": "Lituânia", "Luxembourg": "Luxemburgo",
+      "Macedonia": "Macedônia do Norte", "Madagascar": "Madagascar",
+      "Malawi": "Malaui", "Malaysia": "Malásia", "Mali": "Mali",
+      "Mauritania": "Mauritânia", "Mexico": "México", "Moldova": "Moldávia",
+      "Mongolia": "Mongólia", "Montenegro": "Montenegro", "Morocco": "Marrocos",
+      "Mozambique": "Moçambique", "Myanmar": "Mianmar",
+      "Namibia": "Namíbia", "Nepal": "Nepal", "Netherlands": "Países Baixos",
+      "New Caledonia": "Nova Caledônia", "New Zealand": "Nova Zelândia",
+      "Nicaragua": "Nicarágua", "Niger": "Níger", "Nigeria": "Nigéria",
+      "North Korea": "Coreia do Norte", "Northern Cyprus": "Chipre do Norte",
+      "Norway": "Noruega", "Oman": "Omã",
+      "Pakistan": "Paquistão", "Palestine": "Palestina", "Panama": "Panamá",
+      "Papua New Guinea": "Papua-Nova Guiné", "Paraguay": "Paraguai",
+      "Peru": "Peru", "Philippines": "Filipinas", "Poland": "Polônia",
+      "Portugal": "Portugal", "Puerto Rico": "Porto Rico", "Qatar": "Catar",
+      "Romania": "Romênia", "Russia": "Rússia", "Rwanda": "Ruanda",
+      "Saudi Arabia": "Arábia Saudita", "Senegal": "Senegal", "Serbia": "Sérvia",
+      "Sierra Leone": "Serra Leoa", "Slovakia": "Eslováquia",
+      "Slovenia": "Eslovênia", "Solomon Islands": "Ilhas Salomão",
+      "Somalia": "Somália", "Somaliland": "Somalilândia",
+      "South Africa": "África do Sul", "South Korea": "Coreia do Sul",
+      "South Sudan": "Sudão do Sul", "Spain": "Espanha",
+      "Sri Lanka": "Sri Lanka", "Sudan": "Sudão", "Suriname": "Suriname",
+      "Swaziland": "Esuatíni", "Sweden": "Suécia", "Switzerland": "Suíça",
+      "Syria": "Síria", "Taiwan": "Taiwan", "Tajikistan": "Tajiquistão",
+      "United Republic of Tanzania": "Tanzânia", "Thailand": "Tailândia",
+      "The Bahamas": "Bahamas", "Timor-Leste": "Timor-Leste",
+      "Togo": "Togo", "Trinidad and Tobago": "Trinidad e Tobago",
+      "Tunisia": "Tunísia", "Turkey": "Turquia", "Turkmenistan": "Turcomenistão",
+      "Uganda": "Uganda", "Ukraine": "Ucrânia",
+      "United Arab Emirates": "Emirados Árabes Unidos",
+      "United Kingdom": "Reino Unido", "United States of America": "Estados Unidos",
+      "Uruguay": "Uruguai", "Uzbekistan": "Uzbequistão",
+      "Vanuatu": "Vanuatu", "Venezuela": "Venezuela", "Vietnam": "Vietnã",
+      "West Bank": "Cisjordânia", "Western Sahara": "Saara Ocidental",
+      "Yemen": "Iêmen", "Zambia": "Zâmbia", "Zimbabwe": "Zimbábue",
+      "Republic of Serbia": "Sérvia",
+      "United States": "Estados Unidos",
+      "Tanzania": "Tanzânia",
+      "Dem. Rep. Congo": "Rep. Dem. do Congo",
+      "Côte d'Ivoire": "Costa do Marfim",
+      "Congo": "Congo",
+      "Falkland Islands": "Ilhas Malvinas"
+    };
+
+    const LEVELS = [
+      {
+        id: 1,
+        name: "Países Grandes",
+        icon: "🌍",
+        description: "Países mais conhecidos do mundo",
+        difficulty: 1,
+        countries: [
+          "Brazil", "Russia", "United States of America", "China", "India",
+          "Canada", "Australia", "Argentina", "Mexico", "Egypt",
+          "Indonesia", "Saudi Arabia", "South Africa", "Turkey",
+          "Algeria", "Mongolia", "Kazakhstan", "Peru", "Colombia", "Libya"
+        ]
+      },
+      {
+        id: 2,
+        name: "Europa",
+        icon: "🏰",
+        description: "Teste seu conhecimento europeu",
+        difficulty: 2,
+        countries: [
+          "France", "Germany", "Spain", "Italy", "United Kingdom",
+          "Portugal", "Poland", "Sweden", "Norway", "Greece",
+          "Ukraine", "Romania", "Finland", "Austria", "Ireland",
+          "Switzerland", "Belgium", "Netherlands", "Czech Republic", "Denmark"
+        ]
+      },
+      {
+        id: 3,
+        name: "Desafio Global",
+        icon: "🏝️",
+        description: "Ilhas e países menos conhecidos",
+        difficulty: 3,
+        countries: [
+          "Japan", "New Zealand", "Madagascar", "Philippines", "Sri Lanka",
+          "Cuba", "Iceland", "South Korea", "Thailand", "Vietnam",
+          "Malaysia", "Myanmar", "Nepal", "Cambodia", "Papua New Guinea",
+          "North Korea", "Taiwan", "Laos", "Bangladesh", "Pakistan"
+        ]
+      }
+    ];
+
+    const ROUNDS_PER_LEVEL = 10;
+    const BASE_POINTS = 100;
+    const TIME_BONUS_MAX = 50;
+    const TIME_BONUS_WINDOW = 8;
+    const STREAK_BONUS = 15;
+    const HINT_TOTAL = 3;
+
+    /* ==============================
+       GAME STATE
+    ============================== */
+    const state = {
+      map: null,
+      geoLayer: null,
+      geoData: null,
+      countryLayers: {},
+      currentLevel: 0,
+      currentRound: 0,
+      targetCountry: null,
+      targetCountryLayer: null,
+      roundCountries: [],
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      correctCount: 0,
+      missedCountries: [],
+      timerInterval: null,
+      elapsedSeconds: 0,
+      roundStartTime: 0,
+      isPlaying: false,
+      hintsRemaining: HINT_TOTAL,
+      availableCountries: [],
+      processingClick: false
+    };
+
+    /* ==============================
+       SOUND SYSTEM (Web Audio API)
+    ============================== */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        try { audioCtx = new AudioCtx(); } catch(e) { return false; }
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return true;
+    }
+
+    function playTone(freq, duration, type = 'sine', volume = 0.12) {
+      if (!ensureAudio()) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playCorrectSound() {
+      playTone(523, 0.15, 'sine', 0.12);
+      setTimeout(() => playTone(659, 0.15, 'sine', 0.12), 100);
+      setTimeout(() => playTone(784, 0.25, 'sine', 0.1), 200);
+    }
+
+    function playIncorrectSound() {
+      playTone(220, 0.3, 'sawtooth', 0.08);
+      setTimeout(() => playTone(180, 0.4, 'sawtooth', 0.06), 150);
+    }
+
+    function playLevelCompleteSound() {
+      const notes = [523, 587, 659, 784, 880, 1047];
+      notes.forEach((n, i) => {
+        setTimeout(() => playTone(n, 0.2, 'sine', 0.08), i * 80);
+      });
+    }
+
+    function playClickSound() {
+      playTone(800, 0.05, 'sine', 0.04);
+    }
+
+    /* ==============================
+       TRANSLATION HELPERS
+    ============================== */
+    function getPortugueseName(englishName) {
+      return COUNTRIES_PT[englishName] || englishName;
+    }
+
+    /* ==============================
+       MAP INITIALIZATION
+    ============================== */
+    async function loadGeoJSON() {
+      for (const url of GEOJSON_URLS) {
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            return data;
+          }
+        } catch (e) {
+          console.warn('GeoJSON source failed:', url, e);
+        }
+      }
+      throw new Error('Não foi possível carregar os dados do mapa.');
+    }
+
+    function initMap() {
+      state.map = L.map('map-container', {
+        center: [20, 0],
+        zoom: 2.5,
+        minZoom: 2,
+        maxZoom: 8,
+        zoomControl: true,
+        attributionControl: false,
+        worldCopyJump: true,
+        maxBounds: [[-85, -200], [85, 200]],
+        maxBoundsViscosity: 0.8
+      });
+
+      state.map.zoomControl.setPosition('bottomright');
+    }
+
+    function getDefaultStyle() {
+      return {
+        fillColor: '#162d4a',
+        weight: 1,
+        opacity: 0.6,
+        color: '#2a4d7a',
+        fillOpacity: 0.7
+      };
+    }
+
+    function getHoverStyle() {
+      return {
+        fillColor: '#1e3a5f',
+        weight: 2,
+        color: '#4a90d9',
+        fillOpacity: 0.85
+      };
+    }
+
+    function renderCountries(geojsonData) {
+      state.geoData = geojsonData;
+
+      state.geoLayer = L.geoJSON(geojsonData, {
+        style: getDefaultStyle,
+        onEachFeature: (feature, layer) => {
+          const name = feature.properties.name;
+          if (name) {
+            state.countryLayers[name] = layer;
+          }
+
+          layer.on({
+            mouseover: (e) => onCountryMouseOver(e, feature),
+            mouseout: (e) => onCountryMouseOut(e, feature),
+            mousemove: onCountryMouseMove,
+            click: (e) => onCountryClick(e, feature)
+          });
+        }
+      }).addTo(state.map);
+    }
+
+    /* ==============================
+       COUNTRY INTERACTIONS
+    ============================== */
+    const tooltip = document.getElementById('country-tooltip');
+
+    function onCountryMouseOver(e, feature) {
+      if (!state.isPlaying) return;
+      const layer = e.target;
+
+      if (layer._customStyle) return;
+
+      layer.setStyle(getHoverStyle());
+      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+      }
+
+      tooltip.textContent = getPortugueseName(feature.properties.name);
+      tooltip.classList.add('visible');
+    }
+
+    function onCountryMouseOut(e, feature) {
+      if (!state.isPlaying) return;
+      const layer = e.target;
+
+      if (layer._customStyle) return;
+
+      layer.setStyle(getDefaultStyle());
+      tooltip.classList.remove('visible');
+    }
+
+    function onCountryMouseMove(e) {
+      if (!state.isPlaying) return;
+      tooltip.style.left = (e.originalEvent.clientX + 16) + 'px';
+      tooltip.style.top = (e.originalEvent.clientY - 10) + 'px';
+    }
+
+    function onCountryClick(e, feature) {
+      if (!state.isPlaying || state.processingClick) return;
+      state.processingClick = true;
+      playClickSound();
+
+      const clickedName = feature.properties.name;
+      const isCorrect = (clickedName === state.targetCountry);
+
+      if (isCorrect) {
+        handleCorrect(e.target);
+      } else {
+        handleIncorrect(e.target, clickedName);
+      }
+    }
+
+    /* ==============================
+       GAME LOGIC
+    ============================== */
+    function handleCorrect(layer) {
+      playCorrectSound();
+
+      const elapsedForRound = (Date.now() - state.roundStartTime) / 1000;
+      let points = BASE_POINTS;
+      if (elapsedForRound < TIME_BONUS_WINDOW) {
+        points += Math.round(TIME_BONUS_MAX * (1 - elapsedForRound / TIME_BONUS_WINDOW));
+      }
+
+      state.streak++;
+      if (state.streak > 1) {
+        points += STREAK_BONUS * (state.streak - 1);
+      }
+      if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+
+      state.score += points;
+      state.correctCount++;
+
+      showFeedback(true);
+      updateScore();
+      updateStreak();
+
+      flashCountry(layer, '#2ecc71', '#4ade80');
+
+      spawnConfetti(6);
+
+      setTimeout(() => {
+        resetCountryStyle(layer);
+        state.processingClick = false;
+        nextRound();
+      }, 800);
+    }
+
+    function handleIncorrect(clickedLayer, clickedName) {
+      playIncorrectSound();
+
+      state.streak = 0;
+      state.missedCountries.push(getPortugueseName(state.targetCountry));
+
+      showFeedback(false);
+      updateStreak();
+
+      flashCountry(clickedLayer, '#e74c3c', '#f87171');
+
+      const correctLayer = state.countryLayers[state.targetCountry];
+      if (correctLayer) {
+        flashCountry(correctLayer, '#2ecc71', '#4ade80');
+        const correctInfo = document.getElementById('correct-info');
+        correctInfo.textContent = '→ ' + getPortugueseName(state.targetCountry);
+        correctInfo.classList.add('visible');
+        setTimeout(() => correctInfo.classList.remove('visible'), 2000);
+      }
+
+      setTimeout(() => {
+        resetCountryStyle(clickedLayer);
+        if (correctLayer) resetCountryStyle(correctLayer);
+        state.processingClick = false;
+        nextRound();
+      }, 1500);
+    }
+
+    function flashCountry(layer, color1, color2) {
+      layer._customStyle = true;
+      let flashCount = 0;
+      const interval = setInterval(() => {
+        layer.setStyle({
+          fillColor: flashCount % 2 === 0 ? color1 : color2,
+          fillOpacity: 0.9,
+          weight: 2,
+          color: color1,
+          opacity: 1
+        });
+        flashCount++;
+        if (flashCount > 5) clearInterval(interval);
+      }, 120);
+    }
+
+    function resetCountryStyle(layer) {
+      layer._customStyle = false;
+      layer.setStyle(getDefaultStyle());
+    }
+
+    function showFeedback(correct) {
+      const overlay = document.getElementById('feedback-overlay');
+      const icon = document.getElementById('feedback-icon');
+
+      icon.className = 'feedback-icon ' + (correct ? 'correct' : 'incorrect');
+      icon.textContent = correct ? '✓' : '✗';
+
+      overlay.classList.add('show');
+      setTimeout(() => overlay.classList.remove('show'), 700);
+    }
+
+    function spawnConfetti(count) {
+      const colors = ['#d4a844', '#e8c36a', '#4ade80', '#6bb3ff', '#f0d78c', '#ffffff'];
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-particle';
+        el.style.left = (40 + Math.random() * 20) + '%';
+        el.style.top = (30 + Math.random() * 20) + '%';
+        el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        el.style.transform = `rotate(${Math.random() * 360}deg)`;
+        el.style.animationDuration = (1 + Math.random() * 0.5) + 's';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
+      }
+    }
+
+    /* ==============================
+       ROUND MANAGEMENT
+    ============================== */
+    function nextRound() {
+      state.currentRound++;
+
+      if (state.currentRound >= ROUNDS_PER_LEVEL) {
+        endLevel();
+        return;
+      }
+
+      updateProgress();
+      pickNextCountry();
+    }
+
+    function pickNextCountry() {
+      state.targetCountry = state.roundCountries[state.currentRound];
+      state.roundStartTime = Date.now();
+
+      const targetEl = document.getElementById('target-country');
+      targetEl.classList.add('fade-out');
+
+      setTimeout(() => {
+        targetEl.textContent = getPortugueseName(state.targetCountry);
+        targetEl.classList.remove('fade-out');
+      }, 200);
+    }
+
+    function updateProgress() {
+      const pct = ((state.currentRound) / ROUNDS_PER_LEVEL) * 100;
+      document.getElementById('progress-bar').style.width = pct + '%';
+    }
+
+    /* ==============================
+       TIMER
+    ============================== */
+    function startTimer() {
+      state.elapsedSeconds = 0;
+      updateTimerDisplay();
+      state.timerInterval = setInterval(() => {
+        state.elapsedSeconds++;
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(state.elapsedSeconds / 60);
+      const secs = state.elapsedSeconds % 60;
+      document.getElementById('timer-display').textContent =
+        mins + ':' + (secs < 10 ? '0' : '') + secs;
+    }
+
+    /* ==============================
+       UI UPDATES
+    ============================== */
+    function updateScore() {
+      const el = document.getElementById('score-display');
+      el.textContent = state.score;
+      el.style.transform = 'scale(1.3)';
+      setTimeout(() => el.style.transform = 'scale(1)', 200);
+    }
+
+    function updateStreak() {
+      const badge = document.getElementById('streak-badge');
+      const countEl = document.getElementById('streak-count');
+      countEl.textContent = state.streak;
+
+      if (state.streak >= 2) {
+        badge.classList.add('visible');
+      } else {
+        badge.classList.remove('visible');
+      }
+    }
+
+    /* ==============================
+       HINT SYSTEM
+    ============================== */
+    function useHint() {
+      if (state.hintsRemaining <= 0 || !state.isPlaying || !state.targetCountry) return;
+
+      state.hintsRemaining--;
+      document.getElementById('hints-left').textContent = state.hintsRemaining;
+
+      const layer = state.countryLayers[state.targetCountry];
+      if (layer) {
+        const bounds = layer.getBounds();
+        state.map.flyToBounds(bounds, { padding: [80, 80], maxZoom: 5, duration: 0.8 });
+
+        layer._customStyle = true;
+        let blinks = 0;
+        const blinkInt = setInterval(() => {
+          if (blinks % 2 === 0) {
+            layer.setStyle({ fillColor: '#d4a844', fillOpacity: 0.5, weight: 2, color: '#e8c36a' });
+          } else {
+            layer.setStyle(getDefaultStyle());
+          }
+          blinks++;
+          if (blinks > 5) {
+            clearInterval(blinkInt);
+            layer.setStyle(getDefaultStyle());
+            layer._customStyle = false;
+          }
+        }, 200);
+      }
+
+      if (state.hintsRemaining <= 0) {
+        document.getElementById('hint-btn').style.opacity = '0.4';
+        document.getElementById('hint-btn').style.pointerEvents = 'none';
+      }
+    }
+
+    /* ==============================
+       GAME FLOW
+    ============================== */
+    function startGame() {
+      ensureAudio();
+
+      const level = LEVELS[state.currentLevel];
+
+      const available = level.countries.filter(c => state.countryLayers[c]);
+      if (available.length < ROUNDS_PER_LEVEL) {
+        alert('Dados insuficientes para este nível. Tente outro.');
+        return;
+      }
+
+      const shuffled = [...available].sort(() => Math.random() - 0.5);
+      state.roundCountries = shuffled.slice(0, ROUNDS_PER_LEVEL);
+      state.currentRound = 0;
+      state.score = 0;
+      state.streak = 0;
+      state.bestStreak = 0;
+      state.correctCount = 0;
+      state.missedCountries = [];
+      state.isPlaying = true;
+      state.processingClick = false;
+      state.hintsRemaining = HINT_TOTAL;
+
+      document.getElementById('hints-left').textContent = HINT_TOTAL;
+      const hintBtn = document.getElementById('hint-btn');
+      hintBtn.style.opacity = '1';
+      hintBtn.style.pointerEvents = 'auto';
+      hintBtn.classList.add('visible');
+
+      updateScore();
+      updateStreak();
+
+      const levelIcon = document.getElementById('level-icon');
+      const levelName = document.getElementById('level-name');
+      levelIcon.textContent = level.icon;
+      levelName.textContent = 'Nível ' + level.id;
+
+      document.getElementById('welcome-modal').classList.remove('visible');
+      document.getElementById('results-modal').classList.remove('visible');
+      document.getElementById('hud').classList.add('visible');
+      document.getElementById('progress-bar-container').classList.add('visible');
+
+      document.getElementById('progress-bar').style.width = '0%';
+
+      resetAllCountryStyles();
+
+      state.map.flyTo([20, 0], 2.5, { duration: 0.5 });
+
+      startTimer();
+      pickNextCountry();
+    }
+
+    function endLevel() {
+      state.isPlaying = false;
+      stopTimer();
+      playLevelCompleteSound();
+
+      document.getElementById('hud').classList.remove('visible');
+      document.getElementById('progress-bar-container').classList.remove('visible');
+      document.getElementById('hint-btn').classList.remove('visible');
+      document.getElementById('streak-badge').classList.remove('visible');
+
+      const accuracy = Math.round((state.correctCount / ROUNDS_PER_LEVEL) * 100);
+      const timeTaken = state.elapsedSeconds;
+      const mins = Math.floor(timeTaken / 60);
+      const secs = timeTaken % 60;
+
+      let stars = 0;
+      if (accuracy >= 40) stars = 1;
+      if (accuracy >= 70) stars = 2;
+      if (accuracy >= 90) stars = 3;
+
+      let msg = '';
+      if (stars === 3) msg = 'Incrível! Você é um mestre da geografia! 🏆';
+      else if (stars === 2) msg = 'Muito bom! Continue praticando! 💪';
+      else if (stars === 1) msg = 'Bom começo! Tente novamente para melhorar! 📚';
+      else msg = 'Não desista! A prática leva à perfeição! 🌟';
+
+      document.getElementById('results-title').textContent =
+        stars >= 2 ? 'Parabéns!' : 'Fim de Fase!';
+      document.getElementById('result-score').textContent = state.score;
+      document.getElementById('result-accuracy').textContent = accuracy + '%';
+      document.getElementById('result-time').textContent =
+        mins + ':' + (secs < 10 ? '0' : '') + secs;
+      document.getElementById('result-message').textContent = msg;
+
+      const starsEl = document.querySelectorAll('#stars-container .star');
+      starsEl.forEach((s, i) => {
+        s.classList.toggle('earned', i < stars);
+      });
+
+      const missedContainer = document.getElementById('missed-container');
+      if (state.missedCountries.length > 0) {
+        missedContainer.innerHTML =
+          '<div class="missed-list"><div class="missed-list-title">Países que você errou</div><ul>' +
+          state.missedCountries.map(c => '<li>' + c + '</li>').join('') +
+          '</ul></div>';
+      } else {
+        missedContainer.innerHTML = '';
+      }
+
+      const nextBtn = document.getElementById('next-level-btn');
+      if (state.currentLevel < LEVELS.length - 1) {
+        nextBtn.style.display = '';
+        nextBtn.textContent = 'Próximo Nível ▶';
+      } else {
+        nextBtn.style.display = '';
+        nextBtn.textContent = '🔄 Jogar Novamente';
+      }
+
+      setTimeout(() => {
+        document.getElementById('results-modal').classList.add('visible');
+        spawnConfetti(stars >= 2 ? 20 : 5);
+      }, 400);
+    }
+
+    function nextLevel() {
+      if (state.currentLevel < LEVELS.length - 1) {
+        state.currentLevel++;
+      } else {
+        state.currentLevel = 0;
+      }
+      selectLevel(state.currentLevel);
+
+      document.getElementById('results-modal').classList.remove('visible');
+      setTimeout(() => startGame(), 300);
+    }
+
+    function showWelcome() {
+      state.isPlaying = false;
+      stopTimer();
+      document.getElementById('results-modal').classList.remove('visible');
+      document.getElementById('hud').classList.remove('visible');
+      document.getElementById('progress-bar-container').classList.remove('visible');
+      document.getElementById('hint-btn').classList.remove('visible');
+      document.getElementById('streak-badge').classList.remove('visible');
+
+      resetAllCountryStyles();
+
+      setTimeout(() => {
+        document.getElementById('welcome-modal').classList.add('visible');
+      }, 300);
+    }
+
+    function resetAllCountryStyles() {
+      Object.values(state.countryLayers).forEach(layer => {
+        layer._customStyle = false;
+        layer.setStyle(getDefaultStyle());
+      });
+    }
+
+    /* ==============================
+       LEVEL SELECTION UI
+    ============================== */
+    function buildLevelCards() {
+      const container = document.getElementById('level-cards');
+      container.innerHTML = '';
+
+      LEVELS.forEach((level, idx) => {
+        const card = document.createElement('button');
+        card.className = 'level-card' + (idx === 0 ? ' selected' : '');
+        card.id = 'level-card-' + idx;
+
+        let dots = '';
+        for (let i = 0; i < 3; i++) {
+          dots += '<span class="diff-dot' + (i < level.difficulty ? ' active' : '') + '"></span>';
+        }
+
+        card.innerHTML =
+          '<span class="level-card-icon">' + level.icon + '</span>' +
+          '<div class="level-card-info">' +
+            '<div class="level-card-name">' + level.name + '</div>' +
+            '<div class="level-card-desc">' + level.description + '</div>' +
+          '</div>' +
+          '<div class="level-card-difficulty">' + dots + '</div>';
+
+        card.onclick = () => selectLevel(idx);
+        container.appendChild(card);
+      });
+    }
+
+    function selectLevel(idx) {
+      state.currentLevel = idx;
+      document.querySelectorAll('.level-card').forEach((c, i) => {
+        c.classList.toggle('selected', i === idx);
+      });
+    }
+
+    /* ==============================
+       INITIALIZATION
+    ============================== */
+    async function init() {
+      initMap();
+      buildLevelCards();
+
+      try {
+        const geoData = await loadGeoJSON();
+        renderCountries(geoData);
+
+        document.getElementById('loading-screen').classList.add('hidden');
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+        }, 600);
+      } catch (err) {
+        console.error(err);
+        document.querySelector('.loader-spinner').style.display = 'none';
+        document.querySelector('.loader-text').textContent =
+          'Erro ao carregar mapa. Verifique sua conexão e recarregue.';
+        document.querySelector('.loader-text').style.color = '#f87171';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

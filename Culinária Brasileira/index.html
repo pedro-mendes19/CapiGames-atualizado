@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Culinária Brasileira</title>
+</head>
     <style>
         * {
             box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
         }
 
         html,
         body {
-            height: 100%;
+            min-height: 100%;
             width: 100%;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
             background: linear-gradient(180deg, #E8F5E9, #C8E6C9);
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -22,6 +23,13 @@
             text-transform: uppercase;
             overflow-y: auto;
             overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none;
         }
 
         .game-wrapper {
@@ -36,11 +44,11 @@
 
         h1 {
             display: none;
-            margin: 1vh auto 1vh auto;
+            margin: 2vh auto 2vh auto;
             padding: 1vh 4vw;
-            font-size: 35px;
             width: fit-content;
-            max-width: 90%;
+            max-width: 95%;
+            font-size: clamp(20px, 4vw, 38px);
             font-weight: 900;
             letter-spacing: 1px;
             text-align: center;
@@ -51,6 +59,7 @@
             border-radius: 50px;
             flex-shrink: 0;
             box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
         }
 
         #intro {
@@ -63,6 +72,7 @@
             justify-content: center;
             align-items: center;
             z-index: 999;
+            overflow-y: auto;
         }
 
         .intro-card {
@@ -70,12 +80,13 @@
             backdrop-filter: blur(5px);
             padding: 5vh 5vw;
             border-radius: 35px;
-            max-width: 1088px;
+            max-width: 980px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
             text-align: center;
             animation: fadeUp .8s ease;
+            margin: auto;
             border: 4px solid #FFD700;
             box-shadow:
                 0 0 0 5px #ffffff,
@@ -84,7 +95,7 @@
         }
 
         .intro-card h2 {
-            font-size: clamp(28px, 5vh, 48px);
+            font-size: clamp(32px, 6vh, 52px);
             margin-bottom: 2vh;
             font-weight: 900;
             color: #3fa846;
@@ -92,7 +103,7 @@
         }
 
         .intro-card p {
-            font-size: clamp(16px, 2.5vh, 24px);
+            font-size: clamp(18px, 2.8vh, 28px);
             line-height: 1.5;
             color: #101f0d;
             font-weight: 700;
@@ -103,42 +114,35 @@
             justify-content: center;
             align-items: center;
             margin: 4vh auto 0 auto;
-            background: linear-gradient(180deg, #FFEB3B, #FBC02D);
+            background:#FDD835;
             color: #1B5E20;
-            font-size: clamp(20px, 3vh, 28px);
+            font-size: clamp(22px, 3.5vh, 32px);
             padding: 2vh 6vw;
-            border: none;
+            border: 2px solid #FFF;
             border-radius: 40px;
             cursor: pointer;
             font-weight: 900;
-            box-shadow: 0 0.8vh 0 #f57f17ce;
             animation: pulse 1.5s infinite;
             text-transform: uppercase;
-            transition: transform 0.1s;
-            border: 2px solid #FFF;
+            transition: all 0.2s ease;
         }
 
         .btn-jogar:hover {
             transform: scale(1.05);
-            background: linear-gradient(180deg, #FFF176, #FDD835);
-        }
-
-        .btn-jogar:active {
-            transform: translateY(4px);
-            box-shadow: 0 0.4vh 0 #F57F17;
+            background: #ffcb48;
         }
 
         #container {
-            width: 100%;
-            max-width: 1050px;
+            width: min(100%, 900px);
+            max-width: 900px;
             height: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-top: 1vh;
-            margin-bottom: 0;
-            gap: 1vh;
-            padding-bottom: 10px;
+            margin-bottom: auto;
+            gap: 1.5vh;
+            padding: 0 10px 10px;
         }
 
         .tab-navigation {
@@ -156,7 +160,6 @@
             border-radius: 30px;
             border: none;
             font-weight: 900;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
             cursor: pointer;
             background: #DCEDC8;
             color: #33691E;
@@ -182,25 +185,35 @@
             box-shadow: 0 0.5vh 0 #1B5E20;
         }
 
+        .tab-btn.active:active {
+            box-shadow: 0 0.2vh 0 #1B5E20;
+        }
+
         .countries-grid {
             display: flex;
             flex-wrap: wrap;
+            gap: 20px;
             justify-content: center;
-            gap: 30px;
             width: 100%;
-            max-width: 1200px;
-            margin-top: 0;
-            padding-top: 30px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-bottom: 50px;
+        }
+
+        #explorarCulinaria {
+            width: 100%;
+        }
+
+        #quizCulinaria {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 2vh;
+            width: 100%;
         }
 
         .country-card {
             background: white;
             border-radius: 20px;
             margin: 0;
-            width: 155px;
+            width: 160px;
             padding: 15px;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
             border: 3px solid #AED581;
@@ -215,10 +228,14 @@
         }
 
         .country-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(51, 105, 30, 0.2);
+            transform: scale(1.08);
+            box-shadow: 0 20px 40px rgba(51, 105, 30, 0.2);
             border-color: #3fa846;
             background: #F1F8E9;
+        }
+
+        .country-card:active {
+            transform: scale(0.95);
         }
 
         .clothing-preview {
@@ -232,6 +249,7 @@
 
         .clothing-preview img {
             width: auto;
+            height: auto;
             max-width: 100px;
             max-height: 90px;
             filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.1));
@@ -243,18 +261,19 @@
         }
 
         .country-description {
-            font-size: 12px;
+            font-size: 11px;
             color: #33691E;
             margin-top: auto;
+            line-height: 1.2;
             width: 100%;
         }
 
         .ver-ingredientes {
             background: #FFD700;
             color: #1B5E20;
-            border-radius: 50px;
-            padding: 5px 10px;
-            font-size: 11px;
+            border-radius: 10px;
+            padding: 4px 8px;
+            font-size: 10px;
             margin-top: 5px;
             font-weight: 900;
             border: none;
@@ -263,14 +282,14 @@
 
         .bloco-imagem {
             background: white;
-            padding: 1.5vh;
+            padding: 1.5vh 2vw;
             border-radius: 35px;
             box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 95%;
-            max-width: 450px;
+            width: 100%;
+            max-width: 500px;
             border: 5px solid #A5D6A7;
             margin-bottom: 3vh;
         }
@@ -280,16 +299,20 @@
             background: #E8F5E9;
             padding: 0.5vh 1.5vw;
             border-radius: 15px;
-            font-size: clamp(14px, 2vh, 16px);
+            font-size: clamp(14px, 2vh, 15px);
             font-weight: 700;
+            font-style: bold;
             color: #2E7D32;
+            width: fit-content;
+            max-width: 100%;
+            white-space: nowrap;
         }
 
         #imagemPergunta {
             width: auto;
             max-width: 100%;
             height: auto;
-            max-height: 20vh;
+            max-height: 18vh;
             display: block;
             border-radius: 20px;
             object-fit: contain;
@@ -297,8 +320,8 @@
         }
 
         #nomeAlimento {
-            margin-top: 1.5vh;
-            font-size: clamp(22px, 3vh, 32px);
+            margin-top: 1vh;
+            font-size: clamp(20px, 3vh, 30px);
             color: #E65100;
             font-weight: 900;
             text-align: center;
@@ -306,8 +329,8 @@
         }
 
         #pergunta {
-            width: 95%;
-            max-width: 600px;
+            width: 100%;
+            max-width: 620px;
             font-size: clamp(15px, 2.2vh, 20px);
             font-weight: 800;
             text-align: center;
@@ -317,6 +340,7 @@
             padding: 1vh 2vw;
             border-radius: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
         }
 
         .opcoes {
@@ -324,6 +348,7 @@
             gap: 10px;
             justify-content: center;
             width: 100%;
+            max-width: 100%;
             flex-wrap: wrap;
             margin-top: 1vh;
         }
@@ -334,15 +359,16 @@
             border-radius: 25px;
             padding: 1vh 1vw;
             cursor: pointer;
-            min-width: 100px;
-            width: 30%;
-            max-width: 160px;
+            min-width: 110px;
+            width: calc(33.333% - 10px);
+            max-width: 170px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0.7vh 0 #FBC02D;
+            box-shadow: 0 0.5vh 0 #FBC02D;
             transition: transform 0.1s, background 0.2s;
+            box-sizing: border-box;
         }
 
         .opcao:hover {
@@ -371,21 +397,22 @@
         }
 
         #resultado {
-            margin: 1vh auto;
+            margin: 0 auto;
+            height: auto;
+            min-height: 60px;
+            padding: 10px 15px;
             width: 95%;
             max-width: 600px;
-            min-height: 50px;
-            height: auto;
-            padding: 5px 20px;
-            border-radius: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
             font-size: clamp(14px, 2.2vh, 20px);
             font-weight: 800;
+            text-align: center;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             opacity: 0;
             transition: opacity 0.2s;
+            box-sizing: border-box;
         }
 
         #score {
@@ -395,45 +422,50 @@
             background: rgba(255, 255, 255, 0.952);
             padding: 0.8vh 2.5vw;
             border-radius: 50px;
-            margin-top: 1vh;
         }
 
         #painelFinal {
             display: none;
             max-width: 90%;
             width: 600px;
-            padding: 5vh 4vw;
+            min-height: 480px;
+            padding: 30px 40px;
             background-color: #ffffff;
             border-radius: 40px;
             text-align: center;
+            box-shadow: 0 2vh 5vh rgba(0, 0, 0, 0.2);
             animation: fadeUp .6s ease;
+            margin: auto;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             border: 4px solid #FFD700;
             box-shadow:
                 0 0 0 5px #ffffff,
                 0 0 0 9px #3fa846,
                 0 15px 35px rgba(0, 0, 0, 0.2);
-            margin: auto;
         }
 
         #painelFinal h2 {
-            font-size: clamp(32px, 5vh, 48px);
-            margin-bottom: 1vh;
+            font-size: clamp(28px, 5vh, 48px);
+            margin: 0 0 2vh 0;
             color: #E65100;
             font-weight: 900;
             text-transform: uppercase;
         }
 
         #resumoFinal {
-            font-size: clamp(18px, 2.5vh, 22px);
+            font-size: clamp(18px, 2.2vh, 22px);
+            font-weight: bold;
             color: #3E2723;
-            margin-bottom: 3vh;
+            margin-bottom: 2vh;
         }
 
         .totais {
             display: flex;
             justify-content: center;
             gap: 5vw;
-            margin: 3vh 0 4vh 0;
+            margin: 2vh 0 3vh 0;
             background: rgb(245, 245, 242);
             padding: 2vh;
             border-radius: 25px;
@@ -469,7 +501,7 @@
             font-size: clamp(18px, 2.5vh, 24px);
             font-weight: bold;
             color: #BF360C;
-            margin-bottom: 4vh;
+            margin-bottom: 3vh;
         }
 
         .botoes-finais {
@@ -479,9 +511,8 @@
             flex-wrap: wrap;
         }
 
-        .btn-reiniciar,
-        .btn-sair {
-            padding: 1.5vh 3vw;
+        .btn-reiniciar {
+            padding: 2.5vh 3vw;
             font-size: clamp(16px, 2.2vh, 20px);
             border-radius: 30px;
             border: none;
@@ -494,23 +525,11 @@
         }
 
         .btn-reiniciar {
-            background: linear-gradient(180deg, #42A5F5, #1976D2);
-            box-shadow: 0 0.6vh 0 #0D47A1;
+            background: #2f95da;
         }
 
-        .btn-reiniciar:active {
-            transform: translateY(0.4vh);
-            box-shadow: 0 0.2vh 0 #0D47A1;
-        }
-
-        .btn-sair {
-            background: linear-gradient(180deg, #FFA726, #F57C00);
-            box-shadow: 0 0.6vh 0 #E65100;
-        }
-
-        .btn-sair:active {
-            transform: translateY(0.4vh);
-            box-shadow: 0 0.2vh 0 #E65100;
+        .btn-reiniciar:hover {
+            background: #1976D2;
         }
 
         #modalOverlay {
@@ -558,6 +577,7 @@
             color: #5D4037;
             font-size: 16px;
             margin-bottom: 5px;
+            font-weight: bold;
         }
 
         .modal-box p {
@@ -581,7 +601,6 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 0 #b71c1c;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
         }
 
         .btn-fechar-modal:hover {
@@ -609,16 +628,277 @@
             to { opacity: 1; transform: scale(1) }
         }
 
+        @media (min-width: 1100px) and (max-width: 1400px) {
+            .game-wrapper {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            #container {
+                padding: 0 10px 24px;
+                gap: 1vh;
+            }
+
+            .bloco-imagem {
+                max-width: 430px;
+                padding: 1.2vh 2vw;
+            }
+
+            .label-progresso {
+                margin-bottom: 0.8vh;
+                padding: 0.6vh 1.5vw;
+                font-size: 14px;
+            }
+
+            #imagemPergunta {
+                max-height: 16vh;
+            }
+
+            #nomeAlimento {
+                font-size: clamp(18px, 2.4vh, 24px);
+            }
+
+            #pergunta {
+                max-width: 580px;
+                padding: 0.9vh 2vw;
+            }
+
+            .opcoes {
+                gap: 8px;
+            }
+
+            .opcao {
+                padding: 0.9vh 1vw;
+                min-width: 110px;
+                max-width: 150px;
+            }
+
+            #score {
+                padding: 0.8vh 2vw;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #container {
+                padding: 0 5px 10px;
+            }
+
+            .bloco-imagem {
+                width: 100%;
+                max-width: 100%;
+                padding: 1.5vh 2vw;
+            }
+
+            .opcao {
+                width: calc(50% - 10px);
+                max-width: none;
+            }
+
+            .label-progresso {
+                padding: 0.8vh 2vw;
+            }
+        }
+
         @media (max-width: 600px) {
-            .opcao { width: 45%; }
-            .botoes-finais { flex-direction: column; align-items: center; gap: 1.5vh; }
-            .btn-reiniciar, .btn-sair { width: 80%; }
+            .intro-card {
+                width: 95%;
+                padding: 4vh 4vw;
+                border-radius: 25px;
+            }
+
+            .intro-card h2 {
+                font-size: 24.5px;
+                margin-bottom: 1vh;
+            }
+
+            .intro-card p {
+                font-size: 14px;
+                line-height: 1.3;
+            }
+
+            .btn-jogar {
+                margin-top: 2vh;
+                padding: 1.5vh 10vw;
+                font-size: 18px;
+            }
+
+            #resultado {
+                font-size: 15px;
+                min-height: 40px;
+                padding: 6px 10px;
+                margin-top: 1vh;
+            }
+
+            #painelFinal {
+                padding: 4vh 4vw;
+                border-radius: 30px;
+                width: 95%;
+                max-width: 500px;
+                min-height: auto;
+            }
+
+            #painelFinal h2 {
+                font-size: 28px;
+            }
+
+            #resumoFinal {
+                font-size: 16px;
+                margin-bottom: 1.5vh;
+            }
+
+            .totais {
+                margin: 1.5vh 0;
+                padding: 1vh;
+                gap: 3vw;
+            }
+
+            .totais b {
+                font-size: 32px;
+            }
+
+            .acertos,
+            .erros {
+                font-size: 14px;
+            }
+
+            #mensagemFinal {
+                font-size: 18px;
+                margin-bottom: 2vh;
+                white-space: normal;
+            }
+
+            .btn-reiniciar {
+                padding: 2vh 4vw;
+                font-size: 15px;
+                min-width: 130px;
+            }
+
+            h1 {
+                font-size: clamp(18px, 6vw, 24px);
+                padding: 5px 15px;
+                border-width: 3px;
+                margin: 1.5vh auto;
+                white-space: nowrap;
+            }
+
+            .bloco-imagem {
+                padding: 1.2vh;
+                margin-bottom: 1.5vh;
+            }
+
+            #imagemPergunta {
+                max-height: 16vh;
+            }
+
+            #nomeAlimento {
+                font-size: 20px;
+            }
+
+            #pergunta {
+                font-size: 15px;
+                padding: 1vh 3vw;
+            }
+
+            .opcao {
+                width: 45%;
+                padding: 1vh;
+            }
+
+            .opcao img {
+                width: 30px;
+            }
+
+            .opcao p {
+                font-size: 12px;
+            }
+
+            #score {
+                font-size: 15px;
+            }
+
+            #quizCulinaria {
+                gap: 2vh;
+            }
+
+            .game-wrapper {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            h1 {
+                font-size: clamp(15px, 5.5vw, 19px);
+                padding: 5px 12px;
+                margin: 1vh auto;
+                white-space: nowrap;
+            }
+
+            .bloco-imagem {
+                padding: 1vh;
+                border-radius: 25px;
+            }
+
+            #imagemPergunta {
+                max-height: 14vh;
+            }
+
+            #nomeAlimento {
+                font-size: 18px;
+                margin-top: 0.5vh;
+            }
+
+            #pergunta {
+                font-size: 13px;
+                padding: 0.8vh 2vw;
+            }
+
+            #resultado {
+                font-size: 13px;
+                min-height: 35px;
+                padding: 5px 8px;
+            }
+
+            .opcao {
+                padding: 0.8vh;
+                min-width: 80px;
+                width: 45%;
+            }
+
+            .opcao img {
+                width: 25px;
+            }
+
+            .opcao p {
+                font-size: 11px;
+            }
+
+            .countries-grid {
+                gap: 10px;
+            }
+
+            .country-card {
+                width: calc(50% - 5px);
+                padding: 10px;
+                height: 180px;
+            }
+
+            .clothing-preview img {
+                max-width: 80px;
+                max-height: 70px;
+            }
+
+            .country-description {
+                font-size: 10px;
+            }
         }
     </style>
-</head>
+
 <body>
     <div class="game-wrapper">
         <h1>CULINÁRIA BRASILEIRA</h1>
+
         <div id="intro">
             <div class="intro-card">
                 <h2>CULINÁRIA BRASILEIRA</h2>
@@ -630,7 +910,9 @@
                 <button class="btn-jogar" onclick="iniciarJogo()">▶ Jogar</button>
             </div>
         </div>
+
         <div id="container" style="display:none;">
+
             <div class="tab-navigation">
                 <button id="btnQuiz" class="tab-btn active" onclick="mostrarAba('quiz')">
                     QUIZ
@@ -639,40 +921,51 @@
                     CURIOSIDADES
                 </button>
             </div>
-            <div id="explorarCulinaria" style="display:none;">
-                <div style="text-align: center; color: #2E7D32; font-weight: bold; margin-bottom: 15px; margin-top: 25px;">
-                    🔎 Clique nos cards para ver os ingredientes de todas as regiões! 🔍
+
+            <div id="explorarCulinaria">
+                <div style="text-align: center; color: #2E7D32; font-weight: bold; margin-bottom: 15px;">
+                    🔎 Clique nos cards para ver os ingredientes! 🔍
                 </div>
-                <div class="countries-grid" id="gridCuriosidades">
-                    </div>
+                <div class="countries-grid" id="gridCuriosidades"></div>
             </div>
+
             <div id="quizCulinaria" style="display:none; flex-direction: column; align-items: center; gap: 2vh; width: 100%;">
+
                 <div class="bloco-imagem">
                     <div id="progresso" class="label-progresso">Pergunta 1 de 10</div>
                     <img id="imagemPergunta" src="" alt="Imagem da comida">
                     <div id="nomeAlimento">NOME DO PRATO</div>
                 </div>
+
                 <div id="pergunta">DE QUAL ESTADO É ESTE PRATO?</div>
-                <div class="opcoes" id="opcoes">
-                </div>
+
+                <div class="opcoes" id="opcoes"></div>
+
                 <div id="resultado"></div>
                 <div id="score">Pontuação: 0</div>
+
             </div>
+
         </div>
+
         <div id="painelFinal">
             <h2>Fim de jogo!</h2>
             <p id="resumoFinal"></p>
+
             <div class="totais">
                 <span class="acertos">✔ Acertos: <b id="totalAcertos"></b></span>
                 <span class="erros">✘ Erros: <b id="totalErros"></b></span>
             </div>
+
             <p id="mensagemFinal"></p>
+
             <div class="botoes-finais">
                 <button class="btn-reiniciar" onclick="voltarIntroducao()">🔁 Jogar Novamente</button>
-                <button class="btn-sair" onclick="fecharJogo()">🚪 Sair do Jogo</button>
             </div>
         </div>
+
     </div>
+
     <div id="modalOverlay">
         <div class="modal-box">
             <img id="modalImg" src="" alt="Comida">
@@ -914,30 +1207,35 @@
                     { nome: "SÃO PAULO", img: "img/bandeirasp.png" }]
             }
         ];
-        
-        let perguntasSorteadas = []; 
+
+        function embaralhar(lista) {
+            for (let i = lista.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [lista[i], lista[j]] = [lista[j], lista[i]];
+            }
+            return lista;
+        }
+
+        let perguntasDaRodada = [];
+        const TOTAL_PERGUNTAS = 10;
         let atual = 0;
         let score = 0;
         let respondido = false;
-        const totalPorPartida = 10; 
-        
-        function embaralhar(array) {
-            let arrayEmbaralhado = [...array];
-            for (let i = arrayEmbaralhado.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arrayEmbaralhado[i], arrayEmbaralhado[j]] = [arrayEmbaralhado[j], arrayEmbaralhado[i]];
-            }
-            return arrayEmbaralhado;
-        }
-        
+
         function gerarCardsCuriosidades() {
             const grid = document.getElementById('gridCuriosidades');
             grid.innerHTML = '';
 
-            perguntas.forEach((item, index) => {
+            const perguntasOrdenadas = [...perguntas].sort((a, b) =>
+                a.nome.localeCompare(b.nome)
+            );
+
+            perguntasOrdenadas.forEach((item) => {
                 const card = document.createElement('div');
                 card.className = 'country-card';
-                card.onclick = () => abrirModal(index);
+
+                card.onclick = () => abrirModal(item);
+
                 card.innerHTML = `
                     <div class="clothing-preview">
                         <img src="${item.img}" alt="${item.nome}">
@@ -947,37 +1245,21 @@
                         <div class="ver-ingredientes">VEJA</div>
                     </div>
                 `;
+
                 grid.appendChild(card);
             });
         }
 
-        function abrirModal(index) {
-            const item = perguntas[index];
+        function abrirModal(item) {
             document.getElementById('modalImg').src = item.img;
             document.getElementById('modalTitulo').innerText = item.nome;
             document.getElementById('modalIngredientes').innerText = item.ingredientes;
+
             document.getElementById('modalOverlay').style.display = 'flex';
         }
 
         function fecharModal() {
             document.getElementById('modalOverlay').style.display = 'none';
-        }
-
-        function mostrarAba(aba) {
-            document.getElementById('explorarCulinaria').style.display =
-                aba === 'explorar' ? 'block' : 'none';
-
-            document.getElementById('quizCulinaria').style.display =
-                aba === 'quiz' ? 'flex' : 'none';
-
-            document.querySelectorAll('.tab-btn')
-                .forEach(btn => btn.classList.remove('active'));
-
-            if (aba === 'quiz') {
-                document.getElementById('btnQuiz').classList.add('active');
-            } else {
-                document.getElementById('btnExplorar').classList.add('active');
-            }
         }
 
         function iniciarJogo() {
@@ -991,7 +1273,8 @@
 
             mostrarAba('quiz');
 
-            perguntasSorteadas = embaralhar(perguntas).slice(0, totalPorPartida);
+            let bancoEmbaralhado = embaralhar([...perguntas]);
+            perguntasDaRodada = bancoEmbaralhado.slice(0, TOTAL_PERGUNTAS);
 
             atual = 0;
             score = 0;
@@ -1002,9 +1285,9 @@
         }
 
         function mostrar() {
-            const p = perguntasSorteadas[atual];
+            const p = perguntasDaRodada[atual];
 
-            document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${totalPorPartida}`;
+            document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${perguntasDaRodada.length}`;
             document.getElementById('imagemPergunta').src = p.img;
             document.getElementById('nomeAlimento').innerText = p.nome;
 
@@ -1015,7 +1298,9 @@
             const divOpcoes = document.getElementById('opcoes');
             divOpcoes.innerHTML = '';
 
-            p.opcoes.forEach(opcao => {
+            let opcoesSorteadas = embaralhar([...p.opcoes]);
+
+            opcoesSorteadas.forEach(opcao => {
                 const btn = document.createElement('div');
                 btn.className = 'opcao';
                 btn.innerHTML = `<img src="${opcao.img}"><p>${opcao.nome}</p>`;
@@ -1028,12 +1313,29 @@
             respondido = false;
         }
 
+        function mostrarAba(aba) {
+            document.getElementById('explorarCulinaria').style.display =
+                aba === 'explorar' ? 'block' : 'none';
+
+            document.getElementById('quizCulinaria').style.display =
+                aba === 'quiz' ? 'flex' : 'none';
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (aba === 'quiz') {
+                document.getElementById('btnQuiz').classList.add('active');
+            } else {
+                document.getElementById('btnExplorar').classList.add('active');
+            }
+        }
+
         function verificar(resposta, elementoClicado) {
             if (respondido) return;
             respondido = true;
 
-            const p = perguntasSorteadas[atual];
+            const p = perguntasDaRodada[atual];
             const r = document.getElementById('resultado');
+
             r.style.opacity = '1';
 
             if (resposta === p.correta) {
@@ -1061,7 +1363,7 @@
 
             setTimeout(() => {
                 atual++;
-                if (atual < totalPorPartida) {
+                if (atual < perguntasDaRodada.length) {
                     mostrar();
                 } else {
                     fim();
@@ -1074,16 +1376,16 @@
             document.querySelector('h1').style.display = 'none';
 
             const painel = document.getElementById('painelFinal');
-            painel.style.display = 'block';
+            painel.style.display = 'flex';
 
-            const erros = totalPorPartida - score;
+            const erros = perguntasDaRodada.length - score;
             document.getElementById('totalAcertos').innerText = score;
             document.getElementById('totalErros').innerText = erros;
-            document.getElementById('resumoFinal').innerText = `Você completou as ${totalPorPartida} perguntas desta rodada!`;
+            document.getElementById('resumoFinal').innerText = `Você completou as ${perguntasDaRodada.length} perguntas!`;
 
             let msg = '';
-            if (score === totalPorPartida) msg = "🏆 INCRÍVEL! Você gabaritou a rodada!";
-            else if (score > totalPorPartida * 0.7) msg = "👏 Mandou bem! Conhece muito do nosso Brasil.";
+            if (score === perguntasDaRodada.length) msg = "🏆 INCRÍVEL! Você gabaritou a rodada!";
+            else if (score > perguntasDaRodada.length * 0.7) msg = "👏 Mandou bem! Conhece muito do nosso Brasil.";
             else msg = "🍽 Que tal explorar a aba Curiosidades e tentar de novo?";
 
             document.getElementById('mensagemFinal').innerText = msg;
@@ -1098,23 +1400,25 @@
         function fecharJogo() {
             window.close();
             document.body.innerHTML = `
-    <div style="
-        display: flex; 
-        flex-direction: column; 
-        justify-content: center; 
-        align-items: center; 
-        height: 100vh; 
-        background: linear-gradient(135deg, #E8F5E9, #C8E6C9); 
-        font-family: 'Comic Sans MS', cursive, sans-serif;
-        text-align: center;
-    ">
-        <h1 style="color: #E65100; font-size: 40px; margin-bottom: 20px;">Jogo Encerrado!</h1>
-        <p style="color: #5D4037; font-size: 24px;">Até a próxima refeição!</p>
-    </div>
-  `;
+        <div style="
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9); 
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+        ">
+            <h1 style="color: #E65100; font-size: 40px; margin-bottom: 20px;">Jogo Encerrado!</h1>
+            <p style="color: #5D4037; font-size: 24px;">Até a próxima refeição!</p>
+        </div>
+      `;
         }
-        
+
         gerarCardsCuriosidades();
+
     </script>
+
 </body>
 </html>

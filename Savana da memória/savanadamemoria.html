@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,6 +8,7 @@
   <title>Savana da Memória</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
   <style>
     :root {
       --bg-color: #848d1c;
@@ -18,9 +20,9 @@
     }
 
     body {
-      font-family: 'Fredoka', sans-serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       text-transform: uppercase;
-      background-image: url('img/fundojogo.png');
+      background-image: url(img/fundojogo.png);
       background-size: 100% 100%;
       background-position: center;
       background-repeat: no-repeat;
@@ -255,7 +257,7 @@
     #overlay-inicio {
       position: fixed;
       inset: 0;
-      background-image: url('img/capajogo.png');
+      background-image: url(img/fundointro.png);
       background-position: center;
       background-size: cover;
       background-color: #000;
@@ -266,27 +268,27 @@
     }
 
     .btn-start {
-      background: linear-gradient(180deg, #f5b358 0%, #FF8C00 100%);
+      background: linear-gradient(180deg, #eca644 0%, #FF8C00 100%);
       color: white;
       cursor: pointer;
-      font-family: 'Fredoka', sans-serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       font-weight: bold;
       border-radius: 50px;
       white-space: nowrap;
       text-transform: uppercase;
       text-shadow: 2px 2px 0px #cc6a00;
-      font-size: clamp(20px, 5vmin, 45px);
-      padding: clamp(15px, 3vmin, 25px) clamp(35px, 8vmin, 80px);
-      border: 4px solid #fff;
-      box-shadow: 0 8px 0 #a04000, 0 15px 20px rgba(0, 0, 0, 0.4);
-      margin-top: 60vh;
+      font-size: clamp(20px, 5vmin, 40px);
+      padding: clamp(14px, 2.5vmin, 22px) clamp(32px, 7vmin, 72px);
+      border: 3px solid #fff;
+      box-shadow: 0 9px 0 #a04000, 0 15px 20px rgba(0, 0, 0, 0.4);
+      margin-top: 65vh;
       margin-left: 2vh;
       transition: all 0.2s ease-in-out;
       animation: pulseStart 2s infinite;
     }
 
     .btn-start:hover {
-      background: linear-gradient(180deg, #ffd394 0%, #ffa02e 100%);
+      background: linear-gradient(180deg, #fdbd63 0%, #ffa02e 100%);
       transform: translateY(-3px) scale(1.05);
       box-shadow: 0 11px 0 #a04000, 0 20px 25px rgba(0, 0, 0, 0.5);
     }
@@ -395,6 +397,14 @@
       z-index: 5;
     }
 
+    .tempo-final {
+      display: block;
+      font-size: 2.5rem;
+      color: #693600;
+      margin: 15px 0;
+      text-align: center;
+    }
+
     .botoes-modal {
       display: flex;
       flex-direction: column;
@@ -406,8 +416,6 @@
     .btn-proximo {
       margin-top: 0;
     }
-
-
 
     .btn-proximo {
       background: #985e29;
@@ -438,7 +446,8 @@
       box-shadow: 0 3px 0 #693600, 0 5px 10px rgba(0, 0, 0, 0.2);
     }
 
-    @media screen and (max-width: 1024px), screen and (max-height: 800px) {
+    @media screen and (max-width: 1024px),
+    screen and (max-height: 800px) {
       header {
         margin: 8px 0;
       }
@@ -452,6 +461,10 @@
         padding: 4px 25px;
         font-size: 1.1em;
         margin-bottom: 8px;
+      }
+
+      #tempo {
+        font-size: 0.95rem;
       }
 
       .btn-icon {
@@ -473,8 +486,13 @@
       }
 
       .modal-content {
-        padding: 30px 40px;
+        padding: 20px 25px;
         border-width: 4px;
+      }
+
+      .tempo-final {
+        font-size: 1.8rem;
+        margin: 10px 0;
       }
 
       .icone-vitoria {
@@ -492,8 +510,6 @@
         margin-top: 5px;
         box-shadow: 0 3px 0 #693600;
       }
-
-
     }
 
     @media screen and (max-height: 500px) {
@@ -524,6 +540,10 @@
         border-width: 2px;
       }
 
+      #tempo {
+        font-size: 0.85rem;
+      }
+
       .info-item {
         gap: 5px;
       }
@@ -551,10 +571,15 @@
       }
 
       .modal-content {
-        padding: 15px 25px;
+        padding: 10px 15px;
         border-width: 3px;
         border-radius: 12px;
         box-shadow: 0 6px 0 #8a5a2f;
+      }
+
+      .tempo-final {
+        font-size: 1.4rem;
+        margin: 8px 0;
       }
 
       .icone-vitoria {
@@ -611,7 +636,6 @@
       }
     }
   </style>
-</head>
 
 <body>
 
@@ -631,9 +655,6 @@
       <div class="botoes-controle">
         <button onclick="alternarMusica()" class="btn-icon" title="Ligar/Desligar Música">
           <i id="icone-musica" class="fas fa-music"></i>
-        </button>
-        <button onclick="reiniciarNivel()" class="btn-icon" title="Reiniciar Nível">
-          <i class="fas fa-redo"></i>
         </button>
       </div>
     </div>
@@ -922,8 +943,8 @@
 
         msg.innerHTML = `
           PARABÉNS! Você zerou todos os níveis! 🎉<br><br>
-          <strong>Seu tempo total foi:</strong><br>
-          <span style="font-size: 2rem; color: #693600;">${tempoFinalFormatado}</span> 
+          <strong>Seu tempo total foi:</strong>
+          <span class="tempo-final">${tempoFinalFormatado}</span> 
         `;
 
         btn.innerHTML = `JOGAR NOVAMENTE <i class="fas fa-redo"></i>`;
@@ -946,12 +967,8 @@
       modal.style.display = "flex";
     }
 
-
-
     function proximoNivel() { nivelAtual++; iniciarNivelLogica(); }
-    function reiniciarNivel() { if (confirm("Reiniciar este nível?")) iniciarNivelLogica(); }
-
   </script>
-</body>
 
+</body>
 </html>

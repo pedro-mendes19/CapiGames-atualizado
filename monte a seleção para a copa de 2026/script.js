@@ -77,7 +77,8 @@ const jogadores = [
     { id: 65, nome: "Antony", posicao: "Ponta", clube: "Real Betis", liga: "La Liga", forca: 82, foto: "img/atacantes/antony.png" },
     { id: 66, nome: "Martinelli", posicao: "Ponta", clube: "Arsenal", liga: "Premier League", forca: 85, foto: "img/atacantes/martinelli.png" },
     { id: 67, nome: "Matheus Cunha", posicao: "Ponta", clube: "Wolves", liga: "Premier League", forca: 82, foto: "img/atacantes/cunha.png" },
-    { id: 68, nome: "Marcos Leonardo", posicao: "Centroavante", clube: "Al-Hilal", liga: "Liga Arabe", forca: 82, foto: "img/atacantes/marcos_leonardo.png" }
+    { id: 68, nome: "Marcos Leonardo", posicao: "Centroavante", clube: "Al-Hilal", liga: "Liga Arabe", forca: 82, foto: "img/atacantes/marcos_leonardo.png" },
+    { id: 69, nome: "Igor Thiago", posicao: "Centroavante", clube: "Brentford", liga: "Premier League", forca: 83, foto: "img/atacantes/igor_thiago.png" }
 
 ];
 
@@ -236,6 +237,13 @@ function escalar(jogador) {
 
         atualizarMedia();
         renderizarMercado();
+
+        // Se o jogador foi para um slot de reserva, destaca a aba RESERVAS
+        if (idSlot.startsWith('res-')) {
+            const tabRes = document.getElementById('tab-reservas');
+            tabRes.classList.add('tab-pulse');
+            setTimeout(() => tabRes.classList.remove('tab-pulse'), 1500);
+        }
     } else {
         mostrarModal({
             titulo: "CONVOCAÇÃO CHEIA!",
@@ -295,11 +303,47 @@ function filtrar(liga) {
     renderizarMercado(liga);
 }
 
+// --- FUNÇÕES DAS ABAS ---
+function trocarAba(aba) {
+    const painelTitulares = document.getElementById('painel-titulares');
+    const painelReservas = document.getElementById('painel-reservas');
+    const tabTitulares = document.getElementById('tab-titulares');
+    const tabReservas = document.getElementById('tab-reservas');
+
+    if (aba === 'titulares') {
+        painelTitulares.style.display = 'block';
+        painelReservas.style.display = 'none';
+        tabTitulares.classList.add('active');
+        tabReservas.classList.remove('active');
+    } else {
+        painelTitulares.style.display = 'none';
+        painelReservas.style.display = 'block';
+        tabTitulares.classList.remove('active');
+        tabReservas.classList.add('active');
+    }
+
+    // Re-trigger animation
+    const painel = aba === 'titulares' ? painelTitulares : painelReservas;
+    painel.style.animation = 'none';
+    painel.offsetHeight; // force reflow
+    painel.style.animation = '';
+}
+
+function atualizarContadorReservas() {
+    const total = document.querySelectorAll('.slot.reserva').length;
+    const preenchidos = document.querySelectorAll('.slot.reserva.preenchido').length;
+    const contador = document.getElementById('contador-reservas');
+    if (contador) {
+        contador.innerText = `${preenchidos}/${total}`;
+    }
+}
+
 function atualizarMedia() {
     const el = document.getElementById('media-forca');
     if (jogadoresEscalados.length === 0) { el.innerText = "0.0"; return; }
     const media = (jogadoresEscalados.reduce((acc, j) => acc + j.forca, 0) / jogadoresEscalados.length).toFixed(1);
     el.innerText = media;
+    atualizarContadorReservas();
 }
 
 // --- FUNÇÕES DO MODAL ---
@@ -363,3 +407,4 @@ function inicializarSlots() {
 
 inicializarSlots();
 renderizarMercado();
+atualizarContadorReservas();
