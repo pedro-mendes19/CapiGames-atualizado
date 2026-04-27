@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metamorfose Insetos</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+  <style>
+    * { font-family: 'Fredoka', sans-serif; box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body { box-sizing: border-box; }
+
+    .game-bg {
+      background: linear-gradient(170deg, #1a472a 0%, #2d6a3f 30%, #3a8f54 60%, #5cb85c 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .game-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 120% 60% at 50% 110%, rgba(34,85,34,0.7) 0%, transparent 70%),
+        radial-gradient(circle at 15% 20%, rgba(255,255,200,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(255,255,200,0.06) 0%, transparent 35%);
+      pointer-events: none;
+    }
+
+    /* Floating leaves */
+    @keyframes floatLeaf {
+      0% { transform: translateY(-10%) rotate(0deg) scale(0.8); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.4; }
+      100% { transform: translateY(110%) rotate(360deg) scale(1); opacity: 0; }
+    }
+    .leaf {
+      position: absolute;
+      width: 20px; height: 20px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+    }
+    .leaf svg { width: 100%; height: 100%; }
+    .leaf:nth-child(1) { left: 10%; animation: floatLeaf 12s linear infinite 0s; }
+    .leaf:nth-child(2) { left: 30%; animation: floatLeaf 15s linear infinite 3s; }
+    .leaf:nth-child(3) { left: 55%; animation: floatLeaf 10s linear infinite 6s; }
+    .leaf:nth-child(4) { left: 75%; animation: floatLeaf 14s linear infinite 2s; }
+    .leaf:nth-child(5) { left: 90%; animation: floatLeaf 11s linear infinite 8s; }
+
+    /* Screens */
+    .screen { display: none; width: 100%; height: 100%; position: absolute; inset: 0; }
+    .screen.active { display: flex; }
+
+    /* Drag items */
+    .drag-item {
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      touch-action: none;
+    }
+    .drag-item:hover { transform: scale(1.05); }
+    .drag-item.dragging {
+      cursor: grabbing;
+      transform: scale(1.12);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      z-index: 100;
+      opacity: 0.9;
+    }
+
+    /* Drop zones */
+    .drop-zone {
+      border: 3px dashed rgba(255,255,255,0.4);
+      border-radius: 16px;
+      transition: all 0.3s;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .drop-zone.highlight {
+      border-color: #ffd700;
+      background: rgba(255,215,0,0.15);
+      transform: scale(1.03);
+    }
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.1);
+      cursor: pointer;
+    }
+    .drop-zone.filled:hover {
+      background: rgba(255,255,255,0.18);
+    }
+    .drop-zone.correct {
+      border-color: #4ade80;
+      background: rgba(74,222,128,0.2);
+    }
+    .drop-zone.wrong {
+      border-color: #f87171;
+      background: rgba(248,113,113,0.2);
+    }
+
+    /* Shake animation for wrong answers */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.45s ease-in-out; }
+
+    /* Success animation */
+    @keyframes celebrate {
+      0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+      50% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .celebrate { animation: celebrate 0.6s ease-out forwards; }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pop-in { animation: popIn 0.5s ease-out forwards; }
+
+    @keyframes sparkle {
+      0%,100% { opacity: 0; transform: scale(0) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1) rotate(180deg); }
+    }
+
+    /* Confetti */
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
+    }
+    .confetti {
+      position: absolute;
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      pointer-events: none;
+      animation: confettiFall 3s ease-in forwards;
+    }
+
+    /* Phase indicator */
+    .phase-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: all 0.4s;
+    }
+    .phase-dot.active { background: #ffd700; transform: scale(1.3); box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+    .phase-dot.done { background: #4ade80; }
+
+    /* Progress bar */
+    .progress-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.15);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #4ade80, #facc15);
+      transition: width 0.6s ease;
+    }
+
+    /* Pulse button */
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(255,215,0,0.5); } 50% { box-shadow: 0 0 0 12px rgba(255,215,0,0); } }
+    .btn-pulse { animation: pulse 2s infinite; }
+
+    /* Arrow between zones */
+    .arrow-between { color: rgba(255,255,255,0.5); font-size: 24px; display: flex; align-items: center; }
+
+    /* Info bubble */
+    .info-bubble {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 10px 16px;
+      color: #e0f0e0;
+      font-size: 14px;
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    /* Info panel (retrátil) */
+    .info-panel {
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #e0f0e0;
+      font-size: 13px;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Transition between phases */
+    @keyframes slideIn {
+      0% { transform: translateX(60px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    .slide-in { animation: slideIn 0.5s ease-out forwards; }
+
+    /* Victory screen butterfly */
+    @keyframes butterflyFly {
+      0% { transform: translate(0,0) rotate(0deg); }
+      25% { transform: translate(40px,-30px) rotate(5deg); }
+      50% { transform: translate(-20px,-50px) rotate(-5deg); }
+      75% { transform: translate(30px,-20px) rotate(3deg); }
+      100% { transform: translate(0,0) rotate(0deg); }
+    }
+    .butterfly-fly { animation: butterflyFly 5s ease-in-out infinite; }
+
+    .star-sparkle {
+      position: absolute;
+      animation: sparkle 1.5s ease-in-out infinite;
+    }
+
+    /* Verify button */
+    .btn-verify {
+      background: linear-gradient(90deg, #facc15, #f59e0b);
+      color: #14532d;
+      font-weight: 700;
+      border-radius: 14px;
+      padding: 10px 28px;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.2s;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+    .btn-verify:hover:not(:disabled) { transform: scale(1.05); }
+    .btn-verify:active:not(:disabled) { transform: scale(0.97); }
+    .btn-verify:disabled { opacity: 0.45; cursor: not-allowed; }
+  </style>
+
+<body class="h-full">
+  <div id="app" class="game-bg h-full w-full relative" style="overflow:auto;">
+    <!-- FIXED: viewBox capitalização correta -->
+    <div class="leaf">
+     <svg viewBox="0 0 24 24" fill="none" stroke="#3a6b35" stroke-width="2">
+      <path d="M12 2C6.5 6 2 12 2 17c0 3 2.5 5 5 5 2 0 3.5-1 5-3 1.5 2 3 3 5 3 2.5 0 5-2 5-5 0-5-4.5-11-10-15z" /><path d="M12 2v20" />
+     </svg>
+    </div>
+    <div class="leaf">
+     <svg viewBox="0 0 24 24" fill="none" stroke="#4a8b45" stroke-width="2">
+      <path d="M12 2C6.5 6 2 12 2 17c0 3 2.5 5 5 5 2 0 3.5-1 5-3 1.5 2 3 3 5 3 2.5 0 5-2 5-5 0-5-4.5-11-10-15z" /><path d="M12 2v20" />
+     </svg>
+    </div>
+    <div class="leaf">
+     <svg viewBox="0 0 24 24" fill="none" stroke="#3a6b35" stroke-width="2">
+      <path d="M12 2C6.5 6 2 12 2 17c0 3 2.5 5 5 5 2 0 3.5-1 5-3 1.5 2 3 3 5 3 2.5 0 5-2 5-5 0-5-4.5-11-10-15z" /><path d="M12 2v20" />
+     </svg>
+    </div>
+    <div class="leaf">
+     <svg viewBox="0 0 24 24" fill="none" stroke="#4a8b45" stroke-width="2">
+      <path d="M12 2C6.5 6 2 12 2 17c0 3 2.5 5 5 5 2 0 3.5-1 5-3 1.5 2 3 3 5 3 2.5 0 5-2 5-5 0-5-4.5-11-10-15z" /><path d="M12 2v20" />
+     </svg>
+    </div>
+    <div class="leaf">
+     <svg viewBox="0 0 24 24" fill="none" stroke="#3a6b35" stroke-width="2">
+      <path d="M12 2C6.5 6 2 12 2 17c0 3 2.5 5 5 5 2 0 3.5-1 5-3 1.5 2 3 3 5 3 2.5 0 5-2 5-5 0-5-4.5-11-10-15z" /><path d="M12 2v20" />
+     </svg>
+    </div>
+    
+    <!-- TELA INÍCIO -->
+    <div id="screen-start" class="screen active flex-col items-center justify-center text-center px-4" style="z-index:10;">
+     <div class="relative z-10 flex flex-col items-center gap-4">
+      <div class="flex gap-4 mb-2">
+       <div class="text-5xl">🦗</div>
+       <div class="text-5xl">🦋</div>
+       <div class="text-5xl">🪲</div>
+      </div>
+      <h1 id="el-title" class="text-4xl md:text-5xl font-bold text-white drop-shadow-lg leading-tight">Metamorfose<br>Insetos</h1>
+      <p class="text-lg text-green-100 max-w-md">Descubra como os insetos se transformam! Organize as fases da metamorfose e aprenda sobre a natureza. 🌿</p>
+      <button id="btn-start" onclick="startGame()" class="btn-pulse mt-4 bg-yellow-400 hover:bg-yellow-300 text-green-900 font-bold text-xl px-10 py-4 rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95"> Começar Aventura! 🚀 </button>
+      <p class="text-green-200 text-sm mt-2">Arraste as fases na ordem correta</p>
+     </div>
+    </div>
+    
+    <!-- TELA JOGO -->
+    <div id="screen-game" class="screen flex-col items-center px-3 py-4" style="z-index:10;">
+      <!-- Topo: home | dots | reset -->
+      <div class="w-full max-w-2xl flex items-center justify-between mb-1">
+        <button onclick="goHome()" class="text-white/70 hover:text-white transition p-2 rounded-xl hover:bg-white/10">
+          <i data-lucide="home" style="width:22px;height:22px;"></i>
+        </button>
+        <div class="flex gap-2 items-center" id="phase-dots"></div>
+        <button onclick="resetPhase()" class="text-white/70 hover:text-white transition p-2 rounded-xl hover:bg-white/10" title="Recomeçar fase">
+          <i data-lucide="rotate-ccw" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+
+      <!-- Barra de progresso -->
+      <div class="w-full max-w-2xl progress-bar mb-3">
+        <div id="progress-fill" class="progress-fill" style="width:0%"></div>
+      </div>
+
+      <!-- Cabeçalho da fase + botão ❓ -->
+      <div id="phase-header" class="w-full max-w-2xl flex items-start justify-between mb-2 slide-in px-1">
+        <div>
+          <h2 id="phase-title" class="text-2xl md:text-3xl font-bold text-white drop-shadow"></h2>
+          <p id="phase-type" class="text-yellow-300 font-semibold text-sm mt-1"></p>
+        </div>
+        <button onclick="toggleInfo()" id="info-btn" class="mt-1 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition text-lg flex-shrink-0" title="Informações sobre esta fase">❓</button>
+      </div>
+
+      <!-- Painel de info retrátil -->
+      <div id="info-panel" class="w-full max-w-2xl info-panel mb-3 slide-in hidden">
+        <div class="flex justify-between items-start mb-1">
+          <span id="info-panel-title" class="font-bold text-yellow-200 text-sm"></span>
+          <button onclick="toggleInfo()" class="text-white/40 hover:text-white text-xl leading-none ml-2">×</button>
+        </div>
+        <p id="info-panel-text" class="text-green-100/80 text-xs leading-relaxed"></p>
+      </div>
+
+      <!-- Zonas de drop -->
+      <div id="drop-container" class="flex items-center justify-center gap-2 md:gap-3 mb-4 flex-wrap w-full max-w-2xl slide-in"></div>
+
+      <!-- Pool de peças -->
+      <div id="drag-pool" class="flex items-center justify-center gap-3 md:gap-4 flex-wrap w-full max-w-2xl slide-in"></div>
+
+      <!-- Botão verificar -->
+      <div class="mt-4 flex flex-col items-center gap-2">
+        <button id="verify-btn" onclick="checkSequence()" class="btn-verify" disabled>
+          Verificar Sequência ✓
+        </button>
+        <div id="feedback" class="text-center min-h-[56px]"></div>
+      </div>
+    </div>
+    
+    <!-- TELA VITÓRIA -->
+    <div id="screen-victory" class="screen flex-col items-center justify-center text-center px-4" style="z-index:10;">
+     <div class="relative z-10 flex flex-col items-center gap-3" id="victory-content">
+      <div class="butterfly-fly text-6xl mb-2">🦋</div>
+      <h1 id="el-victory-msg" class="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">Parabéns, Cientista!</h1>
+      <p class="text-lg text-green-100 max-w-md">Você completou todas as fases da metamorfose! Agora sabe como a traça, o gafanhoto e a borboleta se transformam. 🌟</p>
+      <div class="flex gap-6 mt-3 text-5xl">
+        <span class="pop-in" style="animation-delay:0.2s;opacity:0">🪲</span> 
+        <span class="pop-in" style="animation-delay:0.5s;opacity:0">🦗</span> 
+        <span class="pop-in" style="animation-delay:0.8s;opacity:0">🦋</span>
+      </div>
+      <button onclick="goHome()" class="mt-3 bg-white/20 hover:bg-white/30 text-white font-bold px-6 py-2 rounded-xl shadow transition-all hover:scale-105 active:scale-95 text-sm">
+        ← Início
+      </button>
+      <button onclick="restartGame()" class="btn-pulse mt-2 bg-yellow-400 hover:bg-yellow-300 text-green-900 font-bold text-xl px-10 py-4 rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95"> Jogar Novamente 🔄 </button>
+     </div>
+     <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    // ========== CONFIG & SDK ==========
+    const defaultConfig = {
+      game_title: 'Metamorfose\nInsetos',
+      btn_start_text: 'Começar Aventura! 🚀',
+      victory_message: 'Parabéns, Cientista!',
+      background_color: '#1a472a',
+      surface_color: '#ffffff',
+      text_color: '#ffffff',
+      primary_action_color: '#facc15',
+      secondary_action_color: '#4ade80',
+      font_family: 'Fredoka',
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+      const font = c.font_family || defaultConfig.font_family;
+      const baseSize = c.font_size || defaultConfig.font_size;
+      document.documentElement.style.fontFamily = `${font}, sans-serif`;
+
+      const elTitle = document.getElementById('el-title');
+      if (elTitle) {
+        elTitle.textContent = (c.game_title || defaultConfig.game_title).replace('\\n', '\n');
+        elTitle.innerHTML = elTitle.textContent.replace('\n', '<br>');
+        elTitle.style.fontSize = `${baseSize * 2.8}px`;
+        elTitle.style.color = c.text_color;
+      }
+      const btnStart = document.getElementById('btn-start');
+      if (btnStart) {
+        btnStart.textContent = c.btn_start_text || defaultConfig.btn_start_text;
+        btnStart.style.backgroundColor = c.primary_action_color;
+        btnStart.style.fontSize = `${baseSize * 1.25}px`;
+      }
+      const elVic = document.getElementById('el-victory-msg');
+      if (elVic) {
+        elVic.textContent = c.victory_message || defaultConfig.victory_message;
+        elVic.style.color = c.text_color;
+        elVic.style.fontSize = `${baseSize * 2.8}px`;
+      }
+
+      const app = document.getElementById('app');
+      if (app) {
+        const bg = c.background_color || defaultConfig.background_color;
+        app.style.background = `linear-gradient(170deg, ${bg} 0%, ${lighten(bg,15)} 50%, ${lighten(bg,30)} 100%)`;
+      }
+
+      const pt = document.getElementById('phase-title');
+      if (pt) { pt.style.color = c.text_color; pt.style.fontSize = `${baseSize * 1.75}px`; }
+      const pty = document.getElementById('phase-type');
+      if (pty) { pty.style.color = c.primary_action_color; pty.style.fontSize = `${baseSize * 0.85}px`; }
+
+      document.querySelectorAll('.drop-zone').forEach(z => { z.style.borderColor = c.surface_color + '66'; });
+      document.querySelectorAll('.drag-item').forEach(d => {
+        if (!d.classList.contains('dragging')) d.style.borderColor = c.surface_color + '44';
+      });
+      document.querySelectorAll('.drop-zone.correct').forEach(z => {
+        z.style.borderColor = c.secondary_action_color;
+        z.style.background = c.secondary_action_color + '33';
+      });
+    }
+
+    function lighten(hex, pct) {
+      let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      r = Math.min(255, r + Math.round((255-r)*pct/100));
+      g = Math.min(255, g + Math.round((255-g)*pct/100));
+      b = Math.min(255, b + Math.round((255-b)*pct/100));
+      return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => applyConfig(config),
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+            { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: v => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+            { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: v => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['game_title', config.game_title || defaultConfig.game_title],
+          ['btn_start_text', config.btn_start_text || defaultConfig.btn_start_text],
+          ['victory_message', config.victory_message || defaultConfig.victory_message]
+        ])
+      });
+    }
+
+    // ========== GAME DATA ==========
+    // FIXED: IDs únicos por fase para evitar conflitos no dropSlots.indexOf()
+    const phases = [
+      {
+        name: 'Traça',
+        type: 'Ametabolia',
+        emoji: '🪲',
+        infoTitle: 'Sobre a Traça',
+        info: 'A traça é um inseto ametábolo: ela não passa por metamorfose! O filhote já nasce parecido com o adulto e apenas cresce.',
+        stages: [
+          { id: 'traca-ovo',    label: 'Ovo',    icon: '🥚' },
+          { id: 'traca-jovem',  label: 'Jovem',  icon: '🐛' },
+          { id: 'traca-adulto', label: 'Adulto', icon: '🪲' }
+        ],
+        successEmoji: ['🪲','🪲'],
+        successMsg: 'A traça não muda de forma! Ela cresce direto. Isso é <b>Ametabolia</b>! 🎉'
+      },
+      {
+        name: 'Gafanhoto',
+        type: 'Hemimetabolia',
+        emoji: '🦗',
+        infoTitle: 'Sobre o Gafanhoto',
+        info: 'O gafanhoto é hemimetábolo: ele passa por uma transformação incompleta. A ninfa se parece com o adulto, mas sem asas!',
+        stages: [
+          { id: 'gafa-ovo',    label: 'Ovo',    icon: '🥚' },
+          { id: 'gafa-ninfa',  label: 'Ninfa',  icon: '🦗' },
+          { id: 'gafa-adulto', label: 'Adulto', icon: '🦗' }
+        ],
+        stageDetails: ['', '(sem asas)', '(com asas)'],
+        successEmoji: ['🦗','🦗'],
+        successMsg: 'O gafanhoto muda aos poucos! A ninfa parece o adulto, mas sem asas. Isso é <b>Hemimetabolia</b>! 🎉'
+      },
+      {
+        name: 'Borboleta',
+        type: 'Metamorfose Completa',
+        emoji: '🦋',
+        infoTitle: 'Sobre a Borboleta',
+        info: 'A borboleta passa por metamorfose completa! Ela muda totalmente: de lagarta vira casulo e depois uma linda borboleta.',
+        stages: [
+          { id: 'borb-ovo',      label: 'Ovo',       icon: '🥚' },
+          { id: 'borb-larva',    label: 'Larva',      icon: '🐛' },
+          { id: 'borb-pupa',     label: 'Pupa',       icon: '🫘' },
+          { id: 'borb-adulto',   label: 'Borboleta',  icon: '🦋' }
+        ],
+        successEmoji: ['🦋','🦋'],
+        successMsg: 'A borboleta muda completamente! De ovo a lagarta, casulo e borboleta. Isso é <b>Metamorfose Completa</b>! 🦋✨'
+      }
+    ];
+
+    let currentPhase = 0;
+    let dropSlots = [];
+    let phaseCompleted = false;
+
+    // ========== AUDIO (Web Audio API) ==========
+    let audioCtx;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+    function playSuccessSound() {
+      try {
+        const ctx = getAudioCtx();
+        const notes = [523.25, 659.25, 783.99];
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.15);
+          osc.stop(ctx.currentTime + i * 0.15 + 0.4);
+        });
+      } catch(e) {}
+    }
+    function playDropSound() {
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 440;
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.15);
+      } catch(e) {}
+    }
+    function playErrorSound() {
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.value = 220;
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.3);
+      } catch(e) {}
+    }
+
+    // ========== SCREENS ==========
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + id).classList.add('active');
+    }
+
+    function startGame() {
+      currentPhase = 0;
+      showScreen('game');
+      loadPhase();
+    }
+    function goHome() {
+      showScreen('start');
+      applyConfig(window?.elementSdk?.config || defaultConfig);
+    }
+    function restartGame() {
+      currentPhase = 0;
+      showScreen('game');
+      loadPhase();
+    }
+
+    // ========== INFO PANEL ==========
+    function toggleInfo() {
+      const panel = document.getElementById('info-panel');
+      panel.classList.toggle('hidden');
+    }
+
+    // ========== PHASE LOADING ==========
+    function loadPhase() {
+      phaseCompleted = false;
+      const phase = phases[currentPhase];
+
+      // Progress bar
+      document.getElementById('progress-fill').style.width = (currentPhase / phases.length * 100) + '%';
+
+      // Phase dots
+      const dotsC = document.getElementById('phase-dots');
+      dotsC.innerHTML = '';
+      phases.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'phase-dot' + (i === currentPhase ? ' active' : '') + (i < currentPhase ? ' done' : '');
+        dotsC.appendChild(dot);
+      });
+
+      // Title
+      document.getElementById('phase-title').textContent = `Fase ${currentPhase + 1}: ${phase.name} ${phase.emoji}`;
+      document.getElementById('phase-type').textContent = phase.type;
+      document.getElementById('feedback').innerHTML = '';
+
+      // Info panel
+      document.getElementById('info-panel-title').textContent = phase.infoTitle;
+      document.getElementById('info-panel-text').textContent = phase.info;
+      document.getElementById('info-panel').classList.add('hidden');
+
+      // Verify button reset
+      const vBtn = document.getElementById('verify-btn');
+      vBtn.disabled = true;
+
+      // Drop zones
+      const dropC = document.getElementById('drop-container');
+      dropC.innerHTML = '';
+      dropSlots = new Array(phase.stages.length).fill(null);
+
+      phase.stages.forEach((stage, i) => {
+        if (i > 0) {
+          const arrow = document.createElement('div');
+          arrow.className = 'arrow-between';
+          arrow.innerHTML = '➜';
+          dropC.appendChild(arrow);
+        }
+        const zone = document.createElement('div');
+        zone.className = 'drop-zone';
+        zone.style.width = phase.stages.length > 3 ? '100px' : '120px';
+        zone.style.minHeight = '110px';
+        zone.style.flexDirection = 'column';
+        zone.dataset.index = i;
+        zone.innerHTML = `<span class="text-white/40 text-xs">${i + 1}ª fase</span>`;
+        // Clique para remover peça da zona
+        zone.addEventListener('click', () => removeFromZone(i));
+        dropC.appendChild(zone);
+      });
+
+      // Drag items (shuffled)
+      const dragC = document.getElementById('drag-pool');
+      dragC.innerHTML = '';
+      const shuffled = [...phase.stages].sort(() => Math.random() - 0.5);
+
+      shuffled.forEach(stage => {
+        const item = document.createElement('div');
+        item.className = 'drag-item bg-white/15 backdrop-blur-sm rounded-2xl p-3 flex flex-col items-center border border-white/20';
+        item.style.width = '100px';
+        item.dataset.stageId = stage.id;
+        const detail = phase.stageDetails ? phase.stageDetails[phase.stages.indexOf(stage)] : '';
+        item.innerHTML = `
+          <div class="text-4xl mb-1">${stage.icon}</div>
+          <div class="text-white font-semibold text-sm">${stage.label}</div>
+          ${detail ? `<div class="text-green-200 text-xs">${detail}</div>` : ''}
+        `;
+        // Clique para posicionar no próximo slot livre
+        item.addEventListener('click', () => clickPlace(stage.id));
+        setupDrag(item);
+        dragC.appendChild(item);
+      });
+
+      // Slide in animation
+      const header = document.getElementById('phase-header');
+      header.classList.remove('slide-in');
+      void header.offsetWidth;
+      header.classList.add('slide-in');
+
+      lucide.createIcons();
+      applyConfig(window?.elementSdk?.config || defaultConfig);
+    }
+
+    // ========== CLICK TO PLACE / REMOVE ==========
+    function clickPlace(stageId) {
+      if (phaseCompleted) return;
+      const phase = phases[currentPhase];
+      // Find first empty slot
+      for (let i = 0; i < phase.stages.length; i++) {
+        if (!dropSlots[i]) {
+          placeInZone(stageId, i);
+          return;
+        }
+      }
+    }
+
+    function removeFromZone(zoneIndex) {
+      if (phaseCompleted) return;
+      if (!dropSlots[zoneIndex]) return;
+      const stageId = dropSlots[zoneIndex];
+      dropSlots[zoneIndex] = null;
+
+      // Return to pool
+      const pool = document.getElementById('drag-pool');
+      pool.querySelectorAll('.drag-item').forEach(item => {
+        if (item.dataset.stageId === stageId) {
+          item.style.display = 'flex';
+          item.style.opacity = '1';
+        }
+      });
+
+      // Clear zone visually
+      const zones = document.querySelectorAll('.drop-zone');
+      const zone = zones[getZoneVisualIndex(zoneIndex)];
+      if (zone) {
+        zone.innerHTML = `<span class="text-white/40 text-xs">${zoneIndex + 1}ª fase</span>`;
+        zone.classList.remove('filled', 'correct', 'wrong');
+      }
+
+      updateVerifyBtn();
+    }
+
+    function placeInZone(stageId, zoneIndex) {
+      const phase = phases[currentPhase];
+      const stageData = phase.stages.find(s => s.id === stageId);
+      const detail = phase.stageDetails ? phase.stageDetails[phase.stages.indexOf(stageData)] : '';
+
+      // If item was already placed somewhere, clear it
+      const prevIdx = dropSlots.indexOf(stageId);
+      if (prevIdx !== -1) {
+        dropSlots[prevIdx] = null;
+        const prevZone = document.querySelectorAll('.drop-zone')[getZoneVisualIndex(prevIdx)];
+        if (prevZone) {
+          prevZone.innerHTML = `<span class="text-white/40 text-xs">${prevIdx + 1}ª fase</span>`;
+          prevZone.classList.remove('filled', 'correct', 'wrong');
+        }
+      }
+
+      // If zone occupied, return that item
+      if (dropSlots[zoneIndex]) {
+        returnToPool(dropSlots[zoneIndex]);
+      }
+
+      dropSlots[zoneIndex] = stageId;
+
+      // Update zone visually (not marking as correct yet — waits for Verificar)
+      const zones = document.querySelectorAll('.drop-zone');
+      const targetZone = zones[getZoneVisualIndex(zoneIndex)];
+      if (targetZone) {
+        targetZone.innerHTML = `
+          <div class="text-3xl mb-1">${stageData.icon}</div>
+          <div class="text-white font-semibold text-xs">${stageData.label}</div>
+          ${detail ? `<div class="text-green-200 text-xs">${detail}</div>` : ''}
+        `;
+        targetZone.classList.add('filled');
+        targetZone.classList.remove('correct', 'wrong');
+      }
+
+      // Hide from pool
+      const pool = document.getElementById('drag-pool');
+      pool.querySelectorAll('.drag-item').forEach(item => {
+        if (item.dataset.stageId === stageId) {
+          item.style.display = 'none';
+          item.style.opacity = '1';
+        }
+      });
+
+      playDropSound();
+      updateVerifyBtn();
+    }
+
+    function updateVerifyBtn() {
+      const allFilled = dropSlots.every(s => s !== null);
+      document.getElementById('verify-btn').disabled = !allFilled;
+    }
+
+    // Returns the visual index of a logical zone index
+    // (drop zones and arrows are interleaved, so zone i is at visual position i*2)
+    function getZoneVisualIndex(logicalIndex) {
+      // querySelectorAll('.drop-zone') only returns drop-zones, not arrows — no offset needed
+      return logicalIndex;
+    }
+
+    // ========== VERIFY SEQUENCE ==========
+    function checkSequence() {
+      if (phaseCompleted) return;
+      const phase = phases[currentPhase];
+      const zones = document.querySelectorAll('.drop-zone');
+      let allCorrect = true;
+
+      phase.stages.forEach((stage, i) => {
+        const zone = zones[i];
+        if (!zone) return;
+        const isCorrect = dropSlots[i] === stage.id;
+        if (!isCorrect) {
+          allCorrect = false;
+          zone.classList.add('wrong');
+          zone.classList.remove('correct');
+          // Shake wrong zones
+          zone.classList.remove('shake');
+          void zone.offsetWidth; // reflow to restart animation
+          zone.classList.add('shake');
+        } else {
+          zone.classList.add('correct');
+          zone.classList.remove('wrong');
+        }
+      });
+
+      const fb = document.getElementById('feedback');
+
+      if (allCorrect) {
+        phaseCompleted = true;
+        playSuccessSound();
+        document.getElementById('progress-fill').style.width = ((currentPhase + 1) / phases.length * 100) + '%';
+
+        fb.innerHTML = `
+          <div class="celebrate">
+            <div class="flex justify-center gap-3 text-4xl mb-2">
+              ${phase.successEmoji.map(e => `<span>${e}</span>`).join('')}
+            </div>
+            <p class="text-white text-base font-semibold">${phase.successMsg}</p>
+            ${currentPhase < phases.length - 1 ? `
+              <button onclick="nextPhase()" class="mt-3 bg-yellow-400 hover:bg-yellow-300 text-green-900 font-bold px-8 py-3 rounded-xl shadow transition-all hover:scale-105 active:scale-95">
+                Próxima Fase ➜
+              </button>
+            ` : `
+              <button onclick="showVictory()" class="mt-3 bg-yellow-400 hover:bg-yellow-300 text-green-900 font-bold px-8 py-3 rounded-xl shadow transition-all hover:scale-105 active:scale-95">
+                Ver Resultado 🏆
+              </button>
+            `}
+          </div>
+        `;
+        applyConfig(window?.elementSdk?.config || defaultConfig);
+      } else {
+        playErrorSound();
+        fb.innerHTML = `<p class="text-amber-300 font-semibold text-sm">🤔 Quase! As peças em vermelho estão na posição errada. Tente de novo!</p>`;
+        // Remove wrong class after animation
+        setTimeout(() => {
+          document.querySelectorAll('.drop-zone.wrong').forEach(z => z.classList.remove('wrong', 'shake'));
+        }, 900);
+      }
+    }
+
+    // ========== DRAG & DROP ==========
+    let draggedEl = null;
+    let dragOffsetX = 0, dragOffsetY = 0;
+    let dragClone = null;
+
+    function setupDrag(el) {
+      el.addEventListener('mousedown', onDragStart);
+      el.addEventListener('touchstart', onDragStart, { passive: false });
+    }
+
+    function onDragStart(e) {
+      if (phaseCompleted) return;
+      e.preventDefault();
+      const item = e.currentTarget;
+      draggedEl = item;
+
+      const rect = item.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      dragOffsetX = clientX - rect.left;
+      dragOffsetY = clientY - rect.top;
+
+      dragClone = item.cloneNode(true);
+      dragClone.className = item.className + ' dragging';
+      dragClone.style.position = 'fixed';
+      dragClone.style.width = rect.width + 'px';
+      dragClone.style.pointerEvents = 'none';
+      dragClone.style.left = (clientX - dragOffsetX) + 'px';
+      dragClone.style.top = (clientY - dragOffsetY) + 'px';
+      dragClone.style.zIndex = '9999';
+      document.body.appendChild(dragClone);
+
+      item.style.opacity = '0.3';
+
+      document.addEventListener('mousemove', onDragMove);
+      document.addEventListener('mouseup', onDragEnd);
+      document.addEventListener('touchmove', onDragMove, { passive: false });
+      document.addEventListener('touchend', onDragEnd);
+    }
+
+    function onDragMove(e) {
+      if (!dragClone) return;
+      e.preventDefault();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      dragClone.style.left = (clientX - dragOffsetX) + 'px';
+      dragClone.style.top = (clientY - dragOffsetY) + 'px';
+
+      document.querySelectorAll('.drop-zone').forEach(z => {
+        const r = z.getBoundingClientRect();
+        if (clientX > r.left && clientX < r.right && clientY > r.top && clientY < r.bottom) {
+          z.classList.add('highlight');
+        } else {
+          z.classList.remove('highlight');
+        }
+      });
+    }
+
+    function onDragEnd(e) {
+      if (!dragClone || !draggedEl) return;
+      const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+      const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+      document.removeEventListener('mousemove', onDragMove);
+      document.removeEventListener('mouseup', onDragEnd);
+      document.removeEventListener('touchmove', onDragMove);
+      document.removeEventListener('touchend', onDragEnd);
+
+      let targetZone = null;
+      let targetZoneLogicalIndex = -1;
+      document.querySelectorAll('.drop-zone').forEach((z, i) => {
+        const r = z.getBoundingClientRect();
+        if (clientX > r.left && clientX < r.right && clientY > r.top && clientY < r.bottom) {
+          targetZone = z;
+          targetZoneLogicalIndex = i;
+        }
+        z.classList.remove('highlight');
+      });
+
+      const stageId = draggedEl.dataset.stageId;
+
+      if (targetZone) {
+        placeInZone(stageId, targetZoneLogicalIndex);
+      } else {
+        draggedEl.style.opacity = '1';
+      }
+
+      dragClone.remove();
+      dragClone = null;
+      draggedEl = null;
+    }
+
+    function returnToPool(stageId) {
+      const pool = document.getElementById('drag-pool');
+      pool.querySelectorAll('.drag-item').forEach(item => {
+        if (item.dataset.stageId === stageId) {
+          item.style.display = 'flex';
+          item.style.opacity = '1';
+        }
+      });
+    }
+
+    function resetPhase() {
+      loadPhase();
+    }
+
+    function nextPhase() {
+      currentPhase++;
+      loadPhase();
+    }
+
+    // ========== VICTORY ==========
+    function showVictory() {
+      showScreen('victory');
+      playSuccessSound();
+      spawnConfetti();
+      applyConfig(window?.elementSdk?.config || defaultConfig);
+    }
+
+    function spawnConfetti() {
+      const container = document.getElementById('confetti-container');
+      container.innerHTML = '';
+      const colors = ['#facc15','#4ade80','#f472b6','#60a5fa','#fb923c','#a78bfa'];
+      for (let i = 0; i < 50; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-10px';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDelay = (Math.random() * 2) + 's';
+        c.style.animationDuration = (2 + Math.random() * 2) + 's';
+        c.style.width = (6 + Math.random() * 8) + 'px';
+        c.style.height = (6 + Math.random() * 8) + 'px';
+        container.appendChild(c);
+      }
+    }
+
+    // Init
+    lucide.createIcons();
+    applyConfig(defaultConfig);
+  </script>
+
+</body>
+</html>

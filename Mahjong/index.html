@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahjong Titans Deluxe</title>
-    
+    <title>Mahjong Solitaire</title>
     <style>
         :root {
             --tile-w: 50px;
             --tile-h: 70px;
             --tile-depth: 8px;
+            --primary-color: #1b5e20;
+            --accent-color: #ffd700;
         }
 
         * {
@@ -20,7 +21,7 @@
         }
 
         body {
-            background: radial-gradient(circle at center, #1b5e20 0%, #002500 100%);
+            background: radial-gradient(circle at center, #2f7c34 0%, #032703 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
             height: 100vh;
@@ -55,8 +56,7 @@
         .controls { display: flex; gap: 10px; }
 
         .btn {
-            background: linear-gradient(to bottom, #f5f5f5, #dcdcdc);
-            border: 1px solid #999;
+            border: 1px solid rgba(0,0,0,0.1);
             border-radius: 6px;
             padding: 8px 16px;
             font-size: 1rem;
@@ -65,17 +65,43 @@
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             transition: all 0.2s ease;
+            display: flex; /* Para alinhar o ícone e o texto */
+            align-items: center; /* Para alinhar verticalmente */
+            gap: 5px; /* Espaçamento entre o ícone e o texto */
         }
 
-        .btn:hover { background: #fff; transform: translateY(-1px); }
+        .btn img { /* Estilo para os ícones dentro dos botões */
+            width: 20px; /* Tamanho do ícone */
+            height: 20px; /* Tamanho do ícone */
+            flex-shrink: 0; /* Impede que a imagem encolha */
+        }
+
+        /* Cores específicas para cada botão */
+        #btn-menu { background: #e3f2fd; } /* Azul claro */
+        #btn-menu:hover { background: #1976d2; color: white; transform: translateY(-1px); }
+
+        #btn-hint { background: #fff9c4; } /* Amarelo claro */
+        #btn-hint:hover { background: #fbc02d; color: white; transform: translateY(-1px); }
+
+        #btn-shuffle { background: #f3e5f5; } /* Roxo claro */
+        #btn-shuffle:hover { background: #7b1fa2; color: white; transform: translateY(-1px); }
+
+        #btn-restart { background: #e0f2f1; } /* Verde água claro */
+        #btn-restart:hover { background: #00796b; color: white; transform: translateY(-1px); }
+
+        #btn-cheat { background: #fff3e0; } /* Laranja claro */
+        #btn-cheat:hover { background: #e65100; color: white; transform: translateY(-1px); }
+
         .btn:active { transform: translateY(1px); box-shadow: none; }
         .btn.primary { background: linear-gradient(to bottom, #4caf50, #2e7d32); color: white; border-color: #1b5e20; }
 
         #game-board {
             position: relative;
             flex-grow: 1;
-            margin: 20px auto;
-            width: 900px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
 
         .tile {
@@ -88,53 +114,114 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: transform 0.2s ease, filter 0.2s ease, opacity 0.3s ease;
-            
-            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            border: 2px solid #5d4037;
             box-shadow: 
-                -1px 1px 0 #d1cbb8,
-                -2px 2px 0 #c4bda8,
-                -3px 3px 0 #859178,
-                -4px 4px 0 #6e7a62,
-                -5px 5px 8px rgba(0,0,0,0.6);
-            
-            /* REMOVIDO o padding. ADICIONADO overflow para a imagem não sair dos cantos arredondados */
+                -2px 2px 0 #d1cbb8,
+                -4px 4px 0 #8b5a2b,
+                -6px 6px 10px rgba(0,0,0,0.5);
             padding: 0;
             overflow: hidden; 
+        }
+
+        .tile::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 4px;
+            pointer-events: none;
         }
 
         .tile img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Faz a imagem cobrir toda a peça sem distorcer proporções */
-            
-            /* DICA: Aumente este número (ex: 1.3 ou 1.4) se quiser dar mais zoom no desenho da peça
-               e esconder ainda mais as bordas da imagem original. */
+            object-fit: cover;
             transform: scale(1.15); 
-            
             pointer-events: none;
         }
 
-        .tile:hover { filter: brightness(1.1); }
+        .tile:hover:not(.blocked) { 
+            filter: brightness(1.1) translateY(-2px); 
+            box-shadow: 
+                -2px 4px 0 #d1cbb8,
+                -4px 6px 0 #8b5a2b,
+                -6px 10px 15px rgba(0,0,0,0.6);
+        }
 
         .tile.selected {
-            transform: translateY(-10px);
+            transform: translateY(-10px) translate(calc(var(--z) * -5px), calc(var(--z) * -5px)) !important;
             box-shadow: 
-                0 0 15px rgba(255, 215, 0, 0.8),
-                -1px 9px 0 #d1cbb8,
-                -2px 10px 0 #c4bda8,
-                -3px 11px 0 #859178,
-                -4px 12px 0 #6e7a62,
-                -5px 13px 15px rgba(0,0,0,0.7);
-            border-color: #ffd700;
+                0 0 20px var(--accent-color),
+                -2px 12px 0 #d1cbb8,
+                -4px 14px 0 #8b5a2b,
+                -6px 18px 20px rgba(0,0,0,0.7);
+            border-color: var(--accent-color);
+            z-index: 1000 !important;
         }
 
-        .tile.hinted { animation: pulse-hint 1.5s infinite; }
+        .tile.hinted { animation: pulse-hint 1.5s infinite; border-color: #00e5ff; box-shadow: 0 0 15px #00e5ff; }
+        .tile.matched { opacity: 0; transform: scale(1.3) translateY(-20px); pointer-events: none; }
+        .tile.blocked { 
+            cursor: not-allowed; 
+            filter: grayscale(0.6) brightness(0.7);
+        }
+        
+        .tile.in-tray {
+            position: relative !important;
+            left: 0 !important;
+            top: 0 !important;
+            transform: none !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            border-width: 1px;
+        }
 
-        .tile.matched {
-            opacity: 0;
-            transform: scale(1.3) translateY(-20px);
-            pointer-events: none;
+        /* Bandeja / Aba de Peças */
+        .tray-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+            border-top: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .tray {
+            display: flex;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            min-width: 450px;
+            height: 100px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .tray-slot {
+            width: var(--tile-w);
+            height: var(--tile-h);
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tray-warning {
+            position: absolute;
+            top: -30px;
+            color: #ff5252;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none;
         }
 
         @keyframes pulse-hint {
@@ -143,22 +230,213 @@
             100% { filter: brightness(1) drop-shadow(0 0 0px #00e5ff); }
         }
 
-        .tile.blocked { cursor: not-allowed; }
+        @keyframes pulse-btn {
+            0% { transform: scale(1); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 40px rgba(76, 175, 80, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4); }
+        }
 
         .modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             display: flex; justify-content: center; align-items: center;
             z-index: 1000;
         }
         .modal.hidden { display: none; }
-        .modal-content {
-            background: #fdf6e3; color: #333; padding: 40px;
-            border-radius: 12px; text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        
+        /* Intro Screen Styles */
+        #intro-screen {
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 50%, #1a472a 100%);
+            background-image: 
+                radial-gradient(ellipse at 20% 80%, rgba(255,215,0,0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255,215,0,0.08) 0%, transparent 40%),
+                linear-gradient(135deg, #1a472a 0%, #2d5a3f 50%, #1a472a 100%);
         }
-        .modal-content h1 { margin-bottom: 10px; font-size: 2.5rem; }
-        .modal-content p { margin-bottom: 25px; font-size: 1.2rem; }
+        
+        #start-screen {
+            background: rgba(0,0,0,0.85);
+        }
+        
+        .intro-card {
+            background: linear-gradient(145deg, #fdf6e3 0%, #f5e6c8 100%);
+            border-radius: 30px;
+            padding: 50px 60px;
+            text-align: center;
+            box-shadow: 
+                inset 8px 0 0 0 #8b5a2b,
+                inset -8px 0 0 0 #8b5a2b,
+                inset 0 8px 0 0 #8b5a2b,
+                inset 0 -8px 0 0 #8b5a2b,
+                0 20px 60px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.5);
+            max-width: 700px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+            margin-left: 24px;
+            margin-right: 24px;
+        }
+        
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 8px;
+            background: linear-gradient(90deg, #8b5a2b, #d4a574, #8b5a2b);
+        }
+        
+        .intro-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 8px;
+            background: linear-gradient(90deg, #8b5a2b, #d4a574, #8b5a2b);
+        }
+        
+        .intro-card h1 {
+            font-size: 1.6rem;
+            color: #1b5e20;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+        
+        .intro-card .main-title {
+            font-size: 3.5rem;
+            color: #1b5e20;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+        
+        .intro-card .subtitle {
+            font-size: 1.4rem;
+            color: #5d4037;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .intro-card .description {
+            background: rgba(27, 94, 32, 0.08);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 35px;
+            text-align: left;
+        }
+        
+        .intro-card .description p {
+            color: #3e2723;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        
+        .intro-card .description p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .intro-card .description strong {
+            color: #1b5e20;
+        }
+        
+        .intro-card .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+        }
+        
+        .intro-card .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #5d4037;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .intro-card .feature-icon {
+            font-size: 1.5rem;
+        }
+        
+        .intro-card .start-label {
+            font-size: 1.3rem;
+            color: #5d4037;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .intro-card .btn-play {
+            background: linear-gradient(to bottom, #449f47, #29712d);
+            color: white;
+            border: 3px solid white;
+            padding: 18px 60px;
+            font-size: 1.7rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulse-btn 2s infinite ease-in-out;
+        }
+        
+        .intro-card .btn-play:hover {
+            background: linear-gradient(to bottom, #5cb860, #3a8d3e);
+        }
+        
+        .intro-card .btn-play:active {
+            transform: translateY(0);
+        }
+
+        .modal-content {
+            max-width: 850px !important;
+            width: 95%;
+            padding: 50px 30px !important;
+        }
+        #modal-title {
+            font-size: 3.5rem;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #1b5e20;
+        }
+        #modal-message { margin-bottom: 25px; font-size: 1.4rem; color: #000; font-weight: bold; line-height: 1.6; white-space: pre-line; }
+        .congrats-text { color: #b8860b; font-size: 1.8rem; }
+        #btn-modal-restart { padding: 20px 40px; font-size: 1.4rem; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-layout {
+            background: #ffffff;
+            border: 2px solid #d4a574;
+            border-radius: 8px;
+            padding: 20px 10px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-layout:hover {
+            background: #fff;
+            border-color: #4caf50;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-layout span { font-size: 2.5rem; }
     </style>
 </head>
 <body>
@@ -166,23 +444,86 @@
         <header class="ui-panel">
             <div class="stats">
                 <div class="stat-box">⏱️ <span id="timer">00:00</span></div>
-                <div class="stat-box">🀄 Pares: <span id="pairs-left">72</span></div>
-                <div class="stat-box">🔄 Movimentos: <span id="moves-count">0</span></div>
+                <div class="stat-box">🀄 PARES: <span id="pairs-left">0</span></div>
+                <div class="stat-box">🔄 MOVIMENTOS: <span id="moves-count">0</span></div>
             </div>
             <div class="controls">
-                <button id="btn-hint" class="btn">💡 Dica</button>
-                <button id="btn-shuffle" class="btn">🔀 Embaralhar</button>
-                <button id="btn-restart" class="btn">🔄 Reiniciar</button>
+                <button id="btn-menu" class="btn">
+                    <img src="img/menuescuro.png" data-dark-src="img/menuescuro.png" data-white-src="img/menuclaro.png" alt="Menu"> MENU
+                </button>
+                <button id="btn-undo" class="btn">
+                    <img src="img/reiniciarescuro.png" data-dark-src="img/reiniciarescuro.png" data-white-src="img/reiniciarclaro.png" alt="Desfazer" style="transform: scaleX(-1);"> DESFAZER
+                </button>
+                <button id="btn-hint" class="btn">
+                    <img src="img/lampadaescura.png" data-dark-src="img/lampadaescura.png" data-white-src="img/lampadaclara.png" alt="Dica"> DICA
+                </button>
+                <button id="btn-shuffle" class="btn">
+                    <img src="img/embescuro.png" data-dark-src="img/embescuro.png" data-white-src="img/embclaro.png" alt="Embaralhar"> EMBARALHAR
+                </button>
+                <button id="btn-restart" class="btn">
+                    <img src="img/reiniciarescuro.png" data-dark-src="img/reiniciarescuro.png" data-white-src="img/reiniciarclaro.png" alt="Reiniciar"> REINICIAR
+                </button>
             </div>
         </header>
 
         <main id="game-board"></main>
 
+        <div class="tray-container">
+            <div class="tray" id="tile-tray">
+                <div class="tray-warning" id="tray-full-warning">LIMITE DA ABA ALCANÇADO!</div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+            </div>
+        </div>
+
+        <div id="intro-screen" class="modal">
+            <div class="intro-card">
+                <h1 class="main-title">MAHJONG</h1>
+                <div class="description">
+                    <p><strong>OBJETIVO:</strong> Encontre e remova todos os pares de peças idênticas para limpar o tabuleiro.</p>
+                    <p><strong>COMO JOGAR:</strong> Clique em duas peças livres (sem peças acima e com pelo menos um lado livre) com o mesmo símbolo para remover.</p>
+                    <p><strong>DICA:</strong> Use as dicas quando precisar de ajuda. Você também pode apertar a <strong>Tecla D</strong> no seu teclado para destacar um par!</p>
+                </div>
+                <button class="btn-play" onclick="showLayoutSelection()">JOGAR 🀄</button>
+            </div>
+        </div>
+
+        <div id="start-screen" class="modal hidden">
+            <div class="intro-card">
+                <h1>ESCOLHA UM TABULEIRO PARA JOGAR</h1>
+                <div class="layout-grid">
+                    <button class="btn-layout" onclick="startGame('turtle')">
+                        <span>🐢</span> TARTARUGA
+                    </button>
+                    <button class="btn-layout" onclick="startGame('pyramid')">
+                        <span>🔺</span> PIRÂMIDE
+                    </button>
+                    <button class="btn-layout" onclick="startGame('portal')">
+                        <span>⛩️</span> PORTAL
+                    </button>
+                    <button class="btn-layout" onclick="startGame('bridge')">
+                        <span>🌉</span> PONTE
+                    </button>
+                    <button class="btn-layout" onclick="startGame('arena')">
+                        <span>🏟️</span> ARENA
+                    </button>
+                    <button class="btn-layout" onclick="startGame('fish')">
+                        <span>🐟</span> PEIXE
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="modal" class="modal hidden">
-            <div class="modal-content">
-                <h1 id="modal-title">Fim de Jogo</h1>
+            <div class="modal-content intro-card">
+                <h1 id="modal-title">FIM DE JOGO</h1>
                 <p id="modal-message"></p>
-                <button id="btn-modal-restart" class="btn primary">Jogar Novamente</button>
+                <button id="btn-modal-restart" class="btn-play">JOGAR NOVAMENTE</button>
             </div>
         </div>
     </div>
@@ -203,34 +544,33 @@
         let moves = 0;
         let timerSeconds = 0;
         let timerInterval = null;
+        let currentLayoutMode = 'classic';
+        let moveHistory = [];
+        let trayTiles = [];
+        const TRAY_LIMIT = 7;
 
         const GRID_W = 25;
         const GRID_H = 35;
         const OFFSET_Z = -5;
 
-        // --- SISTEMA DE ÁUDIO MELHORADO (Estilo Windows 7) ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
         function playSound(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-
             if (type === 'click') {
-                // Som de Clique de Madeira (Peça Selecionada)
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
-                gain.gain.setValueAtTime(0.7, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.04);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
             } else if (type === 'match') {
-                // Som Mágico/Cristalino (Par Encontrado)
-                const chords = [1046.50, 1318.51, 1567.98, 2093.00]; // Notas: C6, E6, G6, C7
+                const chords = [1046.50, 1318.51, 1567.98, 2093.00]; 
                 chords.forEach((freq, index) => {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
@@ -244,9 +584,7 @@
                     osc.start(audioCtx.currentTime + (index * 0.04));
                     osc.stop(audioCtx.currentTime + 0.6);
                 });
-                
             } else if (type === 'error') {
-                // Som Grave/Bloqueado (Erro)
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain);
@@ -260,25 +598,20 @@
             }
         }
 
-        // --- MAPEAMENTO DAS IMAGENS ---
         function getTileImagePath(suit, val) {
             if (suit === 'bamboo') return `img/bambu${val}.png`;
             if (suit === 'circle') return `img/dots${val}.png`;
             if (suit === 'character') return `img/characters${val}.png`;
-            
             if (suit === 'wind') {
                 const winds = ['east', 'south', 'west', 'north'];
                 return `img/wind${winds[val]}.png`; 
             }
-            
             if (suit === 'dragon') {
                 if (val === 'vermelho') return 'img/dragonred.png';
                 if (val === 'verde') return 'img/dragongreen.png';
                 if (val === 'branco') return 'img/dragonblue.png';
             }
-            
             if (suit === 'flower') return `img/flower${val + 1}.png`;
-            
             if (suit === 'season') {
                 const seasons = ['spring', 'summer', 'autumn', 'winter'];
                 return `img/${seasons[val]}.png`;
@@ -292,10 +625,8 @@
                 SUITS[suit].forEach((char, i) => addCopies(deck, suit, char, i+1, 4));
             });
             SUITS['wind'].forEach((char, i) => addCopies(deck, 'wind', char, i, 4));
-            
             const dragonNames = ['vermelho', 'verde', 'branco'];
             SUITS['dragon'].forEach((char, i) => addCopies(deck, 'dragon', char, dragonNames[i], 4));
-            
             SUITS['season'].forEach((char, i) => addCopies(deck, 'season', char, i, 1));
             SUITS['flower'].forEach((char, i) => addCopies(deck, 'flower', char, i, 1));
 
@@ -307,38 +638,187 @@
         }
 
         function addCopies(deck, suit, char, val, count) {
-            for (let i = 0; i < count; i++) {
-                deck.push({ suit, char, val });
-            }
+            for (let i = 0; i < count; i++) deck.push({ suit, char, val });
         }
 
-        function getTurtleLayout() {
+        function getLayout(type) {
             const layout = [];
             const add = (z, x, y) => layout.push({ z, x, y });
 
-            const rowLengths = [12, 8, 10, 12, 12, 10, 8, 12];
-            const xOffsets = [2, 6, 4, 2, 2, 4, 6, 2];
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < rowLengths[r]; c++) {
-                    add(0, xOffsets[r] + c * 2, r * 2);
+            if (type === 'turtle') {
+                // CAMADA 0 (Base do tabuleiro) - 87 peças
+                for (let x = 2; x <= 24; x += 2) { add(0, x, 0); add(0, x, 14); }
+                for (let x = 6; x <= 20; x += 2) { add(0, x, 2); add(0, x, 12); }
+                for (let x = 4; x <= 22; x += 2) { add(0, x, 4); add(0, x, 10); }
+                for (let x = 2; x <= 24; x += 2) { add(0, x, 6); add(0, x, 8); }
+                add(0, 0, 7);   
+                add(0, 26, 7);  
+                add(0, 28, 7);  
+
+                // CAMADA 1 - 36 peças (Quadrado 6x6)
+                for (let y = 2; y <= 12; y += 2) {
+                    for (let x = 8; x <= 18; x += 2) {
+                        add(1, x, y);
+                    }
+                }
+
+                // CAMADA 2 - 16 peças (Quadrado 4x4)
+                for (let y = 4; y <= 10; y += 2) {
+                    for (let x = 10; x <= 16; x += 2) {
+                        add(2, x, y);
+                    }
+                }
+
+                // CAMADA 3 - 4 peças (Quadrado 2x2)
+                for (let y = 6; y <= 8; y += 2) {
+                    for (let x = 12; x <= 14; x += 2) {
+                        add(3, x, y);
+                    }
+                }
+
+                // CAMADA 4 - 1 peça (Topo)
+                add(4, 13, 7);
+            } 
+            else if (type === 'pyramid') {
+                const cx = 14;
+                for (let y = 0; y <= 14; y += 2) {
+                    let offset = Math.abs(7 - y/2) * 2;
+                    let start = cx - (14 - offset);
+                    for (let x = start; x <= cx + (14 - offset); x += 2) add(0, x, y);
+                }
+                for (let z = 1; z <= 3; z++) {
+                    for (let y = 2*z; y <= 14 - 2*z; y += 2) {
+                        let offset = Math.abs(7 - y/2) * 2;
+                        let start = cx - (10 - offset);
+                        for (let x = start; x <= cx + (10 - offset); x += 2) add(z, x, y);
+                    }
+                }
+                add(4, cx, 7);
+            } 
+            else if (type === 'portal') {
+                // PORTAL TORII ⛩️ (Exatas 144 peças)
+                
+                // 1. BEIRAL SUPERIOR (Kasagi) - 46 peças
+                // z=0 e z=1: A trave mais longa do topo (vai de ponta a ponta)
+                for (let z = 0; z <= 1; z++) {
+                    for (let x = 0; x <= 28; x += 2) add(z, x, 0); // 15 + 15 = 30 peças
+                }
+                // z=2: Camada superior da trave (um pouco menor nas pontas)
+                for (let x = 2; x <= 26; x += 2) add(2, x, 0); // 13 peças
+                // z=3: Adorno central no topo do telhado
+                add(3, 12, 0); add(3, 14, 0); add(3, 16, 0); // 3 peças
+
+                // 2. SEGUNDA TRAVE (Nuki) - 22 peças
+                // Fica logo abaixo do topo, atravessando os pilares
+                for (let z = 0; z <= 1; z++) {
+                    for (let x = 4; x <= 24; x += 2) add(z, x, 2); // 11 + 11 = 22 peças
+                }
+
+                // 3. OS PILARES LATERAIS - 60 peças
+                // Duas colunas massivas de 3 andares de profundidade
+                for (let z = 0; z <= 2; z++) {
+                    for (let y = 4; y <= 12; y += 2) {
+                        // Pilar Esquerdo
+                        add(z, 6, y); add(z, 8, y);
+                        // Pilar Direito
+                        add(z, 20, y); add(z, 22, y);
+                    }
+                } // 3 camadas * 5 linhas * 4 peças = 60 peças
+
+                // 4. AS BASES (Pedestais) - 16 peças
+                // Degraus mais largos sustentando os pilares na base do tabuleiro
+                for (let z = 0; z <= 1; z++) {
+                    // Base Esquerda
+                    for (let x = 4; x <= 10; x += 2) add(z, x, 14);
+                    // Base Direita
+                    for (let x = 18; x <= 24; x += 2) add(z, x, 14);
+                } // 2 camadas * 8 peças = 16 peças
+                
+                // Soma total: 46 + 22 + 60 + 16 = 144 peças exatas.
+            } 
+            else if (type === 'bridge') {
+                for(let z = 0; z < 2; z++) {
+                    for (let r = 0; r < 6; r++) {
+                        for(let c = 0; c < 4; c++) add(z, 1 + c * 2, r * 2); 
+                        for(let c = 0; c < 4; c++) add(z, 21 + c * 2, r * 2); 
+                    }
+                    for(let r = 0; r < 2; r++) for(let c = 0; c < 6; c++) add(z, 9 + c * 2, 4 + r * 2); 
+                }
+                for(let r = 1; r < 4; r++) {
+                    for(let c = 0; c < 4; c++) add(2, 1 + c * 2, r * 2); 
+                    for(let c = 0; c < 4; c++) add(2, 21 + c * 2, r * 2); 
                 }
             }
-            add(0, 0, 7);
-            add(0, 26, 7);
-            add(0, 28, 7);
-
-            for (let r = 0; r < 6; r++)
-                for (let c = 0; c < 6; c++) add(1, 8 + c * 2, 2 + r * 2);
-
-            for (let r = 0; r < 4; r++)
-                for (let c = 0; c < 4; c++) add(2, 10 + c * 2, 4 + r * 2);
-
-            for (let r = 0; r < 2; r++)
-                for (let c = 0; c < 2; c++) add(3, 12 + c * 2, 6 + r * 2);
-
-            add(4, 13, 7);
-
+            else if (type === 'arena') {
+                // ARENA (Coliseu) - Anel oval com buraco central
+                // Camada 0: Base larga
+                for (let x = 2; x <= 26; x += 2) {
+                    for (let y = 0; y <= 14; y += 2) {
+                        if (!(x >= 10 && x <= 18 && y >= 4 && y <= 10)) add(0, x, y);
+                    }
+                }
+                // Camada 1: Anel interno elevado
+                for (let x = 4; x <= 24; x += 2) {
+                    for (let y = 2; y <= 12; y += 2) {
+                        if (!(x >= 12 && x <= 16 && y >= 6 && y <= 8)) add(1, x, y);
+                    }
+                }
+                // Camada 2: Detalhes do topo
+                for (let x = 6; x <= 22; x += 4) {
+                    add(2, x, 2); add(2, x, 12);
+                }
+            }
+            else if (type === 'fish') {
+                // PEIXE 🐟
+                // 1. Corpo (Denso e Empilhado)
+                for (let z = 0; z <= 2; z++) {
+                    let size = 4 - z;
+                    for (let x = 10; x <= 20; x += 2) {
+                        for (let y = 7 - size; y <= 7 + size; y += 2) add(z, x, y);
+                    }
+                }
+                // 2. Cauda (Formato em V)
+                for (let z = 0; z <= 1; z++) {
+                    add(z, 2, 4); add(z, 2, 10);
+                    add(z, 4, 5); add(z, 4, 9);
+                    add(z, 6, 6); add(z, 6, 8);
+                    add(z, 8, 7);
+                }
+                // 3. Barbatanas
+                for (let z = 0; z <= 1; z++) {
+                    add(z, 12, 1); add(z, 14, 1); // Superior
+                    add(z, 12, 13); add(z, 14, 13); // Inferior
+                }
+                // 4. Cabeça, Boca e Olho
+                for (let z = 0; z <= 1; z++) {
+                    add(z, 22, 5); add(z, 22, 7); add(z, 22, 9);
+                    add(z, 24, 6); add(z, 24, 8);
+                    add(z, 26, 7); // Frente
+                }
+                add(0, 28, 7); // Boca
+                add(3, 22, 6); // Olho
+                add(3, 22, 8); // Detalhe cabeça
+            }
             return layout;
+        }
+
+        function startGame(mode) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            currentLayoutMode = mode;
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.add('hidden');
+            initGame();
+        }
+
+        function showLayoutSelection() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+
+        function showMenu() {
+            clearInterval(timerInterval);
+            document.getElementById('intro-screen').classList.remove('hidden');
+            document.getElementById('start-screen').classList.add('hidden');
         }
 
         function initGame() {
@@ -346,19 +826,53 @@
             board.innerHTML = '';
             tiles = [];
             selectedTile = null;
+            trayTiles = [];
+            moveHistory = [];
             moves = 0;
             timerSeconds = 0;
+            document.getElementById('tile-tray').querySelectorAll('.tile').forEach(el => el.remove());
             updateUI();
             document.getElementById('modal').classList.add('hidden');
 
             clearInterval(timerInterval);
             timerInterval = setInterval(() => { timerSeconds++; updateTimer(); }, 1000);
 
-            const deck = createDeck();
-            const layout = getTurtleLayout();
+            const layout = getLayout(currentLayoutMode);
+        if (layout.length % 2 !== 0) layout.pop(); // Garante que o tabuleiro tenha um número par de posições
+
+        // Pega todos os pares possíveis do deck padrão (144 peças)
+        const pairedDeck = [];
+        const tempFull = createDeck();
+        while (tempFull.length > 1) {
+            const t1 = tempFull.shift();
+            const mIdx = tempFull.findIndex(t2 => isMatch(t1, t2));
+            if (mIdx !== -1) {
+                const t2 = tempFull.splice(mIdx, 1)[0];
+                pairedDeck.push(t1, t2);
+            }
+        }
+
+        // Se o layout exigir mais de 144 peças, duplicamos pares aleatórios para preencher
+        let finalDeck = [...pairedDeck];
+        while (finalDeck.length < layout.length) {
+            const randomPairIdx = Math.floor(Math.random() * (pairedDeck.length / 2)) * 2;
+            finalDeck.push({...pairedDeck[randomPairIdx]}, {...pairedDeck[randomPairIdx + 1]});
+        }
+
+        // Pega apenas a quantidade necessária de pares e embaralha a ordem final
+        const gameDeck = finalDeck.slice(0, layout.length).sort(() => Math.random() - 0.5);
+
+        // Calcula as dimensões do layout para centralização
+        const maxX = Math.max(...layout.map(p => p.x)) + 2;
+        const maxY = Math.max(...layout.map(p => p.y)) + 2;
+        const tilesContainer = document.createElement('div');
+        tilesContainer.style.position = 'relative';
+        tilesContainer.style.width = `${maxX * GRID_W}px`;
+        tilesContainer.style.height = `${maxY * GRID_H}px`;
+        board.appendChild(tilesContainer);
 
             layout.forEach((pos, index) => {
-                const data = deck[index];
+            const data = gameDeck[index];
                 const tile = {
                     id: index,
                     ...pos,
@@ -372,7 +886,6 @@
                 el.dataset.suit = tile.suit;
                 el.dataset.val = tile.val;
                 
-                // CRIA A IMAGEM
                 const img = document.createElement('img');
                 img.src = getTileImagePath(tile.suit, tile.val);
                 el.appendChild(img);
@@ -380,36 +893,30 @@
                 el.style.left = `${tile.x * GRID_W}px`;
                 el.style.top = `${tile.y * GRID_H}px`;
                 el.style.zIndex = tile.z;
+                el.style.setProperty('--z', tile.z);
                 el.style.transform = `translate(${tile.z * OFFSET_Z}px, ${tile.z * OFFSET_Z}px)`;
 
                 el.addEventListener('click', () => handleTileClick(tile));
 
                 tiles.push(tile);
-                board.appendChild(el);
+                tilesContainer.appendChild(el);
             });
-
             updateClickability();
         }
 
         function isTileFree(tile) {
             if (!tile.active) return false;
-
             const intersect = (t1, t2) => {
                 return !(t2.x >= t1.x + 2 || t2.x + 2 <= t1.x || t2.y >= t1.y + 2 || t2.y + 2 <= t1.y);
             };
 
-            let blockedAbove = false;
-            let blockedLeft = false;
-            let blockedRight = false;
-
+            let blockedAbove = false, blockedLeft = false, blockedRight = false;
             for (const other of tiles) {
                 if (!other.active || other.id === tile.id) continue;
-
                 if (other.z === tile.z + 1 && intersect(tile, other)) {
                     blockedAbove = true;
                     break;
                 }
-
                 if (other.z === tile.z) {
                     if (!(other.y >= tile.y + 2 || other.y + 2 <= tile.y)) {
                         if (other.x + 2 === tile.x) blockedLeft = true;
@@ -417,18 +924,14 @@
                     }
                 }
             }
-
             return !blockedAbove && !(blockedLeft && blockedRight);
         }
 
         function updateClickability() {
             tiles.forEach(t => {
                 if (!t.active) return;
-                if (!isTileFree(t)) {
-                    t.element.classList.add('blocked');
-                } else {
-                    t.element.classList.remove('blocked');
-                }
+                if (!isTileFree(t)) t.element.classList.add('blocked');
+                else t.element.classList.remove('blocked');
             });
         }
 
@@ -443,57 +946,214 @@
                 playSound('error');
                 return;
             }
+            
+            // Se a peça já está na bandeja, apenas ignoramos ou poderíamos dar um feedback
+            if (trayTiles.includes(tile)) return;
 
             clearHints();
+            
+            // Tenta encontrar um par na bandeja ANTES de verificar o limite
+            const matchInTray = trayTiles.find(t => isMatch(t, tile));
+            
+            if (matchInTray) {
+                // Par encontrado! Removemos ambos sem precisar de espaço extra na bandeja
+                playSound('match');
+                
+                // Remover do array da bandeja
+                trayTiles = trayTiles.filter(t => t !== matchInTray);
+                
+                // Registrar no histórico antes de desativar
+                moveHistory.push({ type: 'direct_match', tBoardId: tile.id, tTrayId: matchInTray.id });
 
-            if (selectedTile) {
-                if (selectedTile.id === tile.id) {
-                    playSound('click'); // Toca som ao deselecionar também
-                    tile.element.classList.remove('selected');
-                    selectedTile = null;
-                } else if (isMatch(selectedTile, tile)) {
-                    playSound('match'); // SOM MÁGICO AQUI!
-                    tile.active = false;
-                    selectedTile.active = false;
-
-                    tile.element.classList.add('matched');
-                    selectedTile.element.classList.add('matched');
-                    selectedTile.element.classList.remove('selected');
-
-                    selectedTile = null;
+                // Marcar como inativos e animar
+                tile.active = false;
+                matchInTray.active = false;
+                tile.element.classList.add('matched');
+                matchInTray.element.classList.add('matched');
+                
+                setTimeout(() => {
+                    renderTray();
                     moves++;
                     updateUI();
                     updateClickability();
                     checkGameEnd();
-                } else {
-                    playSound('error'); // SOM DE ERRO
-                    selectedTile.element.classList.remove('selected');
-                    tile.element.classList.add('selected');
-                    selectedTile = tile;
-                }
-            } else {
-                playSound('click'); // CLIQUE INICIAL
-                tile.element.classList.add('selected');
-                selectedTile = tile;
+                }, 200);
+            } 
+            else if (trayTiles.length < TRAY_LIMIT) {
+                playSound('click');
+                moveToTray(tile);
+            } 
+            else {
+                playSound('error');
+                const warning = document.getElementById('tray-full-warning');
+                warning.style.display = 'block';
+                setTimeout(() => warning.style.display = 'none', 2000);
             }
         }
 
-        function clearHints() {
-            tiles.forEach(t => t.element.classList.remove('hinted'));
+        function renderTray() {
+            const slots = document.querySelectorAll('.tray-slot');
+            slots.forEach(slot => {
+                // Remove apenas as peças, mantém outros elementos se houver
+                const tileInSlot = slot.querySelector('.tile');
+                if (tileInSlot) tileInSlot.remove();
+            });
+            
+            trayTiles.forEach((tile, index) => {
+                if (slots[index]) {
+                    slots[index].appendChild(tile.element);
+                    tile.element.classList.add('in-tray');
+                }
+            });
         }
 
-        function showHint() {
-            clearHints();
-            const free = tiles.filter(t => isTileFree(t));
-            for (let i = 0; i < free.length; i++) {
-                for (let j = i + 1; j < free.length; j++) {
-                    if (isMatch(free[i], free[j])) {
-                        free[i].element.classList.add('hinted');
-                        free[j].element.classList.add('hinted');
+        function moveToTray(tile, isUndo = false) {
+            trayTiles.push(tile);
+            
+            if (!isUndo) {
+                moveHistory.push({ type: 'move_to_tray', tileId: tile.id });
+            }
+
+            renderTray();
+            checkTrayMatches();
+            updateClickability();
+            updateUI();
+            checkGameEnd();
+        }
+
+        function checkTrayMatches() {
+            for (let i = 0; i < trayTiles.length; i++) {
+                for (let j = i + 1; j < trayTiles.length; j++) {
+                    if (isMatch(trayTiles[i], trayTiles[j])) {
+                        const t1 = trayTiles[i];
+                        const t2 = trayTiles[j];
+                        
+                        trayTiles = trayTiles.filter(t => t !== t1 && t !== t2);
+                        
+                        setTimeout(() => {
+                            playSound('match');
+                            t1.active = false;
+                            t2.active = false;
+                            t1.element.classList.add('matched');
+                            t2.element.classList.add('matched');
+                            renderTray(); // Re-renderiza para fechar o buraco
+                            moves++;
+                            updateUI();
+                            updateClickability();
+                            checkGameEnd();
+                        }, 300);
+                        
+                        moveHistory.push({ type: 'match', t1Id: t1.id, t2Id: t2.id });
                         return;
                     }
                 }
             }
+        }
+
+        function undoMove() {
+            if (moveHistory.length === 0) return;
+            
+            const lastAction = moveHistory.pop();
+            
+            if (lastAction.type === 'move_to_tray') {
+                const tile = tiles.find(t => t.id === lastAction.tileId);
+                tile.element.classList.remove('in-tray');
+                trayTiles = trayTiles.filter(t => t !== tile);
+                
+                const board = document.getElementById('game-board').firstChild;
+                board.appendChild(tile.element);
+                
+                tile.element.style.position = 'absolute';
+                tile.element.style.left = `${tile.x * GRID_W}px`;
+                tile.element.style.top = `${tile.y * GRID_H}px`;
+                tile.element.style.transform = `translate(${tile.z * OFFSET_Z}px, ${tile.z * OFFSET_Z}px)`;
+                renderTray();
+            } 
+            else if (lastAction.type === 'match') {
+                const t1 = tiles.find(t => t.id === lastAction.t1Id);
+                const t2 = tiles.find(t => t.id === lastAction.t2Id);
+                
+                t1.active = true;
+                t2.active = true;
+                t1.element.classList.remove('matched');
+                t2.element.classList.remove('matched');
+                
+                trayTiles.push(t1, t2);
+                renderTray();
+                
+                moves--;
+                undoMove(); 
+            }
+            else if (lastAction.type === 'direct_match') {
+                const tBoard = tiles.find(t => t.id === lastAction.tBoardId);
+                const tTray = tiles.find(t => t.id === lastAction.tTrayId);
+                
+                tBoard.active = true;
+                tTray.active = true;
+                tBoard.element.classList.remove('matched');
+                tTray.element.classList.remove('matched');
+                
+                // A peça do tray volta para o tray, a do board volta para o board
+                trayTiles.push(tTray);
+                renderTray();
+                
+                moves--;
+            }
+            
+            playSound('click');
+            updateUI();
+            updateClickability();
+        }
+
+        function clearHints() { tiles.forEach(t => t.element.classList.remove('hinted')); }
+
+        function showHint() {
+            clearHints();
+            const available = tiles.filter(t => isTileFree(t) && !trayTiles.includes(t));
+            const inTray = trayTiles;
+            
+            // Tenta combinar bandeja com tabuleiro
+            for (let tTray of inTray) {
+                for (let tBoard of available) {
+                    if (isMatch(tTray, tBoard)) {
+                        tTray.element.classList.add('hinted');
+                        tBoard.element.classList.add('hinted');
+                        return;
+                    }
+                }
+            }
+
+            // Tenta combinar tabuleiro com tabuleiro
+            for (let i = 0; i < available.length; i++) {
+                for (let j = i + 1; j < available.length; j++) {
+                    if (isMatch(available[i], available[j])) {
+                        available[i].element.classList.add('hinted');
+                        available[j].element.classList.add('hinted');
+                        return;
+                    }
+                }
+            }
+        }
+
+        function countAvailablePairs() {
+            let count = 0;
+            const available = tiles.filter(t => isTileFree(t) && !trayTiles.includes(t));
+            const inTray = trayTiles;
+            const combined = [...available, ...inTray];
+            
+            const used = new Set();
+            for (let i = 0; i < combined.length; i++) {
+                if (used.has(i)) continue;
+                for (let j = i + 1; j < combined.length; j++) {
+                    if (!used.has(j) && isMatch(combined[i], combined[j])) {
+                        count++;
+                        used.add(i);
+                        used.add(j);
+                        break;
+                    }
+                }
+            }
+            return count;
         }
 
         function shuffleBoard() {
@@ -509,13 +1169,10 @@
                 t.suit = data[i].suit;
                 t.char = data[i].char;
                 t.val = data[i].val;
-                
                 t.element.dataset.suit = t.suit;
                 t.element.dataset.val = t.val;
-                
                 const img = t.element.querySelector('img');
                 if (img) img.src = getTileImagePath(t.suit, t.val);
-                
                 t.element.classList.remove('selected', 'hinted');
             });
             selectedTile = null;
@@ -524,29 +1181,69 @@
             checkGameEnd();
         }
 
+        function cheatClear() {
+            const activeTiles = tiles.filter(t => t.active);
+            if (activeTiles.length === 0) return;
+
+        // Agrupar as peças ativas em pares reais para garantir que não sobrem peças sozinhas
+        const pairs = [];
+        const tempTiles = [...activeTiles];
+        
+        while (tempTiles.length > 1) {
+            const t1 = tempTiles.shift();
+            const matchIndex = tempTiles.findIndex(t2 => isMatch(t1, t2));
+            if (matchIndex !== -1) {
+                const t2 = tempTiles.splice(matchIndex, 1)[0];
+                pairs.push([t1, t2]);
+            }
+        }
+
+        // Embaralhar e remover os pares completos
+        pairs.sort(() => Math.random() - 0.5);
+        const pairsToRemoveCount = Math.floor((activeTiles.length * 0.9) / 2);
+
+        for (let i = 0; i < Math.min(pairsToRemoveCount, pairs.length); i++) {
+            const [p1, p2] = pairs[i];
+            p1.active = false; p2.active = false;
+            p1.element.classList.add('matched');
+            p2.element.classList.add('matched');
+            }
+
+        if (selectedTile) {
+            selectedTile.element.classList.remove('selected');
+            selectedTile = null;
+        }
+
+            updateUI();
+            updateClickability();
+            checkGameEnd();
+        }
+
         function checkGameEnd() {
             const active = tiles.filter(t => t.active);
             if (active.length === 0) {
-                showModal('Vitória!', `Você completou o tabuleiro em ${document.getElementById('timer').innerText} com ${moves} movimentos.`);
+                showModal('🎉 VITÓRIA 🎉', `<span class="congrats-text">PARABÉNS!</span>\nVOCÊ COMPLETOU O TABULEIRO EM ${document.getElementById('timer').innerText} COM UM TOTAL DE ${moves} MOVIMENTOS.`);
                 return;
             }
 
-            const free = active.filter(t => isTileFree(t));
-            let hasMoves = false;
-            for (let i = 0; i < free.length; i++) {
-                for (let j = i + 1; j < free.length; j++) {
-                    if (isMatch(free[i], free[j])) hasMoves = true;
+            const possible = countAvailablePairs();
+            if (possible === 0 && trayTiles.length < TRAY_LIMIT) {
+                // Ainda há espaço na bandeja, mas não há pares imediatos? 
+                // No Mahjong Solitaire Plus, você pode mover peças para a bandeja para liberar outras.
+                // Então só perdemos se não houver pares E a bandeja estiver cheia OU não houver mais peças livres.
+                const freeToMove = tiles.filter(t => isTileFree(t) && !trayTiles.includes(t));
+                if (freeToMove.length === 0 && trayTiles.length > 0) {
+                     showModal('☹️ FIM DE JOGO', `NÃO HÁ MAIS COMBINAÇÕES POSSÍVEIS!\nVOCÊ FICOU TRANCADO.`);
                 }
-            }
-
-            if (!hasMoves) {
-                showModal('Fim de Jogo', 'Não há mais movimentos possíveis. Tente embaralhar ou reiniciar o jogo.');
+            } else if (possible === 0 && trayTiles.length === TRAY_LIMIT) {
+                showModal('☹️ FIM DE JOGO', `A ABA ESTÁ CHEIA E NÃO HÁ COMBINAÇÕES!\nVOCÊ PODE TENTAR DESFAZER OU EMBARALHAR.`);
             }
         }
 
         function updateUI() {
             const activeCount = tiles.filter(t => t.active).length;
-            document.getElementById('pairs-left').innerText = activeCount / 2;
+            const possiblePairs = countAvailablePairs();
+            document.getElementById('pairs-left').innerHTML = `${activeCount / 2} <small>(Disponíveis: ${possiblePairs})</small>`;
             document.getElementById('moves-count').innerText = moves;
         }
 
@@ -559,16 +1256,46 @@
         function showModal(title, msg) {
             clearInterval(timerInterval);
             document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-message').innerText = msg;
+            document.getElementById('modal-message').innerHTML = msg;
             document.getElementById('modal').classList.remove('hidden');
         }
 
+        document.getElementById('btn-menu').addEventListener('click', showMenu);
+        document.getElementById('btn-undo').addEventListener('click', undoMove);
         document.getElementById('btn-hint').addEventListener('click', showHint);
         document.getElementById('btn-shuffle').addEventListener('click', shuffleBoard);
         document.getElementById('btn-restart').addEventListener('click', initGame);
-        document.getElementById('btn-modal-restart').addEventListener('click', initGame);
+        document.getElementById('btn-modal-restart').addEventListener('click', () => {
+            document.getElementById('modal').classList.add('hidden');
+            initGame();
+        });
 
-        window.onload = initGame;
+        // Lógica para trocar os ícones no hover
+        document.querySelectorAll('.controls .btn').forEach(button => {
+            const img = button.querySelector('img');
+            if (img) {
+                button.addEventListener('mouseover', () => {
+                    img.src = img.dataset.whiteSrc;
+                });
+                button.addEventListener('mouseout', () => {
+                    img.src = img.dataset.darkSrc;
+                });
+            }
+        });
+
+        // Listener para o atalho de teclado "D"
+        window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'd') {
+                // Verifica se o jogador está no meio de uma partida (menus escondidos)
+                const isModalHidden = document.getElementById('modal').classList.contains('hidden');
+                const isIntroHidden = document.getElementById('intro-screen').classList.contains('hidden');
+                const isStartHidden = document.getElementById('start-screen').classList.contains('hidden');
+                
+                if (isModalHidden && isIntroHidden && isStartHidden) {
+                    showHint();
+                }
+            }
+        });
     </script>
 </body>
 </html>

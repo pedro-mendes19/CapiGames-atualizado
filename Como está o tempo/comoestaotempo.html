@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Como Está o Tempo?</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100vh; }
+
+  :root {
+    --sun: #FFB300;
+    --rain: #2196F3;
+    --cold: #90CAF9;
+    --wind: #78909C;
+    --cloud: #B0BEC5;
+    --green: #43A047;
+    --red: #E53935;
+    --purple: #7B1FA2;
+    --bg: #FFF8E1;
+    --card: #FFFFFF;
+    --radius: 24px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    background-image:
+      radial-gradient(circle at 10% 10%, #FFE082 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, #B3E5FC 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F8BBD9 0%, transparent 60%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-top: 8px;
+  }
+
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 3rem);
+    color: #a78bfa;
+    -webkit-text-stroke: 2px #7c3aed;
+    letter-spacing: 1px;
+    line-height: 1.2;
+  }
+
+  header p {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: #6D4C41;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  .scoreboard {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .score-pill {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    box-shadow: 0 4px 15px rgba(245,158,11,0.4);
+    padding: 8px 20px;
+    border-radius: 9999px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.125rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .score-pill .label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.92);
+  }
+
+  .score-pill .valor {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .score-pill.acertos {
+    background: linear-gradient(135deg, #66BB6A, #4CAF50); /* Green for correct answers */
+    box-shadow: 0 4px 15px rgba(76,175,80,0.4);
+  }
+
+  .score-pill.erros {
+    background: linear-gradient(135deg, #EF5350, #E53935); /* Red for errors */
+    box-shadow: 0 4px 15px rgba(229,57,53,0.4);
+  }
+
+  /* Existing score-pill styles will apply to .rodada and general styling */
+
+  .game-area {
+    background: #FFFFFF;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: clamp(20px, 4vw, 36px);
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+    border: 3px solid #FFF3;
+    min-height: min(76vh, 780px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+
+  .game-area.final {
+    min-height: min(76vh, 530px);
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius);
+  }
+
+  .game-area.final .scoreboard,
+  .game-area.final .progress-bar-wrap,
+  .game-area.final #progress-label {
+    display: none;
+  }
+
+  body.fim {
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .tela-fim {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px 0;
+  }
+
+  .tela-fim.ativa { display: flex; }
+  .jogo-area-interna.oculto { display: none; }
+
+  .jogo-area-interna {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  .clima-card {
+    background: linear-gradient(135deg, #E3F2FD 0%, #FFF9C4 100%);
+    border-radius: 20px;
+    padding: 24px 16px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #B3D9FF;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.5s, border-color 0.5s;
+  }
+
+  .clima-emoji {
+    font-size: clamp(3.5rem, 12vw, 5.5rem);
+    line-height: 1;
+    display: block;
+    animation: balancear 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+  }
+
+  @keyframes balancear {
+    0%, 100% { transform: rotate(-5deg) scale(1); }
+    50% { transform: rotate(5deg) scale(1.07); }
+  }
+
+  .clima-nome {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    color: #1A237E;
+    margin-top: 10px;
+    text-shadow: 1px 2px 0 rgba(255,255,255,0.8);
+  }
+
+  .instrucao {
+    font-size: clamp(1rem, 3vw, 1.25rem);
+    color: #4A148C;
+    font-weight: 700;
+    margin: 0 auto 13px;
+    background: #EDE7F6;
+    border-radius: 14px;
+    padding: 10px 18px;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .opcoes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(10px, 2.5vw, 18px);
+    margin-bottom: 20px;
+    padding-inline: clamp(8px, 2vw, 16px);
+  }
+
+  @media (max-width: 420px) {
+    .opcoes { grid-template-columns: 1fr 1fr; }
+    .opcoes .opcao:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 180px; margin: 0 auto; }
+  }
+
+  .opcao {
+    background: #F5F5F5;
+    border: 3px solid #E0E0E0;
+    border-radius: 20px;
+    padding: clamp(12px, 3vw, 20px) 8px;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .opcao:hover:not(:disabled) {
+    transform: translateY(-4px) scale(1.04);
+    border-color: #7B1FA2;
+    background: #F3E5F5;
+    box-shadow: 0 8px 20px rgba(123,31,162,0.18);
+  }
+
+  .opcao:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  .opcao:disabled {
+    cursor: default;
+  }
+
+  .opcao .item-emoji {
+    font-size: clamp(2.2rem, 7vw, 3.4rem);
+    line-height: 1;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+
+  .opcao .item-nome {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    color: #37474F;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .opcao.correta {
+    border-color: var(--green);
+    background: #E8F5E9;
+    animation: pular 0.5s ease;
+  }
+
+  .opcao.errada {
+    border-color: var(--red);
+    background: #FFEBEE;
+    animation: tremer 0.4s ease;
+  }
+
+  @keyframes pular {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.15) translateY(-8px); }
+    60% { transform: scale(0.97); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes tremer {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+
+  .feedback {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    min-height: 2.4rem;
+    border-radius: 14px;
+    padding: 10px 15px;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .feedback.acerto {
+    font-size: clamp(1.8rem, 3vw, 1.3rem);
+    background: #E8F5E9;
+    color: #2E7D32;
+    border: 2px solid #A5D6A7;
+    animation: aparecer 0.4s ease;
+  }
+
+  .feedback.erro {
+    font-size: clamp(1.8rem, 3vw, 1.3rem);
+    background: #FFEBEE;
+    color: #C62828;
+    border: 2px solid #FFCDD2;
+    animation: aparecer 0.4s ease;
+  }
+
+  .feedback.vazio { opacity: 0; }
+
+  @keyframes aparecer {
+    from { opacity: 0; transform: scale(0.85) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .btn-jogar {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+    background: linear-gradient(180deg, #FFB300, #FF6F00);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 40px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .btn-jogar:hover {
+    transform: translateZ(0) scale(1.04);
+    box-shadow: 0 12px 28px rgba(255, 111, 0, 0.45);
+  }
+
+  .btn-jogar:active { transform: scale(0.98); }
+
+  /* Tela de fim de jogo */
+  .tela-fim {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+  }
+
+  .tela-fim.ativa { display: flex; }
+  .jogo-area-interna.oculto { display: none; }
+
+  .tela-fim .troféu {
+    font-size: 5rem;
+    animation: girar 1.5s ease;
+  }
+
+  @keyframes girar {
+    0% { transform: rotate(-30deg) scale(0.5); opacity: 0; }
+    60% { transform: rotate(10deg) scale(1.15); opacity: 1; }
+    100% { transform: rotate(0deg) scale(1); }
+  }
+
+  .tela-fim h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    color: #E65100;
+    font-weight: 400;
+  }
+
+  .tela-fim .resultado-final {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: #BF360C;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+    border: 2px solid #FFB300;
+    border-radius: 18px;
+    padding: 12px 24px;
+    text-align: center;
+    margin: 12px 0 20px;
+  }
+
+  .tela-fim .btn-jogar {
+    font-weight: 400;
+  }
+
+  header.oculto {
+    display: none;
+  }
+
+  .estrelas { 
+    font-size: 2.8rem; 
+    letter-spacing: 8px; 
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .estrelas span {
+    display: inline-block;
+    opacity: 0;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+  }
+
+  .estrelas.animar span {
+    animation: estrela-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+               pulsarBotao 1.2s infinite ease-in-out;
+  }
+
+  @keyframes estrela-pop {
+    0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+    80% { transform: scale(1.2) rotate(10deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+
+  @keyframes pulsarBotao {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+  }
+
+  .progress-bar-wrap {
+    width: 100%;
+    height: 10px;
+    background: #EEE;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #7B1FA2, #F06292);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-label {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 700;
+    text-align: right;
+    margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="title">🌤️ COMO ESTÁ O TEMPO?</h1>
+</header>
+
+<div class="game-area">
+
+  <div class="scoreboard">
+    <div class="score-pill rodada">
+      <div class="label">🎯 PERGUNTA</div>
+      <div class="valor" id="qtd-rodada">1 / 8</div>
+    </div>
+  </div>
+
+  <!-- Barra de progresso -->
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+    <div class="progress-label" id="progress-label"></div>
+
+  <!-- Área principal do jogo -->
+  <div class="jogo-area-interna" id="jogo-area">
+
+    <!-- Card de clima -->
+    <div class="clima-card" id="clima-card">
+      <span class="clima-emoji" id="clima-emoji">☀️</span>
+      <span class="clima-nome" id="clima-nome">Ensolarado</span>
+    </div>
+
+    <div class="instrucao">👆 QUAL ITEM COMBINA COM ESSE CLIMA?</div>
+
+    <!-- Feedback -->
+    <div class="feedback vazio" id="feedback-texto"></div>
+
+    <!-- Opções -->
+    <div class="opcoes" id="opcoes-container"></div>
+
+    <button class="btn-jogar" id="btn-jogar" onclick="jogarNovamente()" style="display:none">
+      🔄 JOGAR NOVAMENTE
+    </button>
+  </div>
+
+  <!-- Tela de fim de jogo -->
+  <div class="tela-fim" id="tela-fim">
+    <div class="troféu" id="trofeu">🏆</div>
+    <div class="estrelas" id="estrelas">⭐⭐⭐</div>
+    <h2 id="msg-fim">PARABÉNS!</h2>
+    <div class="resultado-final" id="resultado-final"></div>
+    <button class="btn-jogar" onclick="jogarNovamente()">JOGAR NOVAMENTE</button>
+  </div>
+
+</div>
+
+<script>
+const CLIMAS = [
+  {
+    emoji: "☀️", nome: "ENSOLARADO",
+    bg: "linear-gradient(135deg, #FFF9C4 0%, #FFE082 100%)",
+    borda: "#FFD54F",
+    correto: { emoji: "😎", nome: "ÓCULOS DE SOL" },
+    errados: [
+      { emoji: "🧣", nome: "CACHECOL" },
+      { emoji: "☂️", nome: "GUARDA-CHUVA" },
+      { emoji: "🧥", nome: "CASACO" },
+      { emoji: "🧤", nome: "LUVAS" },
+    ]
+  },
+  {
+    emoji: "🌧️", nome: "CHUVOSO",
+    bg: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
+    borda: "#64B5F6",
+    correto: { emoji: "☂️", nome: "GUARDA-CHUVA" },
+    errados: [
+      { emoji: "😎", nome: "ÓCULOS DE SOL" },
+      { emoji: "🩴", nome: "SANDÁLIA" },
+      { emoji: "🎩", nome: "CHAPÉU" },
+      { emoji: "👕", nome: "CAMISETA" },
+    ]
+  },
+  {
+    emoji: "❄️", nome: "FRIO",
+    bg: "linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 100%)",
+    borda: "#4FC3F7",
+    correto: { emoji: "🧥", nome: "CASACO" },
+    errados: [
+      { emoji: "😎", nome: "ÓCULOS DE SOL" },
+      { emoji: "🩴", nome: "SANDÁLIA" },
+      { emoji: "☂️", nome: "GUARDA-CHUVA" },
+      { emoji: "🩳", nome: "SHORT" },
+    ]
+  },
+  {
+    emoji: "🌬️", nome: "VENTANDO",
+    bg: "linear-gradient(135deg, #ECEFF1 0%, #CFD8DC 100%)",
+    borda: "#90A4AE",
+    correto: { emoji: "🧣", nome: "CACHECOL" },
+    errados: [
+      { emoji: "😎", nome: "ÓCULOS DE SOL" },
+      { emoji: "🩴", nome: "SANDÁLIA" },
+      { emoji: "🧴", nome: "PROTETOR SOLAR" },
+      { emoji: "🎽", nome: "REGATA" },
+    ]
+  },
+  {
+    emoji: "⛅", nome: "NUBLADO",
+    bg: "linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%)",
+    borda: "#BDBDBD",
+    correto: { emoji: "🧢", nome: "BONÉ" },
+    errados: [
+      { emoji: "❄️", nome: "GELO" },
+      { emoji: "🌂", nome: "SOMBRINHA" },
+      { emoji: "🧤", nome: "LUVAS" },
+      { emoji: "🩱", nome: "MAIÔ" },
+    ]
+  },
+  {
+    emoji: "🌡️", nome: "MUITO QUENTE",
+    bg: "linear-gradient(135deg, #FBE9E7 0%, #FFCCBC 100%)",
+    borda: "#FF8A65",
+    correto: { emoji: "🧴", nome: "PROTETOR SOLAR" },
+    errados: [
+      { emoji: "🧥", nome: "CASACO" },
+      { emoji: "🧣", nome: "CACHECOL" },
+      { emoji: "🧤", nome: "LUVAS" },
+      { emoji: "☂️", nome: "GUARDA-CHUVA" },
+    ]
+  },
+  {
+    emoji: "🌨️", nome: "NEVANDO",
+    bg: "linear-gradient(135deg, #E8EAF6 0%, #C5CAE9 100%)",
+    borda: "#7986CB",
+    correto: { emoji: "🧤", nome: "LUVAS" },
+    errados: [
+      { emoji: "😎", nome: "ÓCULOS DE SOL" },
+      { emoji: "🩴", nome: "SANDÁLIA" },
+      { emoji: "🩳", nome: "SHORT" },
+      { emoji: "🎩", nome: "CHAPÉU DE PALHA" },
+    ]
+  },
+  {
+    emoji: "🌈", nome: "APÓS CHUVA",
+    bg: "linear-gradient(135deg, #F3E5F5 0%, #EDE7F6 100%)",
+    borda: "#CE93D8",
+    correto: { emoji: "👢", nome: "BOTA DE CHUVA" },
+    errados: [
+      { emoji: "😎", nome: "ÓCULOS DE SOL" },
+      { emoji: "🧥", nome: "CASACO" },
+      { emoji: "🧣", nome: "CACHECOL" },
+      { emoji: "🎩", nome: "CHAPÉU" },
+    ]
+  }
+];
+
+const MSGS_ACERTO = [
+  "😄 MUITO BEM!", "👏 INCRÍVEL!", "✨ EXCELENTE!", "😊 ÓTIMO!"
+];
+const MSGS_ERRO = [
+  "😬 TENTE NOVAMENTE!", "😌 MAIS UMA VEZ!", "🤔 QUASE LÁ!", "👀 OLHE DE NOVO!"
+];
+
+let rodada = 0;
+let acertos = 0;
+let erros = 0;
+let totalRodadas = 8;
+let climasEmbaralhados = [];
+let respondida = false;
+let climaAtual = null;
+
+// Sons via AudioContext
+const ctx = (() => { try { return new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return null; } })();
+
+function tocar(tipo) {
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  if (tipo === 'acerto') {
+    osc.frequency.setValueAtTime(523, ctx.currentTime);
+    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.12);
+    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.24);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.6);
+  } else {
+    osc.frequency.setValueAtTime(300, ctx.currentTime);
+    osc.frequency.setValueAtTime(220, ctx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.45);
+  }
+}
+
+function embaralhar(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function iniciarJogo() {
+  rodada = 0;
+  acertos = 0;
+  erros = 0;
+  respondida = false;
+  climasEmbaralhados = embaralhar(CLIMAS).slice(0, totalRodadas);
+  document.querySelector('header').classList.remove('oculto');
+  const gameArea = document.querySelector('.game-area');
+  gameArea.classList.remove('final');
+  gameArea.style.border = '3px solid #FFF3';
+  gameArea.style.borderImage = '';
+  document.body.classList.remove('fim');
+  document.getElementById('tela-fim').classList.remove('ativa');
+  document.getElementById('jogo-area').classList.remove('oculto');
+  document.getElementById('btn-jogar').style.display = 'none';
+  atualizarPlacar();
+  carregarRodada();
+}
+
+function carregarRodada() {
+  respondida = false;
+  const clima = climasEmbaralhados[rodada];
+  climaAtual = clima;
+
+  // Clima card
+  const card = document.getElementById('clima-card');
+  card.style.background = clima.bg;
+  card.style.borderColor = clima.borda;
+  document.getElementById('clima-emoji').textContent = clima.emoji;
+  document.getElementById('clima-nome').textContent = clima.nome;
+
+  // Limpa feedback
+  const fb = document.getElementById('feedback-texto');
+  fb.textContent = '';
+  fb.className = 'feedback vazio';
+
+  // Monta opções: 1 certa + 2 erradas aleatórias
+  const erradasSorteadas = embaralhar(clima.errados).slice(0, 2);
+  const opcoes = embaralhar([clima.correto, ...erradasSorteadas]);
+
+  const container = document.getElementById('opcoes-container');
+  container.innerHTML = '';
+  opcoes.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'opcao';
+    btn.innerHTML = `<span class="item-emoji">${item.emoji}</span><span class="item-nome">${item.nome}</span>`;
+    btn.setAttribute('aria-label', item.nome);
+    const eCorreta = item.nome === clima.correto.nome;
+    btn.onclick = () => responder(btn, eCorreta, container);
+    container.appendChild(btn);
+  });
+
+  atualizarPlacar();
+  atualizarProgress();
+}
+
+function responder(btn, correta, container) {
+  if (respondida) return;
+  respondida = true;
+
+  // Desativa todos
+  container.querySelectorAll('.opcao').forEach(b => { b.disabled = true; });
+
+  const fb = document.getElementById('feedback-texto');
+
+  if (correta) {
+    btn.classList.add('correta');
+    fb.textContent = MSGS_ACERTO[Math.floor(Math.random() * MSGS_ACERTO.length)];
+    fb.className = 'feedback acerto';
+    acertos++;
+    tocar('acerto');
+    atualizarPlacar();
+    setTimeout(proximaRodada, 1400);
+  } else {
+    btn.classList.add('errada');
+    fb.textContent = MSGS_ERRO[Math.floor(Math.random() * MSGS_ERRO.length)];
+    fb.className = 'feedback erro';
+    erros++;
+    tocar('erro');
+    atualizarPlacar();
+    // Permite nova tentativa
+    setTimeout(() => {
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+      container.querySelectorAll('.opcao').forEach(b => {
+        if (b !== btn) { b.disabled = false; }
+      });
+      fb.textContent = '';
+      fb.className = 'feedback vazio';
+      respondida = false;
+    }, 900);
+  }
+}
+
+function proximaRodada() {
+  rodada++;
+  if (rodada >= totalRodadas) {
+    finalizarJogo();
+  } else {
+    carregarRodada();
+  }
+}
+
+function finalizarJogo() {
+  document.querySelector('header').classList.add('oculto');
+  document.body.classList.add('fim');
+  const gameArea = document.querySelector('.game-area');
+  gameArea.classList.add('final');
+  gameArea.style.border = '';
+  gameArea.style.borderImage = '';
+  document.getElementById('jogo-area').classList.add('oculto');
+  const tela = document.getElementById('tela-fim');
+  tela.classList.add('ativa');
+
+  const msgFim = 'PARABÉNS! VOCÊ COMPLETOU TODAS AS PERGUNTAS!';
+
+  document.getElementById('trofeu').style.display = 'none';
+  document.getElementById('msg-fim').textContent = msgFim;
+  const estrelasEl = document.getElementById('estrelas');
+  estrelasEl.style.display = 'flex';
+  estrelasEl.innerHTML = '<span>⭐</span><span>⭐</span><span>⭐</span>';
+  estrelasEl.classList.remove('animar');
+  void estrelasEl.offsetWidth; // Force reflow
+  estrelasEl.classList.add('animar');
+
+  estrelasEl.querySelectorAll('span').forEach((span, i) => {
+    span.style.animationDelay = `${i * 0.2}s, ${0.6 + i * 0.2}s`;
+  });
+  document.getElementById('resultado-final').textContent =
+    `TOTAL: ${acertos} / ${totalRodadas}`;
+
+  tocar('acerto');
+}
+
+function jogarNovamente() {
+  iniciarJogo();
+}
+
+function atualizarPlacar() {
+  const elRodada = document.getElementById('qtd-rodada');
+  if (elRodada) {
+    elRodada.textContent = `${Math.min(rodada + 1, totalRodadas)} / ${totalRodadas}`;
+  }
+}
+
+function atualizarProgress() {
+  const pct = ((rodada + 1) / totalRodadas) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = ''; 
+}
+
+// Inicia
+iniciarJogo();
+</script>
+</body>
+</html>
