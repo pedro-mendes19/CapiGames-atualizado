@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Balão Viajante 🎈</title>
+<meta name="description" content="Jogo educativo infantil de adivinhação de palavras com um ursinho viajante">
+<style>
+/* ========== RESET E BASE ========== */
+*{margin:0;padding:0;box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap');
+body{font-family:'Nunito',sans-serif;overflow-x:hidden;min-height:100vh;
+background:linear-gradient(180deg,#87CEEB 0%,#B0E0F6 40%,#D4F1F9 60%,#E8F8E0 80%,#7EC850 85%,#5DAE3B 100%);
+background-attachment:fixed;display:flex;flex-direction:column;align-items:center;user-select:none}
+
+/* ========== NUVENS ========== */
+.cloud{position:fixed;background:#fff;border-radius:50%;opacity:.7;z-index:0}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.c1{width:120px;height:50px;top:8%;left:10%;animation:drift 25s linear infinite}
+.c1::before{width:60px;height:60px;top:-30px;left:20px}
+.c1::after{width:80px;height:45px;top:-20px;left:50px}
+.c2{width:100px;height:40px;top:15%;right:15%;animation:drift 35s linear infinite reverse}
+.c2::before{width:50px;height:50px;top:-25px;left:15px}
+.c2::after{width:65px;height:35px;top:-18px;left:40px}
+.c3{width:90px;height:35px;top:5%;left:55%;animation:drift 30s linear infinite}
+.c3::before{width:45px;height:45px;top:-22px;left:10px}
+.c3::after{width:55px;height:30px;top:-15px;left:35px}
+@keyframes drift{from{transform:translateX(-200px)}to{transform:translateX(calc(100vw + 200px))}}
+
+/* ========== TÍTULO ========== */
+h1{position:relative;z-index:1;margin:15px 0 5px;font-size:clamp(1.6rem,5vw,2.5rem);
+color:#fff;text-shadow:2px 3px 0 #E8834A,0 0 15px rgba(232,131,74,.3);letter-spacing:1px}
+
+/* ========== ÁREA DO JOGO ========== */
+#game-area{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:95%;max-width:600px}
+
+/* ========== BALÕES E CESTA ========== */
+#scene{position:relative;width:280px;height:320px;margin:10px auto;transition:transform 1.5s ease-in}
+#scene.landed{transform:translateY(60px)}
+
+.balloon-group{display:flex;justify-content:center;gap:6px;position:absolute;top:0;left:50%;transform:translateX(-50%)}
+.balloon{width:48px;height:60px;border-radius:50%;position:relative;animation:floatBalloon 3s ease-in-out infinite;
+transition:transform .6s,opacity .6s;cursor:default;filter:drop-shadow(0 4px 6px rgba(0,0,0,.15))}
+.balloon::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
+width:2px;height:35px;background:rgba(0,0,0,.25)}
+.balloon.b1{background:radial-gradient(circle at 35% 30%,#FF9AA2,#E05565);animation-delay:0s}
+.balloon.b2{background:radial-gradient(circle at 35% 30%,#FFD700,#F5A623);animation-delay:.5s}
+.balloon.b3{background:radial-gradient(circle at 35% 30%,#98D8AA,#4CAF50);animation-delay:1s}
+.balloon.b4{background:radial-gradient(circle at 35% 30%,#89CFF0,#4A90D9);animation-delay:1.5s}
+.balloon.b5{background:radial-gradient(circle at 35% 30%,#DDA0DD,#9B59B6);animation-delay:2s}
+.balloon.b6{background:radial-gradient(circle at 35% 30%,#FFDAB9,#FF8C42);animation-delay:2.5s}
+.balloon .shine{position:absolute;width:12px;height:16px;background:rgba(255,255,255,.45);
+border-radius:50%;top:12px;left:12px;transform:rotate(-30deg)}
+.balloon.popped{transform:scale(0) rotate(45deg)!important;opacity:0!important}
+@keyframes floatBalloon{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+
+/* ========== CORDAS ========== */
+#strings{position:absolute;top:60px;left:50%;transform:translateX(-50%);width:200px;height:80px}
+#strings canvas{width:100%;height:100%}
+
+/* ========== CESTA E URSO ========== */
+#basket-area{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);text-align:center}
+.basket{width:70px;height:45px;background:linear-gradient(135deg,#D2A06D,#A67C52);
+border-radius:0 0 12px 12px;margin:0 auto;position:relative;border:3px solid #8B6338;
+box-shadow:inset 0 -5px 10px rgba(0,0,0,.15)}
+.basket::before{content:'';position:absolute;top:-6px;left:-4px;right:-4px;height:8px;
+background:#8B6338;border-radius:4px}
+.bear{font-size:42px;line-height:1;margin-bottom:-8px;animation:bearBounce 2s ease-in-out infinite}
+@keyframes bearBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* ========== PALAVRA ========== */
+#word-display{display:flex;justify-content:center;gap:8px;margin:15px 0;flex-wrap:wrap}
+.letter-slot{width:clamp(32px,8vw,45px);height:clamp(38px,9vw,52px);border-bottom:4px solid #E8834A;
+display:flex;align-items:center;justify-content:center;font-size:clamp(1.3rem,4vw,1.8rem);
+font-weight:900;color:#2C3E50;transition:all .3s}
+.letter-slot.revealed{border-color:#4CAF50;animation:popIn .4s ease}
+.letter-slot.wrong-reveal{border-color:#e74c3c;color:#e74c3c}
+@keyframes popIn{0%{transform:scale(0)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* ========== TECLADO ========== */
+#keyboard{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:520px;margin:10px auto;padding:0 5px}
+.key{width:clamp(30px,7.5vw,42px);height:clamp(36px,8vw,46px);border:none;border-radius:10px;
+background:linear-gradient(145deg,#fff,#E8E8E8);font-family:'Nunito',sans-serif;
+font-size:clamp(.9rem,3vw,1.15rem);font-weight:800;color:#2C3E50;cursor:pointer;
+box-shadow:0 3px 6px rgba(0,0,0,.12);transition:all .2s;display:flex;align-items:center;justify-content:center}
+.key:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(0,0,0,.18);background:linear-gradient(145deg,#FFF8E1,#FFE082)}
+.key:active{transform:translateY(1px)}
+.key.correct{background:linear-gradient(145deg,#A5D6A7,#66BB6A)!important;color:#fff;pointer-events:none}
+.key.wrong{background:linear-gradient(145deg,#EF9A9A,#EF5350)!important;color:#fff;pointer-events:none;opacity:.6}
+.key:disabled{pointer-events:none;opacity:.4}
+
+/* ========== INFO ========== */
+#info{display:flex;gap:20px;margin:8px 0;font-size:clamp(.85rem,2.5vw,1rem);color:#2C3E50;font-weight:700}
+#info span{background:rgba(255,255,255,.65);padding:4px 14px;border-radius:20px;backdrop-filter:blur(4px)}
+
+/* ========== OVERLAY ========== */
+#overlay{display:none;position:fixed;inset:0;z-index:100;flex-direction:column;align-items:center;
+justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);animation:fadeOverlay .5s}
+#overlay.show{display:flex}
+@keyframes fadeOverlay{from{opacity:0}to{opacity:1}}
+#overlay-box{background:linear-gradient(135deg,#FFF8E1,#FFF);border-radius:24px;padding:clamp(20px,5vw,40px);
+text-align:center;max-width:420px;width:90%;box-shadow:0 15px 40px rgba(0,0,0,.25);animation:scaleUp .5s ease}
+@keyframes scaleUp{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+#overlay-box h2{font-size:clamp(1.4rem,4vw,2rem);margin-bottom:8px}
+#overlay-box p{font-size:clamp(.95rem,3vw,1.15rem);color:#555;margin-bottom:16px}
+#overlay-box button{padding:12px 32px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;
+font-size:1.1rem;font-weight:800;color:#fff;cursor:pointer;
+background:linear-gradient(135deg,#FF8C42,#E8834A);box-shadow:0 4px 14px rgba(232,131,74,.4);transition:all .25s}
+#overlay-box button:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(232,131,74,.5)}
+
+/* ========== DICA (TEMA) ========== */
+#hint{font-size:clamp(.85rem,2.5vw,1rem);color:#5D4037;background:rgba(255,255,255,.65);
+padding:5px 18px;border-radius:20px;backdrop-filter:blur(4px);font-weight:700;letter-spacing:.5px}
+
+/* ========== BOTÃO CHUTAR ========== */
+#guess-btn{padding:10px 28px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;
+font-size:clamp(.9rem,3vw,1.05rem);font-weight:800;color:#fff;cursor:pointer;margin:8px 0;
+background:linear-gradient(135deg,#FF8C42,#E8834A);box-shadow:0 4px 12px rgba(232,131,74,.35);
+transition:all .25s;letter-spacing:.5px}
+#guess-btn:hover{transform:scale(1.05);box-shadow:0 6px 18px rgba(232,131,74,.45)}
+#guess-btn:active{transform:scale(.97)}
+#guess-btn:disabled{opacity:.5;pointer-events:none}
+
+/* ========== DIALOG CHUTAR ========== */
+#guess-dialog{display:none;position:fixed;inset:0;z-index:90;flex-direction:column;align-items:center;
+justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(5px)}
+#guess-dialog.show{display:flex}
+#guess-dialog-box{background:linear-gradient(135deg,#FFF8E1,#FFF);border-radius:24px;
+padding:clamp(20px,5vw,36px);text-align:center;max-width:400px;width:90%;
+box-shadow:0 15px 40px rgba(0,0,0,.25);animation:scaleUp .4s ease}
+#guess-dialog-box h3{font-size:clamp(1.2rem,4vw,1.6rem);color:#2C3E50;margin-bottom:6px}
+#guess-dialog-box p{font-size:clamp(.85rem,2.5vw,1rem);color:#777;margin-bottom:14px}
+#guess-input{width:100%;padding:12px 16px;border:3px solid #E8834A;border-radius:14px;
+font-family:'Nunito',sans-serif;font-size:clamp(1rem,3.5vw,1.3rem);font-weight:800;
+text-align:center;color:#2C3E50;outline:none;text-transform:uppercase;letter-spacing:3px;
+transition:border-color .25s;background:#FFFDF5}
+#guess-input:focus{border-color:#FF8C42;box-shadow:0 0 0 4px rgba(232,131,74,.2)}
+#guess-input::placeholder{color:#ccc;text-transform:none;letter-spacing:0;font-weight:600}
+#guess-dialog-btns{display:flex;gap:10px;justify-content:center;margin-top:16px}
+#guess-dialog-btns button{padding:10px 24px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;
+font-size:1rem;font-weight:800;cursor:pointer;transition:all .25s}
+#btn-confirm-guess{color:#fff;background:linear-gradient(135deg,#4CAF50,#388E3C);
+box-shadow:0 4px 12px rgba(76,175,80,.35)}
+#btn-confirm-guess:hover{transform:scale(1.05);box-shadow:0 6px 18px rgba(76,175,80,.45)}
+#btn-cancel-guess{color:#E8834A;background:rgba(232,131,74,.12)}
+#btn-cancel-guess:hover{background:rgba(232,131,74,.22)}
+#guess-error{color:#e74c3c;font-size:.85rem;font-weight:700;margin-top:8px;min-height:1.2em}
+
+/* ========== CONFETE ========== */
+.confetti{position:fixed;width:10px;height:10px;z-index:150;border-radius:2px;animation:confettiFall linear forwards;pointer-events:none}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg)}
+100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+
+/* ========== RESPONSIVO ========== */
+@media(max-width:420px){
+#scene{width:220px;height:260px}
+.balloon{width:38px;height:48px}
+.balloon .shine{width:9px;height:12px;top:9px;left:9px}
+.bear{font-size:32px}
+.basket{width:55px;height:36px}
+}
+</style>
+</head>
+<body>
+
+<!-- Nuvens decorativas -->
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
+
+<h1>🎈 O Balão Viajante 🎈</h1>
+
+<div id="game-area">
+  <!-- Cena: balões + cesta + urso -->
+  <div id="scene">
+    <div class="balloon-group" id="balloon-group">
+      <div class="balloon b1" id="bl0"><span class="shine"></span></div>
+      <div class="balloon b2" id="bl1"><span class="shine"></span></div>
+      <div class="balloon b3" id="bl2"><span class="shine"></span></div>
+      <div class="balloon b4" id="bl3"><span class="shine"></span></div>
+      <div class="balloon b5" id="bl4"><span class="shine"></span></div>
+      <div class="balloon b6" id="bl5"><span class="shine"></span></div>
+    </div>
+    <div id="basket-area">
+      <div class="bear" id="bear">🧸</div>
+      <div class="basket"></div>
+    </div>
+  </div>
+
+  <!-- Botão Chutar Palavra -->
+  <button id="guess-btn" onclick="guessWord()">🎯 Chutar Palavra</button>
+
+  <!-- Dica do tema -->
+  <div id="hint"></div>
+
+  <!-- Info: vidas e pontuação -->
+  <div id="info">
+    <span>🎈 Balões: <b id="lives">6</b></span>
+    <span>⭐ Pontos: <b id="score">0</b></span>
+  </div>
+
+  <!-- Espaços da palavra -->
+  <div id="word-display"></div>
+
+  <!-- Teclado virtual -->
+  <div id="keyboard"></div>
+</div>
+
+<!-- Dialog de Chutar Palavra -->
+<div id="guess-dialog">
+  <div id="guess-dialog-box">
+    <h3>🎯 Chutar Palavra</h3>
+    <p>Digite a palavra completa e confirme!</p>
+    <input type="text" id="guess-input" placeholder="Digite aqui..." maxlength="15" autocomplete="off" spellcheck="false">
+    <div id="guess-error"></div>
+    <div id="guess-dialog-btns">
+      <button id="btn-cancel-guess" onclick="closeGuessDialog()">Cancelar</button>
+      <button id="btn-confirm-guess" onclick="confirmGuess()">Confirmar ✅</button>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay de vitória/derrota -->
+<div id="overlay">
+  <div id="overlay-box">
+    <h2 id="overlay-title"></h2>
+    <p id="overlay-msg"></p>
+    <button id="overlay-btn" onclick="startGame()">Jogar Novamente 🚀</button>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   BANCO DE PALAVRAS
+   Cada objeto tem a palavra e o tema/categoria como dica
+   ========================================================== */
+const WORDS = [
+  {word:"BANANA",hint:"Fruta"},
+  {word:"ESCOLA",hint:"Lugar"},
+  {word:"GIRAFA",hint:"Animal"},
+  {word:"AMIGO",hint:"Pessoa"},
+  {word:"ESTRELA",hint:"Natureza"},
+  {word:"CAVALO",hint:"Animal"},
+  {word:"FLORES",hint:"Planta"},
+  {word:"ABACAXI",hint:"Fruta"},
+  {word:"MACACO",hint:"Animal"},
+  {word:"PINTURA",hint:"Arte"},
+  {word:"FOGUETE",hint:"Veículo"},
+  {word:"MUSICA",hint:"Arte"},
+  {word:"ARVORE",hint:"Planta"},
+  {word:"GOLFINHO",hint:"Animal"},
+  {word:"CASTELO",hint:"Construção"},
+  {word:"PINGUIM",hint:"Animal"},
+  {word:"BORBOLETA",hint:"Inseto"},
+  {word:"COELHO",hint:"Animal"},
+  {word:"NUVEM",hint:"Natureza"},
+  {word:"DRAGAO",hint:"Criatura"}
+];
+
+/* ========== VARIÁVEIS GLOBAIS ========== */
+let currentWord = "";      // Palavra atual
+let guessedLetters = [];   // Letras já tentadas
+let errors = 0;            // Quantidade de erros
+let score = 0;             // Pontuação acumulada
+let gameActive = false;    // Flag: jogo está rodando?
+let usedWords = [];        // Palavras já usadas nesta sessão
+
+/* ========== ELEMENTOS DO DOM ========== */
+const wordDisplay = document.getElementById("word-display");
+const keyboard = document.getElementById("keyboard");
+const livesEl = document.getElementById("lives");
+const scoreEl = document.getElementById("score");
+const guessBtn = document.getElementById("guess-btn");
+const hintEl = document.getElementById("hint");
+const scene = document.getElementById("scene");
+const overlay = document.getElementById("overlay");
+const overlayTitle = document.getElementById("overlay-title");
+const overlayMsg = document.getElementById("overlay-msg");
+
+/* ==========================================================
+   INICIAR JOGO
+   Escolhe uma palavra aleatória e prepara a interface
+   ========================================================== */
+function startGame() {
+  // Resetar overlay
+  overlay.classList.remove("show");
+  // Resetar estado
+  errors = 0;
+  guessedLetters = [];
+  gameActive = true;
+  scene.classList.remove("landed");
+  livesEl.textContent = "6";
+
+  // Restaurar balões
+  for (let i = 0; i < 6; i++) {
+    document.getElementById("bl" + i).classList.remove("popped");
+  }
+
+  // Reabilitar botão chutar
+  guessBtn.disabled = false;
+
+  // Se já usamos todas as palavras, resetar a lista
+  if (usedWords.length >= WORDS.length) usedWords = [];
+
+  // Escolher palavra não repetida
+  let available = WORDS.filter(w => !usedWords.includes(w.word));
+  let chosen = available[Math.floor(Math.random() * available.length)];
+  currentWord = chosen.word;
+  usedWords.push(currentWord);
+
+  // Mostrar dica (apenas o tema)
+  hintEl.textContent = "📌 Tema: " + chosen.hint;
+
+  // Criar espaços da palavra
+  renderWord();
+  // Criar teclado
+  renderKeyboard();
+}
+
+/* ==========================================================
+   RENDERIZAR PALAVRA
+   Mostra underlines e letras já adivinhadas
+   ========================================================== */
+function renderWord() {
+  wordDisplay.innerHTML = "";
+  for (let letter of currentWord) {
+    const slot = document.createElement("div");
+    slot.className = "letter-slot";
+    if (guessedLetters.includes(letter)) {
+      slot.textContent = letter;
+      slot.classList.add("revealed");
+    }
+    wordDisplay.appendChild(slot);
+  }
+}
+
+/* ==========================================================
+   RENDERIZAR TECLADO VIRTUAL
+   Cria botões A-Z para o jogador clicar
+   ========================================================== */
+function renderKeyboard() {
+  keyboard.innerHTML = "";
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for (let l of letters) {
+    const btn = document.createElement("button");
+    btn.className = "key";
+    btn.textContent = l;
+    btn.id = "key-" + l;
+    // Se a letra já foi usada, desabilitar
+    if (guessedLetters.includes(l)) {
+      btn.classList.add(currentWord.includes(l) ? "correct" : "wrong");
+    }
+    btn.addEventListener("click", () => guessLetter(l));
+    keyboard.appendChild(btn);
+  }
+}
+
+/* ==========================================================
+   LÓGICA DE ADIVINHAÇÃO
+   Verifica se a letra está na palavra, atualiza estado
+   ========================================================== */
+function guessLetter(letter) {
+  if (!gameActive || guessedLetters.includes(letter)) return;
+  guessedLetters.push(letter);
+
+  const keyBtn = document.getElementById("key-" + letter);
+
+  if (currentWord.includes(letter)) {
+    // ACERTOU!
+    if (keyBtn) keyBtn.classList.add("correct");
+    renderWord();
+    // Verificar vitória
+    if (checkWin()) endGame(true);
+  } else {
+    // ERROU - estourar um balão
+    if (keyBtn) keyBtn.classList.add("wrong");
+    popBalloon(errors);
+    errors++;
+    livesEl.textContent = String(6 - errors);
+    // Verificar derrota
+    if (errors >= 6) {
+      setTimeout(() => endGame(false), 700);
+    }
+  }
+}
+
+/* ==========================================================
+   CHUTAR PALAVRA - DIALOG CUSTOMIZADO
+   Abre um dialog estilizado para o jogador digitar a palavra.
+   Se errar, perde na hora (todos os balões estouram).
+   ========================================================== */
+const guessDialog = document.getElementById("guess-dialog");
+const guessInput = document.getElementById("guess-input");
+const guessError = document.getElementById("guess-error");
+
+function guessWord() {
+  if (!gameActive) return;
+  guessError.textContent = "";
+  guessInput.value = "";
+  guessDialog.classList.add("show");
+  setTimeout(() => guessInput.focus(), 100);
+}
+
+function closeGuessDialog() {
+  guessDialog.classList.remove("show");
+  guessInput.value = "";
+  guessError.textContent = "";
+}
+
+function confirmGuess() {
+  const normalized = guessInput.value.trim().toUpperCase();
+  if (normalized === "") {
+    guessError.textContent = "⚠️ Digite uma palavra!";
+    guessInput.focus();
+    return;
+  }
+  closeGuessDialog();
+
+  if (normalized === currentWord) {
+    // Acertou! Revelar todas as letras e vencer
+    for (let l of currentWord) {
+      if (!guessedLetters.includes(l)) guessedLetters.push(l);
+    }
+    renderWord();
+    endGame(true);
+  } else {
+    // Errou! Estourar todos os balões restantes e perder
+    for (let i = errors; i < 6; i++) {
+      setTimeout(() => popBalloon(i), (i - errors) * 150);
+    }
+    errors = 6;
+    livesEl.textContent = "0";
+    guessBtn.disabled = true;
+    setTimeout(() => endGame(false), 1000);
+  }
+}
+
+// Permitir confirmar com Enter no input do dialog
+guessInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") confirmGuess();
+  if (e.key === "Escape") closeGuessDialog();
+});
+
+/* ==========================================================
+   ESTOURAR BALÃO
+   Adiciona classe CSS que anima o balão sumindo
+   ========================================================== */
+function popBalloon(index) {
+  const balloon = document.getElementById("bl" + index);
+  if (balloon) {
+    balloon.classList.add("popped");
+  }
+}
+
+/* ==========================================================
+   VERIFICAR VITÓRIA
+   Retorna true se todas as letras da palavra foram reveladas
+   ========================================================== */
+function checkWin() {
+  return [...currentWord].every(l => guessedLetters.includes(l));
+}
+
+/* ==========================================================
+   FIM DE JOGO
+   Mostra overlay de vitória ou derrota
+   ========================================================== */
+function endGame(won) {
+  gameActive = false;
+
+  if (won) {
+    score += 10;
+    scoreEl.textContent = score;
+    overlayTitle.textContent = "🎉 Parabéns!";
+    overlayMsg.textContent = "A viagem continua! ✨";
+    launchConfetti();
+  } else {
+    // Ursinho pousa suavemente
+    scene.classList.add("landed");
+    // Revelar letras que faltavam
+    const slots = wordDisplay.querySelectorAll(".letter-slot");
+    currentWord.split("").forEach((l, i) => {
+      if (!guessedLetters.includes(l)) {
+        slots[i].textContent = l;
+        slots[i].classList.add("wrong-reveal");
+      }
+    });
+    overlayTitle.textContent = "😢 A viagem terminou!";
+    overlayMsg.textContent = 'A palavra era "' + currentWord + '". Vamos tentar de novo?';
+  }
+
+  // Mostrar overlay com pequeno delay
+  setTimeout(() => overlay.classList.add("show"), won ? 600 : 1500);
+}
+
+/* ==========================================================
+   EFEITO DE CONFETE
+   Cria partículas coloridas caindo na tela
+   ========================================================== */
+function launchConfetti() {
+  const colors = ["#FF6B6B","#FFD93D","#6BCB77","#4D96FF","#9B59B6","#FF8C42","#FF69B4"];
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.top = -10 + "px";
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.width = (Math.random() * 8 + 6) + "px";
+    c.style.height = (Math.random() * 8 + 6) + "px";
+    c.style.animationDuration = (Math.random() * 2 + 2) + "s";
+    c.style.animationDelay = (Math.random() * 1.5) + "s";
+    c.style.borderRadius = Math.random() > .5 ? "50%" : "2px";
+    document.body.appendChild(c);
+    // Remover confete após a animação
+    setTimeout(() => c.remove(), 5000);
+  }
+}
+
+/* ==========================================================
+   ENTRADA PELO TECLADO FÍSICO
+   Permite jogar usando o teclado do computador
+   ========================================================== */
+document.addEventListener("keydown", (e) => {
+  if (!gameActive) {
+    // Se apertar Enter quando o jogo acabou, reiniciar
+    if (e.key === "Enter" && overlay.classList.contains("show")) startGame();
+    return;
+  }
+  const key = e.key.toUpperCase();
+  // Aceitar apenas letras A-Z
+  if (/^[A-Z]$/.test(key)) {
+    guessLetter(key);
+  }
+});
+
+/* ========== INICIAR O JOGO AO CARREGAR ========== */
+startGame();
+</script>
+</body>
+</html>

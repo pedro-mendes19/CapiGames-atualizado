@@ -1,899 +1,889 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Culinária Brasileira</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Culinária Brasileira</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Alice&display=swap" rel="stylesheet">
 </head>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-        }
+<style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Nunito', sans-serif;
+    }
 
-        html,
-        body {
-            min-height: 100%;
-            width: 100%;
-            background: linear-gradient(180deg, #E8F5E9, #C8E6C9);
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 0;
-            text-transform: uppercase;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
+    html,
+    body {
+      min-height: 100vh;
+      width: 100%;
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(180deg, #E8F5E9, #C8E6C9);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+      text-transform: uppercase;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
 
-        html::-webkit-scrollbar,
-        body::-webkit-scrollbar {
-            display: none;
-        }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
+    }
 
-        .game-wrapper {
-            min-height: 100vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 20px 10px;
-        }
+    .game-wrapper {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 20px;
+    }
 
+    h1 {
+      display: none;
+      margin: 2vh auto 2vh auto;
+      padding: 1vh 4vw;
+      width: fit-content;
+      max-width: 95%;
+      font-family: 'Alice', serif;
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-align: center;
+      color: #3fa846;
+      -webkit-text-stroke: 0.5px #1B5E20;
+      background: rgba(255, 255, 255, 0.90);
+      border: 0.5vh solid #FFD700;
+      border-radius: 50px;
+      flex-shrink: 0;
+      box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+      word-break: keep-all;
+    }
+
+    #intro {
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+        url('img/fundointro.jpeg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      overflow-y: auto;
+    }
+
+    .intro-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(5px);
+      padding: 5vh 5vw;
+      border-radius: 35px;
+      max-width: 980px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2), inset 0 0 0 4px #ffffff, inset 0 0 0 8px #FFD700;
+      border: 4px solid #3fa846;
+      animation: fadeUp .8s ease;
+      margin: auto;
+    }
+
+    .intro-card h2 {
+      font-family: 'Alice', serif;
+      font-size: clamp(32px, 6vh, 52px);
+      margin-bottom: 2vh;
+      font-weight: 900;
+      color: #3fa846;
+      -webkit-text-stroke: 0.5px #1B5E20;
+    }
+
+    .intro-card p {
+      font-size: clamp(18px, 2.8vh, 28px);
+      line-height: 1.5;
+      color: #101f0d;
+      font-weight: 700;
+    }
+
+    .btn-jogar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 4vh auto 0 auto;
+      background: #FDD835;
+      color: #1B5E20;
+      font-size: clamp(22px, 3.5vh, 32px);
+      padding: 2vh 6vw;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 800;
+      animation: pulse 1.5s infinite;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+
+    .btn-jogar:hover {
+      transform: scale(1.05);
+      background: #ffcb48;
+    }
+
+    .btn-jogar:active {
+      transform: translateY(2px);
+    }
+
+    #container {
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 1vh;
+      margin-bottom: auto;
+      gap: 1.5vh;
+      padding-bottom: 10px;
+    }
+
+    .tab-navigation {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 3vh;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      background: #DCEDC8;
+      color: #33691E;
+      box-shadow: 0 0.5vh 0 #8BC34A;
+      font-size: clamp(12px, 2.5vw, 16px);
+      flex-grow: 1;
+      max-width: 45%;
+      transition: transform 0.1s;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .tab-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 0.2vh 0 #8BC34A;
+    }
+
+    .tab-btn.active {
+      background: #4CAF50;
+      color: white;
+      box-shadow: 0 0.5vh 0 #1B5E20;
+    }
+
+    .tab-btn.active:active {
+      box-shadow: 0 0.2vh 0 #1B5E20;
+    }
+
+    .bloco-imagem {
+      background: white;
+      padding: 1.5vh;
+      border-radius: 35px;
+      box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 95%;
+      max-width: 450px;
+      border: 5px solid #AED581;
+      margin-bottom: 3vh;
+    }
+
+    .label-progresso {
+      margin-bottom: 1vh;
+      background: #E8F5E9;
+      padding: 0.5vh 1.5vw;
+      border-radius: 15px;
+      font-size: 16px;
+      font-size: clamp(14px, 2vh, 16px);
+      font-weight: 700;
+      color: #2E7D32;
+      display: inline-block;
+      min-height: 1.5em;
+    }
+
+    #imagemPergunta {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: 18vh;
+      display: block;
+      border-radius: 20px;
+      object-fit: contain;
+      border: 2px solid #E8F5E9;
+    }
+
+    #nomeAlimento {
+      margin-top: 1vh;
+      font-size: clamp(20px, 3vh, 30px);
+      color: #E65100;
+      font-weight: 900;
+      text-align: center;
+      text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+    }
+
+    #pergunta {
+      width: 95%;
+      max-width: 600px;
+      font-size: clamp(15px, 2.2vh, 20px);
+      font-weight: 800;
+      text-align: center;
+      color: #3E2723;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 1vh 2vw;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .opcoes {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      width: 100%;
+      flex-wrap: wrap;
+      margin-top: 1vh;
+    }
+
+    .opcao {
+      background: linear-gradient(180deg, #ffffff, #f6faf2);
+      border: 3px solid #FFEB3B;
+      border-radius: 25px;
+      padding: 1vh 1vw;
+      cursor: pointer;
+      min-width: 100px;
+      width: 30%;
+      max-width: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0.5vh 0 #FBC02D;
+      transition: transform 0.1s, background 0.2s;
+    }
+
+    .opcao:hover {
+      transform: translateY(-2px);
+    }
+
+    .opcao:active {
+      transform: translateY(0.4vh);
+      box-shadow: 0 0.2vh 0 #FBC02D;
+    }
+
+    .opcao img {
+      width: 35px;
+      height: auto;
+      margin-bottom: 0.5vh;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+    }
+
+    .opcao p {
+      font-size: clamp(11px, 1.8vh, 16px);
+      font-weight: 800;
+      margin: 0;
+      color: #33691E;
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    #resultado {
+      margin: 0 auto;
+      height: auto;
+      min-height: 60px;
+      padding: 10px 15px;
+      width: 95%;
+      max-width: 600px;
+      font-size: clamp(14px, 2.2vh, 20px);
+      font-weight: 800;
+      text-align: center;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+      box-sizing: border-box;
+    }
+
+    #score {
+      font-size: clamp(14px, 2vh, 18px);
+      font-weight: 700;
+      color: #101f0d;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.8vh 2.5vw;
+      border-radius: 50px;
+    }
+
+    .countries-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .country-card {
+      background: white;
+      border-radius: 20px;
+      padding: 15px;
+      width: 160px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      border: 3px solid #AED581;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 200px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .country-card:hover {
+      transform: scale(1.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      border-color: #4CAF50;
+      background: #F1F8E9;
+    }
+
+    .country-card:active {
+      transform: scale(0.95);
+    }
+
+    .clothing-preview {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+      width: 100%;
+      margin-bottom: 5px;
+    }
+
+    .clothing-preview img {
+      width: auto;
+      height: auto;
+      max-width: 100px;
+      max-height: 90px;
+      transition: transform 0.3s;
+      filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    .country-card:hover .clothing-preview img {
+      transform: scale(1.15);
+    }
+
+    .country-description {
+      font-size: 11px;
+      color: #33691E;
+      margin-top: auto;
+      line-height: 1.2;
+      width: 100%;
+    }
+
+    .ver-ingredientes {
+      background: #FFD700;
+      color: #1B5E20;
+      border-radius: 10px;
+      padding: 4px 8px;
+      font-size: 10px;
+      margin-top: 5px;
+      font-weight: bold;
+      border: none;
+      display: inline-block;
+    }
+
+    #painelFinal {
+      display: none;
+      max-width: 90%;
+      width: 600px;
+      min-height: 480px;
+      padding: 30px 40px;
+      background-color: #FFF9C4;
+      border-radius: 40px;
+      border: 6px solid #FBC02D;
+      text-align: center;
+      box-shadow: 0 2vh 5vh rgba(0, 0, 0, 0.2);
+      animation: fadeUp .6s ease;
+      margin: auto;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #painelFinal h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(28px, 5vh, 48px);
+      margin: 0 0 2vh 0;
+      color: #fd840c;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    #resumoFinal {
+      font-size: clamp(18px, 2.2vh, 22px);
+      font-weight: bold;
+      color: #3E2723;
+      margin-bottom: 2vh;
+    }
+
+    .totais {
+      display: flex;
+      justify-content: center;
+      gap: 5vw;
+      margin: 2vh 0 3vh 0;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 2vh;
+      border-radius: 25px;
+    }
+
+    .acertos,
+    .erros {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: clamp(16px, 2.2vh, 20px);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .acertos {
+      color: #2E7D32;
+    }
+
+    .erros {
+      color: #C62828;
+    }
+
+    .totais b {
+      font-size: clamp(40px, 6vh, 52px);
+      line-height: 1.1;
+      margin-top: 0.5vh;
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+    }
+
+    #mensagemFinal {
+      font-size: clamp(18px, 2.5vh, 24px);
+      font-weight: bold;
+      color: #F57C00;
+      margin-bottom: 3.5vh;
+    }
+
+    .botoes-finais {
+      display: flex;
+      justify-content: center;
+      gap: 2vw;
+      flex-wrap: wrap;
+    }
+
+    .btn-reiniciar {
+      padding: 2.5vh 3vw;
+      font-size: clamp(16px, 2.4vh, 20px);
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      color: white;
+      text-transform: uppercase;
+      animation: pulse 1.8s infinite;
+      transition: all 0.1s ease;
+      min-width: 150px;
+      background: #42A5F5;
+    }
+
+    .btn-reiniciar:hover {
+      background: #2f95da;
+    }
+
+    .btn-reiniciar:active {
+      transform: translateY(2px);
+    }
+
+    #modalOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-box {
+      background: #F1F8E9;
+      border: 5px solid #FFD700;
+      border-radius: 30px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    .modal-box img {
+      width: 150px;
+      height: auto;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.2));
+    }
+
+    .modal-box h2 {
+      font-family: 'Alice', serif;
+      color: #2E7D32;
+      font-size: 28px;
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+    }
+
+    .modal-box h3 {
+      color: #5D4037;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .modal-box p {
+      color: #3E2723;
+      font-size: 18px;
+      font-size: clamp(14px, 2.2vh, 20px);
+      line-height: 1.4;
+      font-weight: bold;
+      margin-bottom: 25px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 15px;
+      border-radius: 15px;
+      min-height: 1em;
+      display: block;
+    }
+
+    .btn-fechar-modal {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #b71c1c;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .btn-fechar-modal:hover {
+      background: #ef5350;
+    }
+
+    .btn-fechar-modal:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #b71c1c;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.05)
+      }
+
+      100% {
+        transform: scale(1)
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(3vh)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.5)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
+    }
+
+    @media (max-width: 600px) {
+      #container {
+        gap: 1vh;
+      }
+
+      .intro-card {
+        width: 95%;
+        padding: 4vh 4vw;
+        box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 5px #FFD700;
+        border: 3px solid #1B5E20;
+        border-radius: 25px;
+      }
+
+      .intro-card h2 {
+        font-size: 24.5px;
+        margin-bottom: 1vh;
+      }
+
+      .intro-card p {
+        font-size: 14px;
+        line-height: 1.3;
+      }
+
+      .btn-jogar {
+        margin-top: 2vh;
+        padding: 1.5vh 10vw;
+        font-size: 18px;
+      }
+
+      #painelFinal {
+        padding: 4vh 4vw;
+        border-radius: 30px;
+        width: 95%;
+        max-width: 500px;
+        min-height: auto;
+      }
+
+      #painelFinal h2 {
+        font-size: 28px;
+      }
+
+      #resumoFinal {
+        font-size: 16px;
+        margin-bottom: 1.5vh;
+      }
+
+      .totais {
+        margin: 1.5vh 0;
+        padding: 1vh;
+        gap: 3vw;
+      }
+
+      .totais b {
+        font-size: 30px;
+      }
+
+      .acertos,
+      .erros {
+        font-size: 10px;
+      }
+
+      #mensagemFinal {
+        font-size: 16px;
+        margin-bottom: 2vh;
+        white-space: normal;
+      }
+
+      .btn-reiniciar {
+        padding: 2vh 4vw;
+        font-size: 15px;
+        min-width: 130px;
+      }
+
+      h1 {
+        font-size: 24px;
+        padding: 5px 15px;
+        border-width: 3px;
+        margin: 1vh auto;
+      }
+
+      .bloco-imagem {
+        padding: 0.8vh;
+        margin-bottom: 0.8vh;
+      }
+
+      #imagemPergunta {
+        max-height: 16vh;
+      }
+
+      #nomeAlimento {
+        font-size: 20px;
+      }
+
+      #pergunta {
+        font-size: 15px;
+        padding: 1vh 3vw;
+      }
+
+      .opcao {
+        width: 60%;
+        max-width: 300px;
+        padding: 5px;
+        flex-direction: column;
+        gap: 4px;
+        justify-content: center;
+        min-height: 60px;
+      }
+
+      .opcao img {
+        width: 28px;
+        margin-bottom: 0;
+      }
+
+      .opcao p {
+        font-size: 13px;
+        line-height: 1.1;
+        max-width: 95%;
+      }
+
+      .opcoes {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1vh;
+        gap: 1.8vh;
+      }
+
+      #resultado {
+        min-height: 35px;
+        padding: 5px 10px;
+        font-size: 14px;
+        font-size: clamp(12px, 1.8vh, 15px);
+      }
+
+      .label-progresso {
+        font-size: 11px;
+        padding: 5px 20px;
+      }
+
+      #score {
+        font-size: 12px;
+        padding: 8px 30px;
+      }
+
+      #quizCulinaria {
+        gap: 1.5vh;
+      }
+
+      .game-wrapper {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      @media (max-width: 400px) {
         h1 {
-            display: none;
-            margin: 2vh auto 2vh auto;
-            padding: 1vh 4vw;
-            width: fit-content;
-            max-width: 95%;
-            font-size: clamp(20px, 4vw, 38px);
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-align: center;
-            color: #3fa846;
-            -webkit-text-stroke: 2px #1B5E20;
-            background: rgba(255, 255, 255, 0.90);
-            border: 0.5vh solid #FFD700;
-            border-radius: 50px;
-            flex-shrink: 0;
-            box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
-            white-space: nowrap;
-        }
-
-        #intro {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(rgba(255, 255, 255, 0.623), rgba(255, 255, 255, 0.623)), url('img/fundointro.png');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            overflow-y: auto;
-        }
-
-        .intro-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(5px);
-            padding: 5vh 5vw;
-            border-radius: 35px;
-            max-width: 980px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            text-align: center;
-            animation: fadeUp .8s ease;
-            margin: auto;
-            border: 4px solid #FFD700;
-            box-shadow:
-                0 0 0 5px #ffffff,
-                0 0 0 9px #3fa846,
-                0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .intro-card h2 {
-            font-size: clamp(32px, 6vh, 52px);
-            margin-bottom: 2vh;
-            font-weight: 900;
-            color: #3fa846;
-            -webkit-text-stroke: 2px #1B5E20;
-        }
-
-        .intro-card p {
-            font-size: clamp(18px, 2.8vh, 28px);
-            line-height: 1.5;
-            color: #101f0d;
-            font-weight: 700;
-        }
-
-        .btn-jogar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 4vh auto 0 auto;
-            background:#FDD835;
-            color: #1B5E20;
-            font-size: clamp(22px, 3.5vh, 32px);
-            padding: 2vh 6vw;
-            border: 2px solid #FFF;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 900;
-            animation: pulse 1.5s infinite;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-        }
-
-        .btn-jogar:hover {
-            transform: scale(1.05);
-            background: #ffcb48;
+          font-size: 21px;
+          padding: 5px 12px;
+          margin: 1vh auto;
         }
 
         #container {
-            width: min(100%, 900px);
-            max-width: 900px;
-            height: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 1vh;
-            margin-bottom: auto;
-            gap: 1.5vh;
-            padding: 0 10px 10px;
-        }
-
-        .tab-navigation {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            max-width: 900px;
-            margin-bottom: 3vh;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: none;
-            font-weight: 900;
-            cursor: pointer;
-            background: #DCEDC8;
-            color: #33691E;
-            box-shadow: 0 0.5vh 0 #8BC34A;
-            font-size: clamp(12px, 2.5vw, 16px);
-            flex-grow: 1;
-            max-width: 45%;
-            transition: transform 0.1s;
-        }
-
-        .tab-btn:hover {
-            transform: translateY(-3px);
-        }
-
-        .tab-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 0.2vh 0 #8BC34A;
-        }
-
-        .tab-btn.active {
-            background: #4CAF50;
-            color: white;
-            box-shadow: 0 0.5vh 0 #1B5E20;
-        }
-
-        .tab-btn.active:active {
-            box-shadow: 0 0.2vh 0 #1B5E20;
-        }
-
-        .countries-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            width: 100%;
-        }
-
-        #explorarCulinaria {
-            width: 100%;
-        }
-
-        #quizCulinaria {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 2vh;
-            width: 100%;
-        }
-
-        .country-card {
-            background: white;
-            border-radius: 20px;
-            margin: 0;
-            width: 160px;
-            padding: 15px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-            border: 3px solid #AED581;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            height: 200px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .country-card:hover {
-            transform: scale(1.08);
-            box-shadow: 0 20px 40px rgba(51, 105, 30, 0.2);
-            border-color: #3fa846;
-            background: #F1F8E9;
-        }
-
-        .country-card:active {
-            transform: scale(0.95);
-        }
-
-        .clothing-preview {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-            width: 100%;
-            margin-bottom: 5px;
-        }
-
-        .clothing-preview img {
-            width: auto;
-            height: auto;
-            max-width: 100px;
-            max-height: 90px;
-            filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.1));
-            transition: transform 0.3s;
-        }
-        
-        .country-card:hover .clothing-preview img {
-            transform: scale(1.15);
-        }
-
-        .country-description {
-            font-size: 11px;
-            color: #33691E;
-            margin-top: auto;
-            line-height: 1.2;
-            width: 100%;
-        }
-
-        .ver-ingredientes {
-            background: #FFD700;
-            color: #1B5E20;
-            border-radius: 10px;
-            padding: 4px 8px;
-            font-size: 10px;
-            margin-top: 5px;
-            font-weight: 900;
-            border: none;
-            display: inline-block;
+          gap: 1.2vh;
         }
 
         .bloco-imagem {
-            background: white;
-            padding: 1.5vh 2vw;
-            border-radius: 35px;
-            box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
-            border: 5px solid #A5D6A7;
-            margin-bottom: 3vh;
-        }
-
-        .label-progresso {
-            margin-bottom: 1vh;
-            background: #E8F5E9;
-            padding: 0.5vh 1.5vw;
-            border-radius: 15px;
-            font-size: clamp(14px, 2vh, 15px);
-            font-weight: 700;
-            font-style: bold;
-            color: #2E7D32;
-            width: fit-content;
-            max-width: 100%;
-            white-space: nowrap;
+          padding: 0.6vh;
+          margin-bottom: 0.6vh;
+          border-radius: 25px;
         }
 
         #imagemPergunta {
-            width: auto;
-            max-width: 100%;
-            height: auto;
-            max-height: 18vh;
-            display: block;
-            border-radius: 20px;
-            object-fit: contain;
-            border: 2px solid #E8F5E9;
+          max-height: 14vh;
         }
 
         #nomeAlimento {
-            margin-top: 1vh;
-            font-size: clamp(20px, 3vh, 30px);
-            color: #E65100;
-            font-weight: 900;
-            text-align: center;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+          font-size: 18px;
+          margin-top: 0.5vh;
         }
 
         #pergunta {
-            width: 100%;
-            max-width: 620px;
-            font-size: clamp(15px, 2.2vh, 20px);
-            font-weight: 800;
-            text-align: center;
-            color: #101f0d;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.952);
-            padding: 1vh 2vw;
-            border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-        }
-
-        .opcoes {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            width: 100%;
-            max-width: 100%;
-            flex-wrap: wrap;
-            margin-top: 1vh;
+          font-size: 13px;
+          padding: 0.8vh 2vw;
         }
 
         .opcao {
-            background: linear-gradient(180deg, #ffffff, #f6faf2);
-            border: 3px solid #FFEB3B;
-            border-radius: 25px;
-            padding: 1vh 1vw;
-            cursor: pointer;
-            min-width: 110px;
-            width: calc(33.333% - 10px);
-            max-width: 170px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0.5vh 0 #FBC02D;
-            transition: transform 0.1s, background 0.2s;
-            box-sizing: border-box;
-        }
-
-        .opcao:hover {
-            transform: translateY(-2px);
-        }
-
-        .opcao:active {
-            transform: translateY(0.4vh);
-            box-shadow: 0 0.2vh 0 #FBC02D;
+          width: 60%;
+          padding: 4px;
+          gap: 4px;
+          flex-direction: column;
+          min-height: 40px;
         }
 
         .opcao img {
-            width: 35px;
-            height: auto;
-            margin-bottom: 0.5vh;
-            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+          width: 25px;
         }
 
         .opcao p {
-            font-size: clamp(11px, 1.8vh, 16px);
-            font-weight: 800;
-            margin: 0;
-            color: #33691E;
-            text-align: center;
-            line-height: 1.1;
+          font-size: 12px;
+        }
+
+        .opcoes {
+          flex-direction: column;
+          align-items: center;
+          margin-top: 0.8vh;
+          gap: 1.8vh;
         }
 
         #resultado {
-            margin: 0 auto;
-            height: auto;
-            min-height: 60px;
-            padding: 10px 15px;
-            width: 95%;
-            max-width: 600px;
-            font-size: clamp(14px, 2.2vh, 20px);
-            font-weight: 800;
-            text-align: center;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s;
-            box-sizing: border-box;
+          min-height: 30px;
+          padding: 4px 8px;
+          font-size: 13px;
+          font-size: clamp(12px, 1.8vh, 16px);
         }
 
-        #score {
-            font-size: clamp(14px, 2vh, 18px);
-            font-weight: 700;
-            color: #101f0d;
-            background: rgba(255, 255, 255, 0.952);
-            padding: 0.8vh 2.5vw;
-            border-radius: 50px;
+        #quizCulinaria {
+          gap: 1.5vh;
         }
 
-        #painelFinal {
-            display: none;
-            max-width: 90%;
-            width: 600px;
-            min-height: 480px;
-            padding: 30px 40px;
-            background-color: #ffffff;
-            border-radius: 40px;
-            text-align: center;
-            box-shadow: 0 2vh 5vh rgba(0, 0, 0, 0.2);
-            animation: fadeUp .6s ease;
-            margin: auto;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border: 4px solid #FFD700;
-            box-shadow:
-                0 0 0 5px #ffffff,
-                0 0 0 9px #3fa846,
-                0 15px 35px rgba(0, 0, 0, 0.2);
+        .countries-grid {
+          gap: 10px;
         }
 
-        #painelFinal h2 {
-            font-size: clamp(28px, 5vh, 48px);
-            margin: 0 0 2vh 0;
-            color: #E65100;
-            font-weight: 900;
-            text-transform: uppercase;
+        .country-card {
+          width: calc(50% - 5px);
+          padding: 10px;
+          height: 180px;
         }
 
-        #resumoFinal {
-            font-size: clamp(18px, 2.2vh, 22px);
-            font-weight: bold;
-            color: #3E2723;
-            margin-bottom: 2vh;
+        .clothing-preview img {
+          max-width: 80px;
+          max-height: 70px;
         }
 
-        .totais {
-            display: flex;
-            justify-content: center;
-            gap: 5vw;
-            margin: 2vh 0 3vh 0;
-            background: rgb(245, 245, 242);
-            padding: 2vh;
-            border-radius: 25px;
+        .country-description {
+          font-size: 10px;
         }
-
-        .acertos,
-        .erros {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: clamp(16px, 2.2vh, 20px);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .acertos {
-            color: #2E7D32;
-        }
-
-        .erros {
-            color: #C62828;
-        }
-
-        .totais b {
-            font-size: clamp(40px, 6vh, 52px);
-            line-height: 1.1;
-            margin-top: 0.5vh;
-            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
-        }
-
-        #mensagemFinal {
-            font-size: clamp(18px, 2.5vh, 24px);
-            font-weight: bold;
-            color: #BF360C;
-            margin-bottom: 3vh;
-        }
-
-        .botoes-finais {
-            display: flex;
-            justify-content: center;
-            gap: 2vw;
-            flex-wrap: wrap;
-        }
-
-        .btn-reiniciar {
-            padding: 2.5vh 3vw;
-            font-size: clamp(16px, 2.2vh, 20px);
-            border-radius: 30px;
-            border: none;
-            cursor: pointer;
-            font-weight: 800;
-            color: white;
-            text-transform: uppercase;
-            transition: all 0.1s ease;
-            min-width: 150px;
-        }
-
-        .btn-reiniciar {
-            background: #2f95da;
-        }
-
-        .btn-reiniciar:hover {
-            background: #1976D2;
-        }
-
-        #modalOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-box {
-            background: #F1F8E9;
-            border: 5px solid #FFD700;
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .modal-box img {
-            width: 150px;
-            height: auto;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.2));
-        }
-
-        .modal-box h2 {
-            color: #2E7D32;
-            font-size: 28px;
-            margin: 0 0 10px 0;
-            text-transform: uppercase;
-        }
-
-        .modal-box h3 {
-            color: #5D4037;
-            font-size: 16px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .modal-box p {
-            color: #3E2723;
-            font-size: 18px;
-            line-height: 1.4;
-            font-weight: bold;
-            margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 15px;
-            border-radius: 15px;
-        }
-
-        .btn-fechar-modal {
-            background: #d32f2f;
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #b71c1c;
-        }
-
-        .btn-fechar-modal:hover {
-            background: #ef5350;
-        }
-
-        .btn-fechar-modal:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #b71c1c;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1) }
-            50% { transform: scale(1.05) }
-            100% { transform: scale(1) }
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(3vh) }
-            to { opacity: 1; transform: translateY(0) }
-        }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.5) }
-            to { opacity: 1; transform: scale(1) }
-        }
-
-        @media (min-width: 1100px) and (max-width: 1400px) {
-            .game-wrapper {
-                padding-top: 10px;
-                padding-bottom: 10px;
-            }
-
-            #container {
-                padding: 0 10px 24px;
-                gap: 1vh;
-            }
-
-            .bloco-imagem {
-                max-width: 430px;
-                padding: 1.2vh 2vw;
-            }
-
-            .label-progresso {
-                margin-bottom: 0.8vh;
-                padding: 0.6vh 1.5vw;
-                font-size: 14px;
-            }
-
-            #imagemPergunta {
-                max-height: 16vh;
-            }
-
-            #nomeAlimento {
-                font-size: clamp(18px, 2.4vh, 24px);
-            }
-
-            #pergunta {
-                max-width: 580px;
-                padding: 0.9vh 2vw;
-            }
-
-            .opcoes {
-                gap: 8px;
-            }
-
-            .opcao {
-                padding: 0.9vh 1vw;
-                min-width: 110px;
-                max-width: 150px;
-            }
-
-            #score {
-                padding: 0.8vh 2vw;
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            #container {
-                padding: 0 5px 10px;
-            }
-
-            .bloco-imagem {
-                width: 100%;
-                max-width: 100%;
-                padding: 1.5vh 2vw;
-            }
-
-            .opcao {
-                width: calc(50% - 10px);
-                max-width: none;
-            }
-
-            .label-progresso {
-                padding: 0.8vh 2vw;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .intro-card {
-                width: 95%;
-                padding: 4vh 4vw;
-                border-radius: 25px;
-            }
-
-            .intro-card h2 {
-                font-size: 24.5px;
-                margin-bottom: 1vh;
-            }
-
-            .intro-card p {
-                font-size: 14px;
-                line-height: 1.3;
-            }
-
-            .btn-jogar {
-                margin-top: 2vh;
-                padding: 1.5vh 10vw;
-                font-size: 18px;
-            }
-
-            #resultado {
-                font-size: 15px;
-                min-height: 40px;
-                padding: 6px 10px;
-                margin-top: 1vh;
-            }
-
-            #painelFinal {
-                padding: 4vh 4vw;
-                border-radius: 30px;
-                width: 95%;
-                max-width: 500px;
-                min-height: auto;
-            }
-
-            #painelFinal h2 {
-                font-size: 28px;
-            }
-
-            #resumoFinal {
-                font-size: 16px;
-                margin-bottom: 1.5vh;
-            }
-
-            .totais {
-                margin: 1.5vh 0;
-                padding: 1vh;
-                gap: 3vw;
-            }
-
-            .totais b {
-                font-size: 32px;
-            }
-
-            .acertos,
-            .erros {
-                font-size: 14px;
-            }
-
-            #mensagemFinal {
-                font-size: 18px;
-                margin-bottom: 2vh;
-                white-space: normal;
-            }
-
-            .btn-reiniciar {
-                padding: 2vh 4vw;
-                font-size: 15px;
-                min-width: 130px;
-            }
-
-            h1 {
-                font-size: clamp(18px, 6vw, 24px);
-                padding: 5px 15px;
-                border-width: 3px;
-                margin: 1.5vh auto;
-                white-space: nowrap;
-            }
-
-            .bloco-imagem {
-                padding: 1.2vh;
-                margin-bottom: 1.5vh;
-            }
-
-            #imagemPergunta {
-                max-height: 16vh;
-            }
-
-            #nomeAlimento {
-                font-size: 20px;
-            }
-
-            #pergunta {
-                font-size: 15px;
-                padding: 1vh 3vw;
-            }
-
-            .opcao {
-                width: 45%;
-                padding: 1vh;
-            }
-
-            .opcao img {
-                width: 30px;
-            }
-
-            .opcao p {
-                font-size: 12px;
-            }
-
-            #score {
-                font-size: 15px;
-            }
-
-            #quizCulinaria {
-                gap: 2vh;
-            }
-
-            .game-wrapper {
-                padding-top: 10px;
-                padding-bottom: 10px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            h1 {
-                font-size: clamp(15px, 5.5vw, 19px);
-                padding: 5px 12px;
-                margin: 1vh auto;
-                white-space: nowrap;
-            }
-
-            .bloco-imagem {
-                padding: 1vh;
-                border-radius: 25px;
-            }
-
-            #imagemPergunta {
-                max-height: 14vh;
-            }
-
-            #nomeAlimento {
-                font-size: 18px;
-                margin-top: 0.5vh;
-            }
-
-            #pergunta {
-                font-size: 13px;
-                padding: 0.8vh 2vw;
-            }
-
-            #resultado {
-                font-size: 13px;
-                min-height: 35px;
-                padding: 5px 8px;
-            }
-
-            .opcao {
-                padding: 0.8vh;
-                min-width: 80px;
-                width: 45%;
-            }
-
-            .opcao img {
-                width: 25px;
-            }
-
-            .opcao p {
-                font-size: 11px;
-            }
-
-            .countries-grid {
-                gap: 10px;
-            }
-
-            .country-card {
-                width: calc(50% - 5px);
-                padding: 10px;
-                height: 180px;
-            }
-
-            .clothing-preview img {
-                max-width: 80px;
-                max-height: 70px;
-            }
-
-            .country-description {
-                font-size: 10px;
-            }
-        }
-    </style>
+      }
+    }
+  </style>
 
 <body>
     <div class="game-wrapper">
@@ -979,232 +969,256 @@
     <script>
         const perguntas = [
             {
-                img: "img/feijaotropeiro.png", nome: "FEIJÃO TROPEIRO", correta: "MINAS GERAIS",
+                img: "img/feijaotropeiro.jpeg", nome: "FEIJÃO TROPEIRO", correta: "MINAS GERAIS",
                 ingredientes: "Feijão misturado com farinha de mandioca, torresmo, linguiça, ovos, alho, cebola e temperos.",
                 opcoes: [
-                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" },
-                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
-                    { nome: "GOIÁS", img: "img/bandeirago.png" }]
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.jpeg" },
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.jpeg" },
+                    { nome: "GOIÁS", img: "img/bandeirago.jpeg" }]
             },
             {
-                img: "img/moquecacapixaba.png", nome: "MOQUECA CAPIXABA", correta: "ESPÍRITO SANTO",
+                img: "img/moquecacapixaba.jpeg", nome: "MOQUECA CAPIXABA", correta: "ESPÍRITO SANTO",
                 ingredientes: "Peixe cozido em panela de barro com tomate, coentro, cebola e urucum. Não leva azeite de dendê nem leite de coco.",
                 opcoes: [
-                    { nome: "RIO DE JANEIRO", img: "img/bandeirarj.png" },
-                    { nome: "BAHIA", img: "img/bandeiraba.png" },
-                    { nome: "ESPÍRITO SANTO", img: "img/bandeiraes.png" }]
+                    { nome: "RIO DE JANEIRO", img: "img/bandeirarj.jpeg" },
+                    { nome: "BAHIA", img: "img/bandeiraba.jpeg" },
+                    { nome: "ESPÍRITO SANTO", img: "img/bandeiraes.jpeg" }]
             },
             {
-                img: "img/bauru.png", nome: "BAURU", correta: "SÃO PAULO",
+                img: "img/bauru.jpeg", nome: "BAURU", correta: "SÃO PAULO",
                 ingredientes: "Pão francês, rosbife, tomate, pepino em conserva e mistura de queijos derretidos.",
                 opcoes: [
-                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" },
-                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
-                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" }]
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.jpeg" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.jpeg" },
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.jpeg" }]
             },
 
             {
-                img: "img/acaraje.png", nome: "ACARAJÉ", correta: "BAHIA",
+                img: "img/acaraje.jpeg", nome: "ACARAJÉ", correta: "BAHIA",
                 ingredientes: "Bolinho feito de feijão-fradinho, cebola e sal, frito em azeite de dendê. Recheado com vatapá e camarão.",
                 opcoes: [
-                    { nome: "BAHIA", img: "img/bandeiraba.png" },
-                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
-                    { nome: "CEARÁ", img: "img/bandeirace.png" }]
+                    { nome: "BAHIA", img: "img/bandeiraba.jpeg" },
+                    { nome: "PERNAMBUCO", img: "img/bandeirape.jpeg" },
+                    { nome: "CEARÁ", img: "img/bandeirace.jpeg" }]
             },
             {
-                img: "img/boloderolo.png", nome: "BOLO DE ROLO", correta: "PERNAMBUCO",
+                img: "img/boloderolo.jpeg", nome: "BOLO DE ROLO", correta: "PERNAMBUCO",
                 ingredientes: "Massa finíssima de pão de ló enrolada com muitas camadas de goiabada derretida. Patrimônio cultural.",
                 opcoes: [
-                    { nome: "ALAGOAS", img: "img/bandeiraal.png" },
-                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
-                    { nome: "PARAÍBA", img: "img/bandeirapb.png" }]
+                    { nome: "ALAGOAS", img: "img/bandeiraal.jpeg" },
+                    { nome: "PERNAMBUCO", img: "img/bandeirape.jpeg" },
+                    { nome: "PARAÍBA", img: "img/bandeirapb.jpeg" }]
             },
             {
-                img: "img/baiaodedois.png", nome: "BAIÃO DE DOIS", correta: "CEARÁ",
+                img: "img/baiaodedois.jpeg", nome: "BAIÃO DE DOIS", correta: "CEARÁ",
                 ingredientes: "Feijão de corda (ou verde) cozido junto com o arroz, queijo coalho, carne seca e manteiga de garrafa.",
                 opcoes: [
-                    { nome: "CEARÁ", img: "img/bandeirace.png" },
-                    { nome: "MARANHÃO", img: "img/bandeirama.png" },
-                    { nome: "PIAUÍ", img: "img/bandeirapi.png" }]
+                    { nome: "CEARÁ", img: "img/bandeirace.jpeg" },
+                    { nome: "MARANHÃO", img: "img/bandeirama.jpeg" },
+                    { nome: "PIAUÍ", img: "img/bandeirapi.jpeg" }]
             },
             {
-                img: "img/chimarrao.png", nome: "CHIMARRÃO", correta: "RIO GRANDE DO SUL",
+                img: "img/chimarrao.jpeg", nome: "CHIMARRÃO", correta: "RIO GRANDE DO SUL",
                 ingredientes: "Bebida feita com erva-mate e água quente, consumida em cuia com bomba.",
                 opcoes: [
-                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" },
-                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
-                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" }]
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.jpeg" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.jpeg" },
+                    { nome: "SANTA CATARINA", img: "img/bandeirasc.jpeg" }]
             },
             {
-                img: "img/barreado.png", nome: "BARREADO", correta: "PARANÁ",
+                img: "img/barreado.jpeg", nome: "BARREADO", correta: "PARANÁ",
                 ingredientes: "Carne bovina cozida por muitas horas em panela de barro vedada (barreada) com farinha de mandioca.",
                 opcoes: [
-                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" },
-                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
-                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" }]
+                    { nome: "SANTA CATARINA", img: "img/bandeirasc.jpeg" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.jpeg" },
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.jpeg" }]
             },
             { 
-                img: "img/churrasco.png", nome: "CHURRASCO", correta: "RIO GRANDE DO SUL",
+                img: "img/churrasco.jpeg", nome: "CHURRASCO", correta: "RIO GRANDE DO SUL",
                 ingredientes: "Carnes (principalmente a costela e a picanha) temperadas com sal grosso e assadas em espetos na brasa.",
                 opcoes: [
-                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
-                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" },
-                    { nome: "PARANÁ", img: "img/bandeirapr.png" }]
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.jpeg" },
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.jpeg" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.jpeg" }]
             },
             {
-                img: "img/sequenciadecamarao.png", nome: "SEQUÊNCIA DE CAMARÃO", correta: "SANTA CATARINA",
+                img: "img/sequenciadecamarao.jpeg", nome: "SEQUÊNCIA DE CAMARÃO", correta: "SANTA CATARINA",
                 ingredientes: "Vários pratos com camarão, como frito, empanado, ao alho e óleo, servido com acompanhamentos.",
                 opcoes: [
-                    { nome: "SANTA CATARINA", img: "img/bandeirasc.png" },
-                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
-                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.png" }]
+                    { nome: "SANTA CATARINA", img: "img/bandeirasc.jpeg" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.jpeg" },
+                    { nome: "RIO GRANDE DO SUL", img: "img/bandeirars.jpeg" }]
             },
             {
-                img: "img/tacaca.png", nome: "TACACÁ", correta: "PARÁ",
+                img: "img/tacaca.jpeg", nome: "TACACÁ", correta: "PARÁ",
                 ingredientes: "Caldo amarelado (tucupi), goma de tapioca, camarão seco e folhas de jambu (que causam dormência).",
                 opcoes: [
-                    { nome: "AMAZONAS", img: "img/bandeiraam.png" },
-                    { nome: "PARÁ", img: "img/bandeirapa.png" },
-                    { nome: "ACRE", img: "img/bandeiraac.png" }]
+                    { nome: "AMAZONAS", img: "img/bandeiraam.jpeg" },
+                    { nome: "PARÁ", img: "img/bandeirapa.jpeg" },
+                    { nome: "ACRE", img: "img/bandeiraac.jpeg" }]
             },
             { 
-                img: "img/manicoba.png", nome: "MANIÇOBA", correta: "PARÁ",
+                img: "img/manicoba.jpeg", nome: "MANIÇOBA", correta: "PARÁ",
                 ingredientes: "Folha da mandioca brava moída e cozida por 7 dias, servida com carnes de porco e boi (lembra uma feijoada verde).",
                 opcoes: [
-                    { nome: "PARÁ", img: "img/bandeirapa.png" },
-                    { nome: "TOCANTINS", img: "img/bandeirato.png" },
-                    { nome: "RONDÔNIA", img: "img/bandeiraro.png" }]
+                    { nome: "PARÁ", img: "img/bandeirapa.jpeg" },
+                    { nome: "TOCANTINS", img: "img/bandeirato.jpeg" },
+                    { nome: "RONDÔNIA", img: "img/bandeiraro.jpeg" }]
             },
             { 
-                img: "img/xcaboquinho.png", nome: "X-CABOQUINHO", correta: "AMAZONAS",
+                img: "img/xcaboquinho.jpeg", nome: "X-CABOQUINHO", correta: "AMAZONAS",
                 ingredientes: "Sanduíche de pão francês recheado com lascas de tucumã (fruta amazônica), queijo coalho e banana pacovã frita.",
                 opcoes: [
-                    { nome: "RORAIMA", img: "img/bandeirarr.png" },
-                    { nome: "AMAZONAS", img: "img/bandeiraam.png" },
-                    { nome: "AMAPÁ", img: "img/bandeiraap.png" }]
+                    { nome: "RORAIMA", img: "img/bandeirarr.jpeg" },
+                    { nome: "AMAZONAS", img: "img/bandeiraam.jpeg" },
+                    { nome: "AMAPÁ", img: "img/bandeiraap.jpeg" }]
             },
             {
-                img: "img/paodequeijo.png",
+                img: "img/paodequeijo.jpeg",
                 nome: "PÃO DE QUEIJO",
                 correta: "MINAS GERAIS",
                 ingredientes: "Polvilho, queijo, ovos, leite e óleo.",
                 opcoes: [
-                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
-                    { nome: "GOIÁS", img: "img/bandeirago.png" },
-                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" }
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.jpeg" },
+                    { nome: "GOIÁS", img: "img/bandeirago.jpeg" },
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.jpeg" }
                 ]
             },
             {
-                img: "img/patonotucupi.png",
+                img: "img/patonotucupi.jpeg",
                 nome: "PATO NO TUCUPI",
                 correta: "AMAZONAS",
                 ingredientes: "Pato cozido com tucupi e jambu.",
                 opcoes: [
-                    { nome: "AMAZONAS", img: "img/bandeiraam.png" },
-                    { nome: "PARÁ", img: "img/bandeirapa.png" },
-                    { nome: "ACRE", img: "img/bandeiraac.png" }
+                    { nome: "AMAZONAS", img: "img/bandeiraam.jpeg" },
+                    { nome: "PARÁ", img: "img/bandeirapa.jpeg" },
+                    { nome: "ACRE", img: "img/bandeiraac.jpeg" }
                 ]
             },
             {
-                img: "img/mungunza.png",
+                img: "img/mungunza.jpeg",
                 nome: "MUNGUNZÁ",
                 correta: "BAHIA",
                 ingredientes: "Milho branco cozido com leite de coco e açúcar.",
                 opcoes: [
-                    { nome: "BAHIA", img: "img/bandeiraba.png" },
-                    { nome: "PERNAMBUCO", img: "img/bandeirape.png" },
-                    { nome: "ALAGOAS", img: "img/bandeiraal.png" }
+                    { nome: "BAHIA", img: "img/bandeiraba.jpeg" },
+                    { nome: "PERNAMBUCO", img: "img/bandeirape.jpeg" },
+                    { nome: "ALAGOAS", img: "img/bandeiraal.jpeg" }
                 ]
             },
             {
-                img: "img/soba.png",
+                img: "img/soba.jpeg",
                 nome: "SOBÁ",
                 correta: "MATO GROSSO DO SUL",
                 ingredientes: "Macarrão oriental com carne, omelete e caldo.",
                 opcoes: [
-                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.png" },
-                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
-                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" }
+                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.jpeg" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.jpeg" },
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.jpeg" }
                 ]
             },
             {
-                img: "img/feijoada.png",
+                img: "img/feijoada.jpeg",
                 nome: "FEIJOADA",
                 correta: "RIO DE JANEIRO",
-                ingredientes: "Feijão preto cozido com carnes de porco, linguiça e temperos, servido com arroz, couve e laranja.",
+                ingredientes: "Feijão preto cozido with meats from pork, sausage and seasonings, served with rice, kale and orange.",
                 opcoes: [
-                    { nome: "RIO DE JANEIRO", img: "img/bandeirarj.png" },
-                    { nome: "MINAS GERAIS", img: "img/bandeiramg.png" },
-                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" }
+                    { nome: "RIO DE JANEIRO", img: "img/bandeirarj.jpeg" },
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.jpeg" },
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.jpeg" }
                 ]
             },
             {
-                img: "img/mariaisabel.png",
+                img: "img/mariaisabel.jpeg",
                 nome: "MARIA ISABEL",
                 correta: "PIAUÍ",
-                ingredientes: "Arroz com carne seca picada, temperado com alho, cebola e cheiro-verde.",
+                ingredientes: "Arroz with dried meat, garlic, onion and herbs.",
                 opcoes: [
-                    { nome: "PIAUÍ", img: "img/bandeirapi.png" },
-                    { nome: "CEARÁ", img: "img/bandeirace.png" },
-                    { nome: "MARANHÃO", img: "img/bandeirama.png" }
+                    { nome: "PIAUÍ", img: "img/bandeirapi.jpeg" },
+                    { nome: "CEARÁ", img: "img/bandeirace.jpeg" },
+                    { nome: "MARANHÃO", img: "img/bandeirama.jpeg" }
                 ]
             },
             {
-                img: "img/arrozdecuxa.png",
+                img: "img/arrozdecuxa.jpeg",
                 nome: "ARROZ DE CUXÁ",
                 correta: "MARANHÃO",
-                ingredientes: "Arroz com vinagreira, camarão seco, gergelim e temperos típicos.",
+                ingredientes: "Rice with vinagreira, dried shrimp, sesame and local seasonings.",
                 opcoes: [
-                    { nome: "MARANHÃO", img: "img/bandeirama.png" },
-                    { nome: "PARÁ", img: "img/bandeirapa.png" },
-                    { nome: "PIAUÍ", img: "img/bandeirapi.png" }
+                    { nome: "MARANHÃO", img: "img/bandeirama.jpeg" },
+                    { nome: "PARÁ", img: "img/bandeirapa.jpeg" },
+                    { nome: "PIAUÍ", img: "img/bandeirapi.jpeg" }
                 ]
             },
             {
-                img: "img/chambari.png",
+                img: "img/chambari.jpeg",
                 nome: "CHAMBARI",
                 correta: "TOCANTINS",
-                ingredientes: "Carne com osso (mocotó) cozida com mandioca e temperos, muito tradicional na região.",
+                ingredientes: "Meat with bone (mocotó) cooked with cassava and seasonings.",
                 opcoes: [
-                    { nome: "TOCANTINS", img: "img/bandeirato.png" },
-                    { nome: "GOIÁS", img: "img/bandeirago.png" },
-                    { nome: "PARÁ", img: "img/bandeirapa.png" }
+                    { nome: "TOCANTINS", img: "img/bandeirato.jpeg" },
+                    { nome: "GOIÁS", img: "img/bandeirago.jpeg" },
+                    { nome: "PARÁ", img: "img/bandeirapa.jpeg" }
                 ]
             },
             {
-                img: "img/baixaria.png",
+                img: "img/baixaria.jpeg",
                 nome: "BAIXARIA",
                 correta: "ACRE",
-                ingredientes: "Prato com carne moída, ovo frito, cheiro-verde e acompanhado de arroz e farinha.",
+                ingredientes: "Ground meat, fried egg, herbs, rice and flour.",
                 opcoes: [
-                    { nome: "ACRE", img: "img/bandeiraac.png" },
-                    { nome: "RONDÔNIA", img: "img/bandeiraro.png" },
-                    { nome: "AMAZONAS", img: "img/bandeiraam.png" }
+                    { nome: "ACRE", img: "img/bandeiraac.jpeg" },
+                    { nome: "RONDÔNIA", img: "img/bandeiraro.jpeg" },
+                    { nome: "AMAZONAS", img: "img/bandeiraam.jpeg" }
                 ]
             },
             {
-                img: "img/pequi.png", nome: "ARROZ COM PEQUI", correta: "GOIÁS",
-                ingredientes: "Arroz cozido com pequi (fruto do cerrado de sabor marcante e cor amarela), alho e temperos.",
+                img: "img/pequi.jpeg", nome: "ARROZ COM PEQUI", correta: "GOIÁS",
+                ingredientes: "Rice cooked with pequi, garlic and seasonings.",
                 opcoes: [
-                    { nome: "TOCANTINS", img: "img/bandeirato.png" },
-                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" },
-                    { nome: "GOIÁS", img: "img/bandeirago.png" }]
+                    { nome: "TOCANTINS", img: "img/bandeirato.jpeg" },
+                    { nome: "MATO GROSSO", img: "img/bandeiramt.jpeg" },
+                    { nome: "GOIÁS", img: "img/bandeirago.jpeg" }]
             },
             { 
-                img: "img/caldodepiranha.png", nome: "CALDO DE PIRANHA", correta: "MATO GROSSO",
-                ingredientes: "Caldo encorpado feito com carne de piranha cozida, tomate, pimentão, cebola e coentro. Considerado afrodisíaco.",
+                img: "img/caldodepiranha.jpeg", nome: "CALDO DE PIRANHA", correta: "MATO GROSSO",
+                ingredientes: "Thick broth made with piranha meat, tomato, bell pepper, onion and coriander.",
                 opcoes: [
-                    { nome: "MATO GROSSO", img: "img/bandeiramt.png" },
-                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.png" },
-                    { nome: "GOIÁS", img: "img/bandeirago.png" }]
+                    { nome: "MATO GROSSO", img: "img/bandeiramt.jpeg" },
+                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.jpeg" },
+                    { nome: "GOIÁS", img: "img/bandeirago.jpeg" }]
             },
             { 
-                img: "img/sopaparaguaya.png", nome: "SOPA PARAGUAIA", correta: "MATO GROSSO DO SUL",
-                ingredientes: "Apesar do nome, é um bolo salgado denso feito com farinha de milho, muito queijo meia cura, cebola e leite.",
+                img: "img/sopaparaguaia.jpeg", nome: "SOPA PARAGUAIA", correta: "MATO GROSSO DO SUL",
+                ingredientes: "Salty cake made with corn flour, cheese, onion and milk.",
                 opcoes: [
-                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.png" },
-                    { nome: "PARANÁ", img: "img/bandeirapr.png" },
-                    { nome: "SÃO PAULO", img: "img/bandeirasp.png" }]
+                    { nome: "MATO GROSSO DO SUL", img: "img/bandeirams.jpeg" },
+                    { nome: "PARANÁ", img: "img/bandeirapr.jpeg" },
+                    { nome: "SÃO PAULO", img: "img/bandeirasp.jpeg" }]
+            },
+            {
+                img: "img/gingatapioca.jpeg", nome: "GINGA COM TAPIOCA", correta: "RIO GRANDE DO NORTE",
+                ingredientes: "Peixe ginga frito e espetado em uma tapioca de massa fina e crocante, típica da Praia da Redinha.",
+                opcoes: [
+                    { nome: "RIO GRANDE DO NORTE", img: "img/bandeirarn.jpeg" },
+                    { nome: "PARAÍBA", img: "img/bandeirapb.jpeg" },
+                    { nome: "CEARÁ", img: "img/bandeirace.jpeg" }]
+            },
+            {
+                img: "img/peixadabrasileira.jpeg", nome: "PEIXADA BRASILEIRA", correta: "DISTRITO FEDERAL",
+                ingredientes: "Postas de peixe cozidas com legumes como batata, cenoura e ovos, servida com pirão.",
+                opcoes: [
+                    { nome: "DISTRITO FEDERAL", img: "img/bandeiradf.jpeg" },
+                    { nome: "GOIÁS", img: "img/bandeirago.jpeg" },
+                    { nome: "MINAS GERAIS", img: "img/bandeiramg.jpeg" }]
+            },
+            {
+                img: "img/queijadinha.jpeg", nome: "QUEIJADINHA", correta: "SERGIPE",
+                ingredientes: "Doce feito com coco ralado, queijo, ovos e açúcar, com uma crosta dourada e interior macio.",
+                opcoes: [
+                    { nome: "SERGIPE", img: "img/bandeirase.jpeg" },
+                    { nome: "ALAGOAS", img: "img/bandeiraal.jpeg" },
+                    { nome: "BAHIA", img: "img/bandeiraba.jpeg" }]
             }
         ];
 
@@ -1252,8 +1266,8 @@
 
         function abrirModal(item) {
             document.getElementById('modalImg').src = item.img;
-            document.getElementById('modalTitulo').innerText = item.nome;
-            document.getElementById('modalIngredientes').innerText = item.ingredientes;
+            document.getElementById('modalTitulo').textContent = item.nome;
+            document.getElementById('modalIngredientes').textContent = item.ingredientes;
 
             document.getElementById('modalOverlay').style.display = 'flex';
         }
@@ -1280,16 +1294,16 @@
             score = 0;
             respondido = false;
 
-            document.getElementById('score').innerText = 'Pontuação: 0';
+            document.getElementById('score').textContent = 'Pontuação: 0';
             mostrar();
         }
 
         function mostrar() {
             const p = perguntasDaRodada[atual];
 
-            document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${perguntasDaRodada.length}`;
+            document.getElementById('progresso').textContent = `Pergunta ${atual + 1} de ${perguntasDaRodada.length}`;
             document.getElementById('imagemPergunta').src = p.img;
-            document.getElementById('nomeAlimento').innerText = p.nome;
+            document.getElementById('nomeAlimento').textContent = p.nome;
 
             const r = document.getElementById('resultado');
             r.innerHTML = '';
@@ -1339,17 +1353,17 @@
             r.style.opacity = '1';
 
             if (resposta === p.correta) {
-                r.innerText = "✔ CORRETO! O ESTADO É " + p.correta + "!";
+                r.textContent = "✔ CORRETO! O ESTADO É " + p.correta + "!";
 
                 r.style.color = "#1B5E20";
-                r.style.background = "#b6dfa1";
-                r.style.border = "3px solid #2d7d21";
+                r.style.background = "#a0dea3";
+                r.style.border = "3px solid #43A047";
 
-                elementoClicado.style.background = "#b6dfa1";
-                elementoClicado.style.borderColor = "#2d7d21";
+                elementoClicado.style.background = "#a0dea3";
+                elementoClicado.style.borderColor = "#43A047";
                 score++;
             } else {
-                r.innerText = "✘ INCORRETO! O ESTADO É " + p.correta + "!";
+                r.textContent = "✘ INCORRETO! O ESTADO É " + p.correta + "!";
 
                 r.style.color = "#B71C1C";
                 r.style.background = "#FFCDD2";
@@ -1359,7 +1373,7 @@
                 elementoClicado.style.borderColor = "#E53935";
             }
 
-            document.getElementById('score').innerText = 'Pontuação: ' + score;
+            document.getElementById('score').textContent = 'Pontuação: ' + score;
 
             setTimeout(() => {
                 atual++;
@@ -1379,16 +1393,16 @@
             painel.style.display = 'flex';
 
             const erros = perguntasDaRodada.length - score;
-            document.getElementById('totalAcertos').innerText = score;
-            document.getElementById('totalErros').innerText = erros;
-            document.getElementById('resumoFinal').innerText = `Você completou as ${perguntasDaRodada.length} perguntas!`;
+            document.getElementById('totalAcertos').textContent = score;
+            document.getElementById('totalErros').textContent = erros;
+            document.getElementById('resumoFinal').textContent = `Você completou as ${perguntasDaRodada.length} perguntas!`;
 
             let msg = '';
             if (score === perguntasDaRodada.length) msg = "🏆 INCRÍVEL! Você gabaritou a rodada!";
             else if (score > perguntasDaRodada.length * 0.7) msg = "👏 Mandou bem! Conhece muito do nosso Brasil.";
             else msg = "🍽 Que tal explorar a aba Curiosidades e tentar de novo?";
 
-            document.getElementById('mensagemFinal').innerText = msg;
+            document.getElementById('mensagemFinal').textContent = msg;
         }
 
         function voltarIntroducao() {
@@ -1407,18 +1421,17 @@
             align-items: center; 
             height: 100vh; 
             background: linear-gradient(135deg, #E8F5E9, #C8E6C9); 
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: 'Nunito', sans-serif;
             text-align: center;
         ">
             <h1 style="color: #E65100; font-size: 40px; margin-bottom: 20px;">Jogo Encerrado!</h1>
-            <p style="color: #5D4037; font-size: 24px;">Até a próxima refeição!</p>
+            <p style="color: #101f0d; font-size: 24px;">Até a próxima refeição!</p>
         </div>
       `;
         }
 
-        gerarCardsCuriosidades();
-
+      gerarCardsCuriosidades();
+    
     </script>
-
-</body>
+  </body>
 </html>

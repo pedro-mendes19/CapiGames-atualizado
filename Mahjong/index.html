@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mahjong Solitaire</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --tile-w: 50px;
@@ -18,11 +19,12 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            font-family: 'Nunito', sans-serif;
         }
 
         body {
             background: radial-gradient(circle at center, #2f7c34 0%, #032703 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
             height: 100vh;
             display: flex;
@@ -33,7 +35,7 @@
 
         .game-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1500px;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -51,8 +53,16 @@
             z-index: 100;
         }
 
-        .stats { display: flex; gap: 20px; }
-        .stat-box { font-size: 1.2rem; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+        .stats { display: flex; gap: 25px; align-items: center; }
+        .stat-box { 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            text-shadow: 1px 1px 2px #000; 
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
         .controls { display: flex; gap: 10px; }
 
         .btn {
@@ -78,19 +88,22 @@
 
         /* Cores específicas para cada botão */
         #btn-menu { background: #e3f2fd; } /* Azul claro */
-        #btn-menu:hover { background: #1976d2; color: white; transform: translateY(-1px); }
+        #btn-menu:hover { background: #1976d2; color: white; transform: translateY(-1px); box-shadow: 0 0 15px rgba(25, 118, 210, 0.7); }
+
+        #btn-undo { background: #fce4ec; } /* Rosa/Vermelho claro pastel */
+        #btn-undo:hover { background: #d81b60; color: white; transform: translateY(-1px); box-shadow: 0 0 15px rgba(216, 27, 96, 0.7); }
 
         #btn-hint { background: #fff9c4; } /* Amarelo claro */
-        #btn-hint:hover { background: #fbc02d; color: white; transform: translateY(-1px); }
+        #btn-hint:hover { background: #fbc02d; color: white; transform: translateY(-1px); box-shadow: 0 0 15px rgba(251, 192, 45, 0.7); }
 
         #btn-shuffle { background: #f3e5f5; } /* Roxo claro */
-        #btn-shuffle:hover { background: #7b1fa2; color: white; transform: translateY(-1px); }
+        #btn-shuffle:hover { background: #7b1fa2; color: white; transform: translateY(-1px); box-shadow: 0 0 15px rgba(123, 31, 162, 0.7); }
 
         #btn-restart { background: #e0f2f1; } /* Verde água claro */
-        #btn-restart:hover { background: #00796b; color: white; transform: translateY(-1px); }
+        #btn-restart:hover { background: #00796b; color: white; transform: translateY(-1px); box-shadow: 0 0 15px rgba(0, 121, 107, 0.7); }
 
-        #btn-cheat { background: #fff3e0; } /* Laranja claro */
-        #btn-cheat:hover { background: #e65100; color: white; transform: translateY(-1px); }
+        #btn-skip { background: #fff3e0; } /* Laranja claro */
+        #btn-skip:hover { background: #e65100; color: white; transform: translateY(-1px); box-shadow: 0 0 15px rgba(230, 81, 0, 0.7); }
 
         .btn:active { transform: translateY(1px); box-shadow: none; }
         .btn.primary { background: linear-gradient(to bottom, #4caf50, #2e7d32); color: white; border-color: #1b5e20; }
@@ -181,23 +194,27 @@
 
         /* Bandeja / Aba de Peças */
         .tray-container {
-            width: 100%;
+            width: fit-content;
+            margin: 0 auto;
             display: flex;
             justify-content: center;
-            padding: 20px;
-            background: rgba(0,0,0,0.4);
-            border-top: 2px solid rgba(255,255,255,0.1);
+            padding: 15px 40px;
+            background: rgba(0,0,0,0.5);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
         }
 
         .tray {
             display: flex;
-            gap: 10px;
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
+            gap: 6px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
             border-radius: 12px;
-            border: 2px solid rgba(255,255,255,0.2);
-            min-width: 450px;
-            height: 100px;
+            border: 1px solid rgba(255,255,255,0.1);
+            min-width: 680px;
+            height: 90px;
             align-items: center;
             justify-content: center;
             position: relative;
@@ -269,7 +286,7 @@
                 inset 0 -8px 0 0 #8b5a2b,
                 0 20px 60px rgba(0,0,0,0.5),
                 inset 0 1px 0 rgba(255,255,255,0.5);
-            max-width: 700px;
+            max-width: 850px;
             width: 90%;
             position: relative;
             overflow: hidden;
@@ -292,21 +309,23 @@
         }
         
         .intro-card h1 {
-            font-size: 1.6rem;
+            font-size: 2rem;
             color: #1b5e20;
             margin-bottom: 10px;
             text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
             font-weight: 800;
             letter-spacing: 2px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .intro-card .main-title {
-            font-size: 3.5rem;
+            font-size: 3.2rem;
             color: #1b5e20;
             margin-bottom: 10px;
             text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
             font-weight: 800;
             letter-spacing: 2px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .intro-card .subtitle {
@@ -319,16 +338,19 @@
         .intro-card .description {
             background: rgba(27, 94, 32, 0.08);
             border-radius: 12px;
-            padding: 25px 30px;
+            padding: 30px 30px;
             margin-bottom: 35px;
+            margin-top: 20px;
             text-align: left;
         }
         
         .intro-card .description p {
             color: #3e2723;
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             line-height: 1.7;
             margin-bottom: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
         
         .intro-card .description p:last-child {
@@ -371,8 +393,8 @@
             background: linear-gradient(to bottom, #449f47, #29712d);
             color: white;
             border: 3px solid white;
-            padding: 18px 60px;
-            font-size: 1.7rem;
+            padding: 20px 70px;
+            font-size: 2rem;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
@@ -396,15 +418,38 @@
             padding: 50px 30px !important;
         }
         #modal-title {
-            font-size: 3.5rem;
+            font-size: 2.5rem;
             text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
             font-weight: 800;
             letter-spacing: 2px;
             color: #1b5e20;
+            margin-bottom: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        #modal-message { margin-bottom: 25px; font-size: 1.4rem; color: #000; font-weight: bold; line-height: 1.6; white-space: pre-line; }
-        .congrats-text { color: #b8860b; font-size: 1.8rem; }
-        #btn-modal-restart { padding: 20px 40px; font-size: 1.4rem; }
+        #modal-message { 
+            margin-bottom: 30px; 
+            font-size: 1.4rem; 
+            color: #3e2723; 
+            font-weight: 600; 
+            line-height: 1.6; 
+            white-space: pre-line; 
+        }
+        .congrats-text { 
+            display: block;
+            font-size: 4rem; 
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #ffd700 0%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+            animation: congrats-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes congrats-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        #btn-modal-restart { padding: 20px 50px; font-size: 1.5rem; }
 
         .layout-grid {
             display: grid;
@@ -417,8 +462,8 @@
             background: #ffffff;
             border: 2px solid #d4a574;
             border-radius: 8px;
-            padding: 20px 10px;
-            font-size: 1.3rem;
+            padding: 25px 15px;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #333;
             cursor: pointer;
@@ -463,6 +508,9 @@
                 <button id="btn-restart" class="btn">
                     <img src="img/reiniciarescuro.png" data-dark-src="img/reiniciarescuro.png" data-white-src="img/reiniciarclaro.png" alt="Reiniciar"> REINICIAR
                 </button>
+                <!-- <button id="btn-skip" class="btn">
+                    <img src="img/lampadaescura.png" data-dark-src="img/lampadaescura.png" data-white-src="img/lampadaclara.png" alt="Pular"> PULAR
+                </button> -->
             </div>
         </header>
 
@@ -478,12 +526,17 @@
                 <div class="tray-slot"></div>
                 <div class="tray-slot"></div>
                 <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
+                <div class="tray-slot"></div>
             </div>
         </div>
 
         <div id="intro-screen" class="modal">
             <div class="intro-card">
-                <h1 class="main-title">MAHJONG</h1>
+                <h1 class="main-title">MAHJONG SOLITAIRE</h1>
                 <div class="description">
                     <p><strong>OBJETIVO:</strong> Encontre e remova todos os pares de peças idênticas para limpar o tabuleiro.</p>
                     <p><strong>COMO JOGAR:</strong> Clique em duas peças livres (sem peças acima e com pelo menos um lado livre) com o mesmo símbolo para remover.</p>
@@ -523,7 +576,7 @@
             <div class="modal-content intro-card">
                 <h1 id="modal-title">FIM DE JOGO</h1>
                 <p id="modal-message"></p>
-                <button id="btn-modal-restart" class="btn-play">JOGAR NOVAMENTE</button>
+                <button id="btn-modal-restart" class="btn-play">JOGAR NOVAMENTE 🀄</button>
             </div>
         </div>
     </div>
@@ -547,7 +600,7 @@
         let currentLayoutMode = 'classic';
         let moveHistory = [];
         let trayTiles = [];
-        const TRAY_LIMIT = 7;
+        const TRAY_LIMIT = 12;
 
         const GRID_W = 25;
         const GRID_H = 35;
@@ -1219,10 +1272,29 @@
             checkGameEnd();
         }
 
+        function jumpToEnd() {
+            tiles.forEach(t => {
+                if (t.active) {
+                    t.active = false;
+                    t.element.classList.add('matched');
+                }
+            });
+            trayTiles = [];
+            renderTray();
+            updateUI();
+            checkGameEnd();
+        }
+
         function checkGameEnd() {
             const active = tiles.filter(t => t.active);
             if (active.length === 0) {
-                showModal('🎉 VITÓRIA 🎉', `<span class="congrats-text">PARABÉNS!</span>\nVOCÊ COMPLETOU O TABULEIRO EM ${document.getElementById('timer').innerText} COM UM TOTAL DE ${moves} MOVIMENTOS.`);
+                showModal('PARABÉNS! VOCÊ VENCEU! 🤩👏', `
+                    ⏱️ <strong>TEMPO FINAL:</strong> ${document.getElementById('timer').innerText}
+                    🔄 <strong>TOTAL DE MOVIMENTOS:</strong> ${moves}
+                    
+                    INCRÍVEL! VOCÊ DEMONSTROU PACIÊNCIA E ESTRATÉGIA PARA DOMINAR ESTE TABULEIRO. 
+                    O SEU DESEMPENHO FOI EXCELENTE!
+                `);
                 return;
             }
 
@@ -1243,7 +1315,7 @@
         function updateUI() {
             const activeCount = tiles.filter(t => t.active).length;
             const possiblePairs = countAvailablePairs();
-            document.getElementById('pairs-left').innerHTML = `${activeCount / 2} <small>(Disponíveis: ${possiblePairs})</small>`;
+            document.getElementById('pairs-left').innerHTML = `${activeCount / 2} <small>(DISPONÍVEIS: ${possiblePairs})</small>`;
             document.getElementById('moves-count').innerText = moves;
         }
 
@@ -1265,9 +1337,10 @@
         document.getElementById('btn-hint').addEventListener('click', showHint);
         document.getElementById('btn-shuffle').addEventListener('click', shuffleBoard);
         document.getElementById('btn-restart').addEventListener('click', initGame);
+        // document.getElementById('btn-skip').addEventListener('click', jumpToEnd);
         document.getElementById('btn-modal-restart').addEventListener('click', () => {
             document.getElementById('modal').classList.add('hidden');
-            initGame();
+            showMenu();
         });
 
         // Lógica para trocar os ícones no hover

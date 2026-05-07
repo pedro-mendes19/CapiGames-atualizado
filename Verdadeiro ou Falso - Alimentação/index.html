@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Verdadeiro ou Falso: Alimentação</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 </head>
   <style>
     * {
@@ -14,7 +15,7 @@
     body {
       height: 100%;
       width: 100%;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: 'Nunito', sans-serif;
       background: linear-gradient(135deg, #E8EAF6, #E3F2FD, #F3E5F5);
       background-repeat: no-repeat;
       background-attachment: fixed;
@@ -88,7 +89,7 @@
 
       background:
         linear-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)),
-        url('img/fundointro.png');
+        url('img/fundointro.jpeg');
 
       background-size: cover;
       background-position: center;
@@ -138,7 +139,7 @@
       border-radius: 40px;
       cursor: pointer;
       font-weight: 800;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: 'Nunito', sans-serif;
       box-shadow: 0 11px 22px rgba(3, 155, 229, 0.5);
       animation: pulse 1.5s infinite;
       margin-top: 32px;
@@ -155,13 +156,17 @@
 
     #container {
       width: 100%;
-      max-width: 900px;
-      height: auto;
+      max-width: 950px;
+      background: #ffffff;
+      border: 6px solid #039BE5;
+      border-radius: 40px;
+      padding: 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 18px;
     }
 
     .bloco-imagem {
@@ -172,11 +177,11 @@
     }
 
     .label-progresso {
-      margin-bottom: 11px;
+      margin-bottom: 10px;
       background: linear-gradient(180deg, #ffffff, #f4fbf7);
-      padding: 9px 38px;
+      padding: 8px 34px;
       border-radius: 20px;
-      font-size: 20.5px;
+      font-size: 19px;
       font-weight: 700;
       color: #2c3e50;
       border: 2px solid #7fb3d5;
@@ -186,7 +191,7 @@
       width: auto;
       max-width: 100%;
       height: auto;
-      max-height: 302px;
+      max-height: 280px;
       display: block;
       border-radius: 20px;
       box-shadow: 0 11px 22px rgba(0, 0, 0, 0.15);
@@ -198,12 +203,12 @@
       min-width: 50%;
       max-width: 90%;
       margin: 0 auto;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       text-align: center;
       color: #2c3e50;
       background: linear-gradient(180deg, #ffffff, #f4fbf7);
-      padding: 22px 77px;
+      padding: 18px 60px;
       border: 4px solid #7fb3d5;
       border-radius: 35px;
       box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
@@ -211,9 +216,9 @@
 
     .botoes {
       display: flex;
-      gap: 38px;
+      gap: 30px;
       justify-content: center;
-      margin-top: 11px;
+      margin-top: 8px;
       width: 100%;
       flex-wrap: wrap;
     }
@@ -224,10 +229,10 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 22px 77px;
-      font-size: 24px;
+      padding: 18px 60px;
+      font-size: 23px;
       font-weight: 800;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: 'Nunito', sans-serif;
       border: none;
       border-radius: 35px;
       cursor: pointer;
@@ -261,16 +266,16 @@
     }
 
     #resultado {
-      margin: 11px auto;
-      padding: 16px 58px;
+      margin: 8px auto;
+      padding: 12px 45px;
       max-width: 90%;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       text-align: center;
       background: linear-gradient(180deg, #ffffff, #f9fdfb);
       border-radius: 25px;
       box-shadow: 0 5px 11px rgba(0, 0, 0, 0.1);
-      min-height: 70px;
+      min-height: 65px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -278,13 +283,13 @@
     }
 
     #score {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 700;
       text-align: center;
       margin-top: 5px;
-      color: #362208;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 9px 38px;
+      color: #039BE5;
+      background: #E3F2FD;
+      padding: 8px 34px;
       border-radius: 18px;
     }
 
@@ -310,6 +315,7 @@
     #resumo,
     #mensagemFinal {
       font-size: 32px;
+      font-weight: 900;
     }
 
     .totais {
@@ -348,7 +354,7 @@
       border: none;
       cursor: pointer;
       font-weight: 800;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: 'Nunito', sans-serif;
       color: white;
       text-transform: uppercase;
       background: linear-gradient(180deg, #4FC3F7, #039BE5);
@@ -505,36 +511,36 @@
     resizeGame();
 
     const bancoPerguntas = [
-      { q: 'Frutas e legumes são ricos em vitaminas.', a: true, exp: 'Eles fornecem vitaminas, minerais e fibras essenciais.', img: 'img/frutaslegumes.png' },
-      { q: 'Refrigerante ajuda a hidratar o corpo.', a: false, exp: 'Ele contém muito açúcar e não substitui a água.', img: 'img/refrigerante.png' },
-      { q: 'Comer muito açúcar pode prejudicar a saúde.', a: true, exp: 'O excesso pode causar cáries e outros problemas.', img: 'img/acucar.png' },
-      { q: 'Ultraprocessados são sempre a melhor escolha.', a: false, exp: 'Eles devem ser consumidos com moderação.', img: 'img/ultraprocessados.png' },
-      { q: 'Beber água diariamente é importante para o corpo.', a: true, exp: 'A água é essencial para o funcionamento do organismo.', img: 'img/copoagua.png' },
-      { q: 'Pular refeições é uma boa prática.', a: false, exp: 'O ideal é manter refeições equilibradas.', img: 'img/pularefeicao.png' },
-      { q: 'Arroz e feijão juntos formam uma boa combinação nutricional.', a: true, exp: 'Juntos fornecem proteínas e energia.', img: 'img/arrozfeijao.png' },
-      { q: 'Vegetais só fazem bem se forem cozidos.', a: false, exp: 'Eles também são saudáveis crus.', img: 'img/vegetaiscozidos.png' },
-      { q: 'Comer frutas no lugar de doces é mais saudável.', a: true, exp: 'As frutas têm fibras e menos açúcar.', img: 'img/frutasdoces.png' },
-      { q: 'Todo tipo de gordura faz mal à saúde.', a: false, exp: 'Existem gorduras boas, como as das castanhas.', img: 'img/gordura.png' },
-      { q: 'Café da manhã é uma refeição importante.', a: true, exp: 'Ajuda a dar energia para o dia.', img: 'img/cafedamanha.png' },
-      { q: 'Alimentos industrializados sempre são naturais.', a: false, exp: 'Eles passam por muitos processos industriais.', img: 'img/industrializados.png' },
-      { q: 'Ler rótulos ajuda a escolher melhor os alimentos.', a: true, exp: 'Os rótulos informam ingredientes e nutrientes.', img: 'img/rotulo.png' },
-      { q: 'Beber suco é sempre igual a comer a fruta.', a: false, exp: 'A fruta inteira tem mais fibras.', img: 'img/sucodelaranja.png' },
-      { q: 'Uma alimentação variada é importante.', a: true, exp: 'Ela garante diferentes nutrientes ao corpo.', img: 'img/variada.png' },
-      { q: 'Água com gás substitui a água natural em todos os casos.', a: false, exp: 'Ela pode ser consumida, mas não substitui totalmente a água natural.', img: 'img/aguacomgas.png' },
-      { q: 'Comer muitos alimentos coloridos deixa a alimentação mais saudável.', a: true, exp: 'Cores diferentes indicam nutrientes variados.', img: 'img/pratocolorido.png' },
-      { q: 'Todo suco industrializado é tão saudável quanto a fruta.', a: false, exp: 'Sucos industrializados costumam ter açúcar e menos fibras.', img: 'img/sucoindustrializado.png' },
-      { q: 'Leite e derivados são fontes de cálcio.', a: true, exp: 'O cálcio ajuda na saúde dos ossos e dentes.', img: 'img/leite.png' },
-      { q: 'Comer assistindo TV ajuda a controlar melhor a quantidade de comida.', a: false, exp: 'A distração pode fazer comer além do necessário.', img: 'img/comertelevisao.png' },
-      { q: 'Peixes são fontes de gorduras boas para o coração.', a: true, exp: 'Eles contêm gorduras que fazem bem à saúde.', img: 'img/peixe.png' },
-      { q: 'Trocar refrigerante por água ou suco natural é uma escolha mais saudável.', a: true, exp: 'Reduz o consumo de açúcar e ajuda na hidratação.', img: 'img/trocarefrigerante.png' },
-      { q: 'Comer só um tipo de alimento já garante todos os nutrientes.', a: false, exp: 'O corpo precisa de variedade de alimentos.', img: 'img/monotomiaalimentar.png' },
-      { q: 'Castanhas e nozes devem ser consumidas com moderação.', a: true, exp: 'São saudáveis, mas calóricas.', img: 'img/castanhas.png' },
-      { q: 'Fibras ajudam o funcionamento do intestino.', a: true, exp: 'Elas auxiliam a digestão e a saciedade.', img: 'img/fibras.png' },
-      { q: 'Comer frutas de sobremesa é uma opção mais saudável que doces.', a: true, exp: 'Frutas têm fibras e vitaminas.', img: 'img/frutasobremesa.png' },
-      { q: 'Planejar as refeições ajuda a comer melhor.', a: true, exp: 'Ajuda a evitar escolhas pouco saudáveis.', img: 'img/planejarrefeicoes.png' },
-      { q: 'Todo alimento light é automaticamente saudável.', a: false, exp: 'Mesmo light, pode conter açúcar, gordura ou sódio.', img: 'img/light.png' },
-      { q: 'Lavar frutas e verduras antes de comer é importante.', a: true, exp: 'Ajuda a remover sujeiras e resíduos.', img: 'img/lavarfrutas.png' },
-      { q: 'Mel é um alimento sem açúcar.', a: false, exp: 'Apesar de natural, o mel também é composto principalmente por açúcares.', img: 'img/mel.png' }
+      { q: 'Frutas e legumes são ricos em vitaminas.', a: true, exp: 'Eles fornecem vitaminas, minerais e fibras essenciais.', img: 'img/frutaslegumes.jpeg' },
+      { q: 'Refrigerante ajuda a hidratar o corpo.', a: false, exp: 'Ele contém muito açúcar e não substitui a água.', img: 'img/refrigerante.jpeg' },
+      { q: 'Comer muito açúcar pode prejudicar a saúde.', a: true, exp: 'O excesso pode causar cáries e outros problemas.', img: 'img/acucar.jpeg' },
+      { q: 'Ultraprocessados são sempre a melhor escolha.', a: false, exp: 'Eles devem ser consumidos com moderação.', img: 'img/ultraprocessados.jpeg' },
+      { q: 'Beber água diariamente é importante para o corpo.', a: true, exp: 'A água é essencial para o funcionamento do organismo.', img: 'img/copoagua.jpeg' },
+      { q: 'Pular refeições é uma boa prática.', a: false, exp: 'O ideal é manter refeições equilibradas.', img: 'img/pularefeicao.jpeg' },
+      { q: 'Arroz e feijão juntos formam uma boa combinação nutricional.', a: true, exp: 'Juntos fornecem proteínas e energia.', img: 'img/arrozfeijao.jpeg' },
+      { q: 'Vegetais só fazem bem se forem cozidos.', a: false, exp: 'Eles também são saudáveis crus.', img: 'img/vegetaiscozidos.jpeg' },
+      { q: 'Comer frutas no lugar de doces é mais saudável.', a: true, exp: 'As frutas têm fibras e menos açúcar.', img: 'img/frutasdoces.jpeg' },
+      { q: 'Todo tipo de gordura faz mal à saúde.', a: false, exp: 'Existem gorduras boas, como as das castanhas.', img: 'img/gordura.jpeg' },
+      { q: 'Café da manhã é uma refeição importante.', a: true, exp: 'Ajuda a dar energia para o dia.', img: 'img/cafedamanha.jpeg' },
+      { q: 'Alimentos industrializados sempre são naturais.', a: false, exp: 'Eles passam por muitos processos industriais.', img: 'img/industrializados.jpeg' },
+      { q: 'Ler rótulos ajuda a escolher melhor os alimentos.', a: true, exp: 'Os rótulos informam ingredientes e nutrientes.', img: 'img/rotulo.jpeg' },
+      { q: 'Beber suco é sempre igual a comer a fruta.', a: false, exp: 'A fruta inteira tem mais fibras.', img: 'img/sucodelaranja.jpeg' },
+      { q: 'Uma alimentação variada é importante.', a: true, exp: 'Ela garante diferentes nutrientes ao corpo.', img: 'img/variada.jpeg' },
+      { q: 'Água com gás substitui a água natural em todos os casos.', a: false, exp: 'Ela pode ser consumida, mas não substitui totalmente a água natural.', img: 'img/aguacomgas.jpeg' },
+      { q: 'Comer muitos alimentos coloridos deixa a alimentação mais saudável.', a: true, exp: 'Cores diferentes indicam nutrientes variados.', img: 'img/pratocolorido.jpeg' },
+      { q: 'Todo suco industrializado é tão saudável quanto a fruta.', a: false, exp: 'Sucos industrializados costumam ter açúcar e menos fibras.', img: 'img/sucoindustrializado.jpeg' },
+      { q: 'Leite e derivados são fontes de cálcio.', a: true, exp: 'O cálcio ajuda na saúde dos ossos e dentes.', img: 'img/leite.jpeg' },
+      { q: 'Comer assistindo TV ajuda a controlar melhor a quantidade de comida.', a: false, exp: 'A distração pode fazer comer além do necessário.', img: 'img/comertelevisao.jpeg' },
+      { q: 'Peixes são fontes de gorduras boas para o coração.', a: true, exp: 'Eles contêm gorduras que fazem bem à saúde.', img: 'img/peixe.jpeg' },
+      { q: 'Trocar refrigerante por água ou suco natural é uma escolha mais saudável.', a: true, exp: 'Reduz o consumo de açúcar e ajuda na hidratação.', img: 'img/trocarefrigerante.jpeg' },
+      { q: 'Comer só um tipo de alimento já garante todos os nutrientes.', a: false, exp: 'O corpo precisa de variedade de alimentos.', img: 'img/monotomiaalimentar.jpeg' },
+      { q: 'Castanhas e nozes devem ser consumidas com moderação.', a: true, exp: 'São saudáveis, mas calóricas.', img: 'img/castanhas.jpeg' },
+      { q: 'Fibras ajudam o funcionamento do intestino.', a: true, exp: 'Elas auxiliam a digestão e a saciedade.', img: 'img/fibras.jpeg' },
+      { q: 'Comer frutas de sobremesa é uma opção mais saudável que doces.', a: true, exp: 'Frutas têm fibras e vitaminas.', img: 'img/frutasobremesa.jpeg' },
+      { q: 'Planejar as refeições ajuda a comer melhor.', a: true, exp: 'Ajuda a evitar escolhas pouco saudáveis.', img: 'img/planejarrefeicoes.jpeg' },
+      { q: 'Todo alimento light é automaticamente saudável.', a: false, exp: 'Mesmo light, pode conter açúcar, gordura ou sódio.', img: 'img/light.jpeg' },
+      { q: 'Lavar frutas e verduras antes de comer é importante.', a: true, exp: 'Ajuda a remover sujeiras e resíduos.', img: 'img/lavarfrutas.jpeg' },
+      { q: 'Mel é um alimento sem açúcar.', a: false, exp: 'Apesar de natural, o mel também é composto principalmente por açúcares.', img: 'img/mel.jpeg' }
     ];
 
     let perguntas = [];
