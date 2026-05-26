@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
   <title>Que Alimento é Esse?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https:fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
   <style>
     body {
-      font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+      font-family: 'Nunito', sans-serif;
       margin: 0;
       padding: 0;
       text-align: center;
@@ -73,18 +73,33 @@
     }
 
     @keyframes flutuarImagem {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
     }
 
     @keyframes pulsarBotao {
-      0% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
-      50% { transform: scale(1.1); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); }
-      100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     .btn-jogar-capa {
-      font-family: 'Fredoka', sans-serif;
+      font-family: 'Nunito', sans-serif;
       background: linear-gradient(to bottom, #76bd4e, #518639);
       color: white;
       font-size: clamp(20px, 10vw, 34px);
@@ -114,12 +129,12 @@
       height: 100dvh;
       background: linear-gradient(180deg, #e0f7fa 0%, #a5d6a7 100%);
       overflow: hidden;
-      padding-top: 5px;
+      padding-top: 30px;
     }
 
     .logo-game {
       display: block;
-      margin: 5px auto 10px auto;
+      margin: 5px auto 15px auto;
       max-width: 90%;
       height: auto;
       max-height: 11vh;
@@ -154,7 +169,17 @@
       justify-content: center;
       min-height: 300px;
       margin-top: 20px;
-      padding: 6vh 4vw;
+      padding: 4vh 4vw;
+    }
+
+    .descricao-final {
+      font-size: clamp(18px, 4vw, 22px);
+      color: #5d4037;
+      margin: 20px 0 30px 0;
+      line-height: 1.4;
+      font-weight: 800;
+      white-space: pre-line;
+      max-width: 500px;
     }
 
     .dica-container {
@@ -183,7 +208,7 @@
     }
 
     .contador-perguntas {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 800;
       color: #0288d1;
       background: #e1f5fe;
@@ -196,12 +221,12 @@
     }
 
     #dica {
-      font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+      font-family: 'Nunito', sans-serif;
       font-size: clamp(18px, 4vw, 24px);
       font-weight: 800;
       color: #5d4037;
       line-height: 1.3;
-      margin-top: 0;
+      margin-top: 10px;
       text-align: center;
     }
 
@@ -215,18 +240,21 @@
       font-weight: bold;
       color: #e65100;
       cursor: pointer;
-      box-shadow: 0 4px 0 #ffb74d;
       transition: all 0.1s;
     }
 
     .btn-mudo {
       background: #ffcdd2;
       color: #c62828;
-      box-shadow: 0 4px 0 #ef9a9a;
     }
 
-    .btn-som:active { transform: translateY(4px); box-shadow: 0 0 0 #ffb74d; }
-    .btn-mudo:active { transform: translateY(4px); box-shadow: 0 0 0 #ef9a9a; }
+    .btn-som:active {
+      transform: translateY(4px);
+    }
+
+    .btn-mudo:active {
+      transform: translateY(4px);
+    }
 
     .opcoes {
       display: flex;
@@ -252,8 +280,14 @@
       margin-bottom: 0.5vh;
     }
 
-    .opcao:hover { background-color: #e8f5e9; transform: translateY(-2px); }
-    .opcao:active { transform: translateY(6px); box-shadow: 0 0 0 #2e7d32; }
+    .opcao:hover {
+      background-color: #e8f5e9;
+      transform: translateY(-2px);
+    }
+
+    .opcao:active {
+      transform: translateY(6px);
+    }
 
     #area-resultado {
       margin-top: 2vh;
@@ -279,22 +313,39 @@
     }
 
     @keyframes pop {
-      0% { transform: scale(0); opacity: 0; }
-      80% { transform: scale(1.1); opacity: 1; }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      80% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
-    .animar-pop { animation: pop 0.4s ease-out; }
+    .animar-pop {
+      animation: pop 0.4s ease-out;
+    }
 
     #texto-resultado {
       font-size: clamp(20px, 5vw, 26px);
       font-weight: 900;
-      text-shadow: 2px 2px 0 #fff;
       padding: 0 20px;
+      margin: 12px 0;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
     }
 
     .btn-proxima {
-      font-family: 'Fredoka', sans-serif;
+      font-family: 'Nunito', sans-serif;
       margin: 1.5vh auto;
       display: inline-block;
       padding: 1.5vh 60px;
@@ -305,21 +356,34 @@
       color: #fff;
       font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 0.8vh 0 #e9700e, 0 15px 20px rgba(0, 0, 0, 0.2);
       transition: all 0.1s;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
-    .btn-proxima:hover { background: #e9700e; transform: translateY(-2px); }
-    .btn-proxima:active { transform: translateY(0.8vh); box-shadow: 0 0 0 #e9700e; }
-    .btn-proxima:disabled { background: #cccccc; color: #777777; box-shadow: none; cursor: not-allowed; transform: none; pointer-events: none; }
+    .btn-proxima:hover {
+      background: #e9700e;
+      transform: translateY(-2px);
+    }
+
+    .btn-proxima:active {
+      transform: translateY(0.8vh);
+    }
+
+    .btn-proxima:disabled {
+      background: #cccccc;
+      color: #777777;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+      pointer-events: none;
+    }
 
     #mensagem-final {
       font-size: clamp(24px, 6vw, 30px);
       color: #2e7d32;
       font-weight: 900;
-      margin-bottom: 25px;
+      margin-bottom: 5px;
       padding: 0 10px;
     }
 
@@ -349,8 +413,15 @@
       white-space: nowrap;
     }
 
-    .bg-verde { background: #66bb6a; border: 2px solid #2e7d32; }
-    .bg-vermelho { background: #ef5350; border: 2px solid #c62828; }
+    .bg-verde {
+      background: #66bb6a;
+      border: 2px solid #2e7d32;
+    }
+
+    .bg-vermelho {
+      background: #ef5350;
+      border: 2px solid #c62828;
+    }
 
     .botoes-finais {
       display: flex;
@@ -360,7 +431,7 @@
     }
 
     .btn-reiniciar {
-      font-family: 'Fredoka', sans-serif;
+      font-family: 'Nunito', sans-serif;
       margin: 10px auto;
       display: inline-block;
       padding: 17px 42px;
@@ -375,10 +446,10 @@
       letter-spacing: 1px;
       white-space: nowrap;
       width: 90%;
-      max-width: 382px;
+      max-width: 370px;
       box-sizing: border-box;
       background: linear-gradient(to bottom, #4FC3F7, #039BE5);
-      box-shadow: 0 0.8vh 0 #0280bf, 0 15px 20px rgba(0, 0, 0, 0.2);
+      animation: pulsarBotao 2.5s infinite ease-in-out;
     }
 
     .btn-reiniciar:hover {
@@ -388,117 +459,770 @@
 
     .btn-reiniciar:active {
       transform: translateY(0.8vh);
-      box-shadow: 0 0 0 #0280bf;
     }
 
-    @media (max-width: 768px) {
-      .logo-game {
-        max-height: 10vh;
-        margin-top: 5px;
-        margin-bottom: 5px;
+    
+
+    
+    @media (max-width: 1366px) {
+      #game-screen {
+        padding-top: 10px;
       }
 
-      .img-capa-frente {
-        max-width: 100%;
-        max-height: 65vh;
+      .logo-game {
+        max-height: 10vh;
         margin-bottom: 10px;
       }
 
       .cartao-jogo {
-        width: 95%;
-        padding: 1vh 10px;
-        margin-bottom: 1vh;
-      }
-
-      .btn-jogar-capa {
-        padding: 14px 45px;
-        font-size: 22px;
+        max-width: 850px;
+        padding: 15px;
+        gap: 15px;
+        margin-bottom: 40px;
       }
 
       .dica-container {
-        padding: 10px;
+        padding: 15px;
       }
 
       #dica {
         font-size: 19px;
       }
 
+      .contador-perguntas {
+        font-size: 14px;
+      }
+
+      .opcoes {
+        gap: 12px;
+        margin-top: 1vh;
+      }
+
       .opcao {
-        padding: 0.8vh 10px;
-        font-size: 17px;
-        width: 42%;
+        font-size: 18px;
+        padding: 12px;
+        width: clamp(110px, 30%, 140px);
+        border-radius: 25px;
+      }
+
+      #img-resposta {
+        height: 20vh;
+        max-width: 180px;
+      }
+
+      #texto-resultado {
+        font-size: 22px;
+        margin: 8px 0;
+        gap: 3px;
+      }
+
+      .btn-proxima {
+        padding: 2vh 60px;
+        font-size: 21px;
+      }
+
+      #painel-final {
+        width: 750px;
+        padding: 30px;
+      }
+    }
+
+    
+    @media (max-width: 900px) or (orientation: portrait) {
+      #game-screen {
+        padding-top: 10px;
+      }
+
+      .logo-game {
+        max-height: 8.5vh;
+        margin: 10px auto 10px auto;
+      }
+
+      .cartao-jogo {
+        width: 95%;
+        max-width: 680px;
+        padding: 20px 15px;
+        gap: 15px;
+        margin-bottom: 50px;
+        
+        border-width: 2px;
+      }
+
+      .linha-dos-botoes {
+        margin-bottom: -10px;
+        padding: 0 10px;
+      }
+
+      .btn-som,
+      .btn-mudo {
+        padding: 6px 12px;
+        font-size: 16px;
+      }
+
+      .dica-container {
+        padding: 10px;
+        border-radius: 20px;
+      }
+
+      .contador-perguntas {
+        font-size: 12px;
+        padding: 2px 8px;
+      }
+
+      #dica {
+        font-size: 15.5px;
+        margin-top: 5px;
+      }
+
+      .opcoes {
+        flex-direction: column;
+        
+        align-items: center;
+        gap: 10px;
+        margin-top: 1.5vh;
+      }
+
+      .opcao {
+        width: 85%;
+        max-width: 300px;
+        padding: 15px;
+        font-size: 16px;
+        border-radius: 40px;
+        
+      }
+
+      #area-resultado {
+        min-height: 15vh;
+        margin-top: 1vh;
+      }
+
+      #img-resposta {
+        height: 14vh;
+        max-width: 140px;
+        margin-top: 5px;
+      }
+
+      #texto-resultado {
+        font-size: 18px;
+        padding: 0 10px;
+        margin: 8px 0;
+      }
+
+      .btn-proxima {
+        width: 80%;
+        max-width: 280px;
+        padding: 15px;
+        font-size: 19px;
+        margin: 5px auto;
+      }
+
+      
+      #painel-final {
+        padding: 30px 15px;
+        width: 95%;
+      }
+
+      #mensagem-final {
+        font-size: 24px;
+      }
+
+      .descricao-final {
+        font-size: 18px;
+        margin: 15px 0;
+      }
+
+      .resumo-placar {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .resumo-item {
+        padding: 10px 25px;
+        width: 80%;
+        max-width: 120px;
+      }
+
+      .btn-reiniciar {
+        width: 85%;
+        font-size: 18px;
+        padding: 15px;
+      }
+    }
+
+    
+    @media (min-width: 500px) and (max-width: 900px) and (orientation: portrait) {
+      #game-screen {
+        padding-top: 15px;
+      }
+
+      .logo-game {
+        max-height: 12vh;
+        margin-bottom: 15px;
+      }
+
+      .cartao-jogo {
+        width: 90%;
+        max-width: 750px;
+        padding: 30px 25px;
+        gap: 20px;
+        margin-bottom: 60px;
+        border-width: 3px;
+      }
+
+      .linha-dos-botoes {
+        margin-bottom: -8px;
+        padding: 0 15px;
+      }
+
+      .btn-som,
+      .btn-mudo {
+        padding: 8px 15px;
+        font-size: 18px;
+      }
+
+      .dica-container {
+        padding: 15px;
+        border-radius: 25px;
+      }
+
+      .contador-perguntas {
+        font-size: 14px;
+        padding: 4px 10px;
+      }
+
+      #dica {
+        font-size: 18px;
+        margin-top: 8px;
+      }
+
+      .opcoes {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-top: 2vh;
+      }
+
+      .opcao {
+        width: 80%;
+        max-width: 380px;
+        padding: 18px;
+        font-size: 18px;
+        border-radius: 45px;
       }
 
       #area-resultado {
         min-height: 18vh;
-        margin-top: 0.5vh;
+        margin-top: 2vh;
       }
 
       #img-resposta {
         height: 18vh;
         max-width: 180px;
+        margin-top: 8px;
+      }
+
+      #texto-resultado {
+        font-size: 20px;
+        padding: 0 15px;
+        margin: 10px 0;
       }
 
       .btn-proxima {
-        padding: 1vh 30px;
-        width: 90%;
-        font-size: 19px;
+        width: 75%;
+        max-width: 340px;
+        padding: 18px;
+        font-size: 21px;
+        margin: 8px auto;
       }
 
-      .linha-dos-botoes {
-        margin-bottom: -15px;
-        padding: 0 15px;
+      
+      #painel-final {
+        padding: 40px 20px;
+        width: 90%;
+      }
+
+      #mensagem-final {
+        font-size: 28px;
+      }
+
+      .descricao-final {
+        font-size: 20px;
+        margin: 20px 0;
       }
 
       .resumo-placar {
-        gap: 12px;
-        margin-bottom: 20px;
-        justify-content: center;
+        gap: 18px;
       }
 
       .resumo-item {
-        padding: 15px 30px;
-        font-size: 17px;
+        padding: 12px 30px;
+        font-size: 15px;
       }
 
       .btn-reiniciar {
-        font-size: 18px;
+        width: 80%;
+        font-size: 20px;
+        padding: 18px;
       }
     }
 
-    @media (max-height: 667px) {
-      .logo-game {
-        max-height: 10vh;
-        margin-top: 5px;
-        margin-bottom: 5px;
+    
+    @media (max-width: 500px) and (orientation: portrait) {
+      #game-screen {
+        padding-top: 6px;
       }
 
       .cartao-jogo {
-        padding: 15px 10px;
-        margin-bottom: 10px;
+        width: 96%;
+        max-width: 360px;
+        padding: 10px 8px;
+        gap: 6px;
+        margin-bottom: 14px;
+        margin-top: 6px;
+        border-width: 2px;
+      }
+
+      .linha-dos-botoes {
+        margin-bottom: -3px;
+        padding: 0 6px;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .btn-som,
+      .btn-mudo {
+        padding: 5px 10px;
+        font-size: 14px;
+      }
+
+      .dica-container {
+        padding: 8px;
+        border-radius: 18px;
+        max-width: 95%;
+      }
+
+      .contador-perguntas {
+        font-size: 11px;
+        padding: 2px 8px;
+      }
+
+      #dica {
+        font-size: 13px;
+        margin-top: 5px;
+        line-height: 1.25;
+      }
+
+      .opcoes {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        margin-bottom: 6px;
+      }
+
+      .opcao {
+        width: 80%;
+        max-width: 260px;
+        padding: 10px 10px;
+        font-size: 14px;
+        border-radius: 30px;
+      }
+
+      #area-resultado {
+        min-height: 10vh;
+        margin-top: 6px;
+        margin-bottom: 6px;
+      }
+
+      #img-resposta {
+        height: 12vh;
+        max-width: 120px;
+      }
+
+      #texto-resultado {
+        font-size: 15px;
+        padding: 0 8px;
+        margin: 6px 0;
+      }
+
+      .btn-proxima {
+        width: 90%;
+        max-width: 240px;
+        padding: 10px 24px;
+        font-size: 16px;
+        margin: 6px auto;
+      }
+
+      #painel-final {
+        padding: 20px 12px;
+        width: 96%;
+        margin-top: 12px;
+      }
+
+      #mensagem-final {
+        font-size: 24px;
+        margin-bottom: 6px;
+      }
+
+      .descricao-final {
+        font-size: 15px;
+        margin: 12px 0;
+        line-height: 1.35;
+      }
+
+      .resumo-placar {
+        flex-direction: row;
+        gap: 12px;
+        margin: 12px auto;
+      }
+
+      .resumo-item {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      .btn-reiniciar {
+        width: 86%;
+        font-size: 15px;
+        padding: 14px 28px;
+      }
+    }
+
+    
+    @media (max-height: 670px) and (orientation: portrait) {
+
+      
+      
+      #game-screen {
+        padding-top: 6px;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        
+        -ms-overflow-style: none;
+        
+      }
+
+      
+      #game-screen::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      
+      .logo-game {
+        max-height: 10vh;
+        margin-bottom: 6px;
+      }
+
+      
+      .cartao-jogo {
+        gap: 6px;
+        padding: 8px 6px;
+        border-width: 2px;
+      }
+
+      
+      .linha-dos-botoes {
+        margin-bottom: 0;
+        padding: 0 6px;
+        justify-content: space-between;
+        gap: 6px;
+        width: 100%;
+      }
+
+      .btn-som,
+      .btn-mudo {
+        padding: 6px 8px;
+        font-size: 14px;
+        border-radius: 14px;
+      }
+
+      
+      .dica-container {
+        padding: 8px;
+        max-width: 320px;
+        width: 110%;
+        margin: 0 auto;
+      }
+
+      #contador-perguntas {
+        font-size: 12px;
+      }
+
+      #dica {
+        font-size: 14px;
+        margin-top: 4px;
+      }
+
+      
+      .opcoes {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .opcao {
+        padding: 8px 10px;
+        font-size: 15px;
+        max-width: 200px;
+        border-radius: 30px;
+      }
+
+      
+      #area-resultado {
+        min-height: 12vh;
+        margin-top: 6px;
+      }
+
+      #img-resposta {
+        height: 15vh;
+        max-width: 120px;
+      }
+
+      #texto-resultado {
+        font-size: 16px;
+        padding: 0 8px;
+      }
+
+      
+      .btn-proxima {
+        padding: 10px 30px;
+        font-size: 16px;
+        width: 75%;
+        max-width: 240px;
+      }
+
+      
+      .descricao-final {
+        font-size: 18px;
+        margin: 15px 0;
+      }
+
+      #painel-final {
+        padding: 18px 12px;
+      }
+
+      
+      #painel-quiz {
+        padding: 6px;
+      }
+
+      #painel-quiz .dica-container {
+        padding: 6px;
+        max-width: 310px;
+      }
+
+      #painel-quiz #dica {
+        font-size: 13px;
+        margin-top: 3px;
+      }
+
+      #painel-quiz .opcoes {
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      #painel-quiz .opcao {
+        padding: 10px 8px;
+        font-size: 13px;
+        width: 80%;
+        max-width: 220px;
+        border-radius: 26px;
+      }
+
+      #painel-quiz #img-resposta {
+        height: 14vh;
+        max-width: 110px;
+      }
+
+      #painel-quiz #texto-resultado {
+        font-size: 15px;
+        padding: 0 6px;
+      }
+
+      #painel-quiz .btn-proxima {
+        padding: 10px 24px;
+        font-size: 15px;
+        width: 70%;
+        max-width: 220px;
+      }
+
+      .descricao-final {
+        font-size: 16px;
+      }
+
+      .btn-reiniciar {
+        font-size: 16px;
+        padding: 14px 30px;
+      }
+
+      #mensagem-final {
+        font-size: 22px;
+      }
+    }
+
+    
+    @media (min-height: 900px) and (max-width: 500px) and (orientation: portrait) {
+      #game-screen {
+        padding-top: 8px;
+      }
+
+      .logo-game {
+        max-height: 8vh;
+        margin-bottom: 6px;
+      }
+
+      .cartao-jogo {
+        width: 96%;
+        max-width: 360px;
+        padding: 12px 10px;
+        gap: 8px;
+        margin-bottom: 16px;
+        margin-top: 8px;
+        border-width: 2px;
+      }
+
+      .linha-dos-botoes {
+        margin-bottom: -5px;
+        padding: 0 6px;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .btn-som,
+      .btn-mudo {
+        padding: 5px 10px;
+        font-size: 14px;
       }
 
       .dica-container {
         padding: 10px;
+        border-radius: 18px;
+        max-width: 95%;
+      }
+
+      .contador-perguntas {
+        font-size: 12px;
+        padding: 3px 9px;
       }
 
       #dica {
-        font-size: 18px;
+        font-size: 15px;
+        margin-top: 7px;
+        line-height: 1.25;
       }
 
       .opcoes {
-        margin-top: 10px;
-        gap: 8px;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        margin-bottom: 8px;
       }
 
       .opcao {
-        width: 40%;
-        font-size: 16px;
-        padding: 10px 5px;
+        width: 80%;
+        max-width: 280px;
+        padding: 12px 10px;
+        font-size: 15px;
+        border-radius: 32px;
+      }
+
+      #area-resultado {
+        min-height: 12vh;
+        margin-top: 8px;
+        margin-bottom: 6px;
       }
 
       #img-resposta {
         height: 14vh;
+        max-width: 130px;
+      }
+
+      #texto-resultado {
+        font-size: 16px;
+        padding: 0 10px;
+        margin: 8px 0;
+      }
+
+      .btn-proxima {
+        width: 90%;
+        max-width: 260px;
+        padding: 11px 28px;
+        font-size: 17px;
+        margin: 7px auto;
+      }
+
+      
+      #painel-final {
+        padding: 22px 12px;
+        width: 96%;
+        margin-top: 14px;
+      }
+
+      #mensagem-final {
+        font-size: 25px;
+        margin-bottom: 7px;
+      }
+
+      .descricao-final {
+        font-size: 16px;
+        margin: 14px 0;
+        line-height: 1.35;
+      }
+
+      .resumo-placar {
+        flex-direction: row;
+        gap: 14px;
+        margin: 14px auto;
+      }
+
+      .resumo-item {
+        padding: 9px 18px;
+        font-size: 14px;
+      }
+
+      .btn-reiniciar {
+        width: 86%;
+        font-size: 15px;
+        padding: 14px 32px;
+      }
+    }
+
+    
+    @media (max-width: 900px) {
+      .resumo-placar {
+        flex-direction: column !important;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .resumo-item {
+        width: 80%;
+        max-width: 120px;
+      }
+
+      .resumo-item.bg-verde {
+        order: 0;
+      }
+
+      .resumo-item.bg-vermelho {
+        order: 1;
+      }
+
+      
+      .img-capa-frente {
+        max-width: 120%;
+        max-height: 70vh;
+      }
+
+      .btn-jogar-capa {
+        width: min(55%, 250px);
+        padding: 14px 38px;
+        font-size: clamp(16px, 8vw, 22px);
       }
     }
   </style>
@@ -508,7 +1232,7 @@
 
   <div id="intro-screen">
     <div class="capa-container">
-      <img src="img/capafundo.png" alt="Fundo" class="img-capa-fundo">
+      <img src="img/capafundo.jpeg" alt="Fundo" class="img-capa-fundo">
       <div class="conteudo-central">
         <img src="img/capafrente.png" alt="Capa" class="img-capa-frente">
         <button class="btn-jogar-capa" onclick="iniciarJogo()">▶ JOGAR</button>
@@ -542,6 +1266,10 @@
 
     <div id="painel-final" class="cartao-jogo">
       <div id="mensagem-final">PARABÉNS!</div>
+      <div id="descricao-final" class="descricao-final">
+        Você provou que conhece muito bem os alimentos! Identificar o que comemos é fundamental para uma vida cheia de
+        saúde.
+      </div>
 
       <div class="resumo-placar">
         <div class="resumo-item bg-verde">
@@ -556,24 +1284,23 @@
         <button class="btn-reiniciar" onclick="voltarParaIntro()">🔄 JOGAR NOVAMENTE</button>
       </div>
     </div>
-
   </div>
 
   <script>
     const bancoImagens = {
-      "Maçã": "img/maca.png", "Uva": "img/uva.png", "Pera": "img/pera.png", "Limão": "img/limao.png",
-      "Banana": "img/banana.png", "Abacaxi": "img/abacaxi.png", "Ameixa": "img/ameixa.png",
-      "Jabuticaba": "img/jabuticaba.png", "Melancia": "img/melancia.png", "Mamão": "img/mamao.png",
-      "Manga": "img/manga.png", "Melão": "img/melao.png", "Laranja": "img/laranja.png",
-      "Tangerina": "img/tangerina.png", "Alface": "img/alface.png", "Couve": "img/couve.png",
-      "Brócolis": "img/brocolis.png", "Batata": "img/batata.png", "Mandioca": "img/mandioca.png",
-      "Cenoura": "img/cenoura.png", "Morango": "img/morango.png", "Tomate": "img/tomate.png", "Cebola": "img/cebola.png",
-      "Milho": "img/milho.png", "Caju": "img/caju.png", "Abacate": "img/abacate.png",
-      "Goiaba": "img/goiaba.png", "Abóbora": "img/abobora.png"
+      "Maçã": "img/maca.jpeg", "Uva": "img/uva.jpeg", "Pera": "img/pera.jpeg", "Limão": "img/limao.jpeg",
+      "Banana": "img/banana.jpeg", "Abacaxi": "img/abacaxi.jpeg", "Ameixa": "img/ameixa.jpeg",
+      "Jabuticaba": "img/jabuticaba.jpeg", "Melancia": "img/melancia.jpeg", "Mamão": "img/mamao.jpeg",
+      "Manga": "img/manga.jpeg", "Melão": "img/melao.jpeg", "Laranja": "img/laranja.jpeg",
+      "Tangerina": "img/tangerina.jpeg", "Alface": "img/alface.jpeg", "Couve": "img/couve.jpeg",
+      "Brócolis": "img/brocolis.jpeg", "Batata": "img/batata.jpeg", "Mandioca": "img/mandioca.jpeg",
+      "Cenoura": "img/cenoura.jpeg", "Morango": "img/morango.jpeg", "Tomate": "img/tomate.jpeg", "Cebola": "img/cebola.jpeg",
+      "Milho": "img/milho.jpeg", "Caju": "img/caju.jpeg", "Abacate": "img/abacate.jpeg",
+      "Goiaba": "img/goiaba.jpeg", "Abóbora": "img/abobora.jpeg"
     };
 
     const todasAsPerguntas = [
-      { dica: "Uma fruta redonda, vermelha ou verde e muito usada em sucos.", correta: "Maçã", opcoes: ["Maçã", "Uva", "Pera"] },
+      { dica: "Uma fruta redonda, vermelha ou verde. Usada em saladas de frutas.", correta: "Maçã", opcoes: ["Maçã", "Uva", "Pera"] },
       { dica: "Uma fruta verde por fora e azeda por dentro. Faz um suco refrescante.", correta: "Limão", opcoes: ["Banana", "Limão", "Abacaxi"] },
       { dica: "É pequena, roxa ou verde e cresce em cachos.", correta: "Uva", opcoes: ["Uva", "Ameixa", "Jabuticaba"] },
       { dica: "Uma fruta doce, com casca fina e polpa macia.", correta: "Pera", opcoes: ["Maçã", "Pera", "Melancia"] },
@@ -662,9 +1389,9 @@
 
       const area = document.getElementById("opcoes");
       area.innerHTML = "";
-      
+
       let opcoesEmbaralhadas = embaralhar([...p.opcoes]);
-      
+
       opcoesEmbaralhadas.forEach(opcao => {
         const div = document.createElement("div");
         div.className = "opcao";
@@ -727,23 +1454,22 @@
         document.getElementById("final-acertos").innerText = acertos;
         document.getElementById("final-erros").innerText = erros;
 
-        let msgVisual = "";
-        let msgFalada = "";
-        const total = acertos + erros;
+        let msgDescricao = "";
+        const total = perguntasDaRodada.length;
 
         if (acertos === total) {
-          msgVisual = "🏆 UAU! VOCÊ ACERTOU TUDO! PARABÉNS!";
-          msgFalada = "Uau! Você acertou tudo! Parabéns!";
+          msgVisual = "🏆 UAU! VOCÊ SABE TUDO!";
+          msgDescricao = "Incrível! Você provou que conhece muito bem os alimentos.\nIdentificar o que comemos é fundamental para uma vida cheia de saúde!";
         } else if (acertos > erros) {
-          msgVisual = "🎉 MUITO BEM! VOCÊ FOI INCRÍVEL!";
-          msgFalada = "Muito bem! Você foi incrível!";
+          msgVisual = "🎉 MUITO BEM! VOCÊ FOI ÓTIMO!";
+          msgDescricao = "Parabéns! Você conhece muitos alimentos.\nQue tal jogar de novo para tentar acertar todos?";
         } else {
-          msgVisual = "💪 BOM JOGO! VAMOS TENTAR DE NOVO?";
-          msgFalada = "Bom jogo! Vamos tentar de novo?";
+          msgVisual = "💪 BOM JOGO! VAMOS APRENDER?";
+          msgDescricao = "Bom começo! Conhecer os alimentos é muito importante.\nJogue novamente para aprender sobre novas frutas e vegetais!";
         }
 
         document.getElementById("mensagem-final").innerText = msgVisual;
-        falarTexto(msgFalada + " Você acertou " + acertos + " e errou " + erros);
+        document.getElementById("descricao-final").innerText = msgDescricao;
       }
     }
 
@@ -753,6 +1479,6 @@
       document.getElementById('intro-screen').style.display = 'flex';
     }
   </script>
-</body>
 
+</body>
 </html>
