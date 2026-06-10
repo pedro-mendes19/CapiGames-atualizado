@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,13 +18,13 @@
     margin: 0;
     padding: 0;
   }
-  html {
-    overflow-y: auto;
-  }
+
+  html,
   body {
-    min-height: 100vh;
-    overflow-y: auto;
+    height: 100%;
+    overflow: hidden;
   }
+
   :root {
     --sun: #FFB300;
     --rain: #2196F3;
@@ -38,25 +39,29 @@
     --radius: 24px;
     --shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   }
+
   body {
     font-family: 'Nunito', sans-serif;
     background: var(--bg);
-    min-height: 100vh;
-    overflow-x: hidden;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px 16px 40px;
+    padding: 16px 16px 16px;
     background-image:
       radial-gradient(circle at 10% 10%, #FFE082 0%, transparent 40%),
       radial-gradient(circle at 90% 80%, #B3E5FC 0%, transparent 40%),
       radial-gradient(circle at 50% 50%, #F8BBD9 0%, transparent 60%);
   }
+
   header {
     text-align: center;
     margin-bottom: 20px;
     padding-top: 8px;
   }
+
   header h1 {
     font-family: 'Adigiana Toybox', sans-serif;
     font-size: clamp(2.2rem, 6vw, 3.5rem);
@@ -66,12 +71,14 @@
     line-height: 1.2;
     font-weight: bold;
   }
+
   header p {
     font-size: clamp(1rem, 3vw, 1.2rem);
     color: #6D4C41;
     font-weight: 700;
     margin-top: 6px;
   }
+
   .scoreboard {
     display: flex;
     gap: 16px;
@@ -79,6 +86,7 @@
     flex-wrap: wrap;
     justify-content: center;
   }
+
   .score-pill {
     background: linear-gradient(135deg, #fbbf24, #f59e0b);
     box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
@@ -89,15 +97,18 @@
     font-size: 1.125rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     text-align: center;
+    margin-top: -10px;
   }
+
   .score-pill .label {
     font-family: 'Nunito', sans-serif;
     font-size: 1rem;
     font-weight: 800;
     color: rgba(255, 255, 255, 0.92);
   }
+
   .score-pill .valor {
     font-family: 'Baloo 2', cursive;
     font-size: 1.2rem;
@@ -105,10 +116,12 @@
     color: #fff;
     line-height: 1;
   }
+
   .score-pill.acertos {
     background: linear-gradient(135deg, #66BB6A, #4CAF50);
     box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
   }
+
   .score-pill.erros {
     background: linear-gradient(135deg, #EF5350, #E53935);
     box-shadow: 0 4px 15px rgba(229, 57, 53, 0.4);
@@ -118,7 +131,7 @@
     background: #FFFFFF;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: clamp(24px, 5vw, 40px);
+    padding: clamp(16px, 3.5vw, 40px);
     max-width: 800px;
     width: 100%;
     text-align: center;
@@ -126,11 +139,14 @@
     min-height: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: clamp(10px, 2vh, 20px);
     justify-content: flex-start;
     align-items: stretch;
-    margin-bottom: 28px;
+    margin-bottom: 0;
+    overflow: hidden;
+    flex-shrink: 1;
   }
+
   .game-area.final {
     min-height: min(76vh, 530px);
     justify-content: center;
@@ -140,6 +156,7 @@
     background-clip: padding-box;
     position: relative;
   }
+
   .game-area.final::before {
     content: '';
     position: absolute;
@@ -150,42 +167,43 @@
     background: linear-gradient(135deg, rgba(255, 160, 0, 0.9), rgba(255, 87, 34, 0.85), rgba(255, 193, 7, 0.7));
     filter: blur(8px);
   }
-  .game-area.final .scoreboard,
-  .game-area.final .progress-bar-wrap,
-  .game-area.final #progress-label {
+
+  .game-area.final .scoreboard {
     display: none;
   }
+
   body.fim {
     justify-content: center;
-    min-height: 100vh;
   }
+
   .tela-fim {
-    width: 100%;
-    max-width: 520px;
-    margin: 0 auto;
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding: 16px 0;
+    width: 100%;
   }
+
   .tela-fim.ativa {
     display: flex;
   }
+
   .jogo-area-interna.oculto {
     display: none;
   }
+
   .jogo-area-interna {
     display: flex;
     flex-direction: column;
     gap: 0;
     align-items: stretch;
   }
+
   .clima-card {
     background: linear-gradient(135deg, #E3F2FD 0%, #FFF9C4 100%);
     border-radius: 20px;
-    padding: 26px 16px;
+    padding: 18px 16px;
     margin-bottom: 24px;
     position: relative;
     overflow: hidden;
@@ -195,31 +213,39 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-top: -10px;
     transition: background 0.5s, border-color 0.5s;
   }
+
   .clima-emoji {
-    font-size: clamp(3.2rem, 10vw, 5rem);
-    line-height: 1;
+    width: clamp(200px, 35vw, 280px);
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 16px;
     display: block;
-    animation: balancear 2s ease-in-out infinite;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
   }
+
   @keyframes balancear {
+
     0%,
     100% {
       transform: rotate(-5deg) scale(1);
     }
+
     50% {
       transform: rotate(5deg) scale(1.07);
     }
   }
+
   .clima-nome {
     font-family: 'Fredoka One', cursive;
     font-size: clamp(1.5rem, 4.5vw, 2rem);
     color: #1A237E;
-    margin-top: 6px;
+    margin-top: 18px;
     text-shadow: 1px 2px 0 rgba(255, 255, 255, 0.8);
   }
+
   .instrucao {
     font-size: clamp(1.3rem, 3vw, 1.5rem);
     color: #4A148C;
@@ -231,6 +257,7 @@
     display: inline-block;
     text-align: center;
   }
+
   .opcoes {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -238,6 +265,7 @@
     margin-bottom: 16px;
     padding-inline: clamp(8px, 2vw, 14px);
   }
+
   .opcao {
     background: #F5F5F5;
     border: 3px solid #E0E0E0;
@@ -254,25 +282,30 @@
     position: relative;
     overflow: hidden;
   }
+
   .opcao:hover:not(:disabled) {
     transform: translateY(-4px) scale(1.04);
     border-color: #7B1FA2;
     background: #F3E5F5;
     box-shadow: 0 8px 20px rgba(123, 31, 162, 0.18);
   }
+
   .opcao:active:not(:disabled) {
     transform: scale(0.96);
   }
+
   .opcao:disabled {
     cursor: default;
   }
+
   .opcao .item-emoji {
     width: clamp(3.3rem, 6vw, 4.5rem);
-    height: auto;
+    height: clamp(3.3rem, 6vw, 4.5rem);
     display: block;
     object-fit: contain;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   }
+
   .opcao .item-nome {
     font-family: 'Fredoka One', cursive;
     font-size: clamp(1.1rem, 2.2vw, 1.2rem);
@@ -280,48 +313,61 @@
     text-align: center;
     line-height: 1.2;
   }
+
   .opcao.correta {
     border-color: var(--green);
     background: #E8F5E9;
     animation: pular 0.5s ease;
   }
+
   .opcao.errada {
     border-color: var(--red);
     background: #FFEBEE;
     animation: tremer 0.4s ease;
   }
+
   @keyframes pular {
     0% {
       transform: scale(1);
     }
+
     30% {
       transform: scale(1.15) translateY(-8px);
     }
+
     60% {
       transform: scale(0.97);
     }
+
     100% {
       transform: scale(1);
     }
   }
+
   @keyframes tremer {
+
     0%,
     100% {
       transform: translateX(0);
     }
+
     20% {
       transform: translateX(-8px);
     }
+
     40% {
       transform: translateX(8px);
     }
+
     60% {
       transform: translateX(-5px);
     }
+
     80% {
       transform: translateX(5px);
     }
   }
+
   .feedback {
     font-family: 'Fredoka One', cursive;
     font-size: clamp(1.3rem, 3.5vw, 1.8rem);
@@ -335,31 +381,37 @@
     justify-content: center;
     gap: 8px;
   }
+
   .feedback.acerto {
     background: #E8F5E9;
     color: #2E7D32;
     border: 2px solid #A5D6A7;
     animation: aparecer 0.4s ease;
   }
+
   .feedback.erro {
     background: #FFEBEE;
     color: #C62828;
     border: 2px solid #FFCDD2;
     animation: aparecer 0.4s ease;
   }
+
   .feedback.vazio {
     display: none;
   }
+
   @keyframes aparecer {
     from {
       opacity: 0;
       transform: scale(0.85) translateY(8px);
     }
+
     to {
       opacity: 1;
       transform: scale(1) translateY(0);
     }
   }
+
   .btn-jogar {
     font-family: 'Fredoka One', cursive;
     font-size: clamp(1.15rem, 3.5vw, 1.4rem);
@@ -378,13 +430,16 @@
     margin-top: 4px;
     animation: pulsarBotao 3.5s infinite ease-in-out;
   }
+
   .btn-jogar:hover {
     transform: translateZ(0) scale(1.04);
     box-shadow: 0 12px 28px rgba(255, 111, 0, 0.45);
   }
+
   .btn-jogar:active {
     transform: scale(0.98);
   }
+
   .tela-fim {
     display: none;
     flex-direction: column;
@@ -392,35 +447,43 @@
     gap: 16px;
     padding: 16px 0;
   }
+
   .tela-fim.ativa {
     display: flex;
   }
+
   .jogo-area-interna.oculto {
     display: none;
   }
+
   .tela-fim .troféu {
     font-size: 5rem;
     animation: girar 1.5s ease;
   }
+
   @keyframes girar {
     0% {
       transform: rotate(-30deg) scale(0.5);
       opacity: 0;
     }
+
     60% {
       transform: rotate(10deg) scale(1.15);
       opacity: 1;
     }
+
     100% {
       transform: rotate(0deg) scale(1);
     }
   }
+
   .tela-fim h2 {
     font-family: 'Fredoka One', cursive;
     font-size: clamp(1.8rem, 5vw, 2.6rem);
     color: #E65100;
     font-weight: 400;
   }
+
   .tela-fim .resultado-final {
     font-size: clamp(1rem, 3vw, 1.2rem);
     color: #BF360C;
@@ -432,12 +495,15 @@
     text-align: center;
     margin: 12px 0 20px;
   }
+
   .tela-fim .btn-jogar {
     font-weight: 400;
   }
+
   header.oculto {
     display: none;
   }
+
   .estrelas {
     font-size: 2.8rem;
     letter-spacing: 8px;
@@ -446,464 +512,785 @@
     justify-content: center;
     gap: 12px;
   }
+
   .estrelas span {
     display: inline-block;
     opacity: 0;
     filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
   }
+
   .estrelas.animar {
     animation: pulsarBotao 3s infinite ease-in-out;
   }
+
   .estrelas.animar span {
     animation: estrela-pop 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
+
   @keyframes estrela-pop {
     0% {
       transform: scale(0) rotate(-45deg);
       opacity: 0;
     }
+
     80% {
       transform: scale(1.2) rotate(10deg);
     }
+
     100% {
       transform: scale(1) rotate(0);
       opacity: 1;
     }
   }
+
   @keyframes pulsarBotao {
+
     0%,
     100% {
       transform: scale(1);
     }
+
     50% {
       transform: scale(1.25);
     }
   }
-  .progress-bar-wrap {
-    width: 100%;
-    height: 10px;
-    background: #EEE;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: -10px;
-  }
-  .progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #7B1FA2, #F06292);
-    border-radius: 10px;
-    transition: width 0.5s ease;
-  }
-  .progress-label {
-    font-size: 0.85rem;
-    color: #888;
-    font-weight: 700;
-    text-align: right;
-    margin-bottom: 14px;
-  }
+
   .mobile-br {
     display: none;
   }
+
   @media screen and (orientation: portrait) {
     body {
-      padding: 8px 10px 10px;
+      padding: 8px 10px 8px;
       justify-content: flex-start;
     }
+
     .mobile-br {
       display: block;
     }
   }
+
   /* =====================================================
      CELULARES PEQUENOS (320px até 480px)
   ===================================================== */
-  @media (max-width:480px){
+  @media (max-width:480px) {
 
-    body{
-      padding:8px 10px 12px;
+    body {
+      padding: 8px 10px 8px;
     }
 
-    header{
-      margin-bottom:8px;
-      padding-top:2px;
+    header {
+      margin-bottom: 8px;
+      padding-top: 2px;
     }
 
-    header h1{
-      font-size:1.8rem;
-      line-height:1.1;
+    header h1 {
+      font-size: 1.8rem;
+      line-height: 1.1;
     }
 
-    header p{
-      font-size:0.85rem;
-      margin-top:2px;
+    header p {
+      font-size: 0.85rem;
+      margin-top: 2px;
     }
 
-    .scoreboard{
-      margin-bottom:8px;
-      gap:10px;
+    .scoreboard {
+      margin-bottom: 8px;
+      gap: 10px;
     }
 
-    .score-pill{
-      padding:5px 12px;
-      font-size:0.8rem;
+    .score-pill {
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      margin-top: -6px;
     }
 
-    .score-pill .label{
-      font-size:0.75rem;
+    .score-pill .label {
+      font-size: 0.75rem;
     }
 
-    .score-pill .valor{
-      font-size:0.9rem;
+    .score-pill .valor {
+      font-size: 0.9rem;
     }
 
-    .progress-bar-wrap{
-      margin-bottom:-8px;
+    .game-area {
+      width: 100%;
+      max-width: 100%;
+      padding: 12px;
+      border-radius: 18px;
+      gap: 10px;
+      margin-bottom: 0;
     }
 
-    .game-area{
-      width:100%;
-      max-width:100%;
-      padding:12px;
-      border-radius:18px;
-      gap:10px;
-      margin-bottom:8px;
+    .jogo-area-interna {
+      gap: 8px;
     }
 
-    .jogo-area-interna{
-      gap:8px;
+    .clima-card {
+      min-height: 120px;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 16px;
+      margin-top: -2px;
     }
 
-    .clima-card{
-      min-height:85px;
-      padding:12px;
-      margin-bottom:8px;
-      border-radius:16px;
+    .clima-emoji {
+      width: 160px;
+      height: 90px;
     }
 
-    .clima-emoji{
-      font-size:2.6rem;
+    .clima-nome {
+      font-size: 1.1rem;
+      margin-top: 10px;
     }
 
-    .clima-nome{
-      font-size:1.1rem;
-      margin-top:2px;
+    .instrucao {
+      max-width: 95%;
+      font-size: 0.83rem;
+      padding: 6px 12px;
+      margin-bottom: 8px;
     }
 
-    .instrucao{
-      max-width:95%;
-      font-size:0.88rem;
-      padding:6px 12px;
-      margin-bottom:8px;
+    .feedback {
+      font-size: 1.1rem;
+      padding: 5px 10px;
+      margin-bottom: 8px;
     }
 
-    .feedback{
-      font-size:0.9rem;
-      padding:5px 10px;
-      margin-bottom:8px;
+    .opcoes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-inline: 0;
     }
 
-    .opcoes{
-      grid-template-columns:1fr 1fr;
-      gap:8px;
-      margin-bottom:16px;
-      padding-inline:0;
+    .opcao {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 1px 4px;
+      border-radius: 14px;
+      min-height: unset;
+      width: 100%;
     }
 
-    .opcao{
-      min-height:100px;
-      padding:10px 6px;
-      border-radius:14px;
-      gap:5px;
+    .opcao .item-emoji {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      flex-shrink: 0;
     }
 
-    .opcao .item-emoji{
-      width:50px;
+    .opcao .item-nome {
+      font-size: 0.85rem;
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 3px;
     }
 
-    .opcao .item-nome{
-      font-size:0.8rem;
-      line-height:1.1;
-    }
-
-    .opcoes .opcao:last-child:nth-child(odd){
-      grid-column: 1 / -1;
-      width: min(100%, 365px);
-      margin: 0 auto;
-      justify-self: center;
+    .opcoes .opcao:last-child:nth-child(odd) {
+      grid-column: unset;
+      width: 100%;
+      margin: 0;
+      justify-self: unset;
     }
 
   }
 
+
+  /* =====================================================
+     IPHONE SE (375px) - Ajustado para evitar overflow
+  ===================================================== */
+  @media (max-width: 375px) {
+
+    body {
+      padding: 6px 8px 6px;
+    }
+
+    header {
+      margin-bottom: 4px;
+      padding-top: 10px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    header p {
+      font-size: 0.75rem;
+      margin-top: 1px;
+    }
+
+    .scoreboard {
+      margin-bottom: 4px;
+      gap: 6px;
+    }
+
+    .score-pill {
+      padding: 3px 10px;
+      font-size: 0.7rem;
+      margin-bottom: 5px;
+    }
+
+    .score-pill .label {
+      font-size: 0.65rem;
+    }
+
+    .score-pill .valor {
+      font-size: 0.8rem;
+    }
+
+    .game-area {
+      padding: 20px;
+      gap: 5px;
+      margin-top: 5px;
+      margin-bottom: 0;
+      border-radius: 16px;
+    }
+
+    .jogo-area-interna {
+      gap: 3px;
+    }
+
+    .clima-card {
+      min-height: 100px;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 14px;
+      margin-top: -2px;
+    }
+
+    .clima-emoji {
+      width: 140px;
+      height: 79px;
+    }
+
+    .clima-nome {
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    .instrucao {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      margin-bottom: 10px;
+      max-width: 95%;
+    }
+
+    .feedback {
+      font-size: 0.8rem;
+      padding: 3px 8px;
+      margin-bottom: 10px;
+    }
+
+    .opcoes {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 8px;
+      padding-inline: 0;
+    }
+
+    .opcao {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      min-height: unset;
+      width: 100%;
+    }
+
+    .opcao .item-emoji {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .opcao .item-nome {
+      font-size: 0.8rem;
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    .btn-jogar {
+      font-size: 0.8rem;
+      padding: 8px 18px;
+      margin-top: 2px;
+    }
+
+  }
 
   /* =====================================================
      CELULARES MUITO PEQUENOS (até 360px)
   ===================================================== */
-  @media (max-width:360px){
+  @media (max-width:360px) {
 
-    body{
-      padding:5px 8px 10px;
+    body {
+      padding: 5px 8px 5px;
     }
 
-    header{
-      margin-bottom:5px;
-      padding-top:1px;
+    header {
+      margin-bottom: 5px;
+      padding-top: 1px;
     }
 
-    header h1{
-      font-size:1.4rem;
-      line-height:1;
+    header h1 {
+      font-size: 1.4rem;
+      line-height: 1;
     }
 
-    header p{
-      font-size:0.7rem;
-      margin-top:1px;
+    header p {
+      font-size: 0.7rem;
+      margin-top: 1px;
     }
 
-    .scoreboard{
-      margin-bottom:5px;
-      gap:6px;
+    .scoreboard {
+      margin-bottom: 5px;
+      gap: 6px;
     }
 
-    .score-pill{
-      padding:3px 8px;
-      font-size:0.65rem;
+    .score-pill {
+      padding: 3px 8px;
+      font-size: 0.65rem;
     }
 
-    .score-pill .label{
-      font-size:0.6rem;
+    .score-pill .label {
+      font-size: 0.6rem;
     }
 
-    .score-pill .valor{
-      font-size:0.7rem;
+    .score-pill .valor {
+      font-size: 0.7rem;
     }
 
-    .progress-bar-wrap{
-      height:8px;
-      margin-bottom:-4px;
+
+
+    .game-area {
+      padding: 8px;
+      gap: 6px;
+      margin-bottom: 0;
+      border-radius: 16px;
+      overflow-y: auto;
     }
 
-    .game-area{
-      padding:8px;
-      gap:6px;
-      margin-bottom:6px;
-      border-radius:16px;
+    .jogo-area-interna {
+      gap: 4px;
     }
 
-    .jogo-area-interna{
-      gap:4px;
+    .clima-card {
+      min-height: 100px;
+      padding: 8px;
+      margin-bottom: 6px;
+      border-radius: 14px;
     }
 
-    .clima-card{
-      min-height:70px;
-      padding:8px;
-      margin-bottom:6px;
-      border-radius:14px;
+    .clima-emoji {
+      width: 130px;
+      height: 73px;
     }
 
-    .clima-emoji{
-      font-size:2rem;
+    .clima-nome {
+      font-size: 0.95rem;
+      margin-top: 8px;
     }
 
-    .clima-nome{
-      font-size:0.95rem;
-      margin-top:1px;
+    .instrucao {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      margin-bottom: 6px;
+      max-width: 96%;
     }
 
-    .instrucao{
-      font-size:0.75rem;
-      padding:4px 8px;
-      margin-bottom:6px;
-      max-width:96%;
+    .feedback {
+      font-size: 0.75rem;
+      padding: 3px 6px;
+      margin-bottom: 4px;
     }
 
-    .feedback{
-      font-size:0.75rem;
-      padding:3px 6px;
-      margin-bottom:4px;
+    .opcoes {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+      padding-inline: 0;
     }
 
-    .opcoes{
-      grid-template-columns:1fr 1fr;
-      gap:6px;
-      margin-bottom:10px;
-      padding-inline:0;
+    .opcao {
+      flex-direction: column;
+      /* emoji em cima, nome embaixo */
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      min-height: unset;
+      width: 100%;
     }
 
-    .opcao{
-      min-height:85px;
-      padding:6px 4px;
-      border-radius:10px;
-      gap:3px;
+    .opcao .item-emoji {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      flex-shrink: 0;
     }
 
-    .opcao .item-emoji{
-      width:40px;
+    .opcao .item-nome {
+      font-size: 0.8rem;
+      text-align: center;
+      line-height: 1.2;
     }
 
-    .opcao .item-nome{
-      font-size:0.65rem;
-      line-height:1;
+    .opcoes .opcao:last-child:nth-child(odd) {
+      grid-column: unset;
+      width: 100%;
+      margin: 0;
+      justify-self: unset;
     }
 
-    .opcoes .opcao:last-child:nth-child(odd){
-      grid-column: 1 / -1;
-      width: min(92%, 260px);
-      margin: 0 auto;
-      justify-self: center;
+    .btn-jogar {
+      font-size: 0.85rem;
+      padding: 8px 20px;
     }
 
-    .btn-jogar{
-      font-size:0.85rem;
-      padding:8px 20px;
+    .tela-fim {
+      gap: 6px;
+      padding: 8px;
     }
 
-    .tela-fim{
-      gap:6px;
-      padding:8px;
+    .tela-fim .troféu {
+      font-size: 2.2rem;
     }
 
-    .tela-fim .troféu{
-      font-size:2.2rem;
+    .tela-fim h2 {
+      font-size: 1.1rem;
+      line-height: 1.1;
     }
 
-    .tela-fim h2{
-      font-size:1.1rem;
-      line-height:1.1;
+    .tela-fim .resultado-final {
+      font-size: 0.65rem;
+      padding: 6px 12px;
+      margin: 6px 0 8px;
+      border-radius: 10px;
     }
 
-    .tela-fim .resultado-final{
-      font-size:0.65rem;
-      padding:6px 12px;
-      margin:6px 0 8px;
-      border-radius:10px;
-    }
-
-    .estrelas{
-      font-size:1.5rem;
-      letter-spacing:2px;
-      margin:4px 0;
-      gap:6px;
+    .estrelas {
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      margin: 4px 0;
+      gap: 6px;
     }
 
   }
 
 
   /* =====================================================
-     TABLETS (481px até 1024px)
+     CELULARES MAIORES (390px até 767px) — opções em lista
   ===================================================== */
-  @media (min-width:481px) and (max-width:1024px){
+  @media (min-width:390px) and (max-width:767px) {
 
-    body{
-      padding:8px 12px 14px;
+    body {
+      padding: 8px 12px 8px;
     }
 
-    header{
-      margin-bottom:8px;
-      padding-top:2px;
+    .game-area {
+      width: min(96vw, 520px);
+      padding: 16px 14px;
+      gap: 10px;
+      margin-bottom: 0;
+      border-radius: 18px;
+      overflow-y: auto;
     }
 
-    header h1{
-      font-size:1.6rem;
+    .jogo-area-interna {
+      gap: 8px;
     }
 
-    header p{
-      font-size:0.8rem;
-      margin-top:2px;
+    .clima-card {
+      min-height: 150px;
+      padding: 14px 12px;
+      margin-bottom: 6px;
     }
 
-    .scoreboard{
-      margin-bottom:8px;
-      gap:8px;
+    .clima-emoji {
+      width: 200px;
+      height: 112px;
     }
 
-    .score-pill{
-      padding:5px 12px;
-      font-size:0.75rem;
+    .instrucao {
+      font-size: 1rem;
+      padding: 8px 14px;
+      margin-bottom: 8px;
+      max-width: 100%;
+      width: 100%;
     }
 
-    .score-pill .label{
-      font-size:0.7rem;
+    .feedback {
+      font-size: 1rem;
+      padding: 6px 12px;
+      margin-bottom: 6px;
     }
 
-    .score-pill .valor{
-      font-size:0.8rem;
+    /* ── LISTA VERTICAL ── */
+    .opcoes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-inline: 0;
     }
 
-    .progress-bar-wrap{
-      height:9px;
-      margin-bottom:-7px;
+    .opcao {
+      flex-direction: column;
+      /* emoji em cima, nome embaixo */
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border-radius: 16px;
+      min-height: unset;
+      width: 100%;
     }
 
-    .game-area{
-      width:min(96vw, 680px);
-      padding:14px;
-      gap:10px;
-      margin-bottom:12px;
-      border-radius:16px;
+    .opcao .item-emoji {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      flex-shrink: 0;
     }
 
-    .jogo-area-interna{
-      gap:8px;
+    .opcao .item-nome {
+      font-size: 1.1rem;
+      text-align: center;
+      line-height: 1.2;
     }
 
-    .clima-card{
-      min-height:105px;
-      padding:13px 10px;
-      margin-bottom:6px;
-      border-radius:14px;
+    /* Último item ímpar não precisa de tratamento especial na lista */
+    .opcoes .opcao:last-child:nth-child(odd) {
+      grid-column: unset;
+      width: 100%;
+      margin: 0;
+      justify-self: unset;
     }
 
-    .clima-emoji{
-      font-size:2.8rem;
-    }
-
-    .clima-nome{
-      font-size:1.1rem;
-      margin-top:3px;
-    }
-
-    .instrucao{
-      font-size:0.85rem;
-      padding:6px 12px;
-      margin-bottom:8px;
-      max-width:93%;
-      border-radius:11px;
-    }
-
-    .feedback{
-      font-size:0.85rem;
-      padding:5px 10px;
-      margin-bottom:8px;
-      border-radius:9px;
-    }
-
-    .opcoes{
-      grid-template-columns:repeat(3, 1fr);
-      gap:9px;
-      margin-bottom:10px;
-      padding-inline:2px;
-    }
-
-    .opcao{
-      min-height:100px;
-      padding:10px 6px;
-      border-radius:12px;
-    }
-
-    .opcao .item-emoji{
-      width:55px;
-    }
-
-    .opcao .item-nome{
-      font-size:0.8rem;
-      line-height:1;
-    }
-
-    .btn-jogar{
-      font-size:0.95rem;
-      padding:10px 24px;
+    .btn-jogar {
+      font-size: 1rem;
+      padding: 12px 28px;
     }
 
   }
+
+  /* =====================================================
+     TABLETS VERTICAL (768px até 1024px)
+  ===================================================== */
+  @media (min-width:768px) and (max-width:1024px) and (orientation: portrait) {
+
+    body {
+      padding: 8px 12px 8px;
+    }
+
+    header {
+      margin-bottom: 8px;
+      padding-top: 2px;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      padding-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    .scoreboard {
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .score-pill {
+      padding: 5px 12px;
+      font-size: 0.75rem;
+    }
+
+    .score-pill .label {
+      font-size: 1.1rem;
+    }
+
+    .score-pill .valor {
+      font-size: 1.1rem;
+    }
+
+    .game-area {
+      width: min(96vw, 750px); /* Aumentada a largura para ocupar mais espaço no tablet */
+      padding: 24px 20px;
+      gap: 16px;               /* Define um espaço firme e fixo entre os elementos */
+      margin-bottom: 0;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start; /* 👈 AGORA JUNTA O CONTEÚDO NO TOPO, USANDO O GAP (o clima-card vai subir!) */
+      overflow: hidden;
+    }
+
+    .game-area.final {
+      min-height: unset;       /* Cancela a altura gigante quando o jogo acaba */
+      height: auto;            /* Deixa a caixa se ajustar perfeitamente ao tamanho dos textos/estrelas */
+      padding: 30px 20px;
+    }
+
+    .jogo-area-interna {
+      gap: 10px;
+    }
+
+    .clima-card {
+      min-height: 160px;
+      padding: 16px 12px;
+      margin-bottom: 10px;
+      border-radius: 25px;
+    }
+
+    .clima-emoji {
+      width: 310px;
+      height: 180px;
+    }
+
+    .clima-nome {
+      font-size: 1.8rem;
+      margin-top: 12px;
+    }
+
+    .instrucao {
+      font-size: 1.5rem;
+      padding: 10px 16px;
+      margin-bottom: 12px;
+      max-width: 100%;
+      width: 85%;
+    }
+
+    /* 👇 TRANSFORMA O GRID EM LISTA VERTICAL IGUAL AO CELULAR */
+    .opcoes {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;               /* Aumentado o espaço entre as opções */
+      margin-bottom: 14px;
+      padding-inline: 0;
+    }
+
+    .opcao {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 24px 20px;      /* Aumentado o preenchimento para tornar as opções mais altas */
+      border-radius: 16px;
+      min-height: 190px;       /* Definida uma altura mínima para garantir que fiquem compridas */
+      width: 100%;
+    }
+
+    .opcao .item-emoji {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .opcao .item-nome {
+      font-size: 1.6rem;       /* Aumentado o tamanho da fonte para acompanhar o botão maior */
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .btn-jogar {
+      font-size: 1.1rem;
+      padding: 14px 32px;
+    }
+  }
+
+  /* =====================================================
+     CHROMEBOOK & TABLET LANDSCAPE (1024px até 1366px)
+  ===================================================== */
+  @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+    header h1 {
+      font-size: 3.5rem;
+      margin-bottom: 2px;
+    }
+
+    .game-area {
+      padding: 22px 28px;
+      gap: 10px;
+      max-width: 790px;
+      overflow: hidden;
+    }
+
+    .clima-card {
+      min-height: 120px;
+      padding: 12px 14px;
+      margin-bottom: 15px;
+      margin-top: -8px;
+    }
+
+    .clima-emoji {
+      width: 280px;
+    }
+
+    .clima-nome {
+      font-size: 1.8rem;
+      margin-top: 8px;
+    }
+
+    .score-pill {
+      margin-top: -3px;
+    }
+
+    .instrucao {
+      font-size: 1.30rem;
+      padding: 8px 20px;
+      margin-bottom: 15px;
+      width: 75%;
+      max-width: 100%;
+    }
+
+    .opcoes {
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .opcao {
+      padding: 12px 10px;
+    }
+
+    .opcao .item-emoji {
+      width: 3.8rem;
+      height: 3.8rem;
+    }
+
+    .opcao .item-nome {
+      font-size: 1.1rem;
+    }
+
+    .btn-jogar {
+      padding: 12px 32px;
+      font-size: 1.1rem;
+    }
+  }
+
+  /* =====================================================
+     DESKTOP (1025px+) — Opções alinhadas com clima-card
+  ===================================================== */
+  @media (min-width: 1025px) {
+    .opcoes {
+      padding-inline: 0;
+    }
+  }
 </style>
+
 <body>
   <header>
     <h1 id="title">COMO ESTÁ <br class="mobile-br">O TEMPO?</h1>
@@ -915,16 +1302,13 @@
         <div class="valor" id="qtd-rodada">1 / 12</div>
       </div>
     </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
-    </div>
-    <div class="progress-label" id="progress-label"></div>
+
     <div class="jogo-area-interna" id="jogo-area">
       <div class="clima-card" id="clima-card">
-        <span class="clima-emoji" id="clima-emoji">☀️</span>
+        <img class="clima-emoji" id="clima-emoji" src="img/ensolarado.jpeg" alt="Clima">
         <span class="clima-nome" id="clima-nome">Ensolarado</span>
       </div>
-      <div class="instrucao">👆 QUAL ITEM COMBINA COM ESSE CLIMA?</div>
+      <div class="instrucao">👆 QUAL ITEM COMBINA COM ESSE TEMPO?</div>
       <div class="feedback vazio" id="feedback-texto"></div>
       <div class="opcoes" id="opcoes-container"></div>
       <button class="btn-jogar" id="btn-jogar" onclick="jogarNovamente()" style="display:none">
@@ -1067,7 +1451,7 @@
         borda: "#7986CB",
         correto: { emoji: "🛌", nome: "COBERTOR" },
         errados: [
-          { emoji: "🕶️", nome: "ÓCULOS DE SOL" }, 
+          { emoji: "🕶️", nome: "ÓCULOS DE SOL" },
           { emoji: "🩴", nome: "CHINELO" },
           { emoji: "👙", nome: "BIQUÍNI" },
           { emoji: "👒", nome: "CHAPÉU DE PALHA" },
@@ -1116,6 +1500,23 @@
     };
     function getItemImage(nome) {
       return ITEM_IMAGES[nome] || "";
+    }
+    const CLIMA_IMAGES = {
+      "ENSOLARADO": "img/ensolarado.jpeg",
+      "CHUVOSO": "img/chuvoso.jpeg",
+      "FRIO": "img/frio.jpeg",
+      "VENTANDO": "img/ventando.jpeg",
+      "NUBLADO": "img/nublado.jpeg",
+      "MUITO QUENTE": "img/muitoquente.jpeg",
+      "NEVANDO": "img/nevando.jpeg",
+      "APÓS CHUVA": "img/aposchuva.jpeg",
+      "TEMPESTADE": "img/tempestade.jpeg",
+      "NEVOEIRO": "img/nevoeiro.jpeg",
+      "NOITE FRIA": "img/noitefria.jpeg",
+      "DIA DE PRIMAVERA": "img/diadeprimavera.jpeg"
+    };
+    function getClimaImage(nome) {
+      return CLIMA_IMAGES[nome] || "";
     }
     let rodada = 0;
     let acertos = 0;
@@ -1176,7 +1577,7 @@
       const card = document.getElementById('clima-card');
       card.style.background = clima.bg;
       card.style.borderColor = clima.borda;
-      document.getElementById('clima-emoji').textContent = clima.emoji;
+      document.getElementById('clima-emoji').src = getClimaImage(clima.nome);
       document.getElementById('clima-nome').textContent = clima.nome;
       const fb = document.getElementById('feedback-texto');
       fb.textContent = '';
@@ -1196,7 +1597,6 @@
         container.appendChild(btn);
       });
       atualizarPlacar();
-      atualizarProgress();
     }
     function responder(btn, correta, container) {
       if (respondida) return;
@@ -1273,13 +1673,10 @@
         elRodada.textContent = `${Math.min(rodada + 1, totalRodadas)} / ${totalRodadas}`;
       }
     }
-    function atualizarProgress() {
-      const pct = ((rodada + 1) / totalRodadas) * 100;
-      document.getElementById('progress-bar').style.width = pct + '%';
-      document.getElementById('progress-label').textContent = '';
-    }
+
     iniciarJogo();
   </script>
 
 </body>
+
 </html>

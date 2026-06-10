@@ -5,461 +5,599 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Verdadeiro ou Falso: Alimentação</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
 </head>
-  <style>
-    * {
-      box-sizing: border-box;
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #E8EAF6, #E3F2FD, #F3E5F5);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    text-transform: uppercase;
+    overflow-x: hidden;
+  }
+
+  #game-container-wrapper {
+    z-index: 999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1100px;
+    transform-origin: 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .game-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 32px 10px 32px 10px;
+  }
+
+  h1 {
+    display: none;
+    margin: 0 auto 25px auto;
+    padding: 15px 60px;
+    width: fit-content;
+    max-width: 95%;
+    font-family: "Balsamiq Sans", sans-serif;
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-align: center;
+    color: #039BE5;
+    background:
+      linear-gradient(#fff, #fff) padding-box,
+      linear-gradient(180deg, #00D2FF, #3a7bd5) border-box;
+    backdrop-filter: blur(10px);
+    border: 8px solid transparent;
+    border-radius: 60px;
+    -webkit-text-stroke: 1.5px #0277BD;
+    flex-shrink: 0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  #intro {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    background: none;
+  }
+
+  #intro-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)),
+      url('img/fundointro.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .intro-card {
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.945), rgba(255, 255, 255, 0.945)) padding-box,
+      linear-gradient(180deg, #4FC3F7, #039BE5) border-box;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 60px 50px;
+    max-width: 1090px;
+    width: 90%;
+    border-radius: 50px;
+    border: 10px solid transparent;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.15),
+      inset 0 0 0 5px rgba(255, 255, 255, 0.5);
+    animation: fadeUp .8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: visible;
+  }
+
+  .intro-card h2 {
+    margin: 0 auto 10px auto;
+    padding: 15px 50px;
+    width: fit-content;
+    max-width: 95%;
+    font-family: "Balsamiq Sans", sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-align: center;
+    color: #039BE5;
+    background:
+      linear-gradient(#fff, #fff) padding-box,
+      linear-gradient(180deg, #00D2FF, #3a7bd5) border-box;
+    backdrop-filter: blur(10px);
+    border: 6px solid transparent;
+    border-radius: 50px;
+    -webkit-text-stroke: 1.5px #0277BD;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    line-height: 1.2;
+  }
+
+  .intro-card p {
+    font-size: 27px;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 10px;
+    max-width: 1000px;
+  }
+
+  .btn-jogar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(180deg, #4FC3F7, #039BE5);
+    color: #fff;
+    font-size: 32px;
+    padding: 22px 115px;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    box-shadow: 0 11px 22px rgba(3, 155, 229, 0.5);
+    margin-top: 0;
+    text-transform: uppercase;
+    text-align: center;
+    animation: pulse 1.5s infinite;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+
+  .btn-jogar:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    animation: pulse 1.5s infinite;
+  }
+
+  #container {
+    width: 100%;
+    max-width: 920px;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.945), rgba(255, 255, 255, 0.945)) padding-box,
+      linear-gradient(180deg, #4FC3F7, #039BE5) border-box;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 10px solid transparent;
+    border-radius: 50px;
+    padding: 35px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 50px;
+  }
+
+  .bloco-imagem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .label-progresso {
+    margin-bottom: 10px;
+    background: linear-gradient(180deg, #ffffff, #f4fbf7);
+    padding: 8px 34px;
+    border-radius: 20px;
+    font-size: 19px;
+    font-weight: 700;
+    color: #2c3e50;
+    border: 2px solid #7fb3d5;
+  }
+
+  #imagemPergunta {
+    width: auto;
+    max-width: 105%;
+    height: auto;
+    max-height: 280px;
+    display: block;
+    border-radius: 20px;
+    box-shadow: 0 11px 22px rgba(0, 0, 0, 0.15);
+    object-fit: contain;
+  }
+
+  #pergunta {
+    width: fit-content;
+    min-width: 50%;
+    max-width: 90%;
+    margin: 0 auto;
+    font-size: 26px;
+    font-weight: 800;
+    text-align: center;
+    color: #2c3e50;
+    background: linear-gradient(180deg, #ffffff, #f4fbf7);
+    padding: 16px 50px;
+    border: 4px solid #7fb3d5;
+    border-radius: 35px;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .botoes {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 8px;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  button.true,
+  button.false {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 16px 55px;
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    border: none;
+    border-radius: 35px;
+    cursor: pointer;
+    transition: transform .1s ease, box-shadow .1s ease;
+    min-width: 150px;
+    flex: 1;
+    max-width: 300px;
+    text-transform: uppercase;
+  }
+
+  .true {
+    background: linear-gradient(180deg, #2ecc71, #27ae60);
+    color: #fff;
+    box-shadow: 0 9px 0 #1e8449;
+  }
+
+  .true:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #1e8449;
+  }
+
+  .false {
+    background: linear-gradient(180deg, #e74c3c, #c0392b);
+    color: #fff;
+    box-shadow: 0 9px 0 #922b21;
+  }
+
+  .false:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #922b21;
+  }
+
+  #resultado {
+    margin: 7px auto;
+    padding: 12px 40px;
+    max-width: 90%;
+    font-size: 23px;
+    font-weight: 800;
+    text-align: center;
+    background: linear-gradient(180deg, #ffffff, #f9fdfb);
+    border-radius: 25px;
+    box-shadow: 0 5px 11px rgba(0, 0, 0, 0.1);
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid transparent;
+  }
+
+  #score {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 5px;
+    color: #039BE5;
+    background: #E3F2FD;
+    padding: 8px 36px;
+    border-radius: 18px;
+    margin-top: -5px;
+  }
+
+  #painelFinal {
+    display: none;
+    margin: auto;
+    max-width: 90%;
+    width: 750px;
+    padding: 50px;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)) padding-box,
+      linear-gradient(180deg, #4FC3F7, #039BE5) border-box;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 50px;
+    border: 10px solid transparent;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
+    animation: fadeUp .6s ease;
+  }
+
+  #painelFinal h2 {
+    font-family: "Balsamiq Sans", sans-serif;
+    font-size: 44px;
+    margin-bottom: 32px;
+    font-weight: 800;
+    color: #039BE5;
+    -webkit-text-stroke: 1.5px #0277BD;
+  }
+
+  #resumo,
+  #mensagemFinal {
+    font-size: 32px;
+    font-weight: 900;
+  }
+
+  .totais {
+    display: flex;
+    justify-content: center;
+    gap: 77px;
+    margin: 32px 0;
+    font-size: 34px;
+    font-weight: 900;
+  }
+
+  .acertos {
+    color: #1e8449;
+  }
+
+  .erros {
+    color: #922b21;
+  }
+
+  .botoes-finais {
+    display: flex;
+    justify-content: center;
+    gap: 38px;
+    margin-top: 43px;
+    flex-wrap: wrap;
+  }
+
+  .btn-reiniciar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 24px 77px;
+    font-size: 25px;
+    border-radius: 35px;
+    border: none;
+    cursor: pointer;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    color: white;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #4FC3F7, #039BE5);
+    animation: pulse 1.5s infinite;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+
+  .btn-reiniciar:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1)
     }
 
-    html,
-    body {
-      height: 100%;
-      width: 100%;
-      font-family: 'Nunito', sans-serif;
-      background: linear-gradient(135deg, #E8EAF6, #E3F2FD, #F3E5F5);
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      margin: 0;
-      padding: 0;
-      text-transform: uppercase;
-      overflow: hidden;
+    50% {
+      transform: scale(1.05)
     }
 
-    #game-container-wrapper {
-      z-index: 999;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 1920px;
-      height: 1080px;
-      margin-top: -540px;
-      margin-left: -960px;
-      transform-origin: center center;
+    100% {
+      transform: scale(1)
+    }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(32px)
     }
 
-    .game-wrapper {
-      height: 1080px;
-      width: 1920px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 32px 10px 0 10px;
+    to {
+      opacity: 1;
+      transform: translateY(0)
+    }
+  }
+
+  @keyframes rotatePhone {
+    0% {
+      transform: rotate(0deg)
     }
 
+    50% {
+      transform: rotate(-90deg)
+    }
+
+    100% {
+      transform: rotate(-90deg)
+    }
+  }
+
+  @media (max-width: 1366px) {
     h1 {
-      display: none;
-      margin: 0 auto 32px auto;
-      padding: 16px 77px;
-      width: fit-content;
-      max-width: 90%;
-      font-size: 36px;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      text-align: center;
-      color: #039BE5;
-      background: linear-gradient(180deg, #ffffff, #E3F2FD);
-      border: 5px solid #039BE5;
-      border-radius: 50px;
-      -webkit-text-stroke: 1px #0277BD;
-      flex-shrink: 0;
-      box-shadow: 0 5px 11px rgba(0, 0, 0, 0.1);
-    }
-
-    #intro {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      z-index: 999;
-
-      background: none;
-    }
-
-    #intro-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 998;
-
-      background:
-        linear-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)),
-        url('img/fundointro.jpeg');
-
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .intro-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(6px);
-      padding: 54px 96px;
-      border-radius: 25px;
-      border: 5px solid #039BE5;
-      max-width: 1090px;
-      width: 93%;
-      max-height: 972px;
-      overflow-y: auto;
-      text-align: center;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-      animation: fadeUp .8s ease;
-    }
-
-    .intro-card h2 {
-      font-size: 40px;
-      margin-bottom: 22px;
-      font-weight: 900;
-      color: #039BE5;
-      -webkit-text-stroke: 1.5px #0277BD;
-    }
-
-    .intro-card p {
-      font-size: 24px;
-      line-height: 1.5;
-      color: #535252;
-    }
-
-    .btn-jogar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-left: auto;
-      margin-right: auto;
-      background: linear-gradient(180deg, #4FC3F7, #039BE5);
-      color: #fff;
-      font-size: 28px;
-      padding: 22px 115px;
-      border: none;
-      border-radius: 40px;
-      cursor: pointer;
-      font-weight: 800;
-      font-family: 'Nunito', sans-serif;
-      box-shadow: 0 11px 22px rgba(3, 155, 229, 0.5);
-      animation: pulse 1.5s infinite;
-      margin-top: 32px;
-      text-transform: uppercase;
-      text-align: center;
-      transition: transform 0.2s ease, filter 0.2s ease;
-    }
-
-    .btn-jogar:hover {
-      transform: scale(1.05);
-      filter: brightness(1.1);
-      animation-play-state: paused;
+      font-size: 32px;
+      padding: 12px 40px;
     }
 
     #container {
-      width: 100%;
-      max-width: 950px;
-      background: #ffffff;
-      border: 6px solid #039BE5;
-      border-radius: 40px;
+      max-width: 900px;
       padding: 30px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-    }
-
-    .bloco-imagem {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-
-    .label-progresso {
-      margin-bottom: 10px;
-      background: linear-gradient(180deg, #ffffff, #f4fbf7);
-      padding: 8px 34px;
-      border-radius: 20px;
-      font-size: 19px;
-      font-weight: 700;
-      color: #2c3e50;
-      border: 2px solid #7fb3d5;
     }
 
     #imagemPergunta {
-      width: auto;
-      max-width: 100%;
-      height: auto;
-      max-height: 280px;
-      display: block;
-      border-radius: 20px;
-      box-shadow: 0 11px 22px rgba(0, 0, 0, 0.15);
-      object-fit: contain;
+      max-height: 300px;
     }
 
     #pergunta {
-      width: fit-content;
-      min-width: 50%;
-      max-width: 90%;
-      margin: 0 auto;
-      font-size: 26px;
-      font-weight: 800;
-      text-align: center;
-      color: #2c3e50;
-      background: linear-gradient(180deg, #ffffff, #f4fbf7);
-      padding: 18px 60px;
-      border: 4px solid #7fb3d5;
-      border-radius: 35px;
-      box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
-    }
-
-    .botoes {
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      margin-top: 8px;
-      width: 100%;
-      flex-wrap: wrap;
+      font-size: 24px;
+      padding: 15px 40px;
     }
 
     button.true,
     button.false {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 18px 60px;
-      font-size: 23px;
-      font-weight: 800;
-      font-family: 'Nunito', sans-serif;
-      border: none;
-      border-radius: 35px;
-      cursor: pointer;
-      transition: transform .1s ease, box-shadow .1s ease;
-      min-width: 150px;
-      flex: 1;
-      max-width: 300px;
-      text-transform: uppercase;
-    }
-
-    .true {
-      background: linear-gradient(180deg, #2ecc71, #27ae60);
-      color: #fff;
-      box-shadow: 0 9px 0 #1e8449;
-    }
-
-    .true:active {
-      transform: translateY(4px);
-      box-shadow: 0 4px 0 #1e8449;
-    }
-
-    .false {
-      background: linear-gradient(180deg, #e74c3c, #c0392b);
-      color: #fff;
-      box-shadow: 0 9px 0 #922b21;
-    }
-
-    .false:active {
-      transform: translateY(4px);
-      box-shadow: 0 4px 0 #922b21;
-    }
-
-    #resultado {
-      margin: 8px auto;
-      padding: 12px 45px;
-      max-width: 90%;
-      font-size: 24px;
-      font-weight: 800;
-      text-align: center;
-      background: linear-gradient(180deg, #ffffff, #f9fdfb);
-      border-radius: 25px;
-      box-shadow: 0 5px 11px rgba(0, 0, 0, 0.1);
-      min-height: 65px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 3px solid transparent;
-    }
-
-    #score {
-      font-size: 19px;
-      font-weight: 700;
-      text-align: center;
-      margin-top: 5px;
-      color: #039BE5;
-      background: #E3F2FD;
-      padding: 8px 34px;
-      border-radius: 18px;
+      font-size: 20px;
+      padding: 14px 40px;
     }
 
     #painelFinal {
+      width: 750px;
+      padding: 40px;
+    }
+  }
+
+  @media (max-width: 900px) or (orientation: portrait) {
+    .game-wrapper {
+      padding: 15px 10px 30px 10px;
+      width: 100%;
+      height: 100%;
+      justify-content: flex-start;
+    }
+
+    h1 {
+      font-size: 38px;
+      padding: 15px 40px;
+      margin: 0 auto 10px auto;
+      border-width: 8px;
       display: none;
-      margin-top: 130px;
+    }
+
+    #container {
+      padding: 30px 20px;
+      gap: 25px;
+      border-width: 10px;
+      width: 95%;
+      max-width: 680px;
+      margin: 30px auto 20px auto;
+    }
+
+    #imagemPergunta {
+      max-height: 350px;
+    }
+
+    #pergunta {
+      font-size: 32px;
+      padding: 20px 40px;
+      border-width: 4px;
+    }
+
+    .botoes {
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+      align-items: center;
+    }
+
+    button.true,
+    button.false {
+      width: 100%;
       max-width: 90%;
-      width: 700px;
-      padding: 43px 77px;
-      background: linear-gradient(180deg, #ffffff, #f2fbf6);
-      border-radius: 35px;
-      border: 5px solid #039BE5;
-      text-align: center;
-      box-shadow: 0 22px 43px rgba(0, 0, 0, 0.18);
-      animation: fadeUp .6s ease;
+      padding: 22px 40px;
+      font-size: 28px;
+    }
+
+    #resultado {
+      font-size: 24px;
+      padding: 15px 30px;
+    }
+
+    .intro-card {
+      width: 95%;
+      padding: 40px 20px;
+      gap: 20px;
+      margin: 30px auto 20px auto;
+    }
+
+    .intro-card h2 {
+      font-size: 36px;
+      padding: 10px 30px;
+      width: 90%;
+    }
+
+    .intro-card p {
+      font-size: 24px;
+      max-width: 100%;
+    }
+
+    .btn-jogar {
+      padding: 18px 80px;
+      font-size: 25px;
+      width: auto;
+    }
+
+    #painelFinal {
+      width: 95%;
+      max-width: 680px;
+      padding: 40px 20px;
+      margin: auto;
     }
 
     #painelFinal h2 {
-      font-size: 42px;
-      margin-bottom: 32px;
-    }
-
-    #resumo,
-    #mensagemFinal {
-      font-size: 32px;
-      font-weight: 900;
+      font-size: 38px;
+      padding: 12px 35px;
     }
 
     .totais {
-      display: flex;
-      justify-content: center;
-      gap: 77px;
-      margin: 32px 0;
-      font-size: 34px;
-      font-weight: 900;
-    }
-
-    .acertos {
-      color: #1e8449;
-    }
-
-    .erros {
-      color: #922b21;
-    }
-
-    .botoes-finais {
-      display: flex;
-      justify-content: center;
-      gap: 38px;
-      margin-top: 43px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 20px;
+      font-size: 30px;
+      margin: 30px 0;
     }
 
     .btn-reiniciar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 22px 77px;
-      font-size: 25px;
-      border-radius: 35px;
-      border: none;
-      cursor: pointer;
-      font-weight: 800;
-      font-family: 'Nunito', sans-serif;
-      color: white;
-      text-transform: uppercase;
-      background: linear-gradient(180deg, #4FC3F7, #039BE5);
-      transition: transform 0.2s ease, filter 0.2s ease;
+      padding: 20px 60px;
+      font-size: 24px;
+      width: auto;
+      display: inline-block;
+      margin: 0 auto;
     }
-
-    .btn-reiniciar:hover {
-      transform: scale(1.05);
-      filter: brightness(1.1);
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(1)
-      }
-
-      50% {
-        transform: scale(1.05)
-      }
-
-      100% {
-        transform: scale(1)
-      }
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(32px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    #orientation-warning {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #1dc4f7;
-      color: #fff;
-      z-index: 9999;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    #orientation-warning h2 {
-      font-size: 1.4rem;
-      margin-top: 5px;
-      padding: 0 15px;
-      line-height: 1.4;
-    }
-
-    #orientation-warning .icon {
-      font-size: 5rem;
-      animation: rotatePhone 2s infinite ease-in-out;
-    }
-
-    @keyframes rotatePhone {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      50% {
-        transform: rotate(-90deg);
-      }
-
-      100% {
-        transform: rotate(-90deg);
-      }
-    }
-
-    @media screen and (max-width: 800px) and (orientation: portrait) {
-      #orientation-warning {
-        display: flex;
-      }
-
-      body>*:not(#orientation-warning) {
-        display: none !important;
-      }
-    }
-  </style>
+  }
+</style>
 
 <body>
-
   <div id="intro-bg"></div>
-  <div id="orientation-warning">
-    <div class="icon">📱</div>
-    <h2>GIRE A TELA PARA JOGAR NA HORIZONTAL!</h2>
-  </div>
   <div id="game-container-wrapper">
     <div class="game-wrapper">
-      <h1>VERDADEIRO OU FALSO: ALIMENTAÇÃO</h1>
+      <h1>VERDADEIRO OU FALSO:<br>ALIMENTAÇÃO</h1>
       <div id="intro">
         <div class="intro-card">
-          <h2>VERDADEIRO OU FALSO: ALIMENTAÇÃO</h2>
+          <h2>VERDADEIRO OU FALSO:<br>ALIMENTAÇÃO</h2>
           <p><strong>Vamos brincar e aprender sobre alimentação saudável!<br>
               Responda 10 perguntas de verdadeiro ou falso e descubra quais alimentos fazem bem ao corpo.</strong>
           </p>
@@ -481,35 +619,50 @@
       </div>
       <div id="painelFinal">
         <h2>Fim do jogo!</h2>
-
         <p id="resumo"></p>
-
         <div class="totais">
           <span class="acertos">✔ Acertos: <b id="totalAcertos"></b></span>
           <span class="erros">✘ Erros: <b id="totalErros"></b></span>
         </div>
-
         <p id="mensagemFinal"></p>
-
         <div class="botoes-finais">
           <button class="btn-reiniciar" onclick="voltarIntroducao()">🔁 Jogar novamente</button>
         </div>
       </div>
     </div>
   </div>
-  
   <script>
     function resizeGame() {
       const wrapper = document.getElementById('game-container-wrapper');
-      const baseWidth = 1920;
-      const baseHeight = 1080;
-      const scale = Math.min(1, Math.min(window.innerWidth / baseWidth, window.innerHeight / baseHeight));
-      wrapper.style.transform = 'scale(' + scale + ')';
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      const isPortrait = screenHeight > screenWidth;
+      let baseWidth, baseHeight, scale;
+      if (isPortrait) {
+        baseWidth = 720;
+        baseHeight = 1280;
+        scale = Math.min(screenWidth / baseWidth, screenHeight / baseHeight) * 0.88;
+      } else {
+        baseWidth = 1920;
+        baseHeight = 1080;
+        scale = Math.min(1, Math.min(screenWidth / baseWidth, screenHeight / baseHeight)) * 0.98;
+      }
+      wrapper.style.width = baseWidth + 'px';
+      wrapper.style.height = baseHeight + 'px';
+      const scaledWidth = baseWidth * scale;
+      const scaledHeight = baseHeight * scale;
+      const leftOffset = (screenWidth - scaledWidth) / 2;
+      let topOffset;
+      if (isPortrait) {
+        topOffset = Math.max(10, (screenHeight - scaledHeight) * 0.2);
+      } else {
+        topOffset = Math.max(0, (screenHeight - scaledHeight) / 2);
+      }
+      wrapper.style.transform = `translate(${leftOffset}px, ${topOffset}px) scale(${scale})`;
     }
     window.addEventListener('resize', resizeGame);
     window.addEventListener('DOMContentLoaded', resizeGame);
     resizeGame();
-
     const bancoPerguntas = [
       { q: 'Frutas e legumes são ricos em vitaminas.', a: true, exp: 'Eles fornecem vitaminas, minerais e fibras essenciais.', img: 'img/frutaslegumes.jpeg' },
       { q: 'Refrigerante ajuda a hidratar o corpo.', a: false, exp: 'Ele contém muito açúcar e não substitui a água.', img: 'img/refrigerante.jpeg' },
@@ -542,37 +695,28 @@
       { q: 'Lavar frutas e verduras antes de comer é importante.', a: true, exp: 'Ajuda a remover sujeiras e resíduos.', img: 'img/lavarfrutas.jpeg' },
       { q: 'Mel é um alimento sem açúcar.', a: false, exp: 'Apesar de natural, o mel também é composto principalmente por açúcares.', img: 'img/mel.jpeg' }
     ];
-
     let perguntas = [];
     let atual = 0;
     let score = 0;
     let respondido = false;
-
     function mostrar() {
       const p = perguntas[atual];
       document.getElementById('pergunta').innerText = p.q;
       document.getElementById('imagemPergunta').src = p.img;
-
       const r = document.getElementById('resultado');
       r.innerHTML = '';
       r.style.border = '3px solid transparent';
-
       document.getElementById('progresso').innerText = `Pergunta ${atual + 1} de ${perguntas.length}`;
-
       respondido = false;
       document.querySelectorAll('.botoes button').forEach(b => { b.disabled = false; b.style.opacity = '1'; });
     }
-
     function responder(valor) {
       if (respondido) return;
       respondido = true;
       document.querySelectorAll('.botoes button').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
-
       const p = perguntas[atual];
       const r = document.getElementById('resultado');
-
-      r.style.padding = '16px 58px';
-
+      r.style.padding = '12px 40px';
       if (valor === p.a) {
         r.innerHTML = '✔ Correto! ' + p.exp;
         r.style.color = '#1e8449';
@@ -591,18 +735,14 @@
         setTimeout(fim, 4000);
       }
     }
-
     function fim() {
       document.getElementById('container').style.display = 'none';
       document.querySelector('h1').style.display = 'none';
-
       const erros = perguntas.length - score;
-
       document.getElementById('painelFinal').style.display = 'block';
       document.getElementById('totalAcertos').innerText = score;
       document.getElementById('totalErros').innerText = erros;
       document.getElementById('resumo').innerText = `Você respondeu todas as perguntas.`;
-
       let mensagem = '';
       if (score === perguntas.length) {
         mensagem = '🌟 Parabéns! Você acertou tudo! Excelente conhecimento!';
@@ -611,38 +751,28 @@
       } else {
         mensagem = '💡 Continue praticando! A alimentação é importante.';
       }
-
       document.getElementById('mensagemFinal').innerText = mensagem;
     }
-
     function iniciarJogo() {
       document.getElementById('intro-bg').style.display = 'none';
       document.getElementById('intro').style.display = 'none';
       document.getElementById('painelFinal').style.display = 'none';
-
       const container = document.getElementById('container');
       container.style.display = 'flex';
-
       document.querySelector('h1').style.display = 'block';
-
       atual = 0;
       score = 0;
-
       perguntas = [...bancoPerguntas]
         .sort(() => Math.random() - 0.5)
         .slice(0, 10);
-
       document.getElementById('score').innerText = 'Pontuação: 0';
       document.querySelector('.botoes').style.display = 'flex';
-
       const r = document.getElementById('resultado');
       r.innerHTML = '';
       r.style.padding = '0';
       r.style.border = 'none';
-
       mostrar();
     }
-
     function voltarIntroducao() {
       document.getElementById('intro-bg').style.display = 'block';
       document.getElementById('painelFinal').style.display = 'none';

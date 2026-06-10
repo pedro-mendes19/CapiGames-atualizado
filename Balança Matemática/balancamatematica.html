@@ -18,72 +18,25 @@
         --skip: #9b59b6;
     }
 
+    html {
+        height: 100%;
+        overflow: hidden;
+    }
+
     body {
         font-family: 'Fredoka', 'Nunito', cursive;
         background-color: var(--bg-color);
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         height: 100vh;
         margin: 0;
         overflow: hidden;
         user-select: none;
         touch-action: none;
-    }
-
-    #orientation-warning {
-        display: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--primary);
-        color: white;
-        z-index: 9999;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 20px;
         box-sizing: border-box;
-    }
-
-    #orientation-warning h2 {
-        font-size: 1.4rem;
-        margin-top: 5px;
-        padding: 0 15px;
-        line-height: 1.4;
-    }
-
-    #orientation-warning .icon {
-        font-size: 5rem;
-        animation: rotatePhone 2s infinite ease-in-out;
-    }
-
-    @keyframes rotatePhone {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        50% {
-            transform: rotate(-90deg);
-        }
-
-        100% {
-            transform: rotate(-90deg);
-        }
-    }
-
-    @media screen and (max-width: 800px) and (orientation: portrait) {
-        #orientation-warning {
-            display: flex;
-        }
-
-        body>*:not(#orientation-warning) {
-            display: none !important;
-        }
+        padding: 15px 10px;
     }
 
     .overlay-screen {
@@ -144,16 +97,6 @@
         text-transform: uppercase;
     }
 
-    .time-display {
-        font-size: 2rem;
-        color: var(--primary);
-        font-weight: bold;
-        margin: 20px 0;
-        background: #e8f4f8;
-        padding: 10px;
-        border-radius: 10px;
-    }
-
     .btn {
         font-family: 'Fredoka', 'Nunito', cursive;
         font-size: 1.5rem;
@@ -180,11 +123,6 @@
         box-shadow: none;
     }
 
-    .btn-start:hover {
-        background-color: #2980b9;
-        animation: none;
-    }
-
     .btn-play-again {
         background-color: var(--primary);
         color: white;
@@ -192,42 +130,22 @@
         animation: float-gentle 2.5s infinite ease-in-out;
         font-size: 2.2rem;
         padding: 15px 50px;
-        margin-top: 16px;
-    }
-
-    .btn-play-again:active {
-        animation: none;
-        transform: translateY(8px);
-        box-shadow: none;
-    }
-
-    .btn-play-again:hover {
-        background-color: #2980b9;
     }
 
     .btn-skip {
         background-color: var(--skip);
         color: white;
         border: none;
-        padding: 18px 35px;
-        font-size: 1.6rem;
+        padding: 15px 35px;
+        font-size: 1.5rem;
         font-family: 'Fredoka', 'Nunito', cursive;
         font-weight: bold;
         text-transform: uppercase;
         border-radius: 30px;
         cursor: pointer;
         box-shadow: 0 5px 0 #8e44ad;
-        margin-top: 15px;
         transition: all 0.1s ease;
-    }
-
-    .btn-skip:hover:not(:disabled) {
-        background-color: #8e44ad;
-    }
-
-    .btn-skip:active:not(:disabled) {
-        transform: translateY(5px);
-        box-shadow: none;
+        margin-bottom: 5px;
     }
 
     .btn-skip:disabled {
@@ -237,55 +155,10 @@
         opacity: 0.8;
     }
 
-    @keyframes bounce {
-
-        0%,
-        100% {
-            transform: translateY(0);
-        }
-
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.05);
-        }
-
-        100% {
-            transform: scale(1);
-        }
-    }
-
-    @keyframes soft-pulse {
-
-        0%,
-        100% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.02);
-        }
-    }
-
-    @keyframes float-gentle {
-
-        0%,
-        100% {
-            transform: translateY(0);
-        }
-
-        50% {
-            transform: translateY(-5px);
-        }
-    }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    @keyframes soft-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+    @keyframes float-gentle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
     .top-bar {
         display: flex;
@@ -297,46 +170,39 @@
     .level-badge {
         background-color: #f1c40f;
         color: #d35400;
-        margin-top: 8px;
-        padding: 10px 35px;
+        padding: 8px 30px;
         border-radius: 30px;
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         font-weight: bold;
         box-shadow: 0 4px 0 #f39c12;
-        transition: all 0.3s;
         text-transform: uppercase;
     }
 
-    .level-max {
-        background-color: #e74c3c;
-        color: white;
-        box-shadow: 0 4px 0 #c0392b;
-    }
+    .level-max { background-color: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
 
     .hud {
-        margin-top: 15px;
         display: flex;
-        gap: 60px;
-        font-size: 1.8rem;
+        gap: 40px;
+        font-size: 1.6rem;
         font-weight: bold;
         color: var(--text-color);
         text-transform: uppercase;
         background: white;
-        padding: 15px 40px;
+        padding: 12px 35px;
         border-radius: 50px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
-    .separator {
-        border-left: 2px solid #ddd;
-    }
+    .separator { border-left: 2px solid #ddd; }
 
+    /* =======================================================
+       ESTRUTURA DA BALANÇA PADRÃO (DESKTOP / MONITORES)
+       ======================================================= */
     .balance-container {
         position: relative;
-        width: 800px;
-        height: 350px;
-        margin-top: 20px;
-        margin-bottom: 90px;
+        width: min(100%, 750px);
+        height: 280px;
+        margin: 10px auto;
     }
 
     .stand {
@@ -344,10 +210,11 @@
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
-        width: 24px;
-        height: 180px;
+        width: 20px;
+        height: 150px;
         background-color: #7f8c8d;
-        border-radius: 12px 12px 0 0;
+        border-radius: 10px 10px 0 0;
+        z-index: 1;
     }
 
     .base {
@@ -355,58 +222,55 @@
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
-        width: 260px;
-        height: 24px;
+        width: 240px;
+        height: 20px;
         background-color: var(--text-color);
-        border-radius: 12px;
+        border-radius: 10px;
+        z-index: 2;
     }
 
     .beam {
         position: absolute;
-        top: 170px;
-        left: 60px;
-        width: 680px;
-        height: 14px;
+        bottom: 140px; 
+        left: 5%;
+        width: 90%;
+        height: 12px;
         background-color: var(--accent);
-        border-radius: 7px;
-        transform-origin: center;
+        border-radius: 6px;
+        transform-origin: center center;
         transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
         transform: rotate(0deg);
+        z-index: 3;
     }
 
     .pan {
         position: absolute;
-        top: 15px;
-        width: 180px;
-        height: 120px;
-        background-image: linear-gradient(to bottom, #95a5a6 50px, transparent 50px);
+        top: 12px; 
+        width: 25%;
+        height: 110px;
+        z-index: -1;
+        background-image: linear-gradient(to bottom, #95a5a6 40px, transparent 40px);
         background-size: 3px 100%;
         background-repeat: no-repeat;
-        background-position: 15px 0, 162px 0;
     }
 
-    .pan-left {
-        left: 0;
-    }
-
-    .pan-right {
-        right: 0;
-    }
+    .pan-left { left: 5%; background-position: 15px 0, calc(100% - 15px) 0; }
+    .pan-right { right: 5%; background-position: 15px 0, calc(100% - 15px) 0; }
 
     .plate {
         position: absolute;
         bottom: 0;
         width: 100%;
-        height: 80px;
+        height: 70px;
         background-color: #bdc3c7;
-        border-bottom: 8px solid #7f8c8d;
-        border-radius: 0 0 25px 25px;
+        border-bottom: 6px solid #7f8c8d;
+        border-radius: 0 0 20px 20px;
         display: flex;
         justify-content: center;
         align-items: flex-end;
         flex-wrap: wrap-reverse;
         padding-bottom: 5px;
-        transition: background 0.3s;
+        box-sizing: border-box;
     }
 
     .pan-right .plate {
@@ -417,471 +281,153 @@
     .plate.drag-over {
         background-color: #a8e6cf;
         border-color: #2ecc71;
-        transform: scale(1.05);
     }
 
     .weight {
-        width: 55px;
-        height: 55px;
+        width: 46px;
+        height: 46px;
         background-color: var(--primary);
         color: white;
-        border-radius: 10px;
+        border-radius: 8px;
         display: flex;
         justify-content: center;
         align-items: center;
         font-weight: bold;
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         cursor: grab;
         border: 2px solid #2980b9;
-        box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.15);
-        margin: 3px;
+        box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+        margin: 2px;
         touch-action: none;
-    }
-
-    .weight:active {
-        cursor: grabbing;
-    }
-
-    .weight.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        pointer-events: none;
     }
 
     .target-weight {
         background-color: var(--accent);
         border-color: #d35400;
-        width: 80px;
-        height: 80px;
-        font-size: 2.5rem;
+        width: 65px;
+        height: 65px;
+        font-size: 2rem;
     }
 
+    .weight.disabled { opacity: 0.5; pointer-events: none; }
+
     .status-msg {
-        margin-top: 10px;
-        font-size: 2rem;
-        height: 40px;
+        font-size: 1.6rem;
+        height: 35px;
         color: #27ae60;
         font-weight: bold;
         text-align: center;
+        margin-bottom: 5px;
     }
 
+    /* =======================================================
+       PRATELEIRA DINÂMICA INTELIGENTE
+       ======================================================= */
     .shelf {
-        margin-top: 5px;
         background-color: #d35400;
-        padding: 25px;
-        width: 85%;
-        max-width: 1000px;
+        padding: 15px 25px;
+        width: max-content; 
+        min-width: 180px;    
+        max-width: 92%;     
         border-radius: 15px;
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 20px;
-        box-shadow: 0 8px 0 #a04000;
-        min-height: 80px;
+        gap: 15px;
+        box-shadow: 0 6px 0 #a04000;
+        min-height: 50px;
+        margin: 0 auto 10px auto;
+        box-sizing: border-box;
+        transition: width 0.3s ease, max-width 0.3s ease;
     }
 
-    .goodbye-msg {
-        font-size: 3rem;
-        color: var(--primary);
-        margin-top: 20px;
-        font-weight: bold;
-        text-align: center;
-    }
 
-    @media (min-width: 1024px) and (min-height: 801px) {
-
-        body {
-            padding: 30px 0;
-            box-sizing: border-box;
-        }
-
+    /* =======================================================
+       RESPONSIVIDADE OTIMIZADA E REFINADA
+       ======================================================= */
+    
+    /* 1. DISPOSITIVOS MÓVEIS / TELEMÓVEIS (Ecrãs Verticais) */
+    @media (max-width: 600px) and (orientation: portrait) {
+        /* Redução do indicador de nível solicitado */
         .level-badge {
-            font-size: 1.62rem;
-            padding: 9px 32px;
-            margin-top: 7px;
+            font-size: 1.1rem;
+            padding: 5px 18px;
+            box-shadow: 0 3px 0 #f39c12;
         }
+        .level-max { box-shadow: 0 3px 0 #c0392b; }
 
-        .hud {
-            margin-top: 14px;
-            font-size: 1.62rem;
-            padding: 14px 36px;
-            gap: 54px;
-        }
-
-        .balance-container {
-            width: 720px;
-            height: 315px;
-            margin-top: 18px;
-            margin-bottom: 81px;
-        }
-
-        .stand {
-            height: 162px;
-            width: 22px;
-        }
-
-        .base {
-            width: 234px;
-            height: 22px;
-        }
-
-        .beam {
-            top: 153px;
-            left: 54px;
-            width: 612px;
-            height: 13px;
-        }
-
-        .pan {
-            width: 162px;
-            height: 108px;
-            background-position: 14px 0, 146px 0;
-            background-image: linear-gradient(to bottom, #95a5a6 45px, transparent 45px);
-        }
-
-        .plate {
-            height: 72px;
-        }
-
-        .weight {
-            width: 50px;
-            height: 50px;
-            font-size: 1.44rem;
-            margin: 3px;
-        }
-
-        .target-weight {
-            width: 72px;
-            height: 72px;
-            font-size: 2.25rem;
-        }
-
-        .status-msg {
-            font-size: 1.8rem;
-            margin-top: 9px;
-            height: 36px;
-        }
-
-        .shelf {
-            margin-top: 4px;
-            padding: 23px;
-            min-height: 72px;
-            gap: 18px;
-        }
-
-        .btn-skip {
-            margin-top: 14px;
-            margin-bottom: 5px;
-            padding: 16px 32px;
-            font-size: 1.44rem;
-        }
+        .game-title { font-size: 1.8rem; }
+        .panel-box { padding: 15px; width: 90%; }
+        .panel-box p { font-size: 1.1rem; }
+        .hud { gap: 15px; padding: 6px 18px; font-size: 1.1rem; }
+        
+        /* Ajuste para afinar e suavizar a balança */
+        .balance-container { height: 200px; }
+        .stand { height: 110px; width: 10px; } /* Mais fino */
+        .base { width: 160px; height: 10px; }  /* Mais fino */
+        .beam { bottom: 105px; height: 10px; }   /* Travessão bem refinado e fino */
+        .pan { height: 85px; top: 4px; }
+        .plate { height: 52px; border-bottom-width: 4px; }
+        
+        /* Pesos proporcionais */
+        .weight { width: 36px; height: 36px; font-size: 1.1rem; border-radius: 6px; margin: 2px; }
+        .plate .weight:not(.target-weight) { width: 28px; height: 28px; font-size: 1rem; border-radius: 6px; margin: 1px; }
+        .target-weight { width: 40px; height: 40px; font-size: 1.4rem; }
+        
+        /* Shelf adaptável */
+        .shelf { padding: 10px 15px; gap: 8px; max-width: 95%; min-height: 45px; }
+        .btn-skip { padding: 10px 25px; font-size: 1.2rem; }
     }
 
-    @media (max-height: 800px) and (min-width: 651px) {
-        .game-title {
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-        }
-
-        .panel-box {
-            padding: 20px;
-            max-width: 500px;
-            margin-bottom: 15px;
-        }
-
-        .panel-box p {
-            font-size: 1.2rem;
-            margin: 5px 0;
-        }
-
-        .time-display {
-            font-size: 1.4rem;
-            margin: 10px 0;
-            padding: 8px;
-        }
-
-        .btn {
-            font-size: 1.2rem;
-            padding: 10px 25px;
-            margin: 5px;
-        }
-
-        .btn-start {
-            font-size: 1.6rem;
-            padding: 10px 30px;
-            margin-top: 10px;
-        }
-
-        #end-screen .btn-play-again {
-            font-size: 1.4rem;
-            padding: 12px 30px;
-            margin-top: 10px;
-        }
-
-        .top-bar {
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .level-badge {
-            font-size: 1.4rem;
-            padding: 8px 25px;
-            margin-top: 0;
-        }
-
-        .hud {
-            margin-top: 0;
-            font-size: 1.4rem;
-            padding: 10px 25px;
-            gap: 30px;
-        }
-
-
-        .balance-container {
-            width: 640px;
-            height: 280px;
-            margin-top: 10px;
-            margin-bottom: 60px;
-        }
-
-        .stand {
-            height: 184px;
-            width: 19px;
-        }
-
-        .base {
-            width: 208px;
-            height: 19px;
-        }
-
-        .beam {
-            top: 96px;
-            left: 48px;
-            width: 544px;
-            height: 11px;
-        }
-
-        .pan {
-            width: 144px;
-            height: 96px;
-            background-position: 12px 0, 130px 0;
-            background-image: linear-gradient(to bottom, #95a5a6 40px, transparent 40px);
-        }
-
-        .plate {
-            height: 64px;
-        }
-
-        .weight {
-            width: 44px;
-            height: 44px;
-            font-size: 1.3rem;
-        }
-
-        .target-weight {
-            width: 60px;
-            height: 60px;
-            font-size: 1.8rem;
-        }
-
-        .status-msg {
-            font-size: 1.6rem;
-            margin-top: 5px;
-            height: 30px;
-        }
-
-        .shelf {
-            margin-top: 10px;
-            padding: 15px;
-            min-height: 70px;
-            width: 90%;
-            gap: 15px;
-        }
-
-        .btn-skip {
-            margin-top: 18px;
-            margin-bottom: 15px;
-            padding: 12px 25px;
-            font-size: 1.3rem;
-        }
+    /* 2. CROMBOOKS / TABLETS / ECRÃS LANDSCAPE BAIXOS */
+    @media (max-height: 700px) and (orientation: landscape) {
+        body { padding: 5px 10px; }
+        .game-title { font-size: 1.8rem; margin-bottom: 2px; }
+        .panel-box { padding: 15px; max-width: 450px; margin-bottom: 10px; }
+        .panel-box p { font-size: 1.1rem; }
+        .top-bar { gap: 4px; }
+        
+        /* Nível reduzido em landscape compacto */
+        .level-badge { font-size: 1.1rem; padding: 4px 18px; box-shadow: 0 3px 0 #f39c12; }
+        .hud { font-size: 1.2rem; padding: 6px 20px; gap: 20px; }
+        
+        /* Balança refinada para Chromebooks */
+        .balance-container { height: 160px; margin: 5px auto; }
+        .stand { height: 90px; width: 12px; }
+        .base { width: 180px; height: 12px; }
+        .beam { bottom: 90px; height: 7px; } /* Travessão mais fino */
+        .pan { height: 75px; top: -10px; }
+        .plate { height: 42px; border-bottom-width: 4px; }
+        
+        .weight { width: 34px; height: 34px; font-size: 1rem; }
+        .target-weight { width: 46px; height: 46px; font-size: 1.3rem; }
+        
+        .status-msg { font-size: 1.2rem; height: 25px; margin-bottom: 2px; }
+        .shelf { padding: 8px 15px; gap: 10px; min-height: 40px; }
+        .btn-skip { padding: 8px 20px; font-size: 1.1rem; }
     }
 
-    @media (max-height: 500px) {
-        .game-title {
-            font-size: 1.2rem;
-            margin-top: 2px;
-            margin-bottom: 2px;
-
-            text-shadow: 1px 1px 0px #d35400;
-        }
-
-        .panel-box {
-            padding: 10px;
-            width: 92%;
-            max-width: 400px;
-            margin-bottom: 5px;
-            border-width: 2px;
-        }
-
-
-        .panel-box h1,
-        .panel-box h2 {
-            font-size: 0.9rem;
-            margin: 5px 0;
-        }
-
-        .panel-box p {
-            font-size: 0.9rem;
-            margin: 3px 0;
-        }
-
-        .time-display {
-            font-size: 1rem;
-            margin: 5px 0;
-            padding: 4px;
-        }
-
-        .btn {
-            font-size: 0.85rem;
-            padding: 6px 15px;
-            margin: 3px;
-        }
-
-        .btn-start {
-            font-size: 1rem;
-            padding: 8px 20px;
-            margin-top: 10px;
-            box-shadow: 0 6px 0 #2980b9;
-        }
-
-
-        .top-bar {
-            margin-top: 2px;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .level-badge {
-            font-size: 0.9rem;
-            padding: 4px 15px;
-            margin-top: 0;
-        }
-
-        .hud {
-            font-size: 0.9rem;
-            padding: 4px 15px;
-            gap: 20px;
-            margin-top: 0;
-        }
-
-        .highlight {
-            font-size: 1.5rem !important;
-        }
-
-
-        .balance-container {
-            width: 280px;
-            height: 120px;
-            margin-top: 5px;
-            margin-bottom: 35px;
-        }
-
-        .stand {
-            height: 60px;
-            width: 8px;
-        }
-
-        .base {
-            width: 90px;
-            height: 8px;
-        }
-
-        .beam {
-            top: 56px;
-            left: 20px;
-            width: 240px;
-            height: 5px;
-        }
-
-        .pan {
-            top: 5px;
-            width: 60px;
-            height: 40px;
-            background-size: 2px 100%;
-            background-position: 4px 0, 54px 0;
-            background-image: linear-gradient(to bottom, #95a5a6 16px, transparent 16px);
-        }
-
-        .plate {
-            height: 26px;
-            border-bottom-width: 3px;
-            border-radius: 0 0 8px 8px;
-            padding-bottom: 2px;
-        }
-
-        .weight {
-            width: 20px;
-            height: 20px;
-            font-size: 0.75rem;
-            border-width: 1px;
-            margin: 2px;
-            border-radius: 4px;
-        }
-
-        .target-weight {
-            width: 28px;
-            height: 28px;
-            font-size: 1rem;
-        }
-
-        .status-msg {
-            font-size: 1rem;
-            margin-top: 2px;
-            height: 25px;
-        }
-
-        .shelf {
-            margin-top: 0px;
-            padding: 8px;
-            min-height: 28px;
-            width: 85%;
-            gap: 8px;
-            border-radius: 8px;
-        }
-
-        .btn-skip {
-            margin-top: 14px;
-            margin-bottom: 8px;
-            padding: 6px 16px;
-            font-size: 0.85rem;
-        }
-
-
-        #end-screen .btn-play-again {
-            font-size: 0.9rem;
-            padding: 8px 20px;
-            margin-top: 10px;
-            box-shadow: 0 4px 0 #2980b9;
-        }
+    /* 3. GRANDES MONITORES / DESKTOPS */
+    @media (min-width: 1200px) and (min-height: 800px) {
+        .balance-container { max-width: 850px; height: 340px; }
+        .stand { height: 180px; width: 24px; }
+        .base { width: 280px; height: 24px; }
+        .beam { bottom: 170px; height: 14px; }
+        .pan { height: 130px; }
+        .plate { height: 85px; }
+        .weight { width: 55px; height: 55px; font-size: 1.6rem; }
+        .target-weight { width: 80px; height: 80px; font-size: 2.4rem; }
+        .shelf { padding: 20px 35px; gap: 20px; }
     }
 </style>
 
 <body>
 
-    <div id="orientation-warning">
-        <div class="icon">📱</div>
-        <h2>GIRE A TELA PARA JOGAR NA HORIZONTAL!</h2>
-    </div>
-
     <div id="intro-screen" class="overlay-screen">
         <div class="game-title">BALANÇA MATEMÁTICA ⚖️</div>
         <div class="panel-box">
             <p>Olá, matemático! 👋</p><br>
-            <p>Sua missão é <strong style="color: var(--primary);">arrastar os pesos azuis</strong> para a direita até
-                que os dois lados fiquem iguais.</p><br>
+            <p>Sua missão é <strong style="color: var(--primary);">arrastar os pesos azuis</strong> para a direita até que os dois lados fiquem iguais.</p><br>
             <p>São 10 níveis para equilibrar os números na balança.</p>
         </div>
         <button class="btn btn-start" onclick="iniciarJogo()">COMEÇAR!</button>
@@ -935,7 +481,6 @@
         const currentDisplay = document.getElementById('currentDisplay');
         const msg = document.getElementById('msg');
         const levelDisplay = document.getElementById('levelDisplay');
-
         const btnSkip = document.getElementById('btnSkip');
 
         let targetValue = 0;
@@ -945,11 +490,8 @@
         let currentLevel = 1;
         let isTransitioning = false;
 
-
-
         function iniciarJogo() {
             introScreen.classList.add('hidden-up');
-
             setTimeout(() => { resetGame(); }, 300);
         }
 
@@ -1093,15 +635,10 @@
         function reiniciarJogo() {
             currentLevel = 1;
             resetGame();
-
             introScreen.classList.remove('hidden');
             introScreen.classList.remove('hidden-up');
-
             endScreen.classList.add('hidden-up');
-
-            setTimeout(() => {
-                endScreen.classList.add('hidden');
-            }, 500);
+            setTimeout(() => { endScreen.classList.add('hidden'); }, 500);
         }
 
         function resetGame(manualSkip = false) {
@@ -1114,7 +651,6 @@
             msg.innerText = "Arraste os pesos!";
             msg.style.color = "#3498db";
             dropZone.style.backgroundColor = "white";
-
             btnSkip.disabled = false;
 
             levelDisplay.innerText = `Nível ${currentLevel}`;
@@ -1125,7 +661,6 @@
             }
 
             let parts = [];
-
 
             switch (currentLevel) {
                 case 1: targetValue = Math.floor(Math.random() * 3) + 3; gerarPedacos(targetValue, parts, 3); adicionarDistratores(parts, 1, 2, targetValue); break;
@@ -1161,30 +696,16 @@
             updateBalance();
         }
 
-
         function gerarPedacos(alvo, array, maxPiece) {
             let remaining = alvo;
             while (remaining > 0) {
-
                 let currentMax = Math.min(remaining, maxPiece);
-                if (remaining === alvo && currentMax === alvo) {
-                    currentMax = alvo - 1;
-                }
-
+                if (remaining === alvo && currentMax === alvo) { currentMax = alvo - 1; }
                 let part = Math.floor(Math.random() * currentMax) + 1;
-
-
-                if (remaining <= maxPiece / 2 || Math.random() > 0.8) {
-                    if (remaining < alvo) {
-                        part = remaining;
-                    }
-                }
-
+                if (remaining <= maxPiece / 2 || Math.random() > 0.8) { if (remaining < alvo) { part = remaining; } }
                 array.push(part);
                 remaining -= part;
             }
-
-
             if (array.length === 1) {
                 let val = array.pop();
                 let half = Math.floor(val / 2);
@@ -1193,34 +714,19 @@
             }
         }
 
-
         function gerarPedacosMultiplos(alvo, array, multiplo) {
             let remaining = alvo;
             while (remaining > 0) {
                 let maxMults = Math.floor(remaining / multiplo);
-
-
-                if (remaining === alvo && maxMults > 1) {
-                    maxMults -= 1;
-                }
-
+                if (remaining === alvo && maxMults > 1) { maxMults -= 1; }
                 let multsToUse = Math.floor(Math.random() * Math.min(3, maxMults)) + 1;
                 let part = multsToUse * multiplo;
-
                 if (part > remaining) part = remaining;
-
-
-                if (part === alvo) {
-                    part -= multiplo;
-                }
-
+                if (part === alvo) { part -= multiplo; }
                 if (part === 0) part = multiplo;
-
                 array.push(part);
                 remaining -= part;
             }
-
-
             if (array.length === 1 && array[0] > multiplo) {
                 let val = array.pop();
                 array.push(val - multiplo);
@@ -1228,13 +734,10 @@
             }
         }
 
-
         function adicionarDistratores(array, qtd, maxVal, alvo) {
             for (let i = 0; i < qtd; i++) {
                 let val;
-                do {
-                    val = Math.floor(Math.random() * maxVal) + 1;
-                } while (val === alvo);
+                do { val = Math.floor(Math.random() * maxVal) + 1; } while (val === alvo);
                 array.push(val);
             }
         }
@@ -1242,13 +745,10 @@
         function adicionarDistratoresMultiplos(array, qtd, maxVal, multiplo, alvo) {
             for (let i = 0; i < qtd; i++) {
                 let val;
-                do {
-                    val = (Math.floor(Math.random() * (maxVal / multiplo)) + 1) * multiplo;
-                } while (val === alvo);
+                do { val = (Math.floor(Math.random() * (maxVal / multiplo)) + 1) * multiplo; } while (val === alvo);
                 array.push(val);
             }
         }
     </script>
-
 </body>
 </html>

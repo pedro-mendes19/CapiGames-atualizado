@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOGO DA VELHA ESCOLAR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <title>Jogo da Velha Escolar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Cabin+Sketch:wght@700&display=swap" rel="stylesheet">
 </head>
 <style>
     body {
-        background-image: url('fundojogo.png');
+        background-image: url('fundojogo.jpeg');
         background-size: cover;
         background-position: center;
         color: #a5a4a4;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-family: 'Nunito', sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -48,7 +48,8 @@
 
     h1 {
         color: #eef5ef;
-        font-size: 2.6rem;
+        font-family: 'Cabin Sketch', cursive;
+        font-size: 2.8rem;
         margin-bottom: 10px;
         margin-top: 0;
         text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6);
@@ -154,7 +155,7 @@
     select {
         padding: 12px;
         font-size: 1.4rem;
-        font-family: 'Patrick Hand', cursive;
+        font-family: 'Nunito', sans-serif;
         background: transparent;
         color: white;
         border: 2px solid white;
@@ -165,12 +166,12 @@
 
     option {
         background-color: #050505b7;
-        font-family: sans-serif;
+        font-family: 'Nunito', sans-serif;
     }
 
     button {
-        font-size: 1.6rem;
-        font-family: 'Patrick Hand', cursive;
+        font-size: 1.2rem;
+        font-family: 'Nunito', sans-serif;
         padding: 12px 35px;
         cursor: pointer;
         background-color: transparent;
@@ -179,6 +180,7 @@
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         transition: transform 0.1s, background-color 0.2s;
         text-transform: uppercase;
+        white-space: nowrap;
     }
 
     button:hover {
@@ -191,6 +193,19 @@
         color: #ffd6a5;
     }
 
+    .game-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .game-buttons button {
+        flex: 1;
+        max-width: 200px;
+        padding: 12px 10px;
+    }
+
     #mensagem {
         color: #e7e7e7;
         font-size: 1.8rem;
@@ -198,8 +213,30 @@
         min-height: 40px;
     }
 
-    /* MEDIA QUERY PARA MOBILE */
     @media (max-width: 600px) {
+        body {
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        #gameScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex: 1;
+        }
+
         h1 {
             font-size: 1.8rem;
             padding-bottom: 5px;
@@ -302,7 +339,7 @@
 
                 <h2 id="mensagem">VEZ DO X</h2>
 
-                <div style="display: flex; gap: 15px; justify-content: center;">
+                <div class="game-buttons">
                     <button id="reiniciarButton">APAGAR</button>
                     <button class="secondary" onclick="voltarAoMenu()">SAIR DA SALA</button>
                 </div>
