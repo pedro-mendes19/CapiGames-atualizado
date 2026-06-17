@@ -25,13 +25,7 @@
       text-transform: uppercase;
       overflow-y: auto;
       overflow-x: hidden;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    html::-webkit-scrollbar,
-    body::-webkit-scrollbar {
-      display: none;
+      
     }
 
     .game-wrapper {
@@ -46,7 +40,7 @@
 
     h1 {
       display: none;
-      margin: 2vh auto 2vh auto;
+      margin: 1vh auto 1vh auto;
       padding: 1vh 4vw;
       width: fit-content;
       max-width: 95%;
@@ -148,7 +142,7 @@
       align-items: center;
       margin-top: 1vh;
       margin-bottom: auto;
-      gap: 1.5vh;
+      gap: 1vh;
       padding-bottom: 10px;
     }
 
@@ -199,19 +193,21 @@
 
     .bloco-imagem {
       background: white;
-      padding: 1.5vh;
+      padding: 1.8vh;
       border-radius: 35px;
       box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 95%;
-      max-width: 450px;
+      width: 100%;
+      max-width: 720px;
       border: 5px solid #AED581;
       margin-bottom: 3vh;
+      gap: 1.2vh;
     }
 
     .label-progresso {
+      margin-top: 4px;
       margin-bottom: 1vh;
       background: #E8F5E9;
       padding: 0.5vh 1.5vw;
@@ -228,16 +224,16 @@
       width: auto;
       max-width: 100%;
       height: auto;
-      max-height: 18vh;
+      max-height: 22vh;
       display: block;
       border-radius: 20px;
       object-fit: contain;
-      border: 2px solid #E8F5E9;
+      border: 2px solid #c5e99d;
     }
 
     #nomeAlimento {
       margin-top: 1vh;
-      font-size: clamp(20px, 3vh, 30px);
+      font-size: clamp(20px, 2.8vh, 28px);
       color: #E65100;
       font-weight: 900;
       text-align: center;
@@ -246,21 +242,21 @@
 
     #pergunta {
       width: 95%;
-      max-width: 600px;
-      font-size: clamp(15px, 2.2vh, 20px);
+      max-width: 580px;
+      font-size: clamp(15px, 2vh, 20px);
       font-weight: 800;
       text-align: center;
       color: #3E2723;
       margin: 0 auto;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 1vh 2vw;
+      background: #E8F5E9;
+      padding: 1.2vh 2vw;
       border-radius: 20px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     .opcoes {
       display: flex;
-      gap: 10px;
+      gap: 14px;
       justify-content: center;
       width: 100%;
       flex-wrap: wrap;
@@ -301,7 +297,7 @@
     }
 
     .opcao p {
-      font-size: clamp(11px, 1.8vh, 16px);
+      font-size: clamp(10px, 1.6vh, 16px);
       font-weight: 800;
       margin: 0;
       color: #33691E;
@@ -311,12 +307,13 @@
 
     #resultado {
       margin: 0 auto;
+      margin-top: 10px;
       height: auto;
       min-height: 60px;
       padding: 10px 15px;
       width: 95%;
-      max-width: 600px;
-      font-size: clamp(14px, 2.2vh, 20px);
+      max-width: 560px;
+      font-size: clamp(14px, 2vh, 20px);
       font-weight: 800;
       text-align: center;
       border-radius: 25px;
@@ -434,7 +431,7 @@
     }
 
     #painelFinal h2 {
-      font-family: 'Nunito', sans-serif;
+      font-family: 'Alice', serif;
       font-size: clamp(28px, 5vh, 48px);
       margin: 0 0 2vh 0;
       color: #fd840c;
@@ -647,8 +644,20 @@
     }
 
     @media (max-width: 768px) {
+      #intro {
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+          url('img/fundointro-9.16.jpeg');
+        background-size: cover;
+        background-position: center;
+      }
+
+      #container {
+        gap: 0.1vh;
+      }
+      
       .intro-card {
-        width: 95%;
+        width: 90%;
         padding: 4vh 4vw;
         box-shadow: inset 0 0 0 4px #ffffff, inset 0 0 0 9px #FFD700;
         border: 6px solid #1B5E20;
@@ -657,8 +666,8 @@
 
       .btn-jogar {
         margin-top: 2vh;
-        padding: 1.5vh 10vw;
-        font-size: 25px;
+        padding: 1.6vh 12vw;
+        font-size: 27px;
       }
 
       h1 {
@@ -673,8 +682,9 @@
       }
 
       .bloco-imagem {
-        max-width: 500px;
+        max-width: 680px;
         margin-bottom: 10px;
+        gap: 1vh;
       }
 
       .opcoes {
@@ -691,7 +701,7 @@
         flex-direction: column;
         gap: 10px;
         min-height: 60px;
-        border-radius: 40px;
+        border-radius: 50px;
       }
 
       .opcao img {
@@ -704,277 +714,430 @@
         max-width: 95%;
       }
 
+      .btn-reiniciar {
+        max-height: 60px;
+        min-height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+        text-align: center;
+      }
+
       #pergunta {
         font-size: 24px;
         padding: 12px 20px;
         border-radius: 25px;
       }
 
+      #resultado {
+        margin-top: 10px;
+        margin-bottom: 5px;
+      }
+      
       #score {
         font-size: 20px;
         padding: 10px 30px;
       }
     }
 
-    @media (max-width: 600px) {
-      #container {
-        gap: 1vh;
-      }
-
-      .intro-card {
-        width: 95%;
-        padding: 4vh 4vw;
-        box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 5px #FFD700;
-        border: 3px solid #1B5E20;
-        border-radius: 25px;
-      }
-
-      .intro-card h2 {
-        font-size: 24.5px;
-        margin-bottom: 1vh;
-      }
-
-      .intro-card p {
-        font-size: 14px;
-        line-height: 1.3;
-      }
-
-      .btn-jogar {
-        margin-top: 2vh;
-        padding: 1.5vh 10vw;
-        font-size: 14px;
-      }
-
-      .tab-navigation {
-        gap: 15px;
-      }
-
-      .tab-btn {
-        max-width: 42%;
-      }
-
-      #painelFinal {
-        padding: 4vh 4vw;
-        border-radius: 30px;
-        width: 95%;
-        max-width: 500px;
-        min-height: auto;
-      }
-
-      #painelFinal h2 {
-        font-size: 28px;
-      }
-
-      #resumoFinal {
-        font-size: 16px;
-        margin-bottom: 1.5vh;
-      }
-
-      .totais {
-        margin: 1.5vh 0;
-        padding: 1vh;
-        gap: 3vw;
-      }
-
-      .totais b {
-        font-size: 30px;
-      }
-
-      .acertos,
-      .erros {
-        font-size: 10px;
-      }
-
-      #mensagemFinal {
-        font-size: 16px;
-        margin-bottom: 2vh;
-        white-space: normal;
-      }
-
-      .btn-reiniciar {
-        padding: 2vh 4vw;
-        font-size: 15px;
-        min-width: 130px;
-      }
-
-      h1 {
-        font-size: 26px;
-        padding: 5px 15px;
-        border-width: 3px;
-        margin: 1vh auto;
-      }
-
-      .bloco-imagem {
-        padding: 0.8vh;
-        margin-bottom: 0.8vh;
-      }
-
-      #imagemPergunta {
-        max-height: 16vh;
-      }
-
-      #nomeAlimento {
-        font-size: 20px;
-      }
-
-      #pergunta {
-        font-size: 15px;
-        padding: 1vh 3vw;
-      }
-
-      .opcao {
-        width: 60%;
-        max-width: 300px;
-        padding: 4px;
-        flex-direction: column;
-        gap: 4px;
-        justify-content: center;
-        min-height: 60px;
-      }
-
-      .opcao img {
-        width: 28px;
-        margin-bottom: 0;
-      }
-
-      .opcao p {
-        font-size: 13px;
-        line-height: 1.1;
-        max-width: 95%;
-      }
-
-      .opcoes {
-        flex-direction: column;
-        align-items: center;
-        margin-top: 1vh;
-        gap: 1.8vh;
-      }
-
-      #resultado {
-        min-height: 35px;
-        padding: 5px 10px;
-        font-size: 14px;
-        font-size: clamp(12px, 1.8vh, 15px);
-      }
-
-      .label-progresso {
-        font-size: 11px;
-        padding: 5px 20px;
-      }
-
-      #score {
-        font-size: 12px;
-        padding: 8px 30px;
-      }
-
-      #quizCulinaria {
-        gap: 1.5vh;
-      }
-
-      .game-wrapper {
-        padding-top: 10px;
-        padding-bottom: 10px;
-      }
-
-      @media (max-width: 400px) {
-        h1 {
-          font-size: 23px;
-          padding: 5px 12px;
-          margin: 1vh auto;
-        }
-
-        .btn-jogar {
-          margin-top: 2vh;
-          padding: 1.5vh 10vw;
-          font-size: 14px;
-      }
-
-        #container {
-          gap: 1.2vh;
-        }
-
-        .bloco-imagem {
-          padding: 0.6vh;
-          margin-bottom: 0.6vh;
-          border-radius: 25px;
-        }
-
-        #imagemPergunta {
-          max-height: 14vh;
-        }
-
-        #nomeAlimento {
-          font-size: 18px;
-          margin-top: 0.5vh;
-        }
-
-        #pergunta {
-          font-size: 13px;
-          padding: 0.8vh 2vw;
-        }
-
-        .opcao {
-          width: 60%;
-          padding: 4px;
-          gap: 4px;
-          flex-direction: column;
-          min-height: 40px;
-        }
-
-        .opcao img {
-          width: 25px;
-        }
-
-        .opcao p {
-          font-size: 12px;
-        }
-
-        .opcoes {
-          flex-direction: column;
-          align-items: center;
-          margin-top: 0.8vh;
-          gap: 1.8vh;
-        }
-
-        #resultado {
-          min-height: 30px;
-          padding: 4px 8px;
-          font-size: 13px;
-          font-size: clamp(12px, 1.8vh, 16px);
-        }
-
-        #quizCulinaria {
-          gap: 1.5vh;
-        }
-
-        .countries-grid {
-          gap: 10px;
-        }
-
-        .country-card {
-          width: calc(50% - 5px);
-          padding: 10px;
-          height: 180px;
-        }
-
-        .clothing-preview img {
-          max-width: 80px;
-          max-height: 70px;
-        }
-
-        .country-description {
-          font-size: 10px;
-        }
-
-        .tab-navigation {
-          gap: 15px;
-        }
-
-        .tab-btn {
-          max-width: 40%;
-        }
-      }
+    
+  @media (max-width: 600px) {
+    .game-wrapper {
+      padding: 10px 8px;
     }
+
+    #container {
+      gap: 0.5vh;
+    }
+
+    
+    .intro-card {
+      width: 93%;
+      padding: 3.5vh 5vw;
+      box-shadow: inset 0 0 0 3px #ffffff, inset 0 0 0 7px #FFD700;
+      border: 4px solid #1B5E20;
+      border-radius: 32px;
+    }
+
+    .intro-card h2 {
+      font-size: clamp(20px, 5vw, 28px);
+      margin-bottom: 1.5vh;
+    }
+
+    .intro-card p {
+      font-size: clamp(13px, 3.5vw, 16px);
+      line-height: 1.4;
+    }
+
+    .btn-jogar {
+      margin-top: 2.5vh;
+      padding: 1.4vh 12vw;
+      font-size: clamp(16px, 4.5vw, 20px);
+    }
+
+    
+    h1 {
+      font-size: clamp(22px, 5.5vw, 32px);
+      padding: 6px 16px;
+      margin: 1vh auto;
+    }
+
+    
+    .tab-navigation {
+      gap: 14px;
+      margin-bottom: 1.6vh;
+      margin-top: 5px;
+    }
+
+    .tab-btn {
+      max-width: 42%;
+      font-size: clamp(11px, 3vw, 14px);
+      padding: 8px 14px;
+    }
+
+    
+    .bloco-imagem {
+      max-width: 390px;
+      padding: 1.2vh 3vw; 
+      margin-bottom: 0.5vh;
+      gap: 0.8vh;         
+      border-radius: 28px;
+      border-width: 4px;
+    }
+
+    .label-progresso {
+      font-size: clamp(12px, 3vw, 14px);
+      padding: 4px 14px;
+    }
+
+    #imagemPergunta {
+      max-height: 18vh;
+      border-radius: 16px;
+    }
+
+    #nomeAlimento {
+      font-size: clamp(17px, 5vw, 22px);
+      margin-top: 0.5vh;
+    }
+
+    #pergunta {
+      font-size: clamp(14px, 3.5vw, 18px);
+      padding: 1vh 4vw;
+      border-radius: 20px;
+    }
+
+    
+    .opcoes {
+      flex-direction: column;
+      align-items: center;
+      margin-top: 0.8vh;  
+      gap: 1.4vh;           
+      width: 100%;
+    }
+
+    .opcao {
+      width: 70%;
+      max-width: 320px;
+      padding: 8px 12px;      
+      flex-direction: column; 
+      gap: 4px;               
+      min-height: 50px;
+      border-radius: 36px;
+      justify-content: center; 
+      align-items: center;
+    }
+
+    .opcao img {
+      width: 38px;
+      margin-bottom: 0.4vh;
+      flex-shrink: 0;
+    }
+
+    .opcao p {
+      font-size: clamp(13px, 3.5vw, 17px);
+      margin: 0;
+      line-height: 1.2;
+      text-align: center; 
+    }
+
+    #resultado {
+      min-height: 40px;
+      padding: 8px 12px;
+      font-size: clamp(13px, 3.2vw, 16px);
+      margin-top: 10px;
+      border-radius: 20px;
+    }
+
+    #score {
+      font-size: clamp(14px, 3.5vw, 17px);
+      padding: 8px 24px;
+    }
+
+    #quizCulinaria {
+      gap: 1vh;
+    }
+
+    
+    #painelFinal {
+      padding: 4vh 5vw;
+      border-radius: 30px;
+      width: 93%;
+      max-width: 480px;
+      min-height: auto;
+    }
+
+    #painelFinal h2 {
+      font-size: clamp(22px, 6vw, 32px);
+    }
+
+    #resumoFinal {
+      font-size: clamp(14px, 3.5vw, 17px);
+      margin-bottom: 1.5vh;
+    }
+
+    .totais {
+      margin: 1.5vh 0;
+      padding: 1.5vh 2vw;
+      gap: 6vw;
+    }
+
+    .totais b {
+      font-size: clamp(32px, 9vw, 44px);
+    }
+
+    .acertos,
+    .erros {
+      font-size: clamp(11px, 3vw, 14px);
+    }
+
+    #mensagemFinal {
+      font-size: clamp(14px, 3.8vw, 18px);
+      margin-bottom: 2vh;
+    }
+
+    .btn-reiniciar {
+      padding: 1.8vh 5vw;
+      font-size: clamp(14px, 3.8vw, 17px);
+      min-width: 140px;
+    }
+
+    
+    .countries-grid {
+      gap: 14px;
+    }
+
+    .country-card {
+      width: calc(50% - 7px);
+      padding: 12px;
+      height: 185px;
+    }
+
+    .clothing-preview img {
+      max-width: 90px;
+      max-height: 80px;
+    }
+
+    .country-description {
+      font-size: 11px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .game-wrapper {
+      padding: 8px 6px;
+    }
+
+    #container {
+      gap: 0.4vh;
+    }
+
+    .intro-card {
+      width: 95%;
+      padding: 3vh 5vw;
+      box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 6px #FFD700;
+      border: 3px solid #1B5E20;
+      border-radius: 28px;
+    }
+
+    .intro-card h2 {
+      font-size: clamp(18px, 5.5vw, 24px);
+      margin-bottom: 1vh;
+    }
+
+    .intro-card p {
+      font-size: clamp(12px, 3.5vw, 14px);
+      line-height: 1.35;
+    }
+
+    .btn-jogar {
+      margin-top: 2vh;
+      padding: 1.6vh 13vw;
+      font-size: clamp(14px, 4.5vw, 18px);
+    }
+
+    h1 {
+      font-size: clamp(18px, 5.5vw, 26px);
+      padding: 5px 12px;
+      margin: 0.8vh auto;
+    }
+
+    .tab-navigation {
+      gap: 10px;
+      margin-bottom: 2vh;
+      margin-top: 4px;
+    }
+
+    .tab-btn {
+      max-width: 42%;
+      font-size: clamp(10px, 3vw, 13px);
+      padding: 7px 10px;
+    }
+ 
+    .bloco-imagem {
+      padding: 1vh 3vw;   
+      margin-bottom: 0.4vh;
+      gap: 0.6vh;         
+      border-radius: 24px;
+      border-width: 3px;
+      width: 95%;
+    }
+
+    .label-progresso {
+      font-size: clamp(11px, 3vw, 13px);
+      padding: 3px 12px;
+    }
+
+    #imagemPergunta {
+      max-height: 20vh;
+      border-radius: 14px;
+    }
+
+    #nomeAlimento {
+      font-size: clamp(15px, 4.2vw, 19px);
+      margin-top: 0.4vh;
+      margin-bottom: 0.5vh;
+    }
+
+    #pergunta {
+      width: 90%;
+      font-size: clamp(12px, 3.3vw, 16px);
+      padding: 1vh 4vw;
+      border-radius: 16px;
+    }
+
+    .opcoes {
+      flex-direction: column;
+      align-items: center;
+      margin-top: 0.8vh;
+      gap: 1.4vh;         
+      width: 100%;
+    }
+
+    .opcao {
+      width: 60%;        
+      max-width: 260px;  
+      padding: 5px 10px; 
+      min-height: 42px;  
+      border-radius: 28px; 
+      flex-direction: column;
+      gap: 3px;          
+      justify-content: center;
+      align-items: center;
+    }
+
+    .opcao img {
+      width: 26px; 
+      margin-bottom: 0.4vh;
+      flex-shrink: 0;
+    }
+
+    .opcao p {
+      font-size: clamp(9px, 2.8vw, 12px); 
+      margin: 0;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    #resultado {
+      min-height: 36px;
+      padding: 6px 10px;
+      font-size: clamp(11px, 3vw, 14px);
+      margin-top: 10px;
+      border-radius: 16px;
+    }
+
+    #score {
+      font-size: clamp(12px, 3vw, 15px);
+      padding: 7px 20px;
+    }
+
+    #quizCulinaria {
+      gap: 0.8vh;
+    }
+
+    
+    #painelFinal {
+      padding: 3.5vh 5vw;
+      border-radius: 26px;
+      width: 95%;
+      min-height: auto;
+    }
+
+    #painelFinal h2 {
+      font-size: clamp(20px, 6vw, 28px);
+    }
+
+    #resumoFinal {
+      font-size: clamp(13px, 3.5vw, 16px);
+      margin-bottom: 1vh;
+    }
+
+    .totais {
+      margin: 1vh 0;
+      padding: 1.2vh 2vw;
+      gap: 8vw;
+    }
+
+    .totais b {
+      font-size: clamp(28px, 8vw, 38px);
+    }
+
+    .acertos,
+    .erros {
+      font-size: clamp(10px, 2.8vw, 13px);
+    }
+
+    #mensagemFinal {
+      font-size: clamp(13px, 3.5vw, 16px);
+      margin-bottom: 1.5vh;
+    }
+
+    .btn-reiniciar {
+      padding: 1.6vh 5vw;
+      font-size: clamp(12px, 3vw, 16px);
+      min-width: 120px;
+      border-radius: 18px;
+    }
+
+    .countries-grid {
+      gap: 10px;
+    }
+
+    .country-card {
+      width: calc(50% - 5px);
+      padding: 10px;
+      height: 170px;
+    }
+
+    .clothing-preview img {
+      max-width: 78px;
+      max-height: 68px;
+    }
+
+    .country-description {
+      font-size: 10px;
+    }
+  }
   </style>
 
 <body>
@@ -1017,14 +1180,14 @@
                     <div id="progresso" class="label-progresso">Pergunta 1 de 10</div>
                     <img id="imagemPergunta" src="" alt="Imagem da comida">
                     <div id="nomeAlimento">NOME DO PRATO</div>
+
+                    <div id="pergunta">DE QUAL ESTADO É ESTE PRATO?</div>
+
+                    <div class="opcoes" id="opcoes"></div>
+
+                    <div id="resultado"></div>
+                    <div id="score">Pontuação: 0</div>
                 </div>
-
-                <div id="pergunta">DE QUAL ESTADO É ESTE PRATO?</div>
-
-                <div class="opcoes" id="opcoes"></div>
-
-                <div id="resultado"></div>
-                <div id="score">Pontuação: 0</div>
 
             </div>
 
@@ -1523,7 +1686,7 @@
         }
 
       gerarCardsCuriosidades();
-    
     </script>
+
   </body>
 </html>

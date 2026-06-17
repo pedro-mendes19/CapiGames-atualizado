@@ -36,7 +36,7 @@
         user-select: none;
         touch-action: none;
         box-sizing: border-box;
-        padding: 15px 10px;
+        padding: 20px 10px;
     }
 
     .overlay-screen {
@@ -155,10 +155,47 @@
         opacity: 0.8;
     }
 
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-    @keyframes soft-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
-    @keyframes float-gentle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes bounce {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes soft-pulse {
+        0%,
+        100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.02);
+        }
+    }
+
+    @keyframes float-gentle {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-5px);
+        }
+    }
 
     .top-bar {
         display: flex;
@@ -178,7 +215,11 @@
         text-transform: uppercase;
     }
 
-    .level-max { background-color: #e74c3c; color: white; box-shadow: 0 4px 0 #c0392b; }
+    .level-max {
+        background-color: #e74c3c;
+        color: white;
+        box-shadow: 0 4px 0 #c0392b;
+    }
 
     .hud {
         display: flex;
@@ -193,11 +234,10 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
-    .separator { border-left: 2px solid #ddd; }
+    .separator {
+        border-left: 2px solid #ddd;
+    }
 
-    /* =======================================================
-       ESTRUTURA DA BALANÇA PADRÃO (DESKTOP / MONITORES)
-       ======================================================= */
     .balance-container {
         position: relative;
         width: min(100%, 750px);
@@ -231,7 +271,7 @@
 
     .beam {
         position: absolute;
-        bottom: 140px; 
+        bottom: 140px;
         left: 5%;
         width: 90%;
         height: 12px;
@@ -245,7 +285,7 @@
 
     .pan {
         position: absolute;
-        top: 12px; 
+        top: 13px;
         width: 25%;
         height: 110px;
         z-index: -1;
@@ -254,8 +294,15 @@
         background-repeat: no-repeat;
     }
 
-    .pan-left { left: 5%; background-position: 15px 0, calc(100% - 15px) 0; }
-    .pan-right { right: 5%; background-position: 15px 0, calc(100% - 15px) 0; }
+    .pan-left {
+        left: 5%;
+        background-position: 15px 0, calc(100% - 15px) 0;
+    }
+
+    .pan-right {
+        right: 5%;
+        background-position: 15px 0, calc(100% - 15px) 0;
+    }
 
     .plate {
         position: absolute;
@@ -309,10 +356,13 @@
         font-size: 2rem;
     }
 
-    .weight.disabled { opacity: 0.5; pointer-events: none; }
+    .weight.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
 
     .status-msg {
-        font-size: 1.6rem;
+        font-size: 1.9rem;
         height: 35px;
         color: #27ae60;
         font-weight: bold;
@@ -320,15 +370,12 @@
         margin-bottom: 5px;
     }
 
-    /* =======================================================
-       PRATELEIRA DINÂMICA INTELIGENTE
-       ======================================================= */
     .shelf {
         background-color: #d35400;
         padding: 15px 25px;
-        width: max-content; 
-        min-width: 180px;    
-        max-width: 92%;     
+        width: max-content;
+        min-width: 180px;
+        max-width: 92%;
         border-radius: 15px;
         display: flex;
         justify-content: center;
@@ -341,123 +388,457 @@
         transition: width 0.3s ease, max-width 0.3s ease;
     }
 
-
-    /* =======================================================
-       RESPONSIVIDADE OTIMIZADA E REFINADA
-       ======================================================= */
-    
-    /* 1. DISPOSITIVOS MÓVEIS / TELEMÓVEIS (Ecrãs Verticais) */
     @media (max-width: 600px) and (orientation: portrait) {
-        /* Redução do indicador de nível solicitado */
         .level-badge {
             font-size: 1.1rem;
             padding: 5px 18px;
             box-shadow: 0 3px 0 #f39c12;
         }
-        .level-max { box-shadow: 0 3px 0 #c0392b; }
 
-        .game-title { font-size: 1.6rem; }
-        .panel-box { padding: 4px; width: 90%; margin: 15px; }
-        .panel-box p { font-size: 1rem; }
-        .highlight { font-size: 2.1rem !important; }
-        .btn-start, .btn-play-again { font-size: 1.4rem; padding: 12px 30px; }
-        .hud { gap: 15px; padding: 6px 18px; font-size: 1.1rem; }
-        
-        /* Ajuste para afinar e suavizar a balança */
-        .balance-container { height: 200px; }
-        .stand { height: 110px; width: 12px; } /* Mais fino */
-        .base { width: 160px; height: 12px; }  /* Mais fino */
-        .beam { bottom: 105px; height: 10px; }   /* Travessão bem refinado e fino */
-        .pan { height: 85px; top: 4px; }
-        .plate { height: 52px; width: 80px; border-bottom-width: 4px; border-radius: 0 0 15px 15px; }
-        
-        /* Pesos proporcionais */
-        .weight { width: 36px; height: 36px; font-size: 1.1rem; border-radius: 6px; margin: 2px; }
-        .plate .weight:not(.target-weight) { width: 28px; height: 28px; font-size: 1rem; border-radius: 6px; margin: 1px; }
-        .target-weight { width: 40px; height: 40px; font-size: 1.4rem; }
-        
-        /* Shelf adaptável */
-        .shelf { padding: 10px 15px; gap: 8px; max-width: 95%; min-height: 45px; }
-        .btn-skip { padding: 10px 25px; font-size: 1.2rem; }
+        .level-max {
+            box-shadow: 0 3px 0 #c0392b;
+        }
+
+        .game-title {
+            font-size: 1.6rem;
+        }
+
+        .panel-box {
+            padding: 8px;
+            width: 90%;
+            margin: 15px;
+        }
+
+        .panel-box p {
+            font-size: 1rem;
+        }
+
+        .highlight {
+            font-size: 2.1rem !important;
+        }
+
+        .btn-start,
+        .btn-play-again {
+            font-size: 1.3rem;
+            padding: 12px 30px;
+        }
+
+        .hud {
+            gap: 15px;
+            padding: 6px 18px;
+            font-size: 1.1rem;
+        }
+
+        .balance-container {
+            height: 200px;
+        }
+
+        .stand {
+            height: 110px;
+            width: 12px;
+        }
+
+        .base {
+            width: 160px;
+            height: 12px;
+        }
+
+        .beam {
+            bottom: 105px;
+            height: 10px;
+        }
+
+        .pan {
+            height: 85px;
+            top: 4px;
+        }
+
+        .plate {
+            height: 52px;
+            width: 90px;
+            border-bottom-width: 4px;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .weight {
+            width: 36px;
+            height: 36px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            margin: 2px;
+        }
+
+        .plate .weight:not(.target-weight) {
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
+            border-radius: 6px;
+            margin: 1px;
+        }
+
+        .target-weight {
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
+        }
+
+        .status-msg {
+            font-size: clamp(1.3rem, 3vh, 1.8rem);
+            height: 30px;
+        }
+
+        .shelf {
+            padding: 10px 15px;
+            gap: 8px;
+            max-width: 95%;
+            min-height: 45px;
+        }
+
+        .btn-skip {
+            padding: 10px 25px;
+            font-size: 1.2rem;
+        }
     }
 
-    /* 2. CROMBOOKS / TABLETS / ECRÃS LANDSCAPE BAIXOS */
+    @media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+        .game-title {
+            font-size: 3.48rem;
+        }
+
+        .panel-box p {
+            font-size: 1.6rem;
+        }
+
+        .balance-container {
+            max-width: 550px;
+            height: 320px;
+        }
+
+        .stand {
+            height: 180px;
+            width: 24px;
+        }
+
+        .beam {
+            bottom: 170px;
+            height: 12px;
+        }
+
+        .status-msg {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-start,
+        .btn-play-again {
+            font-size: 2.4rem;
+            padding: 20px 50px;
+        }
+
+        .pan {
+            height: 110px;
+        }
+
+        .plate {
+            height: 75px;
+            width: 110%;
+            border-bottom-width: 5px;
+            border-radius: 0 0 18px 18px;
+        }
+
+        .weight {
+            width: 52px;
+            height: 52px;
+            font-size: 1.6rem;
+        }
+
+        .plate .weight:not(.target-weight) {
+            width: 48px;
+            height: 48px;
+            font-size: 1.5rem;
+            margin: 2px;
+        }
+
+        .target-weight {
+            width: 65px;
+            height: 65px;
+            font-size: 2.2rem;
+        }
+    }
+
     @media (max-height: 700px) and (orientation: landscape) {
-        body { padding: 5px 10px; }
-        .game-title { font-size: 1.8rem; margin-bottom: 2px; }
-        .panel-box { padding: 15px; max-width: 450px; margin-bottom: 10px; }
-        .panel-box p { font-size: 1.1rem; }
-        .top-bar { gap: 4px; }
-        
-        /* Nível reduzido em landscape compacto */
-        .level-badge { font-size: 1.1rem; padding: 4px 18px; box-shadow: 0 3px 0 #f39c12; }
-        .hud { font-size: 1.2rem; padding: 6px 20px; gap: 20px; }
-        
-        /* Balança refinada para Chromebooks */
-        .balance-container { height: 160px; margin: 5px auto; }
-        .stand { height: 90px; width: 12px; }
-        .base { width: 180px; height: 12px; }
-        .beam { bottom: 90px; height: 7px; } /* Travessão mais fino */
-        .pan { height: 75px; top: -10px; width: 14%; }
-        .plate { height: 42px; border-bottom-width: 4px; border-radius: 0 0 12px 12px; }
-        
-        .weight { width: 34px; height: 34px; font-size: 1rem; }
-        .target-weight { width: 46px; height: 46px; font-size: 1.3rem; }
-        
-        .status-msg { font-size: 1.2rem; height: 25px; margin-bottom: 2px; }
-        .shelf { padding: 8px 15px; gap: 10px; min-height: 40px; }
-        .btn-skip { padding: 8px 20px; font-size: 1.1rem; }
+        body {
+            padding: 5px 10px;
+        }
+
+        .game-title {
+            font-size: 1.8rem;
+            margin-bottom: 2px;
+        }
+
+        .panel-box {
+            padding: 15px;
+            max-width: 450px;
+            margin-bottom: 10px;
+        }
+
+        .panel-box p {
+            font-size: 1.1rem;
+        }
+
+        .top-bar {
+            gap: 4px;
+        }
+
+        .level-badge {
+            font-size: 1.1rem;
+            padding: 4px 18px;
+            box-shadow: 0 3px 0 #f39c12;
+        }
+
+        .hud {
+            font-size: 1.2rem;
+            padding: 6px 20px;
+            gap: 20px;
+        }
+
+        .balance-container {
+            height: 160px;
+            margin: 5px auto;
+        }
+
+        .stand {
+            height: 90px;
+            width: 12px;
+        }
+
+        .base {
+            width: 180px;
+            height: 12px;
+        }
+
+        .beam {
+            bottom: 90px;
+            height: 7px;
+        }
+
+        .pan {
+            height: 75px;
+            top: -10px;
+            width: 14%;
+        }
+
+        .plate {
+            height: 42px;
+            border-bottom-width: 4px;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .weight {
+            width: 34px;
+            height: 34px;
+            font-size: 1rem;
+        }
+
+        .target-weight {
+            width: 46px;
+            height: 46px;
+            font-size: 1.3rem;
+        }
+
+        .status-msg {
+            font-size: 1.2rem;
+            height: 25px;
+            margin-bottom: 2px;
+        }
+
+        .shelf {
+            padding: 8px 15px;
+            gap: 10px;
+            min-height: 40px;
+        }
+
+        .btn-skip {
+            padding: 8px 20px;
+            font-size: 1.1rem;
+        }
     }
 
-    /* 3. CELULARES NA HORIZONTAL (Landscape muito baixo) */
     @media (max-height: 500px) and (orientation: landscape) {
-        body { padding: 2px 5px; }
-        .game-title { font-size: 1.4rem; margin-bottom: 2px; }
-        .panel-box { padding: 5px; margin: 5px auto; width: 90%; max-width: 500px; }
-        .panel-box p { font-size: 0.9rem; margin: 4px 0; }
-        .btn-start, .btn-play-again { font-size: 1.2rem; padding: 8px 20px; }
-        .highlight { font-size: 1.8rem !important; }
-        
-        .top-bar { flex-direction: row; justify-content: center; gap: 15px; }
-        .level-badge { font-size: 1rem; padding: 4px 12px; }
-        .hud { font-size: 1rem; padding: 4px 15px; gap: 10px; }
-        
-        .balance-container { height: 110px; margin: 2px auto; }
-        .stand { height: 60px; width: 8px; }
-        .base { width: 140px; height: 8px; }
-        .beam { bottom: 60px; height: 6px; }
-        .pan { height: 50px; top: -5px; width: 14%; }
-        .plate { height: 32px; width: 65px; border-bottom-width: 3px; border-radius: 0 0 10px 10px; }
-        
-        .weight { width: 26px; height: 26px; font-size: 0.9rem; border-radius: 4px; }
-        .target-weight { width: 34px; height: 34px; font-size: 1.1rem; }
-        
-        .status-msg { font-size: 1rem; height: 20px; margin-bottom: 2px; }
-        .shelf { padding: 5px 10px; gap: 5px; min-height: 30px; margin-bottom: 5px; }
-        .btn-skip { padding: 6px 15px; font-size: 0.9rem; }
+        body {
+            padding: 5px 8px;
+        }
+
+        .game-title {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+
+        .panel-box {
+            padding: 5px;
+            margin: 5px auto;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        #end-screen .panel-box {
+            margin: 10px 0;
+            padding: 10px;
+        }
+
+        .panel-box p {
+            font-size: 0.9rem;
+            margin: 4px 0;
+        }
+
+        .btn-start,
+        .btn-play-again {
+            font-size: 1.2rem;
+            padding: 8px 26px;
+        }
+
+        .highlight {
+            font-size: 1.8rem !important;
+        }
+
+        .top-bar {
+            gap: 5px;
+        }
+
+        .level-badge {
+            font-size: 0.7rem;
+            padding: 4px 12px;
+        }
+
+        .hud {
+            font-size: 0.8rem;
+            padding: 4px 15px;
+            gap: 8px;
+        }
+
+        .balance-container {
+            height: 130px;
+            max-width: 300px;
+            margin: 2px auto 10px auto;
+        }
+
+        .stand {
+            height: 85px;
+            width: 8px;
+        }
+
+        .base {
+            width: 90px;
+            height: 8px;
+        }
+
+        .beam {
+            bottom: 80px;
+            height: 6px;
+        }
+
+        .pan {
+            height: 60px;
+            top: 5px;
+            width: 26%;
+        }
+
+        .plate {
+            height: 40px;
+            width: 120%;
+            border-bottom-width: 3px;
+            border-radius: 0 0 10px 10px;
+            padding: 0 4px;
+        }
+
+        .weight {
+            width: 25px;
+            height: 25px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+        }
+
+        .target-weight {
+            width: 35px;
+            height: 35px;
+            font-size: 1.1rem;
+        }
+
+        .status-msg {
+            font-size: 1rem;
+            height: 20px;
+            margin-bottom: 2px;
+        }
+
+        .shelf {
+            padding: 5px 10px;
+            gap: 5px;
+            min-height: 30px;
+            margin-bottom: 5px;
+        }
+
+        .btn-skip {
+            padding: 6px 15px;
+            font-size: 0.8rem;
+        }
     }
 
-    /* 4. GRANDES MONITORES / DESKTOPS */
     @media (min-width: 1200px) and (min-height: 800px) {
-        .balance-container { max-width: 850px; height: 340px; }
-        .stand { height: 180px; width: 24px; }
-        .base { width: 280px; height: 24px; }
-        .beam { bottom: 170px; height: 14px; }
-        .pan { height: 130px; }
-        .plate { height: 85px; border-radius: 0 0 25px 25px; }
-        .weight { width: 55px; height: 55px; font-size: 1.6rem; }
-        .target-weight { width: 80px; height: 80px; font-size: 2.4rem; }
-        .shelf { padding: 20px 35px; gap: 20px; }
+        .balance-container {
+            max-width: 850px;
+            height: 340px;
+        }
+
+        .stand {
+            height: 180px;
+            width: 24px;
+        }
+
+        .base {
+            width: 280px;
+            height: 24px;
+        }
+
+        .beam {
+            bottom: 170px;
+            height: 14px;
+        }
+
+        .pan {
+            height: 130px;
+        }
+
+        .plate {
+            height: 85px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .weight {
+            width: 55px;
+            height: 55px;
+            font-size: 1.6rem;
+        }
+
+        .target-weight {
+            width: 80px;
+            height: 80px;
+            font-size: 2.4rem;
+        }
+
+        .shelf {
+            padding: 20px 35px;
+            gap: 20px;
+        }
     }
 </style>
 
 <body>
-
     <div id="intro-screen" class="overlay-screen">
         <div class="game-title">BALANÇA MATEMÁTICA ⚖️</div>
         <div class="panel-box">
             <p>Olá, matemático! 👋</p><br>
-            <p>Sua missão é <strong style="color: var(--primary);">arrastar os pesos azuis</strong> para a direita até que os dois lados fiquem iguais.</p><br>
+            <p>Sua missão é <strong style="color: var(--primary);">arrastar os pesos azuis</strong> para a direita até
+                que os dois lados fiquem iguais.</p><br>
             <p>São 10 níveis para equilibrar os números na balança.</p>
         </div>
         <button class="btn btn-start" onclick="iniciarJogo()">COMEÇAR!</button>

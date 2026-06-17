@@ -135,9 +135,16 @@
                 -3px 3px 0 #2e7d32, /* Camada verde do verso da peça de Mahjong */
                 -4px 4px 0 #1b5e20,
                 -5px 5px 0 #124116,
-                -6px 6px 8px rgba(0,0,0,0.5);
+                -6px 6px 0 #0d3010,
+                -7px 7px 0 #08200a,
+                -8px 8px 10px rgba(0,0,0,0.6);
             padding: 0;
             overflow: hidden; 
+        }
+
+        .tile:not(.blocked) {
+            filter: brightness(1.1);
+            border-color: #8b5a2b;
         }
 
         .tile::after {
@@ -158,18 +165,20 @@
         }
 
         .tile:hover:not(.blocked) { 
-            filter: brightness(1.08) translateY(-2px); 
+            filter: brightness(1.2) translateY(-2px); 
             box-shadow: 
                 -1px 3px 0 #e5dfcf,
                 -2px 4px 0 #d3cbb5,
                 -3px 5px 0 #2e7d32,
                 -4px 6px 0 #1b5e20,
                 -5px 7px 0 #124116,
-                -7px 9px 12px rgba(0,0,0,0.6);
+                -6px 8px 0 #0d3010,
+                -7px 9px 0 #08200a,
+                -9px 11px 14px rgba(0,0,0,0.7);
         }
 
         .tile.selected {
-            transform: translateY(-10px) translate(calc(var(--z) * 5px), calc(var(--z) * -5px)) !important;
+            transform: translateY(-10px) translate(calc(var(--z) * 8px), calc(var(--z) * -8px)) !important;
             box-shadow: 
                 0 0 20px var(--accent-color),
                 -1px 11px 0 #e5dfcf,
@@ -177,16 +186,18 @@
                 -3px 13px 0 #2e7d32,
                 -4px 14px 0 #1b5e20,
                 -5px 15px 0 #124116,
-                -7px 18px 22px rgba(0,0,0,0.7);
+                -6px 16px 0 #0d3010,
+                -7px 17px 0 #08200a,
+                -9px 19px 24px rgba(0,0,0,0.8);
             border-color: var(--accent-color);
-            z-index: 99999 !important;
+            z-index: 999999 !important;
         }
 
         .tile.hinted { animation: pulse-hint 1.5s infinite; border-color: #00e5ff; box-shadow: 0 0 15px #00e5ff; }
         .tile.matched { opacity: 0; transform: scale(1.3) translateY(-20px); pointer-events: none; }
         .tile.blocked { 
             cursor: not-allowed; 
-            filter: grayscale(0.6) brightness(0.7);
+            filter: grayscale(0.8) brightness(0.45);
         }
         
         .tile.in-tray {
@@ -243,10 +254,10 @@
 
         .tray-warning {
             position: absolute;
-            top: -30px;
+            top: -40px;
             color: #ff5252;
-            font-weight: bold;
-            font-size: 0.9rem;
+            font-weight: 800;
+            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             display: none;
@@ -655,7 +666,7 @@
                 <h1 class="main-title">MAHJONG SOLITAIRE</h1>
                 <div class="description">
                     <p><strong>OBJETIVO:</strong> Encontre e remova todos os pares de peças idênticas para limpar o tabuleiro.</p>
-                    <p><strong>COMO JOGAR:</strong> Clique em duas peças livres (sem peças acima e com pelo menos um lado livre) com o mesmo símbolo para remover.</p>
+                    <p><strong>COMO JOGAR:</strong> Clique em duas peças livres (sem peças acima e com pelo menos o lado esquerdo ou direito livre) com o mesmo símbolo para remover.</p>
                     <p><strong>DICA:</strong> Use as dicas quando precisar de ajuda. Você também pode apertar a <strong>Tecla D</strong> no seu teclado para destacar um par!</p>
                 </div>
                 <button class="btn-play" onclick="showLayoutSelection()">JOGAR 🀄</button>
@@ -720,7 +731,7 @@
 
         const GRID_W = 25;
         const GRID_H = 35;
-        const OFFSET_Z = 5;
+        const OFFSET_Z = 8;
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
@@ -1171,8 +1182,15 @@
         function updateClickability() {
             tiles.forEach(t => {
                 if (!t.active) return;
-                if (!isTileFree(t)) t.element.classList.add('blocked');
-                else t.element.classList.remove('blocked');
+                const baseZIndex = (t.z * 10000) + (t.y * 100) + t.x;
+                if (!isTileFree(t)) {
+                    t.element.classList.add('blocked');
+                    t.element.style.zIndex = baseZIndex;
+                } else {
+                    t.element.classList.remove('blocked');
+                    // Eleva a peça livre para que fique visivelmente por cima das bloqueadas ao seu redor
+                    t.element.style.zIndex = baseZIndex + 100000;
+                }
             });
         }
 
