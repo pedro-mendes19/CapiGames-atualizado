@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tetris </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            touch-action: none; 
+            overscroll-behavior: none; 
+            background-color: #020617; /* Slate 950 */
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(29, 78, 216, 0.2) 0%, transparent 60%),
+                linear-gradient(rgba(30, 58, 138, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 58, 138, 0.3) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            background-position: center center;
+            font-family: 'Fredoka', Nunito;
+            color: #e2e8f0;
+        }
+        
+        .font-sci { font-family: 'Fredoka', Nunito; }
+        
+        canvas { display: block; }
+
+        /* Estilo Neon para as Caixas */
+        .neon-box {
+            background: rgba(2, 6, 23, 0.8);
+            border: 2px solid #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5), inset 0 0 15px rgba(59, 130, 246, 0.3);
+            border-radius: 4px;
+            position: relative;
+            backdrop-filter: blur(4px);
+        }
+
+        .neon-text {
+            color: #60a5fa;
+            text-shadow: 0 0 5px rgba(96, 165, 250, 0.8);
+            letter-spacing: 0.1em;
+        }
+
+        .neon-button {
+            background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
+            border: 2px solid #60a5fa;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.6), inset 0 0 10px rgba(59, 130, 246, 0.4);
+            color: white;
+            text-shadow: 0 0 4px white;
+            transition: all 0.2s;
+        }
+        .neon-button:hover {
+            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 0 15px rgba(96, 165, 250, 0.8), inset 0 0 15px rgba(96, 165, 250, 0.6);
+            transform: scale(1.02);
+        }
+        .neon-button:active {
+            transform: scale(0.98);
+        }
+
+        .neon-button-danger {
+            background: linear-gradient(180deg, #991b1b 0%, #7f1d1d 100%);
+            border: 2px solid #f87171;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6), inset 0 0 10px rgba(239, 68, 68, 0.4);
+        }
+        .neon-button-danger:hover {
+            background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%);
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.8), inset 0 0 15px rgba(248, 113, 113, 0.6);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+        }
+
+        #tetris {
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        
+        .stat-box { margin-bottom: 0.5rem; }
+        .stat-title { font-size: 0.8rem; text-align: center; color: #f8fafc; letter-spacing: 0.05em; margin-bottom: 2px;}
+        .stat-value { font-size: 1.25rem; text-align: center; font-family: 'Fredoka', Nunito; }
+
+        /* Estilos do Título 3D Colorido */
+        .logo-letter {
+            font-family: 'Fredoka', Nunito;
+            font-weight: 900;
+            font-size: 3rem;
+            color: transparent;
+            background-color: var(--c);
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.4) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255,255,255,0.4) 2px, transparent 2px),
+                linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 40%, rgba(0,0,0,0.5) 100%);
+            background-size: 14px 14px, 14px 14px, 100% 100%;
+            background-position: center top;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-stroke: 2px var(--c);
+            filter: 
+                drop-shadow(0px 2px 0px var(--c))
+                drop-shadow(0px 4px 0px var(--dc))
+                drop-shadow(0px 6px 0px var(--dc))
+                drop-shadow(0px 0px 15px var(--c));
+            line-height: 1;
+        }
+        @media (min-width: 400px) {
+            .logo-letter { font-size: 4rem; }
+        }
+        @media (min-width: 640px) {
+            .logo-letter {
+                font-size: 6.5rem;
+                background-size: 20px 20px, 20px 20px, 100% 100%;
+                -webkit-text-stroke: 3px var(--c);
+                filter: 
+                    drop-shadow(0px 3px 0px var(--c))
+                    drop-shadow(0px 6px 0px var(--dc))
+                    drop-shadow(0px 9px 0px var(--dc))
+                    drop-shadow(0px 0px 20px var(--c));
+            }
+        }
+        @media (min-width: 1024px) {
+            .logo-letter {
+                font-size: 8rem;
+                background-size: 24px 24px, 24px 24px, 100% 100%;
+                -webkit-text-stroke: 4px var(--c);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center select-none overflow-hidden relative">
+    
+    <audio id="bg-music" src="Cinder%20Cello.mp3" loop preload="auto"></audio>
+
+    <button id="btn-mute" class="fixed top-4 right-4 z-[60] bg-slate-800/80 border border-slate-600 p-2 sm:p-3 rounded-full text-white text-lg sm:text-xl shadow-[0_0_10px_rgba(59,130,246,0.5)] active:bg-slate-700 transition-all flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12">
+        🔊
+    </button>
+
+    <button id="btn-pause-ui" class="fixed top-4 left-4 z-[60] hidden bg-slate-800/80 border border-slate-600 p-2 sm:p-3 rounded-full text-white text-lg sm:text-xl shadow-[0_0_10px_rgba(59,130,246,0.5)] active:bg-slate-700 transition-all flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12">
+        ⏸️
+    </button>
+
+    <div id="home-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center modal-overlay">
+        
+        <div class="flex flex-row justify-center items-center gap-1 sm:gap-2 lg:gap-3 mb-12" aria-label="TETRIS">
+            <span class="logo-letter" style="--c: #ff3b5c; --dc: #990026;">T</span>
+            <span class="logo-letter" style="--c: #ff8c00; --dc: #995400;">E</span>
+            <span class="logo-letter" style="--c: #ffdd00; --dc: #998500;">T</span>
+            <span class="logo-letter" style="--c: #00e64d; --dc: #00802b;">R</span>
+            <span class="logo-letter" style="--c: #00aaff; --dc: #005580;">I</span>
+            <span class="logo-letter" style="--c: #b300ff; --dc: #590080;">S</span>
+        </div>
+
+        <div class="flex flex-col gap-4 w-64">
+            <button id="btn-play-home" class="neon-button font-sci text-xl py-4 rounded-lg tracking-widest flex items-center justify-center gap-2">
+                ▶ JOGAR
+            </button>
+            <button id="btn-help-home" class="neon-button font-sci text-sm py-3 rounded-lg tracking-widest bg-slate-800 border-slate-500 shadow-slate-500/50">
+                CONTROLES
+            </button>
+        </div>
+    </div>
+
+    <div id="help-screen" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center modal-overlay p-4">
+        <div class="neon-box p-6 md:p-10 max-w-2xl w-full flex flex-col items-center">
+            <h2 class="font-sci text-2xl md:text-3xl text-white mb-8 neon-text tracking-widest">- CONTROLES -</h2>
+            
+            <div class="w-full flex flex-col md:flex-row gap-6 justify-center text-center text-sm md:text-base">
+                <div class="flex-1 neon-box p-4 bg-slate-900/50">
+                    <h3 class="font-sci text-cyan-400 mb-4">MECÂNICAS & TOQUE</h3>
+                    <ul class="space-y-3 text-slate-300 text-left w-max mx-auto">
+                        <li>👆 <strong>Tocar/Clicar:</strong> Girar Direita</li>
+                        <li>↔️ <strong>Deslizar/Arraste:</strong> Mover Peça</li>
+                        <li>⬇️ <strong>Deslizar Baixo:</strong> Queda Rápida</li>
+                        <li>⬆️ <strong>Deslizar Cima:</strong> Guardar Peça (Hold)</li>
+                    </ul>
+                </div>
+                <div class="flex-1 neon-box p-4 bg-slate-900/50">
+                    <h3 class="font-sci text-cyan-400 mb-4">TECLADO (PC)</h3>
+                    <ul class="space-y-3 text-slate-300 text-left w-max mx-auto">
+                        <li><kbd class="bg-slate-700 px-2 py-1 rounded border border-slate-500 text-white font-sci">←</kbd> <kbd class="bg-slate-700 px-2 py-1 rounded border border-slate-500 text-white font-sci">→</kbd> Mover</li>
+                        <li><kbd class="bg-slate-700 px-2 py-1 rounded border border-slate-500 text-white font-sci">↑</kbd> Girar</li>
+                        <li><kbd class="bg-slate-700 px-2 py-1 rounded border border-slate-500 text-white font-sci">↓</kbd> Queda Suave</li>
+                        <li><kbd class="bg-slate-700 px-2 py-1 rounded border border-slate-500 text-white font-sci">ESPAÇO</kbd> Queda Rápida</li>
+                        <li><kbd class="bg-slate-700 px-2 py-1 rounded border border-slate-500 text-white font-sci">C</kbd> ou <kbd class="bg-slate-700 px-2 py-1 rounded border border-slate-500 text-white font-sci">SHIFT</kbd> Hold</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
+                <button id="btn-close-help" class="neon-button font-sci text-lg px-8 py-3 rounded-lg tracking-widest bg-slate-800">
+                    VOLTAR
+                </button>
+                <button id="btn-play-help" class="neon-button font-sci text-lg px-8 py-3 rounded-lg tracking-widest">
+                    ▶ JOGAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-row items-center justify-center gap-2 sm:gap-4 lg:gap-8 w-full max-w-5xl px-1 sm:px-2 h-full">
+        
+        <div class="flex flex-col gap-2 sm:gap-4 w-[22vw] sm:w-28 lg:w-36 flex-shrink-0">
+            
+            <div>
+                <div class="stat-title font-sci text-[9px] sm:text-xs lg:text-sm truncate text-cyan-300">RESERVA</div>
+                <div id="hold-container" class="neon-box flex items-center justify-center bg-black/60 p-1 sm:p-2 h-[80px] sm:h-[100px] lg:h-[120px] cursor-pointer" onclick="holdPiece()">
+                    <canvas id="hold-piece" width="90" height="90" class="w-full h-full object-contain"></canvas>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1 sm:gap-3 mt-2">
+                <div class="stat-box">
+                    <div class="stat-title font-sci text-[9px] sm:text-xs lg:text-sm truncate">PONTOS</div>
+                    <div class="neon-box py-1 sm:py-2">
+                        <div id="score-val" class="stat-value neon-text text-white text-sm sm:text-lg lg:text-xl">0</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title font-sci text-[9px] sm:text-xs lg:text-sm truncate">NÍVEL</div>
+                    <div class="neon-box py-1 sm:py-2">
+                        <div id="level-val" class="stat-value neon-text text-white text-sm sm:text-lg lg:text-xl">1</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title font-sci text-[9px] sm:text-xs lg:text-sm truncate">LINHAS</div>
+                    <div class="neon-box py-1 sm:py-2">
+                        <div id="rows-val" class="stat-value neon-text text-white text-sm sm:text-lg lg:text-xl">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative flex justify-center items-center flex-shrink-0">
+            <div class="neon-box p-1 sm:p-2 bg-black/40">
+                <canvas id="tetris" width="300" height="600" class="h-[70vh] sm:h-[80vh] lg:h-[85vh] w-auto max-w-[50vw] sm:max-w-none aspect-[1/2] object-contain block mx-auto"></canvas>
+            </div>
+
+            <div id="game-overlay" class="absolute inset-0 z-20 hidden flex-col items-center justify-center bg-black/80 backdrop-blur-sm m-1 sm:m-4 rounded neon-box border-none gap-3">
+                <h2 id="overlay-title" class="font-sci text-lg sm:text-2xl md:text-3xl text-cyan-400 font-bold mb-2 tracking-widest text-center px-2">PAUSADO</h2>
+                
+                <button id="btn-resume" class="neon-button font-sci w-40 text-xs sm:text-sm px-4 sm:px-6 py-3 rounded tracking-widest">
+                    CONTINUAR
+                </button>
+                
+                <button id="btn-back-menu" class="neon-button neon-button-danger font-sci w-40 text-xs sm:text-sm px-4 sm:px-6 py-3 rounded tracking-widest">
+                    MENU INICIAL
+                </button>
+            </div>
+        </div>
+
+        <div class="flex flex-col w-[22vw] sm:w-28 lg:w-36 flex-shrink-0">
+            <div>
+                <div class="stat-title font-sci text-[9px] sm:text-xs lg:text-sm truncate text-cyan-300">PRÓXIMAS</div>
+                <div class="neon-box flex items-center justify-center bg-black/60 p-1 sm:p-2 h-[200px] sm:h-[280px] lg:h-[350px]">
+                    <canvas id="next-piece" width="90" height="300" class="w-full h-full object-contain"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// --- CONSTANTES ---
+const COLS = 10;
+const ROWS = 20;
+const BLOCK_SIZE = 30;
+
+const TETROMINOES = {
+    0: { shape: [[0]], color: null },
+    I: { shape: [[0,'I',0,0],[0,'I',0,0],[0,'I',0,0],[0,'I',0,0]], color: '#00ffff' },
+    J: { shape: [[0,'J',0],[0,'J',0],['J','J',0]], color: '#0066ff' },
+    L: { shape: [[0,'L',0],[0,'L',0],[0,'L','L']], color: '#ff8800' },
+    O: { shape: [['O','O'],['O','O']], color: '#ffff00' },
+    S: { shape: [[0,'S','S'],['S','S',0],[0,0,0]], color: '#00ff00' },
+    T: { shape: [[0,0,0],['T','T','T'],[0,'T',0]], color: '#ff00ff' },
+    Z: { shape: [['Z','Z',0],[0,'Z','Z'],[0,0,0]], color: '#ff0000' },
+};
+const SHAPES = 'IJLOSTZ';
+
+// Elementos DOM
+const canvas = document.getElementById('tetris');
+const ctx = canvas.getContext('2d');
+const nextCanvas = document.getElementById('next-piece');
+const nextCtx = nextCanvas.getContext('2d');
+const holdCanvas = document.getElementById('hold-piece');
+const holdCtx = holdCanvas.getContext('2d');
+
+const elScore = document.getElementById('score-val');
+const elRows = document.getElementById('rows-val');
+const elLevel = document.getElementById('level-val');
+
+const homeScreen = document.getElementById('home-screen');
+const helpScreen = document.getElementById('help-screen');
+const gameOverlay = document.getElementById('game-overlay');
+const overlayTitle = document.getElementById('overlay-title');
+const btnResume = document.getElementById('btn-resume');
+const btnBackMenu = document.getElementById('btn-back-menu'); // Novo elemento
+
+const bgMusic = document.getElementById('bg-music');
+const btnMute = document.getElementById('btn-mute');
+const btnPauseUI = document.getElementById('btn-pause-ui'); // Novo elemento
+
+bgMusic.volume = 0.5;
+
+// Estado do Jogo
+let board = createBoard();
+let player = { pos: {x: 0, y: 0}, matrix: null };
+let nextPieces = [];
+let heldPieceMatrix = null;
+let canHold = true;
+
+let dropCounter = 0;
+let dropInterval = 1000;
+let lastTime = 0;
+let lockDelayCounter = 0;
+
+let score = 0;
+let rows = 0;
+let level = 1;
+let gameOver = false;
+let isPaused = false;
+let gameStarted = false;
+let isMuted = false;
+let reqId;
+
+// --- INICIALIZAÇÃO ---
+function createBoard() {
+    return Array.from({length: ROWS}, () => new Array(COLS).fill(0));
+}
+
+function randomTetromino() {
+    const rand = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+    return TETROMINOES[rand].shape;
+}
+
+function initNextPieces() {
+    nextPieces = [randomTetromino(), randomTetromino(), randomTetromino()];
+}
+
+function getNextPiece() {
+    const next = nextPieces.shift();
+    nextPieces.push(randomTetromino());
+    return next;
+}
+
+// --- RENDERIZAÇÃO ---
+function drawBlock(context, x, y, type, size = BLOCK_SIZE, isGhost = false) {
+    if (type === 0) return;
+    const color = TETROMINOES[type].color;
+    const px = x * size;
+    const py = y * size;
+
+    context.save();
+    if (isGhost) {
+        context.lineWidth = 2;
+        context.strokeStyle = color;
+        context.fillStyle = `${color}22`;
+        context.shadowBlur = 10;
+        context.shadowColor = color;
+        context.beginPath();
+        context.rect(px + 1, py + 1, size - 2, size - 2);
+        context.fill();
+        context.stroke();
+    } else {
+        context.fillStyle = `${color}33`; 
+        context.fillRect(px, py, size, size);
+        context.shadowBlur = 15;
+        context.shadowColor = color;
+        context.strokeStyle = color;
+        context.lineWidth = 3;
+        context.strokeRect(px + 2, py + 2, size - 4, size - 4);
+        context.shadowBlur = 5; 
+        context.shadowColor = '#ffffff';
+        context.strokeStyle = '#ffffff';
+        context.lineWidth = 1.5;
+        context.strokeRect(px + 2, py + 2, size - 4, size - 4);
+        context.shadowBlur = 0;
+        context.fillStyle = `${color}99`;
+        context.fillRect(px + 7, py + 7, size - 14, size - 14);
+    }
+    context.restore();
+}
+
+function drawMatrix(matrix, offset, context, size = BLOCK_SIZE, isGhost = false) {
+    matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value !== 0) {
+                drawBlock(context, x + offset.x, y + offset.y, value, size, isGhost);
+            }
+        });
+    });
+}
+
+function drawNextQueue() {
+    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+    const size = 18; 
+    nextPieces.forEach((piece, index) => {
+        const offsetX = (nextCanvas.width / size - piece[0].length) / 2;
+        const offsetY = 1 + (index * 4);
+        drawMatrix(piece, {x: offsetX, y: offsetY}, nextCtx, size);
+    });
+}
+
+function drawHoldQueue() {
+    holdCtx.clearRect(0, 0, holdCanvas.width, holdCanvas.height);
+    if (!heldPieceMatrix) return;
+    const size = 18;
+    const offsetX = (holdCanvas.width / size - heldPieceMatrix[0].length) / 2;
+    const offsetY = (holdCanvas.height / size - heldPieceMatrix.length) / 2;
+    drawMatrix(heldPieceMatrix, {x: offsetX, y: offsetY}, holdCtx, size);
+}
+
+function getGhostPos() {
+    const ghostPlayer = { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y } };
+    while (!collide(board, ghostPlayer)) {
+        ghostPlayer.pos.y++;
+    }
+    ghostPlayer.pos.y--;
+    return ghostPlayer.pos;
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawMatrix(board, {x: 0, y: 0}, ctx);
+    if (player.matrix) {
+        const ghostPos = getGhostPos();
+        drawMatrix(player.matrix, ghostPos, ctx, BLOCK_SIZE, true);
+        drawMatrix(player.matrix, player.pos, ctx);
+    }
+}
+
+// --- LÓGICA CORE ---
+function collide(board, playerObj) {
+    const [m, o] = [playerObj.matrix, playerObj.pos];
+    for (let y = 0; y < m.length; ++y) {
+        for (let x = 0; x < m[y].length; ++x) {
+            if (m[y][x] !== 0 &&
+               (board[y + o.y] && board[y + o.y][x + o.x]) !== 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function merge(board, playerObj) {
+    playerObj.matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value !== 0) {
+                board[y + playerObj.pos.y][x + playerObj.pos.x] = value;
+            }
+        });
+    });
+}
+
+function rotate(matrix, dir) {
+    const rotated = matrix.map((_, index) => matrix.map(col => col[index]));
+    if (dir > 0) return rotated.map(row => row.reverse());
+    return rotated.reverse();
+}
+
+function lockPiece() {
+    merge(board, player);
+    playerReset();
+    arenaSweep();
+    dropCounter = 0;
+    lockDelayCounter = 0;
+}
+
+function playerRotate(dir) {
+    const pos = player.pos.x;
+    let offset = 1;
+    player.matrix = rotate(player.matrix, dir);
+    
+    while (collide(board, player)) {
+        player.pos.x += offset;
+        offset = -(offset + (offset > 0 ? 1 : -1));
+        if (offset > player.matrix[0].length) {
+            player.matrix = rotate(player.matrix, -dir);
+            player.pos.x = pos;
+            return;
+        }
+    }
+    lockDelayCounter = 0; 
+}
+
+function playerMove(dir) {
+    player.pos.x += dir;
+    if (collide(board, player)) {
+        player.pos.x -= dir;
+    } else {
+        lockDelayCounter = 0; 
+    }
+}
+
+function resetPlayerPosition() {
+    player.pos.y = 0;
+    player.pos.x = Math.floor(COLS / 2) - Math.floor(player.matrix[0].length / 2);
+}
+
+function playerReset() {
+    player.matrix = getNextPiece();
+    resetPlayerPosition();
+    drawNextQueue();
+    canHold = true; 
+    lockDelayCounter = 0;
+
+    if (collide(board, player)) {
+        gameOver = true;
+        bgMusic.pause();
+        showGameOverlay('FIM DE JOGO');
+    }
+}
+
+function holdPiece() {
+    if (!canHold || !gameStarted || isPaused || gameOver) return;
+
+    if (!heldPieceMatrix) {
+        heldPieceMatrix = player.matrix;
+        player.matrix = getNextPiece();
+    } else {
+        const temp = player.matrix;
+        player.matrix = heldPieceMatrix;
+        heldPieceMatrix = temp;
+    }
+
+    resetPlayerPosition();
+    drawNextQueue();
+    drawHoldQueue();
+    
+    canHold = false;
+    dropCounter = 0;
+    lockDelayCounter = 0;
+    draw();
+}
+
+function playerDrop() {
+    const isTouchingFloor = collide(board, {
+        matrix: player.matrix,
+        pos: { x: player.pos.x, y: player.pos.y + 1 }
+    });
+
+    if (!isTouchingFloor) {
+        player.pos.y++;
+        score += 1; 
+        updateUI();
+        dropCounter = 0;
+    }
+}
+
+function playerHardDrop() {
+    let linesDropped = 0;
+    while (!collide(board, player)) {
+        player.pos.y++;
+        linesDropped++;
+    }
+    player.pos.y--;
+    linesDropped--; 
+
+    if (linesDropped > 0) {
+        score += linesDropped * 2; 
+        updateUI();
+    }
+    
+    lockPiece();
+}
+
+function arenaSweep() {
+    let clearedLines = 0;
+    
+    outer: for (let y = board.length - 1; y >= 0; --y) {
+        for (let x = 0; x < board[y].length; ++x) {
+            if (board[y][x] === 0) continue outer;
+        }
+
+        const row = board.splice(y, 1)[0].fill(0);
+        board.unshift(row);
+        ++y;
+        clearedLines++;
+    }
+
+    if (clearedLines > 0) {
+        score += [100, 300, 500, 800][clearedLines - 1] * level;
+        rows += clearedLines;
+        if (rows >= level * 10) {
+            level++;
+            dropInterval = 1000 / level + 200;
+        }
+        updateUI();
+    }
+}
+
+function updateUI() {
+    elScore.innerText = score;
+    elRows.innerText = rows;
+    elLevel.innerText = level;
+}
+
+// --- CONTROLO DE ESTADO ---
+function showGameOverlay(title) {
+    gameOverlay.classList.remove('hidden');
+    gameOverlay.classList.add('flex');
+    overlayTitle.innerText = title;
+    
+    if (gameOver) {
+        overlayTitle.classList.replace('text-cyan-400', 'text-red-500');
+        btnResume.innerText = "NOVO JOGO";
+    } else {
+        overlayTitle.classList.replace('text-red-500', 'text-cyan-400');
+        btnResume.innerText = "CONTINUAR";
+    }
+}
+
+function hideGameOverlay() {
+    gameOverlay.classList.add('hidden');
+    gameOverlay.classList.remove('flex');
+}
+
+function initGame() {
+    board = createBoard();
+    score = 0;
+    rows = 0;
+    level = 1;
+    dropInterval = 1000;
+    gameOver = false;
+    isPaused = false;
+    gameStarted = true;
+    
+    heldPieceMatrix = null;
+    canHold = true;
+    lockDelayCounter = 0;
+    
+    initNextPieces();
+    updateUI();
+    playerReset();
+    drawHoldQueue();
+    
+    homeScreen.classList.add('hidden');
+    homeScreen.classList.remove('flex');
+    btnPauseUI.classList.remove('hidden'); // Mostra o botão de pausa
+    hideGameOverlay();
+    
+    bgMusic.currentTime = 0;
+    if (!isMuted) {
+        bgMusic.play().catch(e => console.warn("Áudio bloqueado pelo navegador", e));
+    }
+
+    lastTime = performance.now();
+    update();
+}
+
+function togglePause() {
+    if (!gameStarted || gameOver) return;
+    
+    isPaused = !isPaused;
+    if (isPaused) {
+        bgMusic.pause();
+        showGameOverlay('PAUSADO');
+        cancelAnimationFrame(reqId);
+    } else {
+        hideGameOverlay();
+        if (!isMuted) {
+            bgMusic.play().catch(e => console.warn("Áudio bloqueado pelo navegador"));
+        }
+        lastTime = performance.now();
+        update();
+    }
+}
+
+function returnToMenu() {
+    gameStarted = false;
+    gameOver = true;
+    isPaused = false;
+    bgMusic.pause();
+    
+    hideGameOverlay();
+    btnPauseUI.classList.add('hidden'); // Esconde o botão de pausa
+    
+    homeScreen.classList.remove('hidden');
+    homeScreen.classList.add('flex');
+}
+
+function update(time = 0) {
+    if (gameOver || isPaused || !gameStarted) return;
+    
+    const deltaTime = time - lastTime;
+    lastTime = time;
+
+    const isTouchingFloor = collide(board, {
+        matrix: player.matrix,
+        pos: { x: player.pos.x, y: player.pos.y + 1 }
+    });
+
+    if (isTouchingFloor) {
+        lockDelayCounter += deltaTime;
+        if (lockDelayCounter >= 500) { 
+            lockPiece();
+        }
+    } else {
+        lockDelayCounter = 0;
+        dropCounter += deltaTime;
+
+        if (dropCounter > dropInterval) {
+            player.pos.y++;
+            dropCounter = 0;
+        }
+    }
+
+    draw();
+    reqId = requestAnimationFrame(update);
+}
+
+// --- LÓGICA DE ÁUDIO ---
+btnMute.addEventListener('click', () => {
+    isMuted = !isMuted;
+    bgMusic.muted = isMuted;
+    btnMute.innerText = isMuted ? '🔇' : '🔊';
+    
+    if (!isMuted && gameStarted && !isPaused && !gameOver) {
+        bgMusic.play().catch(e => console.warn("Áudio bloqueado pelo navegador", e));
+    }
+});
+
+// --- EVENTOS E CONTROLOS ---
+document.addEventListener('keydown', event => {
+    if (gameOver || isPaused || !gameStarted) {
+        if (event.keyCode === 27) togglePause();
+        return;
+    }
+    
+    if ([32, 37, 38, 39, 40].includes(event.keyCode)) {
+        event.preventDefault();
+    }
+
+    if (event.keyCode === 37) { // Esquerda
+        playerMove(-1);
+    } else if (event.keyCode === 39) { // Direita
+        playerMove(1);
+    } else if (event.keyCode === 40) { // Baixo (Soft Drop)
+        playerDrop();
+    } else if (event.keyCode === 38 || event.keyCode === 88) { // Cima / X (Girar Dir)
+        playerRotate(1);
+    } else if (event.keyCode === 90) { // Z (Girar Esq)
+        playerRotate(-1);
+    } else if (event.keyCode === 32) { // Espaço (Hard Drop)
+        playerHardDrop();
+    } else if (event.keyCode === 67 || event.keyCode === 16) { // C ou Shift (Hold)
+        holdPiece();
+    } else if (event.keyCode === 27) { // ESC
+        togglePause();
+    }
+    
+    draw();
+});
+
+// GESTOS PARA CELULAR / TABLET
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.addEventListener('touchstart', e => {
+    if (e.target.tagName === 'BUTTON' || !gameStarted || isPaused || gameOver) return;
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+document.addEventListener('touchend', e => {
+    if (e.target.tagName === 'BUTTON' || !gameStarted || isPaused || gameOver) return;
+    
+    let touchEndX = e.changedTouches[0].screenX;
+    let touchEndY = e.changedTouches[0].screenY;
+    
+    let dx = touchEndX - touchStartX;
+    let dy = touchEndY - touchStartY;
+    
+    if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0) playerMove(1);
+            else playerMove(-1);
+        } else {
+            if (dy > 0) {
+                playerHardDrop(); 
+            } else {
+                holdPiece(); 
+            }
+        }
+    } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+        playerRotate(1);
+    }
+    draw();
+});
+
+// GESTOS PARA MOUSE
+let isMouseDown = false;
+
+document.addEventListener('mousedown', e => {
+    if (e.target.tagName === 'BUTTON' || !gameStarted || isPaused || gameOver) return;
+    isMouseDown = true;
+    touchStartX = e.clientX;
+    touchStartY = e.clientY;
+});
+
+document.addEventListener('mouseup', e => {
+    if (!isMouseDown || e.target.tagName === 'BUTTON' || !gameStarted || isPaused || gameOver) return;
+    isMouseDown = false;
+    
+    let touchEndX = e.clientX;
+    let touchEndY = e.clientY;
+    
+    let dx = touchEndX - touchStartX;
+    let dy = touchEndY - touchStartY;
+    
+    if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0) playerMove(1);
+            else playerMove(-1);
+        } else {
+            if (dy > 0) playerHardDrop();
+            else holdPiece();
+        }
+    } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+        if (e.target.id !== 'hold-piece' && e.target.id !== 'hold-container') {
+            playerRotate(1);
+        }
+    }
+    draw();
+});
+
+// Eventos de Botões UI Principal
+document.getElementById('btn-play-home').addEventListener('click', initGame);
+document.getElementById('btn-help-home').addEventListener('click', () => {
+    helpScreen.classList.remove('hidden');
+    helpScreen.classList.add('flex');
+});
+
+document.getElementById('btn-close-help').addEventListener('click', () => {
+    helpScreen.classList.add('hidden');
+    helpScreen.classList.remove('flex');
+    homeScreen.classList.remove('hidden');
+    homeScreen.classList.add('flex');
+});
+document.getElementById('btn-play-help').addEventListener('click', () => {
+    helpScreen.classList.add('hidden');
+    helpScreen.classList.remove('flex');
+    initGame();
+});
+
+// Ações In-Game
+btnPauseUI.addEventListener('click', () => {
+    if (gameStarted && !gameOver) togglePause();
+});
+
+btnResume.addEventListener('click', () => {
+    if (gameOver) initGame();
+    else togglePause();
+});
+
+btnBackMenu.addEventListener('click', returnToMenu);
+
+// Render inicial passivo (fundo)
+draw();
+
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DESCUBRA A PALAVRA</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -20,13 +20,91 @@
             padding-bottom: 50px;
         }
 
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            margin-top: 20px;
+        }
+
         h1 {
-            margin: 20px 0 10px 0;
+            margin: 0 0 10px 0;
             font-weight: 800;
-            font-size: 32px;
+            font-size: clamp(24px, 5vw, 32px);
             letter-spacing: 2px;
             text-transform: uppercase;
+            text-align: center;
         }
+
+        .btn-rules {
+            background-color: transparent;
+            color: #a3a3a3;
+            border: 1px solid #a3a3a3;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .btn-rules:hover {
+            color: white;
+            border-color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* --- MODAL DE REGRAS --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background-color: #31364a;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .modal-content h2 { margin-top: 0; color: #3aa394; }
+        .modal-content ul { padding-left: 20px; line-height: 1.6; }
+        .modal-content li { margin-bottom: 10px; }
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .close-modal:hover { color: white; }
+
+        /* --- DISPLAY DA DICA --- */
+        .hint-display {
+            background-color: #2c3e50;
+            border-left: 5px solid #f1c40f;
+            padding: 15px;
+            margin: 15px 10px 5px 10px;
+            border-radius: 4px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fdfdfd;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- TABULEIRO --- */
         .board-container {
@@ -35,17 +113,16 @@
             align-items: center;
             flex-grow: 1;
             margin: 10px 0;
+            width: 100%;
         }
 
         .board {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            /* Grid template é definido dinamicamente no JS */
             grid-template-rows: repeat(6, 1fr);
             gap: 5px;
-            width: 330px;
-            height: 400px;
-            max-width: 90vw;
-            max-height: 55vh;
+            padding: 10px;
+            max-width: 95vw;
         }
 
         .tile {
@@ -62,14 +139,14 @@
             user-select: none;
             line-height: 1; 
             transition: border-color 0.1s;
+            width: clamp(40px, 12vw, 60px);
+            height: clamp(40px, 12vw, 60px);
         }
 
-        /* Estados e Animações */
         .filled { border-color: #818384; }
         
-        /* NOVO: Classe para o cursor selecionado */
         .selected {
-            border-bottom: 4px solid #3aa394; /* Sublinhado verde */
+            border-bottom: 4px solid #3aa394;
             background-color: rgba(255, 255, 255, 0.05);
         }
 
@@ -79,16 +156,15 @@
         @keyframes pop { 50% { transform: scale(1.1); } }
         @keyframes flip { 0% { transform: rotateX(0); } 50% { transform: rotateX(90deg); } 100% { transform: rotateX(0); } }
 
-        /* Cores */
         .correct { background-color: #3aa394 !important; border-color: #3aa394 !important; }
         .present { background-color: #d3ad69 !important; border-color: #d3ad69 !important; }
         .absent { background-color: #312a2c !important; border-color: #312a2c !important; }
 
         /* --- TECLADO --- */
         .keyboard-container {
-            margin-bottom: 20px;
-            width: 96%;
-            max-width: 500px;
+            margin-bottom: 10px;
+            width: 98%;
+            max-width: 600px;
         }
 
         .keyboard-row {
@@ -111,7 +187,7 @@
             margin: 0 3px;
             flex: 1;
             text-transform: uppercase;
-            font-size: 14px;
+            font-size: clamp(10px, 3vw, 14px);
             user-select: none;
             transition: background-color 0.2s, transform 0.1s;
             touch-action: manipulation;
@@ -123,20 +199,29 @@
         }
 
         .key-wide { flex: 1.5; font-size: 12px; }
+        
+        /* Destaque para o botão de Verificar */
+        .key-verify {
+            background-color: #3aa394;
+            flex: 2;
+            font-size: 13px;
+        }
+        .key-verify:active { background-color: #2b7a6f; }
 
         /* --- CONTROLES (DICA E RESTART) --- */
         .controls-container {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .restart-btn {
-            background-color: #e67e22;
+        .restart-btn, .hint-btn {
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 16px;
+            padding: 15px 25px;
+            font-size: 15px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
@@ -145,19 +230,11 @@
             touch-action: manipulation;
         }
 
-        .hint-btn {
-            background-color: #f1c40f; 
-            color: #2c3e50;
-            border: none;
-            padding: 15px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
+        .restart-btn { background-color: #e67e22; }
+        .restart-btn:hover { background-color: #d35400; }
 
+        .hint-btn { background-color: #f1c40f; color: #2c3e50; }
+        .hint-btn:hover:not(:disabled) { background-color: #f39c12; }
         .hint-btn:disabled {
             background-color: #575757;
             color: #999;
@@ -165,13 +242,10 @@
             box-shadow: none;
         }
 
-        .restart-btn:hover { background-color: #d35400; }
-        .hint-btn:hover:not(:disabled) { background-color: #f39c12; }
-
         /* --- MENSAGENS --- */
         .message-container {
             position: fixed;
-            top: 10%;
+            top: 15%;
             left: 50%;
             transform: translateX(-50%);
             background-color: white;
@@ -183,15 +257,21 @@
             display: none;
             z-index: 1000;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <h1>DESCUBRA A PALAVRA</h1>
+    <div class="header">
+        <h1>DESCUBRA A PALAVRA</h1>
+        <button class="btn-rules" id="btn-open-rules">❓ Como Jogar</button>
+    </div>
     
     <div class="message-container" id="message-container"></div>
     
+    <div class="hint-display" id="hint-display"></div>
+
     <div class="board-container">
         <div class="board" id="board"></div>
     </div>
@@ -199,78 +279,104 @@
     <div class="keyboard-container" id="keyboard"></div>
 
     <div class="controls-container">
-        <button class="hint-btn" id="hint-btn">💡 Dica</button>
+        <button class="hint-btn" id="hint-btn">💡 Pedir Dica</button>
         <button class="restart-btn" id="restart-btn">Nova Palavra</button>
     </div>
 
-    <script>
-        const rawWords = [
-            "AMIGO", "ANEXO", "ANDAR", "AONDE", "AREIA", "ASSIM", "AVIAO", "BAIXO", "BANCO", "BARCO", 
-            "BATOM", "BEBER", "BEIJO", "BICHO", "BLOCO", "BOTAO", "BRACO", "BREVE", "BRISA", "BURRO", 
-            "CAIXA", "CALOR", "CAMPO", "CANTO", "CARRO", "CARTA", "CASAL", "CERTO", "CHAVE", "CHEFE", 
-            "CHUVA", "CINCO", "CLARO", "CLUBE", "COISA", "COMER", "CORPO", "CRAVO", "CRIAR", "CURTO", 
-            "DANCA", "DENTE", "DESDE", "DIZER", "DOBRO", "DOIDO", "DUZIA", "EMAIL", "ENVIO", "ESTAR", 
-            "EXAME", "EXTRA", "FACIL", "FAZER", "FEBRE", "FELIZ", "FERRO", "FESTA", "FIBRA", "FILME", 
-            "FINAL", "FOLHA", "FONTE", "FORMA", "FORTE", "FRACO", "FRUTA", "FUGIR", "FUNDO", "GARRA", 
-            "GENTE", "GESTO", "GRATO", "GRITO", "GRUPO", "HAVER", "HOMEM", "HOTEL", "IDEIA", "IDOSO", 
-            "IGUAL", "JOGAR", "JOVEM", "JUIZO", "JUSTO", "LABIO", "LAPIS", "LEITE", "LENTO", "LEAO", 
-            "LETRA", "LIMPO", "LINHA", "LIVRO", "LOUCO", "LUGAR", "MACA", "MAGRO", "MAIOR", "MELAO", 
-            "MENOS", "METAL", "MEDIR", "METER", "MILHO", "MINHA", "MOEDA", "MONTE", "MORAL", "MORTE", 
-            "MUDAR", "MUITO", "MUNDO", "NACAO", "NADAR", "NARIZ", "NATAL", "NAVIO", "NIVEL", "NOBRE", 
-            "NOITE", "NORTE", "NUVEM", "OLHAR", "ONTEM", "OUTRO", "OUVIR", "PADRE", "PAGAR", "PAPEL", 
-            "PARTE", "PASSO", "PEDRA", "PEIXE", "PEITO", "PERTO", "PLUMA", "PODER", "POETA", "PONTO", 
-            "PORTA", "PORTO", "POUCO", "PRAIA", "PRATO", "PRECO", "PRETO", "PRIMO", "PROVA", "QUASE", 
-            "RAIVA", "RAZAO", "RADIO", "REGRA", "RITMO", "SABER", "SABIO", "SAIDA", "SALTO", "SAUDE", 
-            "SENHA", "SERIO", "SINAL", "SITIO", "SONHO", "SORTE", "SUAVE", "SUBIR", "SUMIR", "SUPER", 
-            "SURDO", "TARDE", "TEMPO", "TENIS", "TERRA", "TIGRE", "TINTA", "TOCAR", "TOMAR", "TORRE", 
-            "TOSSE", "TOTAL", "TRACO", "TRENO", "TRIGO", "TROCA", "TRONO", "VALOR", "VAPOR", "VAZIO", 
-            "VELHO", "VENTO", "VERAO", "VERDE", "VIDRO", "VIES", "VIGOR", "VINHO", "VISAO", "VISTO", 
-            "VIVER", "VOLTA", "ZEBRA"
-        ];
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="btn-close-rules">&times;</span>
+            <h2>COMO JOGAR</h2>
+            <ul>
+                <li>O objetivo é adivinhar a palavra oculta usando o teclado.</li>
+                <li>Pode ser uma palavra de <strong>5, 6 ou 7 letras</strong>.</li>
+                <li>Se precisar de ajuda, clique em <strong>PEDIR DICA</strong> para ler uma charada.</li>
+                <li>Após digitar as letras, clique no botão <strong>VERIFICAR</strong> para testar sua resposta.</li>
+                <li>As cores das letras vão mudar para mostrar o quão perto você está:
+                    <br><br>
+                    🟩 <strong>Verde:</strong> Letra certa, no lugar certo.<br>
+                    🟨 <strong>Amarelo:</strong> A letra existe na palavra, mas está no lugar errado.<br>
+                    ⬛ <strong>Escuro:</strong> A letra não existe na palavra.
+                </li>
+            </ul>
+        </div>
+    </div>
 
-        const words = rawWords.filter(word => word.length === 5);
+    <script>
+        // Banco de Palavras com Dicas (5, 6 e 7 letras misturadas)
+        const wordDatabase = [
+            // 5 Letras
+            { word: "NUVEM", hint: "Fica no céu, parece de algodão e é formada por gotículas de água." },
+            { word: "TIGRE", hint: "Felino selvagem e feroz que tem o pelo cheio de listras." },
+            { word: "LIVRO", hint: "Tem muitas páginas e serve para lermos histórias ou estudarmos." },
+            { word: "LAPIS", hint: "Usamos para escrever no caderno e pode ser apagado com borracha." },
+            { word: "TERRA", hint: "É o planeta em que vivemos. Também é onde plantamos sementes." },
+            // 6 Letras
+            { word: "ARVORE", hint: "Planta grande com tronco de madeira, galhos e muitas folhas." },
+            { word: "BANANA", hint: "Fruta amarela, comprida, que precisa ser descascada para comer." },
+            { word: "CAVALO", hint: "Animal de montaria muito veloz. Faz barulho de galope." },
+            { word: "ESCOLA", hint: "Lugar onde os alunos vão todos os dias para aprender." },
+            { word: "MEDICO", hint: "Profissional que cuida da nossa saúde e trabalha no hospital." },
+            // 7 Letras
+            { word: "FOGUETE", hint: "Veículo poderoso que viaja para o espaço e chega na lua." },
+            { word: "RELOGIO", hint: "Instrumento que usamos no pulso ou na parede para ver as horas." },
+            { word: "ESTRELA", hint: "Brilha no céu durante a noite. O sol também é uma delas." },
+            { word: "PLANETA", hint: "Corpo celeste gigante no espaço. Terra, Marte e Júpiter são exemplos." },
+            { word: "FORMIGA", hint: "Inseto pequeno e muito trabalhador que vive em colônias." }
+        ];
 
         // --- VARIÁVEIS DE ESTADO ---
         let secretWord = "";
+        let currentHint = "";
+        let cols = 0; // Será definido pelo tamanho da palavra
+        const rows = 6;
         let currentRow = 0;
-        let currentTile = 0; // Agora atua como índice do cursor (0-4)
+        let currentTile = 0;
         let isGameOver = false;
         let isAnimating = false;
-        let hasUsedHint = false;
         let guesses = [];
-        const rows = 6;
-        const cols = 5;
 
         // Elementos do DOM
         const board = document.getElementById('board');
         const keyboard = document.getElementById('keyboard');
         const messageDisplay = document.getElementById('message-container');
+        const hintDisplay = document.getElementById('hint-display');
         const restartBtn = document.getElementById('restart-btn');
         const hintBtn = document.getElementById('hint-btn');
+        const rulesModal = document.getElementById('rules-modal');
+        const btnOpenRules = document.getElementById('btn-open-rules');
+        const btnCloseRules = document.getElementById('btn-close-rules');
 
         // --- INICIALIZAÇÃO ---
         function initGame() {
             if (isAnimating) return;
 
-            secretWord = words[Math.floor(Math.random() * words.length)];
+            // Sorteia uma palavra aleatória do banco
+            const randomObj = wordDatabase[Math.floor(Math.random() * wordDatabase.length)];
+            secretWord = randomObj.word;
+            currentHint = randomObj.hint;
+            cols = secretWord.length; // Define colunas dinamicamente (5, 6 ou 7)
+
             console.log("Palavra Secreta:", secretWord); 
 
             currentRow = 0;
             currentTile = 0;
             isGameOver = false;
-            hasUsedHint = false;
             
-            guesses = [
-                ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""],
-                ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""]
-            ];
+            // Cria a matriz de respostas vazias dinamicamente
+            guesses = Array.from({length: rows}, () => new Array(cols).fill(""));
+
+            // Ajusta o CSS Grid baseado no tamanho da palavra
+            board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
             board.innerHTML = ''; 
             keyboard.innerHTML = '';
+            hintDisplay.style.display = 'none';
+            hintDisplay.textContent = '';
 
             createBoard();
             createKeyboard();
-            updateCursor(); // Inicializa o cursor visual
+            updateCursor(); 
             
             messageDisplay.style.display = 'none';
             hintBtn.disabled = false;
@@ -284,7 +390,7 @@
                     tile.classList.add('tile');
                     tile.setAttribute('id', `tile-${r}-${c}`);
                     
-                    // Permite clicar na caixa para selecionar (extra)
+                    // Permite clicar na caixa para selecionar onde digitar
                     tile.addEventListener('click', () => {
                         if (r === currentRow && !isGameOver && !isAnimating) {
                             currentTile = c;
@@ -304,7 +410,8 @@
                 const rowDiv = document.createElement('div');
                 rowDiv.classList.add('keyboard-row');
                 
-                if (index === 2) addKey(rowDiv, 'ENTER', true);
+                // Botão Verificar no teclado
+                if (index === 2) addKey(rowDiv, 'VERIFICAR', true, 'ENTER');
                 
                 rowString.split('').forEach(char => addKey(rowDiv, char, false));
                 
@@ -313,7 +420,7 @@
                 keyboard.appendChild(rowDiv);
             });
             
-            // Adiciona linha extra para setas no mobile (opcional, mas bom pra UX)
+            // Setas direcionais
             const arrowRow = document.createElement('div');
             arrowRow.classList.add('keyboard-row');
             arrowRow.style.marginTop = "5px";
@@ -329,6 +436,8 @@
             button.textContent = text;
             button.classList.add('key');
             if (isWide) button.classList.add('key-wide');
+            if (action === 'ENTER') button.classList.add('key-verify'); // Classe especial para o botão Verificar
+            
             button.setAttribute('id', `key-${action || text}`);
             
             button.addEventListener('click', (e) => {
@@ -341,9 +450,8 @@
             parent.appendChild(button);
         }
 
-        // --- FUNÇÃO PARA ATUALIZAR O CURSOR VISUAL ---
+        // --- CURSOR VISUAL ---
         function updateCursor() {
-            // Remove seleção de todos na linha atual
             for (let c = 0; c < cols; c++) {
                 const tile = document.getElementById(`tile-${currentRow}-${c}`);
                 if (tile) tile.classList.remove('selected');
@@ -351,14 +459,13 @@
 
             if (isGameOver || isAnimating) return;
 
-            // Adiciona seleção na tile atual
             const currentTileEl = document.getElementById(`tile-${currentRow}-${currentTile}`);
             if (currentTileEl) {
                 currentTileEl.classList.add('selected');
             }
         }
 
-        // --- LÓGICA DE JOGO ---
+        // --- LÓGICA DE ENTRADA ---
         function handleInput(key) {
             if (isGameOver || isAnimating) return;
 
@@ -372,7 +479,7 @@
             }
 
             if (key === 'ARROWRIGHT') {
-                if (currentTile < 4) {
+                if (currentTile < cols - 1) {
                     currentTile++;
                     updateCursor();
                 }
@@ -383,12 +490,10 @@
             if (key === 'BACKSPACE') {
                 const currentVal = guesses[currentRow][currentTile];
                 
-                // Se a casa atual tem letra, apaga ela e FICA nela
                 if (currentVal !== "") {
                     guesses[currentRow][currentTile] = "";
                     updateTileVisual(currentRow, currentTile, "");
                 } 
-                // Se a casa atual está vazia e não estamos no começo, volta um e apaga
                 else if (currentTile > 0) {
                     currentTile--;
                     guesses[currentRow][currentTile] = "";
@@ -398,31 +503,26 @@
                 return;
             }
 
-            // --- ENTER ---
+            // --- VERIFICAR (ENTER) ---
             if (key === 'ENTER') {
-                // Verifica se há espaços vazios na linha
                 if (!guesses[currentRow].includes("")) {
                     checkGuess();
                 } else {
-                    showMessage("Palavra incompleta");
-                    shakeRow(); // Efeito visual de erro
+                    showMessage("Atenção: Preencha todas as letras primeiro.");
                 }
                 return;
             }
 
             // --- LETRAS ---
             if (/^[A-Z]$/.test(key)) {
-                // Preenche a posição atual
                 guesses[currentRow][currentTile] = key;
                 updateTileVisual(currentRow, currentTile, key);
 
-                // Animação de pop
                 const tile = document.getElementById(`tile-${currentRow}-${currentTile}`);
                 tile.classList.add('pop');
                 setTimeout(() => tile.classList.remove('pop'), 100);
 
-                // Avança para a próxima se não for a última
-                if (currentTile < 4) {
+                if (currentTile < cols - 1) {
                     currentTile++;
                     updateCursor();
                 }
@@ -438,23 +538,15 @@
                     tile.style.borderColor = "#818384";
                 } else {
                     tile.classList.remove('filled');
-                    tile.style.borderColor = "#4c4347"; // volta cor padrão
-                    // Se for o selecionado, o CSS .selected sobrescreve a borda
+                    tile.style.borderColor = "#4c4347"; 
                 }
             }
-        }
-        
-        function shakeRow() {
-            const rowStart = currentRow * 5; 
-            // Implementação simples de shake seria adicionar classe na board ou nos tiles
-            // Deixando simplificado aqui apenas com mensagem
         }
 
         function checkGuess() {
             const guess = guesses[currentRow].join("");
             const rowToCheck = currentRow;
             
-            // Remove cursor visual durante animação
             const currentTileEl = document.getElementById(`tile-${currentRow}-${currentTile}`);
             if(currentTileEl) currentTileEl.classList.remove('selected');
 
@@ -462,7 +554,7 @@
 
             let wordCheck = secretWord.split('');
             const guessCheck = guess.split('');
-            const resultColors = new Array(5).fill('absent');
+            const resultColors = new Array(cols).fill('absent');
 
             // 1. Verdes
             guessCheck.forEach((char, i) => {
@@ -506,7 +598,7 @@
                 }, 300 * i);
             });
 
-            // 4. Fim de processamento
+            // 4. Fim do turno
             setTimeout(() => {
                 isAnimating = false;
 
@@ -519,55 +611,30 @@
                     isGameOver = true;
                 } else {
                     currentRow++;
-                    currentTile = 0; // Reseta para primeira coluna da nova linha
+                    currentTile = 0; 
                     updateCursor();
                 }
-            }, 300 * 5 + 100);
+            }, 300 * cols + 100);
         }
 
-        // --- DINÂMICA: DICA ---
-        function useHint() {
-            if (isGameOver || hasUsedHint || isAnimating) return;
-
-            // Procura slots vazios ou errados na linha atual para preencher
-            const indicesDisponiveis = [];
-            for (let i = 0; i < 5; i++) {
-                // Só dá dica se o espaço estiver vazio ou letra errada
-                if (guesses[currentRow][i] !== secretWord[i]) {
-                    indicesDisponiveis.push(i);
-                }
-            }
-
-            if (indicesDisponiveis.length === 0) {
-                showMessage("Você já tem as letras certas!");
-                return;
-            }
-
-            const randomIndex = indicesDisponiveis[Math.floor(Math.random() * indicesDisponiveis.length)];
-            const correctChar = secretWord[randomIndex];
-
-            guesses[currentRow][randomIndex] = correctChar;
-            updateTileVisual(currentRow, randomIndex, correctChar);
+        // --- MOSTRAR DICA EM TEXTO ---
+        function showHint() {
+            if (isGameOver || isAnimating) return;
             
-            const tile = document.getElementById(`tile-${currentRow}-${randomIndex}`);
-            tile.classList.add('pop');
-
-            hasUsedHint = true;
-            hintBtn.disabled = true;
+            hintDisplay.textContent = `Dica: ${currentHint}`;
+            hintDisplay.style.display = 'block';
+            hintBtn.disabled = true; // Desabilita o botão após revelar a charada
             
-            // Re-foca o cursor onde estava ou move se necessário
-            updateCursor();
+            updateCursor(); // Devolve o foco visual para o tabuleiro
         }
 
-        // --- DINÂMICA: CONFETES ---
+        // --- ANIMAÇÕES E MENSAGENS ---
         function triggerConfetti() {
             var duration = 3 * 1000;
             var animationEnd = Date.now() + duration;
             var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-            function randomInRange(min, max) {
-              return Math.random() * (max - min) + min;
-            }
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
 
             var interval = setInterval(function() {
               var timeLeft = animationEnd - Date.now();
@@ -583,10 +650,10 @@
             messageDisplay.style.display = 'block';
             setTimeout(() => {
                 messageDisplay.style.display = 'none';
-            }, 2500);
+            }, 3000);
         }
 
-        // --- EVENTOS ---
+        // --- EVENTOS DE CLIQUE E TECLADO FÍSICO ---
         restartBtn.addEventListener('click', (e) => {
             e.preventDefault();
             initGame();
@@ -594,7 +661,7 @@
 
         hintBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            useHint();
+            showHint();
         });
 
         document.addEventListener('keydown', (e) => {
@@ -609,6 +676,14 @@
             }
         });
 
+        // --- EVENTOS DO MODAL DE REGRAS ---
+        btnOpenRules.addEventListener('click', () => rulesModal.style.display = 'flex');
+        btnCloseRules.addEventListener('click', () => rulesModal.style.display = 'none');
+        rulesModal.addEventListener('click', (e) => {
+            if (e.target === rulesModal) rulesModal.style.display = 'none';
+        });
+
+        // Inicia o jogo
         initGame();
     </script>
 </body>
