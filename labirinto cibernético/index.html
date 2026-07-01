@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labirinto Cibernético</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #050508; 
+            font-family: 'Fredoka','Nunito';
+            overflow: hidden;
+            user-select: none;
+        }
+        canvas {
+            background-color: #0a0a12;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.8);
+            border: 2px solid #1a1a2e;
+            border-radius: 8px;
+            image-rendering: pixelated;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Estado Geral do Jogo
+    let state = 'MENU'; // MENU | RULES | GAME | GAMEOVER | WIN_LEVEL | WIN_GAME
+    let currentStage = 1;
+    const maxStages = 30;
+    let soundEnabled = true;
+    let musicEnabled = true;
+
+    // Estado da Partida
+    let isPlayingPath = false;
+    let mouseX = 0, mouseY = 0;
+    let lastMouseX = 0, lastMouseY = 0;
+    let trail = []; // Rastro de luz neon
+    let startTime = 0;
+    let timeLeft = 0;
+    let failReason = "";
+    let buttons = [];
+    
+    let currentLevelData = null;
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = new AudioContext();
+    let musicInterval = null;
+
+    // --- CONSTRUTOR DE FASES ---
+    function makePaths(arr) {
+        return arr.map(path => {
+            let p = [];
+            for(let i=0; i<path.length; i+=2) p.push({x: path[i], y: path[i+1]});
+            return p;
+        });
+    }
+
+    function makeCoords(arr) {
+        return arr.map(coord => ({x: coord[0], y: coord[1]}));
+    }
+
+    // Temas Visuais (Mudando a cada 5 fases: Ciano, Verde, Amarelo, Magenta, Roxo, Vermelho)
+    const themes = [
+        { main: '#00ffff', glow: '#00ffff', bg: '#0a0a12' }, // 1 a 5
+        { main: '#00ff00', glow: '#00ff00', bg: '#0a0a12' }, // 6 a 10
+        { main: '#ffff00', glow: '#ffff00', bg: '#0a0a12' }, // 11 a 15
+        { main: '#ff00ff', glow: '#ff00ff', bg: '#0a0a12' }, // 16 a 20
+        { main: '#aa00ff', glow: '#aa00ff', bg: '#0a0a12' }, // 21 a 25
+        { main: '#ff3300', glow: '#ff3300', bg: '#0a0a12' }  // 26 a 30
+    ];
+
+    // Os 20 formatos base (1-10 Dourados originais, 11-20 Novos Azuis)
+    const baseLayouts = [
+        // --- TIER 1 (1 a 10) ---
+        { p: [[300,540, 300,350], [150,350, 450,350], [150,350, 150,200, 250,200, 250,100, 350,100, 350,200], [450,350, 450,250, 350,250]], g: [[350,150]], e: [] },
+        { p: [[300,540, 300,350], [100,350, 500,350], [100,350, 100,100, 250,100, 250,250], [500,350, 500,150, 350,150, 350,250]], g: [[100,150], [250,200], [450,150]], e: [] },
+        { p: [[150,450, 150,150, 250,150, 250,450], [150,450, 400,450], [400,450, 400,150, 500,150, 500,350, 350,350, 350,250, 450,250]], g: [[200,150], [400,250], [500,250]], e: [{x:250, y:450, dx:2, dy:0, minX:150, maxX:400, minY:450, maxY:450}] },
+        { p: [[300,540, 300,300], [150,300, 500,300], [150,300, 150,150, 250,150, 250,250], [500,300, 500,200, 400,200, 400,250]], g: [[150,200], [500,250]], e: [{x:150, y:200, dx:0, dy:2, minX:150, maxX:150, minY:150, maxY:300}, {x:450, y:300, dx:2, dy:0, minX:300, maxX:500, minY:300, maxY:300}] },
+        { p: [[300,540, 300,150, 100,150, 100,450, 500,450, 500,250, 400,250, 400,350, 200,350, 200,250, 400,250]], g: [[100,200], [450,250]], e: [{x:200, y:150, dx:3, dy:0, minX:100, maxX:300, minY:150, maxY:150}, {x:300, y:450, dx:4, dy:0, minX:100, maxX:500, minY:450, maxY:450}] },
+        { p: [[300,540, 300,400], [300,400, 150,400, 150,200, 250,200], [300,400, 450,400, 450,300, 350,300], [150,300, 250,300], [250,200, 250,100, 450,100, 450,200]], g: [[250,300], [350,300], [450,200]], e: [{x:300, y:400, dx:2, dy:0, minX:150, maxX:450, minY:400, maxY:400}] },
+        { p: [[300,540, 300,450], [150,450, 450,450], [150,450, 150,350], [450,450, 450,350], [150,350, 450,350], [300,350, 300,250], [150,250, 450,250], [150,250, 150,150], [150,150, 450,150]], g: [[450,350], [450,150]], e: [{x:300, y:450, dx:3, dy:0, minX:150, maxX:450, minY:450, maxY:450}, {x:300, y:250, dx:-3, dy:0, minX:150, maxX:450, minY:250, maxY:250}] },
+        { p: [[300,540, 300,450], [100,450, 500,450], [100,450, 100,200, 200,200, 200,100], [300,450, 300,250, 350,250, 350,150], [500,450, 500,200, 450,200, 450,300]], g: [[200,100], [350,150], [450,300]], e: [{x:100, y:300, dx:0, dy:2, minX:100, maxX:100, minY:200, maxY:450}, {x:500, y:300, dx:0, dy:-2, minX:500, maxX:500, minY:200, maxY:450}] },
+        { p: [[300,540, 300,450], [150,450, 450,450, 450,150, 150,150, 150,450], [250,450, 250,250, 350,250, 350,350, 250,350]], g: [[300,250], [150,150]], e: [{x:300, y:450, dx:2, dy:0, minX:150, maxX:450, minY:450, maxY:450}, {x:450, y:300, dx:0, dy:2, minX:450, maxX:450, minY:150, maxY:450}, {x:300, y:150, dx:-2, dy:0, minX:150, maxX:450, minY:150, maxY:150}] },
+        { p: [[300,540, 300,480], [300,480, 100,480, 100,380, 200,380, 200,450], [200,380, 200,280, 400,280, 400,400, 500,400, 500,100], [400,280, 400,180, 150,180, 150,100, 300,100], [300,480, 500,480, 500,450]], g: [[200,450], [300,100], [500,450], [500,100]], e: [{x:100, y:430, dx:0, dy:2, minX:100, maxX:100, minY:380, maxY:480}, {x:300, y:280, dx:2, dy:0, minX:200, maxX:400, minY:280, maxY:280}, {x:500, y:250, dx:0, dy:3, minX:500, maxX:500, minY:100, maxY:400}] },
+        
+        // --- TIER 2 (11 a 20) NOVOS DESIGNS AZUIS ---
+        { // 11. A Bússola Interligada
+          p: [[300,540, 300,250], [150,250, 450,250], [150,250, 150,100], [450,250, 450,100], [150,100, 450,100]], 
+          g: [[150,100], [450,100], [300,100]], 
+          e: [{x:300, y:250, dx:0, dy:4, minX:300, maxX:300, minY:100, maxY:250}] 
+        },
+        { // 12. A Escadaria
+          p: [[200,540, 200,450, 300,450, 300,350, 400,350, 400,250, 500,250, 500,150, 100,150, 100,350, 200,350]], 
+          g: [[100,350], [500,150]], 
+          e: [{x:300, y:450, dx:2, dy:0, minX:200, maxX:300, minY:450, maxY:450}, {x:300, y:150, dx:4, dy:0, minX:100, maxX:500, minY:150, maxY:150}] 
+        },
+        { // 13. Caixas Gêmeas
+          p: [[300,540, 300,400], [150,400, 450,400, 450,250, 150,250, 150,400], [250,400, 250,300, 350,300, 350,250]], 
+          g: [[350,300], [250,300]], 
+          e: [{x:300, y:400, dx:4, dy:0, minX:150, maxX:450, minY:400, maxY:400}, {x:300, y:250, dx:-4, dy:0, minX:150, maxX:450, minY:250, maxY:250}] 
+        },
+        { // 14. Corredores de Vento Paralelos
+          p: [[300,540, 300,450], [150,450, 450,450], [150,450, 150,150], [300,450, 300,150], [450,450, 450,150], [150,150, 450,150]], 
+          g: [[150,150], [300,150], [450,150]], 
+          e: [{x:150, y:300, dx:0, dy:5, minX:150, maxX:150, minY:150, maxY:450}, {x:450, y:300, dx:0, dy:-5, minX:450, maxX:450, minY:150, maxY:450}] 
+        },
+        { // 15. Labirinto Concêntrico
+          p: [[300,540, 300,450], [100,450, 500,450, 500,100, 100,100, 100,450], [200,350, 400,350, 400,200, 200,200, 200,350], [300,450, 300,350]], 
+          g: [[300,200], [100,100], [500,100]], 
+          e: [{x:300, y:450, dx:5, dy:0, minX:100, maxX:500, minY:450, maxY:450}, {x:300, y:200, dx:-3, dy:0, minX:200, maxX:400, minY:200, maxY:200}] 
+        },
+        { // 16. A Arena Cruzada
+          p: [[300,540, 300,100], [100,300, 500,300], [100,100, 500,100, 500,500, 100,500, 100,100]], 
+          g: [[100,100], [500,100], [100,500], [500,500]], 
+          e: [{x:300, y:200, dx:5, dy:0, minX:100, maxX:500, minY:200, maxY:200}, {x:200, y:300, dx:0, dy:5, minX:100, maxX:100, minY:100, maxY:500}] 
+        },
+        { // 17. A Serpente de Gelo Longa
+          p: [[150,540, 150,450, 450,450, 450,350, 150,350, 150,250, 450,250, 450,150, 150,150, 150,100, 450,100]], 
+          g: [[450,100]], 
+          e: [{x:300, y:450, dx:-4, dy:0, minX:150, maxX:450, minY:450, maxY:450}, {x:300, y:250, dx:5, dy:0, minX:150, maxX:450, minY:250, maxY:250}] 
+        },
+        { // 18. Rosto Geométrico
+          p: [[300,540, 300,450], [200,450, 400,450], [200,450, 200,150], [400,450, 400,150], [200,150, 400,150], [150,350, 250,350], [350,350, 450,350]], 
+          g: [[150,350], [450,350], [300,150]], 
+          e: [{x:300, y:450, dx:3, dy:0, minX:200, maxX:400, minY:450, maxY:450}, {x:300, y:150, dx:-3, dy:0, minX:200, maxX:400, minY:150, maxY:150}] 
+        },
+        { // 19. Sprints Horizontais
+          p: [[100,540, 100,450, 500,450, 500,300, 100,300, 100,150, 500,150]], 
+          g: [[500,150]], 
+          e: [{x:300, y:450, dx:7, dy:0, minX:100, maxX:500, minY:450, maxY:450}, {x:300, y:300, dx:-7, dy:0, minX:100, maxX:500, minY:300, maxY:300}] 
+        },
+        { // 20. Elevadores da Morte
+          p: [[300,540, 300,450], [150,450, 450,450], [150,450, 150,100], [450,450, 450,100]], 
+          g: [[150,100], [450,100]], 
+          e: [{x:150, y:300, dx:0, dy:6, minX:150, maxX:150, minY:100, maxY:450}, {x:450, y:200, dx:0, dy:-6, minX:450, maxX:450, minY:100, maxY:450}] 
+        },
+
+        // --- TIER 3 (21 a 30) NOVOS DESIGNS VERMELHOS (Inspirados nas Imagens) ---
+        { // 21. Zigzag Mortal (Inspirado na Imagem 1)
+          p: [[300,540, 300,450], [150,450, 450,450], [150,450, 150,300, 250,300, 250,200, 150,200], [450,450, 450,300, 350,300, 350,200, 450,200], [150,200, 150,100], [450,200, 450,100], [250,200, 350,200]],
+          g: [[150,100], [450,100]],
+          e: [{x:300, y:450, dx:3, dy:0, minX:150, maxX:450, minY:450, maxY:450}, {x:300, y:300, dx:-2, dy:0, minX:150, maxX:450, minY:300, maxY:300}]
+        },
+        { // 22. Espiral Quadrada de Fogo (Inspirado na Imagem 2)
+          p: [[300,540, 300,450], [300,450, 450,450, 450,150, 150,150, 150,350, 350,350, 350,250, 250,250]],
+          g: [[250,250]],
+          e: [{x:450, y:300, dx:0, dy:3, minX:450, maxX:450, minY:150, maxY:450}, {x:300, y:150, dx:3, dy:0, minX:150, maxX:450, minY:150, maxY:150}, {x:150, y:250, dx:0, dy:2, minX:150, maxX:150, minY:150, maxY:350}]
+        },
+        { // 23. A Câmara Cruzada (Inspirado na Imagem 3)
+          p: [[300,540, 300,400], [200,400, 400,400, 400,200, 200,200, 200,400], [400,300, 500,300], [200,300, 100,300], [300,200, 300,100]],
+          g: [[500,300], [100,300], [300,100]],
+          e: [{x:300, y:300, dx:2, dy:2, minX:200, maxX:400, minY:200, maxY:400}]
+        },
+        { // 24. Labirinto Denso (Inspirado na Imagem 4)
+          p: [[150,540, 150,450, 450,450, 450,350, 100,350, 100,250, 500,250, 500,150, 150,150]],
+          g: [[150,150]],
+          e: [{x:300, y:450, dx:-3, dy:0, minX:150, maxX:450, minY:450, maxY:450}, {x:300, y:350, dx:3, dy:0, minX:100, maxX:450, minY:350, maxY:350}, {x:300, y:250, dx:-3, dy:0, minX:100, maxX:500, minY:250, maxY:250}, {x:300, y:150, dx:3, dy:0, minX:150, maxX:500, minY:150, maxY:150}]
+        },
+        { // 25. Simetria Quebrada
+          p: [[300,540, 300,450], [100,450, 300,450], [300,450, 300,200], [100,450, 100,100], [100,100, 400,100], [300,200, 500,200], [500,200, 500,400]],
+          g: [[400,100], [500,400]],
+          e: [{x:100, y:250, dx:0, dy:3, minX:100, maxX:100, minY:100, maxY:450}, {x:300, y:300, dx:0, dy:-3, minX:300, maxX:300, minY:200, maxY:450}]
+        },
+        { // 26. Garras de Fogo
+          p: [[300,540, 300,400], [150,400, 450,400], [150,400, 150,200], [450,400, 450,200], [150,200, 250,200], [450,200, 350,200], [250,200, 250,100], [350,200, 350,100]],
+          g: [[250,100], [350,100]],
+          e: [{x:300, y:400, dx:4, dy:0, minX:150, maxX:450, minY:400, maxY:400}, {x:150, y:300, dx:0, dy:3, minX:150, maxX:150, minY:200, maxY:400}, {x:450, y:300, dx:0, dy:-3, minX:450, maxX:450, minY:200, maxY:400}]
+        },
+        { // 27. Circuito Fechado
+          p: [[100,540, 100,450, 500,450, 500,150, 100,150, 100,250, 400,250, 400,350, 200,350]],
+          g: [[200,350]],
+          e: [{x:300, y:450, dx:3, dy:0, minX:100, maxX:500, minY:450, maxY:450}, {x:500, y:300, dx:0, dy:3, minX:500, maxX:500, minY:150, maxY:450}, {x:300, y:150, dx:-3, dy:0, minX:100, maxX:500, minY:150, maxY:150}]
+        },
+        { // 28. A Teia Vermelha
+          p: [[300,540, 300,450], [150,450, 450,450], [150,450, 150,150], [450,450, 450,150], [150,150, 450,150], [300,450, 300,150], [150,300, 450,300]],
+          g: [[150,150], [450,150]],
+          e: [{x:300, y:300, dx:3, dy:0, minX:150, maxX:450, minY:300, maxY:300}, {x:300, y:300, dx:0, dy:3, minX:300, maxX:300, minY:150, maxY:450}]
+        },
+        { // 29. Desvio Triplo
+          p: [[100,540, 100,100], [250,540, 250,100], [400,540, 400,100], [100,100, 500,100], [100,450, 250,450], [250,250, 400,250]],
+          g: [[500,100]],
+          e: [{x:100, y:300, dx:0, dy:4, minX:100, maxX:100, minY:100, maxY:540}, {x:250, y:300, dx:0, dy:-4, minX:250, maxX:250, minY:100, maxY:540}, {x:400, y:300, dx:0, dy:4, minX:400, maxX:400, minY:100, maxY:540}]
+        },
+        { // 30. Inferno de Precisão (Fase Final)
+          p: [[300,540, 300,480], [100,480, 500,480], [100,480, 100,100], [500,480, 500,100], [100,100, 500,100], [200,380, 400,380], [200,380, 200,200], [400,380, 400,200], [200,200, 400,200], [300,480, 300,380], [300,200, 300,100], [300,380, 300,200]],
+          g: [[300,290]],
+          e: [{x:100, y:250, dx:0, dy:4, minX:100, maxX:100, minY:100, maxY:480}, {x:500, y:250, dx:0, dy:-4, minX:500, maxX:500, minY:100, maxY:480}, {x:300, y:480, dx:4, dy:0, minX:100, maxX:500, minY:480, maxY:480}, {x:300, y:100, dx:-4, dy:0, minX:100, maxX:500, minY:100, maxY:100}]
+        }
+    ];
+
+    const stages = [];
+    // Ajustado para 30 Tempos diferentes (cada um exclusivo para sua fase)
+    const baseTimes = [25, 30, 35, 30, 40, 35, 30, 35, 30, 45, 30, 40, 35, 35, 45, 40, 40, 35, 35, 35, 45, 45, 55, 60, 50, 45, 50, 55, 65, 75]; 
+
+    for(let i=0; i<30; i++) {
+        let baseIndex = i; // Agora mapeia todos os 30 layouts que criamos perfeitamente
+        let base = baseLayouts[baseIndex];
+        let tier = Math.floor(i / 10); // Mantém a dificuldade/estreitamento aumentando a cada 10
+        let colorTier = Math.floor(i / 5); // Cores mudam a cada 5 fases
+        
+        let thickness = 42 - (tier * 7); 
+        let timeLimit = baseTimes[baseIndex] - (tier * 4); 
+        
+        let enemies = JSON.parse(JSON.stringify(base.e));
+        enemies.forEach(en => {
+            en.dx *= (1 + tier * 0.4);
+            en.dy *= (1 + tier * 0.4);
+        });
+        
+        stages.push({
+            paths: makePaths(base.p),
+            thickness: thickness,
+            timeLimit: Math.max(10, timeLimit), // Mínimo 10 seg
+            goals: makeCoords(base.g),
+            enemies: enemies,
+            theme: themes[colorTier] // Atribui a cor baseada no bloco de 5
+        });
+    }
+
+    // --- FUNÇÕES DE ÁUDIO ---
+    function playTone(frequency, type, duration, vol = 0.1) {
+        if (!soundEnabled || audioCtx.state === 'suspended') return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playStartSound() { playTone(800, 'sine', 0.1, 0.1); }
+    function playWinSound() {
+        playTone(400, 'square', 0.1, 0.1);
+        setTimeout(() => playTone(600, 'square', 0.1, 0.1), 100);
+        setTimeout(() => playTone(800, 'square', 0.3, 0.1), 200);
+    }
+    function playLoseSound() {
+        playTone(250, 'sawtooth', 0.2, 0.2);
+        setTimeout(() => playTone(200, 'sawtooth', 0.4, 0.2), 150);
+        setTimeout(() => playTone(150, 'sawtooth', 0.6, 0.2), 350);
+    }
+    function playGoalCollectSound() { playTone(1200, 'sine', 0.1, 0.1); }
+
+    function startMusic() {
+        if (!musicEnabled) return;
+        let step = 0;
+        
+        // Sequências de notas estilo Retro/Arcade 8-bit (Frequências em Hz)
+        // Linha de baixo marcante
+        const bassSeq = [110, 0, 110, 0, 110, 110, 0, 110, 98, 0, 98, 0, 98, 98, 0, 98];
+        // Melodia rápida em arpejo espacial
+        const arpSeq  = [220, 261.6, 329.6, 440, 220, 261.6, 329.6, 392, 196, 246.9, 293.6, 392, 196, 246.9, 293.6, 329.6];
+
+        musicInterval = setInterval(() => {
+            if (!musicEnabled || state !== 'GAME') return;
+            
+            let bFreq = bassSeq[step % 16];
+            let aFreq = arpSeq[step % 16];
+
+            // Toca o baixo (onda dente de serra/sawtooth para som mais sujo e denso)
+            if (bFreq > 0) playTone(bFreq, 'sawtooth', 0.15, 0.04);
+            
+            // Toca a melodia (onda quadrada/square característica dos jogos 8-bit antigos)
+            if (aFreq > 0) playTone(aFreq, 'square', 0.1, 0.02);
+
+            // Bateria eletrónica/Hi-hat simples nos contratempos
+            if (step % 2 !== 0) playTone(8000, 'square', 0.02, 0.01);
+
+            step++;
+        }, 125); // 125ms cria um ritmo dinâmico e empolgante de arcade
+    }
+    function stopMusic() { clearInterval(musicInterval); }
+
+    function getPathRects(paths, thickness) {
+        let rects = [];
+        paths.forEach(path => {
+            for(let i=0; i<path.length - 1; i++) {
+                let A = path[i];
+                let B = path[i+1];
+                let left = Math.min(A.x, B.x) - thickness/2;
+                let right = Math.max(A.x, B.x) + thickness/2;
+                let top = Math.min(A.y, B.y) - thickness/2;
+                let bottom = Math.max(A.y, B.y) + thickness/2;
+                rects.push({x: left, y: top, w: right - left, h: bottom - top});
+            }
+        });
+        return rects;
+    }
+
+    function isPointInAnyRect(x, y, rects) {
+        for(let r of rects) {
+            if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) return true;
+        }
+        return false;
+    }
+
+    function isPointInRect(x, y, rect) {
+        return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
+    }
+
+    function drawBackground() {
+        ctx.fillStyle = '#050508';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        let offset = (Date.now() / 30) % 40;
+        ctx.strokeStyle = 'rgba(0, 255, 255, 0.04)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for(let i = -40; i < canvas.width; i+= 40) {
+            ctx.moveTo(i + offset, 0); ctx.lineTo(i + offset, canvas.height);
+            ctx.moveTo(0, i + offset); ctx.lineTo(canvas.width, i + offset);
+        }
+        ctx.stroke();
+    }
+
+    function strokePaths(paths) {
+        ctx.beginPath();
+        paths.forEach(path => {
+            ctx.moveTo(path[0].x, path[0].y);
+            for(let i=1; i<path.length; i++) ctx.lineTo(path[i].x, path[i].y);
+        });
+        ctx.stroke();
+    }
+
+    function drawMaze(paths, thickness, theme) {
+        ctx.lineCap = 'square';
+        ctx.lineJoin = 'miter';
+
+        // Neon Glow
+        ctx.lineWidth = thickness + 4; 
+        ctx.strokeStyle = theme.glow; 
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = theme.glow;
+        strokePaths(paths);
+
+        // Caminho Interior Escuro
+        ctx.shadowBlur = 0;
+        ctx.lineWidth = thickness; 
+        ctx.strokeStyle = theme.bg; 
+        strokePaths(paths);
+    }
+
+    function drawTriangle(x, y) {
+        let pulse = (Math.floor(Date.now() / 200) % 2 === 0);
+        ctx.fillStyle = pulse ? '#ff00ff' : '#aa00aa';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ff00ff';
+        ctx.beginPath();
+        ctx.moveTo(x, y - 6);
+        ctx.lineTo(x + 6, y + 6);
+        ctx.lineTo(x - 6, y + 6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    function drawEnemy(x, y) {
+        let size = 10;
+        ctx.fillStyle = '#ff0000';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#ff0000';
+        ctx.fillRect(x - size/2, y - size/2, size, size);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(x - 2, y - 2, 4, 4);
+        ctx.shadowBlur = 0;
+    }
+
+    function drawPlayer(x, y) {
+        // Rastro de Luz (Trail)
+        if(trail.length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(trail[0].x, trail[0].y);
+            for(let i=1; i<trail.length; i++) {
+                ctx.lineTo(trail[i].x, trail[i].y);
+            }
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.4)';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = '#00ffff';
+            ctx.stroke();
+            ctx.shadowBlur = 0; 
+        }
+
+        // Ponto Principal (Cursor)
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#00ffff';
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2); 
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    // --- TEXTO 3D NEON METÁLICO ---
+    function draw3DNeonText(text, x, y, size) {
+        ctx.font = `bold ${size}px 'Fredoka'`;
+        ctx.textAlign = 'center';
+
+        // 1. Profundidade 3D (Extrusão)
+        let depth = Math.max(3, Math.floor(size / 6));
+        for (let i = depth; i >= 1; i--) {
+            ctx.fillStyle = `rgb(${30 - i*3}, ${30 - i*3}, ${40 - i*3})`; // Sombra metálica
+            ctx.fillText(text, x + i * 1.5, y + i * 1.5);
+        }
+
+        // 2. Face Metálica (Gradiente simulando metal)
+        let gradientMetal = ctx.createLinearGradient(0, y - size, 0, y);
+        gradientMetal.addColorStop(0, '#ffffff');
+        gradientMetal.addColorStop(0.3, '#bbbbbb');
+        gradientMetal.addColorStop(0.5, '#444444');
+        gradientMetal.addColorStop(0.7, '#cccccc');
+        gradientMetal.addColorStop(1, '#ffffff');
+
+        ctx.fillStyle = gradientMetal;
+        ctx.shadowBlur = 0;
+        ctx.fillText(text, x, y);
+
+        // 3. Luzes de Neon Internas (Gradiente Ciano -> Roxo -> Magenta)
+        let metrics = ctx.measureText(text);
+        let gradientNeon = ctx.createLinearGradient(x - metrics.width/2, 0, x + metrics.width/2, 0);
+        gradientNeon.addColorStop(0, '#00ffff'); // Azul Ciano
+        gradientNeon.addColorStop(0.5, '#aa00ff'); // Roxo Elétrico
+        gradientNeon.addColorStop(1, '#ff00ff'); // Magenta
+
+        ctx.lineWidth = Math.max(1.5, size / 16);
+        ctx.strokeStyle = gradientNeon;
+        ctx.shadowColor = gradientNeon;
+        ctx.shadowBlur = 15; // Brilho Neon
+        ctx.strokeText(text, x, y);
+        
+        // Fio de luz central super brilhante
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = '#ffffff';
+        ctx.shadowBlur = 0;
+        ctx.strokeText(text, x, y);
+    }
+
+    // --- INTERFACE (UI) ---
+    function drawMenu() {
+        buttons = [];
+        
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2 - 50, 70); ctx.lineTo(canvas.width/2 - 30, 70);
+        ctx.moveTo(canvas.width/2 - 40, 60); ctx.lineTo(canvas.width/2 - 40, 80);
+        ctx.stroke();
+
+        // Título principal em 3D Neon Metálico
+        draw3DNeonText("LABIRINTO CIBERNÉTICO", canvas.width/2, 115, 36);
+
+        ctx.font = "bold 16px 'Nunito'";
+        ctx.fillStyle = '#888';
+        ctx.textAlign = 'right';
+        ctx.fillText("SELECIONAR FASE:", 320, 235);
+        ctx.fillText("EFEITOS SONOROS:", 320, 305);
+        ctx.fillText("ATIVAR MÚSICA:", 320, 375);
+
+        ctx.textAlign = 'left';
+        ctx.font = "bold 20px 'Nunito'";
+
+        ctx.fillStyle = '#111'; ctx.fillRect(340, 210, 50, 40); ctx.strokeStyle = '#00ffff'; ctx.strokeRect(340, 210, 50, 40);
+        ctx.fillStyle = '#fff'; ctx.fillText(currentStage.toString(), 355, 238);
+
+        ctx.fillStyle = '#111'; ctx.fillRect(395, 210, 30, 40); ctx.strokeRect(395, 210, 30, 40);
+        ctx.fillStyle = '#fff'; ctx.fillText("<", 404, 238);
+        buttons.push({x: 395, y: 210, w: 30, h: 40, onClick: () => currentStage = Math.max(1, currentStage - 1)});
+
+        ctx.fillStyle = '#111'; ctx.fillRect(430, 210, 30, 40); ctx.strokeRect(430, 210, 30, 40);
+        ctx.fillStyle = '#fff'; ctx.fillText(">", 439, 238);
+        buttons.push({x: 430, y: 210, w: 30, h: 40, onClick: () => currentStage = Math.min(maxStages, currentStage + 1)});
+
+        ctx.fillStyle = '#111'; ctx.fillRect(340, 280, 50, 40); ctx.strokeRect(340, 280, 50, 40);
+        buttons.push({x: 340, y: 280, w: 50, h: 40, onClick: () => soundEnabled = !soundEnabled});
+        if (soundEnabled) { ctx.fillStyle = '#ff00ff'; ctx.font = "bold 24px 'Nunito'"; ctx.fillText("✓", 355, 308); ctx.font = "bold 16px 'Nunito'"; }
+
+        ctx.fillStyle = '#111'; ctx.fillRect(340, 350, 50, 40); ctx.strokeRect(340, 350, 50, 40);
+        buttons.push({x: 340, y: 350, w: 50, h: 40, onClick: () => musicEnabled = !musicEnabled});
+        if (musicEnabled) { ctx.fillStyle = '#ff00ff'; ctx.font = "bold 24px 'Nunito'"; ctx.fillText("✓", 355, 378); ctx.font = "bold 16px 'Nunito'"; }
+
+        ctx.fillStyle = '#0a1a2a'; ctx.fillRect(0, 530, canvas.width, 70);
+        draw3DNeonText("COMEÇAR AGORA", canvas.width/2, 575, 24);
+        buttons.push({x: 0, y: 530, w: canvas.width, h: 70, onClick: () => state = 'RULES'});
+    }
+
+    function drawRules() {
+        buttons = [];
+
+        // Título
+        draw3DNeonText("REGRAS DO JOGO", canvas.width/2, 70, 32);
+
+        // Linha separadora animada
+        let pulse = 0.5 + Math.sin(Date.now() / 400) * 0.5;
+        ctx.strokeStyle = `rgba(0, 255, 255, ${0.3 + pulse * 0.7})`;
+        ctx.lineWidth = 1.5;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00ffff';
+        ctx.beginPath();
+        ctx.moveTo(60, 88); ctx.lineTo(540, 88);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Regras
+        const rules = [
+            { icon: '🖱️', color: '#00ffff',  text: 'Mova o mouse pelo caminho neon sem tocar nas paredes' },
+            { icon: '▶',  color: '#00ff88',  text: 'Posicione o cursor no ponto verde de partida para iniciar' },
+            { icon: '△',  color: '#ff00ff',  text: 'Colete todos os triângulos magenta para completar a fase' },
+            { icon: '■',  color: '#ff3333',  text: 'Evite os inimigos vermelhos — eles eliminam na hora' },
+            { icon: '⏱',  color: '#ffff00',  text: 'Fique de olho no temporizador — o tempo acaba rápido!' },
+            { icon: '⚠',  color: '#ff8800',  text: 'Sair da tela com o mouse também conta como derrota' },
+        ];
+
+        rules.forEach((rule, i) => {
+            let yBase = 130 + i * 64;
+
+            // Caixa de fundo
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.strokeStyle = rule.color + '55';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.roundRect(30, yBase - 20, 540, 50, 8);
+            ctx.fill();
+            ctx.stroke();
+
+            // Ícone
+            ctx.font = "20px 'Nunito'";
+            ctx.fillStyle = rule.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = rule.color;
+            ctx.textAlign = 'left';
+            ctx.fillText(rule.icon, 50, yBase + 12);
+            ctx.shadowBlur = 0;
+
+            // Texto
+            ctx.fillStyle = '#cccccc';
+            ctx.font = "bold 14px 'Nunito'";
+            ctx.fillText(rule.text, 88, yBase + 12);
+        });
+
+        // Botão JOGAR
+        ctx.fillStyle = '#0a1a2a';
+        ctx.fillRect(0, 530, canvas.width, 70);
+        draw3DNeonText("ENTENDIDO — JOGAR!", canvas.width/2, 575, 24);
+        buttons.push({x: 0, y: 530, w: canvas.width, h: 70, onClick: () => startGame()});
+
+        // Botão Voltar
+        ctx.fillStyle = '#333';
+        ctx.font = "14px 'Nunito'";
+        ctx.fillStyle = '#555';
+        ctx.textAlign = 'center';
+        ctx.fillText("← Voltar ao menu", canvas.width/2, 518);
+        buttons.push({x: 150, y: 504, w: 300, h: 22, onClick: () => state = 'MENU'});
+    }
+
+    function drawGameOver() {
+        buttons = [];
+        draw3DNeonText("SISTEMA FALHOU!", canvas.width/2, 140, 40);
+        
+        ctx.fillStyle = '#ff5555'; ctx.font = "bold 18px 'Nunito'";
+        ctx.fillText(failReason, canvas.width/2, 190);
+
+        ctx.fillStyle = '#888'; ctx.font = "bold 18px 'Nunito'";
+        ctx.fillText("TENTE NOVAMENTE...", canvas.width/2, 270);
+
+        ctx.strokeStyle = '#ff0000'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(canvas.width/2 - 120, 395, 8, -Math.PI/4, 5*Math.PI/4); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(canvas.width/2 - 120, 385); ctx.lineTo(canvas.width/2 - 120, 398); ctx.stroke();
+
+        ctx.fillStyle = '#aaa'; ctx.font = "bold 16px 'Nunito'"; ctx.fillText("VOLTAR AO MENU", canvas.width/2 + 20, 400);
+        buttons.push({x: canvas.width/2 - 150, y: 370, w: 300, h: 50, onClick: () => state = 'MENU'});
+
+        ctx.fillStyle = '#2a0a0a'; ctx.fillRect(0, 530, canvas.width, 70);
+        draw3DNeonText("REINICIAR", canvas.width/2, 575, 24);
+        buttons.push({x: 0, y: 530, w: canvas.width, h: 70, onClick: () => startGame()});
+    }
+
+    function drawWinLevel() {
+        buttons = [];
+        draw3DNeonText("FASE CONCLUÍDA!", canvas.width/2, 250, 40);
+
+        ctx.fillStyle = '#0a2a1a'; ctx.fillRect(0, 530, canvas.width, 70);
+        draw3DNeonText("PRÓXIMA FASE", canvas.width/2, 575, 24);
+        buttons.push({x: 0, y: 530, w: canvas.width, h: 70, onClick: () => {
+            currentStage++;
+            startGame();
+        }});
+    }
+
+    function drawWinGame() {
+        buttons = [];
+        draw3DNeonText("SISTEMA DOMINADO!", canvas.width/2, 220, 36);
+        
+        ctx.fillStyle = '#aaa'; ctx.font = "bold 16px 'Nunito'";
+        ctx.fillText("Você completou as 30 fases e sua precisão é absoluta.", canvas.width/2, 300);
+
+        ctx.fillStyle = '#0a1a2a'; ctx.fillRect(0, 530, canvas.width, 70);
+        draw3DNeonText("MENU PRINCIPAL", canvas.width/2, 575, 24);
+        buttons.push({x: 0, y: 530, w: canvas.width, h: 70, onClick: () => {
+            currentStage = 1; state = 'MENU';
+        }});
+    }
+
+    function drawHUD() {
+        ctx.fillStyle = 'rgba(10, 10, 18, 0.9)';
+        ctx.fillRect(0, 540, canvas.width, 60);
+
+        if (timeLeft <= 5 && isPlayingPath && Math.floor(Date.now() / 250) % 2 === 0) {
+            ctx.fillStyle = '#ff0000';
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 10;
+        } else {
+            ctx.fillStyle = '#00ffff';
+            ctx.shadowBlur = 0;
+        }
+        ctx.font = "bold 18px 'Nunito'";
+        ctx.textAlign = 'left';
+        ctx.fillText(`TEMPO: ${timeLeft}s`, 20, 575);
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#ff00ff';
+        ctx.textAlign = 'right';
+        ctx.fillText(`FASE: ${currentStage}/30`, canvas.width - 20, 575);
+
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, 570, 3, 0, Math.PI*2);
+        ctx.fill();
+    }
+
+    function gameLoop() {
+        drawBackground();
+
+        if (state === 'MENU') {
+            drawMenu();
+        } else if (state === 'RULES') {
+            drawRules();
+        } 
+        else if (state === 'GAME') {
+            drawMaze(currentLevelData.paths, currentLevelData.thickness, currentLevelData.theme);
+            
+            currentLevelData.goals.forEach(g => drawTriangle(g.x, g.y));
+            drawHUD();
+
+            if (isPlayingPath) {
+                let elapsed = Math.floor((Date.now() - startTime) / 1000);
+                timeLeft = currentLevelData.timeLimit - elapsed;
+                
+                // Rastro do mouse
+                trail.push({x: mouseX, y: mouseY});
+                if(trail.length > 10) trail.shift();
+                
+                if (timeLeft <= 0) {
+                    loseGame("TEMPO ESGOTADO!");
+                    return;
+                }
+                
+                currentLevelData.enemies.forEach(e => {
+                    e.x += e.dx;
+                    e.y += e.dy;
+                    if(e.dx > 0 && e.x > e.maxX) e.dx *= -1;
+                    if(e.dx < 0 && e.x < e.minX) e.dx *= -1;
+                    if(e.dy > 0 && e.y > e.maxY) e.dy *= -1;
+                    if(e.dy < 0 && e.y < e.minY) e.dy *= -1;
+                    
+                    drawEnemy(e.x, e.y);
+
+                    if(Math.abs(mouseX - e.x) < 8 && Math.abs(mouseY - e.y) < 8) loseGame("TOCOU NO INIMIGO!");
+                });
+
+                drawPlayer(mouseX, mouseY);
+            } else {
+                let startPoint = currentLevelData.paths[0][0];
+                ctx.fillStyle = '#00ff00';
+                ctx.globalAlpha = 0.4 + Math.sin(Date.now() / 200) * 0.2;
+                ctx.fillRect(startPoint.x - 12, startPoint.y - 12, 24, 24);
+                ctx.globalAlpha = 1.0;
+                
+                // Cursor fora do caminho (mirando o inicio)
+                ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 2;
+                ctx.shadowBlur = 5; ctx.shadowColor = '#00ffff';
+                ctx.beginPath();
+                ctx.moveTo(mouseX - 8, mouseY); ctx.lineTo(mouseX + 8, mouseY);
+                ctx.moveTo(mouseX, mouseY - 8); ctx.lineTo(mouseX, mouseY + 8);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+        } 
+        else if (state === 'GAMEOVER') {
+            drawGameOver();
+        } 
+        else if (state === 'WIN_LEVEL') {
+            drawWinLevel();
+        } 
+        else if (state === 'WIN_GAME') {
+            drawWinGame();
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        state = 'GAME';
+        isPlayingPath = false;
+        failReason = "";
+        trail = []; // Limpa o rastro
+        
+        let levelTemplate = stages[currentStage - 1];
+        timeLeft = levelTemplate.timeLimit;
+        currentLevelData = {
+            paths: levelTemplate.paths,
+            thickness: levelTemplate.thickness,
+            timeLimit: levelTemplate.timeLimit,
+            goals: JSON.parse(JSON.stringify(levelTemplate.goals)),
+            enemies: JSON.parse(JSON.stringify(levelTemplate.enemies)),
+            theme: levelTemplate.theme,
+            collisionRects: getPathRects(levelTemplate.paths, levelTemplate.thickness)
+        };
+        
+        startMusic();
+    }
+
+    function loseGame(reason) {
+        isPlayingPath = false;
+        state = 'GAMEOVER';
+        failReason = reason;
+        playLoseSound();
+        stopMusic();
+        canvas.style.cursor = 'crosshair';
+    }
+
+    function winLevel() {
+        isPlayingPath = false;
+        playWinSound();
+        stopMusic();
+        if (currentStage < maxStages) {
+            state = 'WIN_LEVEL';
+        } else {
+            state = 'WIN_GAME';
+        }
+        canvas.style.cursor = 'crosshair';
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+        mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+        mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        let isHoveringButton = false;
+        if (state !== 'GAME' || !isPlayingPath) {
+            for (let b of buttons) {
+                if (isPointInRect(mouseX, mouseY, b)) isHoveringButton = true;
+            }
+            canvas.style.cursor = isHoveringButton ? 'pointer' : 'crosshair';
+        }
+
+        if (state === 'GAME') {
+            let start = currentLevelData.paths[0][0];
+
+            if (isPlayingPath) {
+                canvas.style.cursor = 'none';
+
+                let dist = Math.hypot(mouseX - lastMouseX, mouseY - lastMouseY);
+                let steps = Math.max(1, Math.floor(dist / 4));
+                
+                for(let i=1; i<=steps; i++) {
+                    let cx = lastMouseX + (mouseX - lastMouseX) * (i/steps);
+                    let cy = lastMouseY + (mouseY - lastMouseY) * (i/steps);
+                    
+                    let corners = [ {x: cx-3, y: cy-3}, {x: cx+3, y: cy-3}, {x: cx-3, y: cy+3}, {x: cx+3, y: cy+3} ];
+                    let isSafe = true;
+                    for(let c of corners) {
+                        if(!isPointInAnyRect(c.x, c.y, currentLevelData.collisionRects)) isSafe = false;
+                    }
+                    
+                    if(!isSafe) {
+                        loseGame("BATEU NA PAREDE!");
+                        return; 
+                    }
+                }
+
+                for (let i = currentLevelData.goals.length - 1; i >= 0; i--) {
+                    let g = currentLevelData.goals[i];
+                    if (Math.hypot(mouseX - g.x, mouseY - g.y) < 12) {
+                        currentLevelData.goals.splice(i, 1);
+                        playGoalCollectSound();
+                    }
+                }
+
+                if (currentLevelData.goals.length === 0) {
+                    winLevel(); 
+                }
+
+            } else {
+                if (Math.abs(mouseX - start.x) < 12 && Math.abs(mouseY - start.y) < 12) {
+                    isPlayingPath = true;
+                    startTime = Date.now();
+                    lastMouseX = mouseX;
+                    lastMouseY = mouseY;
+                    playStartSound();
+                }
+            }
+        }
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        for (let b of buttons) {
+            if (isPointInRect(mouseX, mouseY, b)) {
+                b.onClick();
+                break;
+            }
+        }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        if (state === 'GAME' && isPlayingPath) {
+            loseGame("SAIU DA TELA!");
+        }
+    });
+
+    document.fonts.ready.then(() => {
+        requestAnimationFrame(gameLoop);
+    });
+
+</script>
+</body>
